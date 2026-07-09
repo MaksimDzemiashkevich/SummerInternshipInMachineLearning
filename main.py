@@ -170,8 +170,6 @@ graph = builder.compile()
 
 display(Image(graph.get_graph().draw_mermaid_png()))
 
-data_frame = pandas.read_excel("test_attributes.xlsx")
-
 result = graph.invoke({"messages": [], 'new_data_frame': pandas.DataFrame(
     columns=["Attribute", "Value", "Rules_Value"]), "i":0})
 
