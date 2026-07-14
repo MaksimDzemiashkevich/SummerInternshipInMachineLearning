@@ -61,23 +61,27 @@ temperature. Grey cast iron GG-20 is suitable for water and steam up to plus 200
 degrees Celsius and for neutral liquids. Carbon steel grade 25L covers applications
 up to plus 425 degrees Celsius. Sealing and contact surfaces must be manufactured
 from corrosion-resistant material. The accepted standard is stainless steel grade
-12Cr18Ni9Ti or a certified equivalent. Material codes are GCI for grey cast iron,
-CS for carbon steel, and SS for stainless steel. Reference: GOST 32569-2013, table 1;
-GOST 5762-2002, clause 2.4.
+12Cr18Ni9Ti or a certified equivalent. Material codes must be recorded using the
+approved short form from the internal reference list IS-002: Material codes are
+GCI for grey cast iron, CS for carbon steel, and SS for stainless steel. Grade or
+alloy designations following the material name, such as "GG-20" or "12Cr18Ni9Ti",
+must be preserved unchanged after the abbreviation is applied. Reference:
+GOST 32569-2013, table 1; GOST 5762-2002, clause 2.4.
 
 
-LEAKAGE AND CONNECTION
+LEAKAGE, CONNECTION AND FLANGE STANDARDS
 
 The valve must comply with the leakage class declared in its specification. Class A
 denotes zero leakage and is required for steam and gas applications. Class B is
 acceptable for water service. The end connection type must correspond to the pressure
 class and nominal diameter. Flanged connections are mandatory for DN 50 mm and above
-at PN 1.0 MPa and higher. For end connections: FLANGED becomes FLG, THREADED
-becomes THD, WELDED becomes WLD, and SOCKET WELD becomes SW. Standard references must follow
-the format GOST-33259 or ASME-B16.5, without extra spaces or punctuation. Flange geometry must
- comply with GOST 33259-2015, which supersedes the earlier GOST 12815-80.
- Reference: GOST R 54808-2011, table 2;
-GOST 33259-2015, clause 5.1.
+at PN 1.0 MPa and higher. End connection types must be recorded using the approved
+short form from the internal reference list IS-002: FLANGED becomes FLG, THREADED
+becomes THD, WELDED becomes WLD, and SOCKET WELD becomes SW. Flange geometry must
+comply with GOST 33259-2015, which supersedes the earlier GOST 12815-80. Standard
+references, including flange standards, must follow the format GOST-33259 or
+ASME-B16.5, without extra spaces or punctuation. Reference: GOST R 54808-2011,
+table 2; GOST 33259-2015, clause 5.1.
 
 
 ACTUATOR AND SERVICE LIFE
@@ -85,12 +89,12 @@ ACTUATOR AND SERVICE LIFE
 The actuator type is selected based on operating conditions and the required opening
 torque. A manual handwheel is appropriate when the torque does not exceed 250 newton
 metres. For higher torques, an electric or pneumatic actuator must be specified.
-The minimum designated service life for pipeline valves is 25 years, provided that
-installation, operation, and maintenance are carried out in accordance with the
-manufacturer's instructions. Actuator types are
-abbreviated as follows: MANUAL HANDWHEEL becomes MHW, ELECTRIC ACTUATOR becomes EA,
-and PNEUMATIC ACTUATOR becomes PA. Reference: GOST 5762-2002, clause 3.7;
-GOST 53402-2009, clause 6.3.
+Actuator types must be recorded using the approved short form from the internal
+reference list IS-002: MANUAL HANDWHEEL becomes MHW, ELECTRIC ACTUATOR becomes EA,
+and PNEUMATIC ACTUATOR becomes PA. The minimum designated service life for pipeline
+valves is 25 years, provided that installation, operation, and maintenance are
+carried out in accordance with the manufacturer's instructions. Reference:
+GOST 5762-2002, clause 3.7; GOST 53402-2009, clause 6.3.
 
 
 CLIMATIC VERSION
@@ -100,11 +104,3 @@ between the letters and the digit. The correct form is UHL1, not UHL 1 or uhl1.
 Similarly, T3 and O1 are correct; T 3 and O 1 are not. UHL1 designates equipment
 suitable for moderate and cold climates and for outdoor installation.
 Reference: GOST 15150-69, table 1.
-
-
-ABBREVIATIONS AND FORMATTING
-
-All attribute values must use the approved short forms from the internal reference
-list IS-002. Full words are not accepted in data fields. The following substitutions
-apply: GATE VALVE becomes GV, BALL VALVE becomes BV, BUTTERFLY VALVE becomes BFV,
-and CHECK VALVE becomes CV.
