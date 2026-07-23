@@ -17,3 +17,4 @@ jupyter>=1.0.0
 langgraph-cli[inmem]>=0.4.0
 langchain-mcp-adapters
 langchain-core>=1.4.0
+pandas
