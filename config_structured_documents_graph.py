@@ -5,14 +5,15 @@ from pathlib import Path
 @dataclass
 class Settings:
     input_path_document: Path = Path("API-600.pdf")
+    RULES_STORAGE_PATH = Path("rule_groups.json")  # можно вынести в settings
     VL_model : str = "cyankiwi/Qwen3-VL-8B-Instruct-AWQ-4bit"
     VL_url : str = "https://skillet-appealing-broken.ngrok-free.dev/v1"
     VL_api_key : str = "not-needed"
     VL_max_tokens : str = 4900
     llmodel : str = "gpt-4o"
-    VL_prompt: str = """Ты выполняешь точное структурированное извлечение содержимого страницы документа, но перед этим анализируешь изображение.
+    VL_prompt: str = """You perform precise structured extraction of a document page's content, but first you analyze the image.
 
-    Верни ТОЛЬКО валидный JSON, без markdown-разметки (без ```json), без пояснений до или после. Строго такой формат:
+    Return ONLY valid JSON, without markdown formatting (no ```json), and without any explanations before or after. Use strictly the following format:
 
     {
       "blocks": [
@@ -21,87 +22,123 @@ class Settings:
         {"type": "...", "...": "..."}
       ]
     }
-    где type может быть paragraph, heading, table. Если тип heading, то у него есть поле level.
-    Поле "level" у heading — это ЦЕЛОЕ число, обозначающее глубину вложенности заголовка 
-    (1 = заголовок верхнего уровня, 2 = подраздел внутри него, 3 = под-подраздел и т.д.), 
-    а НЕ номер раздела документа.
+
+    where "type" can be paragraph, heading, or table.
+    If the type is heading, it must contain the field "level".
+
+    The "level" field of a heading is an INTEGER representing the heading hierarchy depth
+    (1 = top-level heading, 2 = subsection, 3 = sub-subsection, etc.),
+    NOT the document section number.
+
     {"type": "heading", "level": 1, "text": "..."}
-    В таблице есть заголовок, колонки, которые перечислены в списке и строки, которые тоже представляют собой массив.
+
+    A table contains a title, a list of columns, and rows represented as an array.
+
     {"type": "table", "title": "...", "columns": [...], "rows": [{...}]}
-    А есть обычные абзацы с текстом.
+
+    Regular text is represented as paragraphs.
+
     {"type": "paragraph", "text": "..."}
-    блоки наполняются в порядке чтения документа
-    
-    ПРАВИЛО ПОРЯДКА БЛОКОВ (КРИТИЧЕСКИ ВАЖНО):
 
-Блоки в выходном массиве "blocks" должны идти строго в том порядке, в котором 
-контент физически расположен на странице сверху вниз — так, как его читает 
-человек, скользя взглядом по странице.
+    Blocks must be returned in the document reading order.
 
-ЗАПРЕЩЕНО группировать контент по смысловым единицам вместо физического порядка. 
-Например, если на странице сверху расположен список (абзацы/строки без заголовка), 
-а НИЖЕ — заголовок раздела со своим текстом, то в выводе список должен идти 
-ПЕРВЫМ, а заголовок с его текстом — ПОСЛЕ, даже если заголовок кажется 
-"главным" или "текущим" смысловым разделом страницы.
+    BLOCK ORDER RULE (CRITICALLY IMPORTANT):
 
-Не переставляй блок с заголовком в начало вывода только потому, что он кажется 
-структурно важным. Ориентируйся исключительно на вертикальную координату 
-контента на изображении: что выше на странице — то раньше в списке "blocks".
+    The blocks in the output array "blocks" must appear strictly in the order in which
+    the content is physically located on the page from top to bottom—the same way a
+    person would read the page by moving their eyes downward.
 
-Перед выводом финального JSON — мысленно пройдись сверху вниз по изображению 
-и сверь: соответствует ли порядок блоков в твоём JSON порядку их появления 
-на странице. Если нет — исправь порядок.
+    DO NOT group content by semantic meaning instead of physical order.
 
-    ВАЖНО ПРО НЕПОЛНЫЕ ФРАГМЕНТЫ НА ГРАНИЦАХ СТРАНИЦЫ:
-    Текст на странице может начинаться не с начала предложения (продолжение с предыдущей 
-    страницы) или обрываться не в конце предложения (продолжение переходит на следующую 
-    страницу). Это НОРМАЛЬНО и ожидаемо.
+    For example, if a page starts with a list (paragraphs/lines without a heading),
+    and BELOW it there is a section heading with its own text, then the list must
+    appear FIRST in the output, followed by the heading and its text, even if the
+    heading appears to be the "main" or "current" logical section.
 
-    В ТАКИХ СЛУЧАЯХ ОБЯЗАТЕЛЬНО извлекай такой текст полностью, даже если:
-    - он начинается с маленькой буквы или явно является продолжением фразы
-    - он обрывается на середине предложения в самом низу страницы
+    Do not move a heading block to the beginning of the output simply because it seems
+    structurally important. Base the ordering solely on the vertical position of the
+    content in the image: whatever appears higher on the page must appear earlier in
+    the "blocks" array.
 
-    НЕ пропускай такой текст под предлогом "домысливания" или "реконструкции" — 
-    ты не придумываешь содержание, ты просто транскрибируешь то, что реально написано 
-    на изображении, даже если это неполное предложение. Это отличается от домысливания: 
-    домысливание — это когда ты пишешь то, чего на картинке нет. Транскрипция оборванного 
-    куска предложения — это то, что на картинке есть, просто оно не является 
-    самостоятельным законченным предложением.
+    Before producing the final JSON, mentally scan the page from top to bottom and
+    verify that the order of blocks in your JSON matches the order in which they
+    appear on the page. If not, correct the order.
 
-    ПРАВИЛА ДЛЯ ТАБЛИЦ:
+    IMPORTANT ABOUT INCOMPLETE FRAGMENTS AT PAGE BOUNDARIES:
 
-    Сначала проанализируй заголовки колонок таблицы, и только потом структурируй строки — 
-    это нужно, чтобы правильно сопоставить значения с колонками.
+    The text on a page may begin in the middle of a sentence (continued from the
+    previous page) or end before the sentence is complete (continued on the next
+    page). This is NORMAL and expected.
 
-    1. Если под заголовком колонки есть подзаголовок (например заголовок "Seat Surface Typical 
-       Specifications Grade" стоит над тремя подзаголовками "Cast", "Forged", "Welded") — 
-       именуй ключ через слэш: "Заголовок/Подзаголовок". Например:
-       {"Seat Surface Typical Specifications Grade/Cast": "ASTM A217 (CA15)",
-        "Seat Surface Typical Specifications Grade/Forged": "ASTM A182 (F6a)",
-        "Seat Surface Typical Specifications Grade/Welded": "AWS A5.9 ER410"}
+    IN SUCH CASES, you MUST extract the text exactly as it appears, even if:
 
-    2. Если один и тот же текст заголовка встречается в таблице дважды в разных местах 
-       (например слева и справа — декоративное зеркальное оформление широкой таблицы) — 
-       это два физически разных столбца. У каждого из них есть свой подзаголовок — 
-       используй именно комбинацию "Заголовок/Подзаголовок" для каждого, чтобы получились 
-       разные, неконфликтующие ключи. Например:
-       {"Class Designation/Nominal Size DN": "25", ..., "Class Designation/Nominal Pipe Size NPS": "1"}
-       НИКОГДА не создавай два ключа с одинаковым именем в одной строке — в JSON второе 
-       значение сотрёт первое, и данные потеряются.
+    - it starts with a lowercase letter or is clearly a continuation of a sentence;
+    - it ends in the middle of a sentence at the bottom of the page.
 
-    3. Если колонка обычная, без подзаголовка — она остаётся простым ключом со строковым значением.
+    Do NOT omit such text under the pretext of "reconstructing" or "inferring"
+    missing content.
 
-    4. Каждая строка таблицы — отдельный объект в массиве "rows".
+    You are not inventing anything—you are simply transcribing what is actually
+    written in the image, even if it is an incomplete sentence.
 
-    5. Если в оригинале ячейка визуально объединена (относится сразу к нескольким строкам, rowspan) — 
-       продублируй её значение в КАЖДУЮ строку, к которой она относится. Не пропускай строки из-за объединения.
+    This is different from hallucination:
+    hallucination means writing something that is NOT present in the image.
+    Transcribing a truncated sentence means copying text that IS present, even if it
+    does not form a complete sentence.
 
-    6. Номера, коды и обозначения (например "1", "5", "5A") транскрибируй строго как на изображении, 
-       даже если последовательность кажется нарушенной. Не выравнивай и не исправляй нумерацию по своему усмотрению.
+    TABLE RULES:
 
-    7. Если ячейка пустая или содержит "NA" — так и запиши ("NA" или "").
+    First analyze the table headers, and only then structure the rows.
+    This is necessary to correctly associate cell values with their corresponding
+    columns.
 
-    ПРИМЕР — таблица с подзаголовками (Trim):
+    1. If a column has subheaders (for example, the header
+       "Seat Surface Typical Specifications Grade" has the subheaders
+       "Cast", "Forged", and "Welded"), then name the key using
+       "Header/Subheader". For example:
+
+       {
+         "Seat Surface Typical Specifications Grade/Cast": "ASTM A217 (CA15)",
+         "Seat Surface Typical Specifications Grade/Forged": "ASTM A182 (F6a)",
+         "Seat Surface Typical Specifications Grade/Welded": "AWS A5.9 ER410"
+       }
+
+    2. If the same column header text appears twice in different parts of the table
+       (for example, on the left and on the right as part of a mirrored wide-table
+       layout), these are two physically different columns.
+
+       Each has its own subheader.
+
+       Use the combination "Header/Subheader" so that the keys are unique and
+       non-conflicting. For example:
+
+       {
+         "Class Designation/Nominal Size DN": "25",
+         ...,
+         "Class Designation/Nominal Pipe Size NPS": "1"
+       }
+
+       NEVER create two keys with the same name in the same JSON object.
+       In JSON, the second value would overwrite the first, causing data loss.
+
+    3. If a column has no subheader, keep it as a regular key with a string value.
+
+    4. Each table row must be represented as a separate object in the "rows" array.
+
+    5. If a cell is visually merged in the original table (rowspan),
+       duplicate its value into EVERY row to which it applies.
+       Do not omit rows because of merged cells.
+
+    6. Numbers, codes, and identifiers (for example, "1", "5", "5A")
+       must be transcribed exactly as shown in the image,
+       even if the sequence appears inconsistent.
+       Do not renumber or "correct" them.
+
+    7. If a cell is empty or contains "NA", record it exactly as
+       "NA" or "".
+
+    EXAMPLE — table with subheaders (Trim):
+
     {
       "Trim Number": "6",
       "Nominal Trim": "F6 and Cu-Ni",
@@ -111,7 +148,8 @@ class Settings:
       "Stem Hardness (HB)": "200 min 275 max"
     }
 
-    ПРИМЕР — таблица с повторяющимся заголовком слева/справа (Wall Thickness):
+    EXAMPLE — table with duplicated left/right headers (Wall Thickness):
+
     {
       "Class Designation/Nominal Size DN": "25",
       "Minimum Wall Thickness tm mm (in.)/150": "6.4 (0.25)",
@@ -123,249 +161,436 @@ class Settings:
       "Class Designation/Nominal Pipe Size NPS": "1"
     }
 
-    Перед выводом финального JSON — проверь каждую строку каждой таблицы на наличие 
-    дублирующихся ключей верхнего уровня. Если находишь дубль — значит нужно было 
-    использовать формат "Заголовок/Подзаголовок", исправь.
+    Before producing the final JSON, check every row of every table for duplicate
+    top-level keys.
 
-    ПРАВИЛА ДЛЯ ПОВОРОТА:
-    - Если таблица или текст на изображении повёрнуты — поверни их в нормальную ориентацию 
-      перед чтением, и извлекай содержимое уже как из обычной, горизонтальной таблицы/текста.
+    If duplicates are found, you should have used the
+    "Header/Subheader" format. Correct them.
 
-    ЧТО ПРОПУСКАТЬ (не включать в "blocks" вообще):
-    - копирайты, юридические дисклеймеры, оговорки об ответственности
-    - колонтитулы, номера страниц, служебные пометки издателя ("Provided by...", "No reproduction...")
-    - содержание/оглавление (table of contents) — список разделов с точками-разделителями и номерами страниц
-    - диаграммы, схемы
+    ROTATION RULES:
 
-    ЗАПРЕЩЕНО:
-    - Никогда не воспроизводи длинные последовательности одинаковых символов 
-      (точки-разделители, вертикальные черты и т.п.) — просто не включай их в вывод.
-    - Не используй свои знания о том, что "обычно" содержится в подобных документах.
-    - Не дописывай, не домысливай и не реконструируй содержание, которого нет на изображении.
-    - Не заполняй ячейку значением "NA" по умолчанию — ставь "NA" только если в ячейке 
-      ДЕЙСТВИТЕЛЬНО нет текста на изображении.
-    - Не копируй значение из одной колонки в другую — читай каждую ячейку независимо, 
-      даже если значения кажутся похожими.
-    - Если на странице мало содержимого (например, только титульный лист) — 
-      верни "blocks" с ровно тем, что там реально есть, и больше ничего.
-    - Если не уверен, есть ли текст на изображении — не придумывай его.
+    - If a table or text in the image is rotated, rotate it into the correct
+      orientation before reading it, and then extract the content as a normal,
+      horizontally oriented table or text.
 
-    Если на странице нет содержательных блоков (только служебная информация, которую нужно пропустить) — 
-    верни {"blocks": []}
+    WHAT TO SKIP (do not include in "blocks"):
 
-    НАПОМИНАНИЕ — САМОЕ ВАЖНОЕ ПРАВИЛО ПРО ТАБЛИЦЫ:
-    Перед тем как вывести финальный JSON, ещё раз проверь каждую таблицу: если заголовок колонки 
-    имеет подзаголовок — используй формат "Заголовок/Подзаголовок" как имя ключа. Никогда не 
-    выводи подзаголовки как отдельные плоские ключи без указания родительского заголовка, 
-    и никогда не допускай двух одинаковых ключей в одной строке."""
-    llm_prompt: str = """Ты — деловой помощник по проверке и нормализации извлечённых из документа данных.
+    - copyrights;
+    - legal disclaimers and liability notices;
+    - headers, footers, page numbers, publisher notes
+      ("Provided by...", "No reproduction...");
+    - table of contents pages (lists of sections with dot leaders and page numbers);
+    - diagrams and schematics.
 
-    На вход тебе подаётся JSON — список из ОДНОЙ или ДВУХ страниц:
-    - Если страниц ДВЕ: первая страница — это та, которую нужно проверить, исправить и вернуть.
-      Вторая страница дана ТОЛЬКО как контекст — чтобы понять, не обрывается ли последний абзац
-      первой страницы и не продолжается ли он в начале второй. Саму вторую страницу возвращать
-      НЕ нужно, она нужна тебе только для проверки.
-    - Если страница ОДНА: это последняя страница документа (пары для неё нет). Обработай и верни
-      только её.
+    PROHIBITED:
 
-    У каждой страницы есть поле "content", в котором лежит JSON-СТРОКА (не объект, а именно строка,
-    которую нужно распарсить) со структурой:
+    - Never reproduce long sequences of repeated characters
+      (dot leaders, vertical bars, etc.)—simply omit them.
+    - Do not use your own knowledge of what such documents usually contain.
+    - Do not add, infer, or reconstruct content that is not present in the image.
+    - Do not fill a cell with "NA" by default.
+      Use "NA" only if the image actually contains "NA".
+    - Do not copy values from one column into another.
+      Read every cell independently, even if the values appear similar.
+    - If the page contains very little content (for example, only a title page),
+      return "blocks" containing exactly what is present and nothing more.
+    - If you are unsure whether text exists in the image, do not invent it.
+
+    If the page contains no meaningful content blocks (only metadata that should be
+    ignored), return:
+
+    {"blocks": []}
+
+    REMINDER — THE MOST IMPORTANT RULE FOR TABLES:
+
+    Before producing the final JSON, check every table one more time.
+
+    If a column header has a subheader, use the format
+    "Header/Subheader" as the key name.
+
+    Never output subheaders as standalone flat keys without their parent header,
+    and never allow two identical keys within the same row.
+    """
+    llm_prompt: str = """You are a business assistant responsible for validating and normalizing data extracted from a document.
+
+    The input is a JSON containing either ONE or TWO pages:
+
+    - If there are TWO pages:
+      the first page is the one that must be validated, corrected, and returned.
+      The second page is provided ONLY as context to determine whether the last paragraph
+      of the first page is incomplete and continues at the beginning of the second page.
+      Do NOT return the second page—it is provided solely for validation.
+
+    - If there is only ONE page:
+      it is the last page of the document (there is no paired page).
+      Process and return only that page.
+
+    Each page contains a field called "content", which stores a JSON STRING
+    (not a JSON object, but a string that must be parsed) with the following structure:
+
     {"blocks": [{"type": "heading"/"table"/"paragraph", ...}]}
 
-    === ФОРМАТ ОТВЕТА ===
+    === OUTPUT FORMAT ===
 
-    Верни ТОЛЬКО валидный JSON — список из РОВНО ОДНОГО объекта страницы: исправленную первую
-    страницу (даже если на входе было две страницы — на выходе всегда одна). У неё то же поле
-    "content", содержащее JSON-строку с "blocks" (уже исправленными). Остальные поля страницы
-    (page_number, source_page_index, detected_angle, confidence, token_usage) переноси без
-    изменений.
+    Return ONLY valid JSON containing a list with EXACTLY ONE page object:
+    the corrected first page.
 
-    НИ В КОЕМ СЛУЧАЕ НЕ оборачивай ответ в markdown (никаких ```json и ```), не добавляй пояснений
-    до или после JSON — только сам JSON.
+    (Even if the input contains two pages, the output must always contain only one.)
 
-    Твоя задача — проверить содержимое blocks возвращаемой страницы на трёх уровнях и вернуть
-    исправленный результат.
+    The returned page must preserve the same "content" field containing the corrected
+    JSON string with "blocks".
 
-    === 1. ПРОВЕРКА ТАБЛИЦ: соответствие значений колонкам ===
+    Copy all other page fields unchanged:
 
-    Для каждой таблицы проверь, действительно ли значение в ячейке по смыслу подходит своей
-    колонке (заголовку/подзаголовку). Иногда при извлечении значение могло "съехать" — попасть
-    не в ту колонку, к которой оно на самом деле относится по смыслу документа.
+    - page_number
+    - source_page_index
+    - detected_angle
+    - confidence
+    - token_usage
 
-    Проверяй:
-    - Соответствует ли тип/формат значения ожидаемому для этой колонки (например, число там,
-      где должно быть число; единица измерения там, где она указана в заголовке колонки).
+    UNDER NO CIRCUMSTANCES wrap the response in markdown
+    (no ```json ... ```).
 
-    Если находишь явное несоответствие — исправь, поставив значение в правильную колонку.
-    Если сомневаешься (несоответствие неочевидное) — НЕ исправляй, оставь как есть.
-    Исправляй только явные, обоснованные случаи.
+    Do not add explanations before or after the JSON.
+    Return only the JSON itself.
 
-    === 2. ПРОВЕРКА ТАБЛИЦ: значения-переменные (символьные обозначения) ===
+    Your task is to validate the blocks of the returned page on three independent levels
+    and return the corrected result.
 
-    Иногда в ячейке таблицы стоит не готовое значение, а условное обозначение/переменная
-    (буква, символ, сокращение), которая расшифровывается где-то в другом месте документа —
-    в примечании ниже таблицы, в отдельном абзаце до или после таблицы, в сноске.
+    === 1. TABLE VALIDATION: column/value correspondence ===
 
-    Если встречаешь такую переменную:
-    - Найди её расшифровку в других блоках (paragraph/heading/другие таблицы), которые тебе
-      доступны (текущая и, если она есть, контекстная страница).
-    - Если расшифровка найдена и однозначна — ничего не заменяй в самой ячейке (обозначение
-      может быть частью официальной нотации документа и его нельзя просто стереть), но это НЕ
-      считается ошибкой и не требует исправления.
-    - Если явной расшифровки нигде нет — тоже не трогай ячейку, это не ошибка extraction,
-      а особенность документа.
+    For every table, verify that each cell value actually belongs to its corresponding
+    column (header/subheader).
 
-    === 3. СКЛЕЙКА РАЗОРВАННЫХ ПАРАГРАФОВ ===
+    Sometimes during extraction, a value may have shifted into an adjacent column.
 
-    Здесь два независимых направления проверки. Применяй оба, если страниц на входе две;
-    если страница одна — применяй только пункт (B).
+    Check:
 
-    --- (A) Конец возвращаемой страницы -> начало контекстной страницы ---
+    - Does the value's type or format match what is expected for that column?
+      (For example, a numeric value where a number is expected,
+      or a unit matching the column header.)
 
-    Если последний paragraph-блок ПЕРВОЙ (возвращаемой) страницы обрывается не в конце
-    предложения, а первый paragraph-блок ВТОРОЙ (контекстной) страницы явно является
-    продолжением этой же мысли (начинается со строчной буквы, синтаксически продолжает
-    оборванное предложение) — допиши это продолжение в конец последнего paragraph-блока
-    первой страницы.
+    If you find a clear mismatch, move the value into the correct column.
 
-    Саму вторую страницу и её блок отдельно НЕ добавляй в ответ — она не возвращается вообще,
-    её текст должен появиться только внутри блока первой страницы, к которому ты его приклеил.
+    If you are uncertain (the mismatch is not obvious),
+    DO NOT modify it.
 
-    --- (B) Начало возвращаемой страницы -> подозрение на разрыв с предыдущей страницей ---
+    Only correct clear and well-justified errors.
 
-    Проверь ПЕРВЫЙ блок возвращаемой страницы. Если он сам выглядит как продолжение оборванной
-    мысли (начинается со строчной буквы, это явный обрывок предложения, а не самостоятельное
-    начало абзаца) — значит начало этой мысли было на предыдущей странице документа, которая
-    уже была обработана на предыдущем шаге и сейчас тебе не показана.
+    === 2. TABLE VALIDATION: symbolic values / variables ===
 
-    В этом случае такой блок нужно ПОЛНОСТЬЮ УДАЛИТЬ из "blocks" возвращаемой страницы:
-    - не пытайся его "достроить" — у тебя нет доступа к его началу;
-    - не оставляй его как есть в выводе;
-    - просто убери из списка "blocks".
+    Sometimes a table cell contains a symbolic designation
+    (letter, abbreviation, variable)
+    rather than the actual value.
 
-    Это необходимо, чтобы фрагмент не задвоился: он уже был приклеен к предыдущей странице на
-    предыдущем шаге обработки, и если оставить его здесь тоже — он окажется в выводе дважды.
+    Its meaning may be explained elsewhere in the document:
 
-    Применяй правило (B) ТОЛЬКО если признак разрыва достаточно явный. Если сомневаешься
-    (например, это просто короткое, но грамматически законченное предложение) — НЕ удаляй,
-    оставь блок как есть. Если возвращаемая страница — первая страница всего документа, разрыва
-    в её начале, как правило, быть не должно; удаляй только при явных признаках обрыва.
+    - in a note below the table;
+    - in a paragraph before or after the table;
+    - in a footnote.
 
-    --- Общее правило ---
+    If you encounter such a symbol:
 
-    Объединяй/удаляй только реально разорванные предложения. Если два соседних абзаца просто
-    похожи по теме, но каждый грамматически закончен — это два разных абзаца, не трогай их.
+    - Search for its explanation in any available blocks
+      (paragraphs, headings, or other tables)
+      on the current page and, if provided, on the context page.
 
-    Если на входе не было ни одной ошибки/разрыва — верни данные без изменений, в том же
-    формате (списком из одного объекта страницы).
+    - If an unambiguous explanation is found,
+      DO NOT replace the symbol inside the table cell.
+      The symbol may be part of the document's official notation.
+      This is NOT considered an extraction error and does not require correction.
+
+    - If no explanation is found,
+      also leave the cell unchanged.
+      This is a document feature rather than an extraction error.
+
+    === 3. MERGING BROKEN PARAGRAPHS ===
+
+    There are two independent checks.
+
+    If two pages are provided, apply both.
+    If only one page is provided, apply only rule (B).
+
+    --- (A) End of returned page → beginning of context page ---
+
+    If the last paragraph block of the FIRST (returned) page
+    ends in the middle of a sentence,
+    and the first paragraph block of the SECOND (context) page
+    is clearly the continuation of that sentence
+    (starts with a lowercase letter and syntactically continues the unfinished sentence),
+
+    append that continuation to the end of the last paragraph
+    of the first page.
+
+    Do NOT return the second page.
+
+    Its text should appear only inside the merged paragraph
+    of the first page.
+
+    --- (B) Beginning of returned page → possible continuation from previous page ---
+
+    Inspect the FIRST block of the returned page.
+
+    If it clearly looks like the continuation of an unfinished sentence
+    (starts with a lowercase letter and is obviously a sentence fragment
+    rather than an independent paragraph),
+
+    then its beginning was located on the previous page,
+    which has already been processed and is not available now.
+
+    In this case, REMOVE the entire block from the returned page:
+
+    - do not try to reconstruct it;
+    - do not leave it unchanged;
+    - simply remove it from the "blocks" array.
+
+    This prevents duplicated text,
+    because that fragment has already been appended
+    to the previous page during the earlier processing step.
+
+    Apply rule (B) ONLY when the continuation is obvious.
+
+    If you are uncertain
+    (for example, the paragraph is simply short but grammatically complete),
+
+    DO NOT remove it.
+
+    If the returned page is the first page of the document,
+    there normally should not be a continuation at its beginning.
+    Only remove the block if there is strong evidence that it is incomplete.
+
+    --- General rule ---
+
+    Merge or remove ONLY genuinely broken sentences.
+
+    If two adjacent paragraphs merely discuss the same topic
+    but are both grammatically complete,
+    they are separate paragraphs and must remain unchanged.
+
+    If the input contains no extraction errors
+    and no broken paragraphs,
+    return the data unchanged in exactly the same format
+    (a list containing one page object).
+
+    Return the JSON STRICTLY in the following format:
+
+    {
+      "pages": [
+        {...}
+      ]
+    }
+    using the top-level key "pages", which must contain exactly one page.
+    """
+    grouping_rules_model_prompt: str = """You are a business assistant specializing in the analysis of technical standards and regulatory documents in the oil and gas industry (API standards and similar).
+
+    The input is a JSON containing a list of document pages. Each page has a "content" field containing structured blocks (heading, paragraph, table) extracted from the document.
+
+    Your task is to identify technical rules, requirements, or conditions in the document and group them by the attribute (characteristic, parameter, equipment component, etc.) to which they apply.
+
+    Rules may originate from blocks of ALL types:
+
+    - "paragraph" — textual requirements and normative statements;
+    - "table" — specific values (wall thicknesses, pressures, dimensions, materials, etc.) represented by table rows and columns (details below);
+    - "heading" — use only as contextual information about the section. Headings themselves are NOT rules and must not be treated as an independent source of rules.
+
+    An "attribute" is the specific characteristic or component that a rule refers to.
+    Examples include:
+
+    - body material;
+    - minimum wall thickness;
+    - pressure class;
+    - operating temperature;
+    - valve seat hardness.
+
+    Determine the attribute name from the meaning of the text.
+    It is not explicitly provided in the document—you must formulate it yourself.
+
+    Keep the attribute concise and clear (2–4 words), using either English or Russian, matching the language of the source document.
+
+    Formulate each rule as closely as possible to the original document without changing its technical meaning.
+
+    Do NOT paraphrase creatively or shorten the wording if doing so would omit exact numbers, units, applicability conditions, or referenced standards.
+
+    If preserving the technical meaning requires a longer formulation, use it.
+    Brevity must never come at the expense of precision.
+
+    The same attribute may appear across multiple pages.
+    Group all rules belonging to the same attribute together, even if they occur in different parts of the document.
+
+    Ignore text that is not a technical rule or requirement, such as:
+
+    - introductory text;
+    - references to other sections without substantive requirements;
+    - general descriptions lacking normative conditions.
+
+    Do not include such text in any group.
+
+    === RULES FROM TEXT (PARAGRAPHS AND DEFINITIONS) ===
+
+    Technical requirements and restrictions may appear not only in explicitly numbered clauses
+    (such as 4.1 or 5.1.1), but also inside paragraphs within the
+    "Terms and Definitions" section.
+
+    For example, a definition may contain a restriction on how the term may be used or interpreted, such as:
+
+    "not a measurable quantity and shall not be used for calculations unless otherwise specified."
+
+    Such statements are also rules and must be extracted separately,
+    even if they are embedded within a definition rather than presented as a numbered clause.
+
+    Do not skip a paragraph simply because it consists of
+    "a heading + a definition."
+
+    A single paragraph may contain both:
+
+    - a definition;
+    - a normative requirement.
+
+    In such cases, extract ONLY the requirement.
+    Do NOT include the definitional portion.
+
+    Inspect EVERY paragraph for multiple independent normative statements.
+
+    If a paragraph contains several separate requirements,
+    extract them as separate rules rather than combining them into one.
+
+    === RULES FROM TABLES ===
+
+    Tables in these documents are not merely reference material.
+
+    They are often the PRIMARY source of technical requirements,
+    containing specific values for wall thicknesses, pressures, dimensions,
+    material grades, and similar parameters.
+
+    Do not limit yourself to textual references such as
+
+    "shall be as given in Table 1".
+
+    If the table itself is present in the provided blocks,
+    analyze its rows and extract concrete rules from them.
+
+    How to formulate a rule from a table row:
+
+    - Combine into one sentence:
+      - the table title;
+      - the key identifying values from that row
+        (for example, pressure class, nominal size, trim number);
+      - the value from the target column.
+
+    Example:
+
+    If the table "Minimum Wall Thickness" contains the row
+
+    "Class Designation/Nominal Size DN": "25"
+
+    and
+
+    "Minimum Wall Thickness tm mm (in.)/300":
+    "6.4 (0.25)"
+
+    then formulate the rule as:
+
+    "For nominal size DN 25 and pressure class 300,
+    the minimum wall thickness tm shall be
+    6.4 mm (0.25 in.)."
+
+    For table-derived rules, the attribute should generally correspond
+    to the table title
+    (for example, "Minimum Wall Thickness")
+    rather than to an individual column.
+
+    This naturally groups all rows of the same table together.
+
+    Each table row containing meaningful values must become
+    a separate rule within the group.
+
+    Do NOT combine multiple rows into one rule.
+
+    Do NOT summarize the table with statements like
+
+    "wall thickness depends on size and pressure class."
+
+    Instead, extract every specific value from every applicable row.
+
+    Do not include empty ("") or "NA" cells in a rule.
+
+    If a table cell contains a symbolic designation or variable
+    (for example, a single letter)
+    rather than the final value,
+    and you find its explanation in nearby blocks
+    (paragraphs or notes),
+
+    use the decoded meaning when formulating the rule,
+    while optionally preserving the original symbol in parentheses
+    for precision.
+
+    === HANDLING PAGE BOUNDARIES ===
+
+    The input contains either ONE or TWO pages.
+
+    If there are TWO pages:
+
+    - the first page is the primary page from which rules must be extracted
+      (using all of its block types: paragraphs and tables);
+
+    - the second page is provided ONLY as context
+      to determine whether the last statement on the primary page
+      is semantically complete or continues onto the next page.
+
+    Do NOT extract rules from the second page itself.
+
+    It will be processed independently in the next step
+    when it becomes the primary page.
+
+    If there is only ONE page:
+
+    it is the final page of the document.
+
+    Extract rules from it exactly as you would from any other primary page,
+    without any special restrictions caused by the absence of a following page.
+
+    If the last paragraph on the primary page contains a rule
+    whose meaning becomes clear only when considering the beginning
+    of the next page,
+
+    you must still extract that rule.
+
+    Do not discard it merely because it appears at the end of the page.
+
+    === FINAL REMINDER BEFORE RESPONDING ===
+
+    Before producing your output, verify the following:
+
+    1. Have you analyzed EVERY table row by row and extracted the actual values,
+       rather than only the textual references to the table?
+
+    2. Have you inspected definitions in the "Terms and Definitions" section
+       (heading + paragraph) for hidden normative requirements,
+       rather than extracting only explicitly numbered clauses?
+
+    3. Have you avoided duplicating the same rule under different wording?
+
+    4. If a list of previously identified attributes has been provided,
+       have you reused exactly the same attribute names instead of inventing new ones?
+    """
+    TABLE_EXTRACTION_PROMPT = """Ты извлекаешь технические правила из данных нормативных документов в области нефтегазовой промышленности.
+    Тебе может быть дана как таблица так и текст. Если таблица, то в формате JSON: title, columns, rows,
+    если текст, то в формате JSON: paragraph, heading.
+
+    Твоя задача — пройтись по КАЖДОЙ строке и КАЖДОМУ значению (кроме пустых/прочерков) и
+    сформулировать для каждого отдельное правило. Старайся задействовать все колонки для того чтобы
+    правило получилось максимально исчерпывающим.
     
-    Верни JSON СТРОГО в виде объекта: {"pages": [{...}]} — с ключом "pages", внутри которого список из ровно одной страницы."""
-    grouping_rules_model_prompt: str = """Ты — деловой помощник по анализу технических нормативных
-        документов в сфере газовой и нефтяной промышленности (стандарты API и аналогичные).
 
-        Тебе на вход подаются данные в формате JSON — список страниц документа, где в поле "content"
-        лежат структурированные блоки (heading, paragraph, table), извлечённые с этих страниц.
+    ОБЯЗАТЕЛЬНО обработай ВСЕ строки таблицы от первой до последней, без исключений и без
+    сокращения количества — не давай "несколько примеров", а обработай таблицу ПОЛНОСТЬЮ.
+    Пропускай только значения "—", "NA" или пустые.
+    
+    После составления правил ты должен их сгруппировать, каждое правило относится к конкретному атрибуту,
+    который и будет считаться группирующим. Сам атрибут ты должен сформировать по смыслу из данных что у тебя есть.
 
-        Твоя задача — найти в тексте технические правила, требования или условия, и сгруппировать
-        их по атрибуту (характеристике, параметру, узлу оборудования и т.п.), к которому они относятся.
-        Источником правил могут быть блоки ВСЕХ типов:
-        - "paragraph" — текстовые формулировки требований;
-        - "table" — конкретные значения (толщины, давления, размеры, материалы и т.п.), заданные
-          по строкам/колонкам таблицы (подробности ниже, в разделе про таблицы);
-        - "heading" используй только как контекст раздела, самостоятельным источником правил
-          заголовки не являются.
+    Верни ТОЛЬКО валидный JSON — объект, где ключ это атрибут, а значение — список правил
+для этого атрибута, без markdown, без пояснений:
 
-        "Атрибут" — это конкретная характеристика или элемент, о котором идёт речь в правиле. Например:
-        материал корпуса, минимальная толщина стенки, класс давления, температура эксплуатации,
-        твёрдость седла клапана и т.п. Определяй название атрибута по смыслу текста — оно нигде не
-        указано явно, ты формулируешь его сам, кратко и понятно (2-4 слова), на английском или русском
-        языке — используй тот же язык, что и в исходном тексте документа.
-
-        Правила формулируй близко к оригинальному тексту документа, без искажения технического смысла —
-        не пересказывай художественно и не сокращай так, чтобы терять точные числа, единицы измерения,
-        условия применимости или номера стандартов. Если для сохранения точного смысла нужна более
-        длинная формулировка — используй её; краткость никогда не должна идти в ущерб точности.
-
-        Один и тот же атрибут может встречаться в правилах на разных страницах — объединяй все правила
-        по одному атрибуту в одну группу, даже если они находятся в разных местах документа.
-
-        Текст, который не является техническим правилом/требованием (например, вводные фразы, ссылки
-        на другие разделы без содержательного условия, общие описания без конкретных требований) —
-        не включай ни в одну группу, просто пропускай.
-
-        === ПРАВИЛА ИЗ ТЕКСТА (ПАРАГРАФЫ И ОПРЕДЕЛЕНИЯ) ===
-
-        Технические требования и ограничения могут содержаться не только в явно
-        пронумерованных пунктах (4.1, 5.1.1 и т.п.), но и внутри абзацев раздела
-        "Terms and Definitions" — там, где помимо самого определения термина, даётся
-        ограничение на его использование или интерпретацию (например: "не является
-        измеримой величиной и не используется для расчётов, если не указано иное").
-
-        Такие фразы — тоже правила, и их нужно извлекать отдельно, даже если они
-        встроены в определение термина, а не оформлены как отдельный пронумерованный
-        пункт. Не пропускай абзац только потому, что он оформлен как "heading +
-        определение" — внутри одного абзаца может быть и определение, и требование
-        одновременно; в таком случае извлеки только требование, а определительную
-        часть (что это такое) не включай.
-
-        Проверь КАЖДЫЙ абзац на наличие более чем одного самостоятельного утверждения —
-        если абзац содержит несколько отдельных нормативных фраз, раздели их на
-        отдельные правила, а не бери только одно из них.
-
-        === ПРАВИЛА ИЗ ТАБЛИЦ ===
-
-        Таблицы в этих документах — не справочная информация, а часто ОСНОВНОЙ источник
-        требований (конкретные значения толщин, давлений, размеров, марок материалов и т.п.
-        по строкам таблицы). Не ограничивайся упоминанием таблицы в тексте параграфа
-        (например, "shall be as given in Table 1") — если сама таблица присутствует среди
-        переданных тебе blocks, разбери её строки и извлеки из них конкретные правила.
-
-        Как формулировать правило из строки таблицы:
-        - Собери в одну формулировку заголовок таблицы (title), значения ключевых
-          идентифицирующих колонок этой строки (например, класс, номинальный размер,
-          номер trim) и итоговое значение из целевой колонки.
-        - Пример: если в таблице "Minimum Wall Thickness" есть строка с
-          "Class Designation/Nominal Size DN": "25" и
-          "Minimum Wall Thickness tm mm (in.)/300": "6.4 (0.25)" — сформулируй правило
-          как: "Для номинального размера DN 25 при классе 300 минимальная толщина
-          стенки tm составляет 6.4 мм (0.25 in.)."
-        - Атрибутом для такой группы правил, как правило, будет то, что отражено в
-          названии/title таблицы (например "Minimum Wall Thickness"), а не отдельная
-          колонка — так все строки одной таблицы естественно попадут в одну группу.
-        - Каждая строка таблицы с содержательным значением — отдельное правило внутри
-          группы. Не объединяй несколько строк в одну формулировку и не суммаризируй
-          таблицу общей фразой вида "толщина зависит от размера и класса" — нужны
-          именно конкретные значения по каждой строке.
-        - Пустые ячейки ("", "NA") в правило не включай.
-        - Если значение в ячейке — символьное обозначение/переменная (например буква),
-          а не готовое значение, и ты нашёл его расшифровку в соседних блоках (параграф,
-          примечание) — используй расшифровку в формулировке правила вместо голого
-          обозначения, но само обозначение можешь сохранить в скобках для точности.
-
-        === РАБОТА С ГРАНИЦЕЙ СТРАНИЦ ===
-
-        На вход подаётся ОДНА или ДВЕ страницы:
-        - Если страниц ДВЕ: первая страница ("основная") — та, из которой нужно извлекать правила
-          (из всех типов её blocks — paragraph, table). Вторая страница дана ТОЛЬКО как контекст —
-          чтобы понять, является ли последняя мысль основной страницы законченной по смыслу, или
-          её смысл раскрывается только с учётом начала следующей страницы. Саму вторую страницу
-          как источник правил не используй — она будет обработана отдельно на следующем шаге,
-          когда сама станет основной.
-        - Если страница ОДНА: это последняя страница документа, контекстной страницы для неё нет.
-          Извлекай правила из неё точно так же, как из обычной основной страницы — без каких-либо
-          исключений или ограничений из-за отсутствия контекста после неё.
-
-        Если последний абзац основной страницы содержит правило, которое становится понятным
-        именно благодаря контексту следующей страницы — всё равно извлеки это правило, а не
-        отбрасывай его только на основании того, что абзац формально последний на странице.
-
-        === КРАТКОЕ НАПОМИНАНИЕ ПЕРЕД ОТВЕТОМ ===
-
-        Перед тем как вывести результат, ещё раз проверь себя:
-        1. Просмотрел ли ты КАЖДУЮ таблицу построчно и извлёк ли конкретные значения, а не
-           только упоминания таблицы в тексте?
-        2. Проверил ли ты определения терминов (heading + paragraph в разделе Terms and
-           Definitions) на скрытые внутри них требования, а не только явно пронумерованные пункты?
-        3. Не задвоил ли ты одно и то же правило под разными формулировками?
-        4. Использовал ли ты для уже встречавшихся атрибутов ровно те же названия, что и раньше
-           (если тебе передан список ранее выделенных атрибутов)?"""
+{"groups": [{"attribute": "...", "rules": ["...", "..."]}]}
+    """
