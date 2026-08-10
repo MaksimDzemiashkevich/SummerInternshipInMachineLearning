@@ -1,0 +1,11 @@
+.header {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 10px;
+}
+
+.HCustom {
+    font-size: 20px;
+    font-weight: bold;
+}

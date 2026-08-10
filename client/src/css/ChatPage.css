@@ -1,0 +1,13 @@
+.chatPage {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+    align-items: center;
+}
+
+.ListBubles {
+    width: 500px;
+    height: 500px;
+    background-color: red;
+}

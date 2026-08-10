@@ -1,4 +1,5 @@
 import './css/App.css';
+import ChatPage from './Layout/ChatPage/ChatPage';
 
 function App() {
   return (
@@ -6,6 +7,9 @@ function App() {
       <header className="App-header">
 
       </header>
+      <ChatPage>
+
+      </ChatPage>
     </div>
   );
 }
