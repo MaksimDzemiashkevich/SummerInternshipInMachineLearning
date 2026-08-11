@@ -2,12 +2,14 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    height: 100vh;
+    height: 97vh;
     align-items: center;
 }
 
 .ListBubles {
-    width: 500px;
-    height: 500px;
+    margin-bottom: 30px;
+    width: 800px;
     background-color: red;
+    flex: 1;
+    overflow-y: auto;
 }
