@@ -9,7 +9,7 @@
 .ListBubles {
     margin-bottom: 30px;
     width: 800px;
-    background-color: red;
+    background-color: white;
     flex: 1;
     overflow-y: auto;
 }

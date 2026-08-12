@@ -1,14 +1,14 @@
 import { PaperClipOutlined } from '@ant-design/icons';
-import { FileCard, Sender } from '@ant-design/x';
+import { Attachments, Sender } from '@ant-design/x';
 import { Button, Flex } from 'antd';
 import React, { useRef, useState } from 'react';
 import "../../../css/MessageInput.css"
 
 const IconStyle = { fontSize: 16 };
 
-const MessageInput = () => {
+const MessageInput = ({ onSend }) => {
     const [value, setValue] = useState('');
-    const [attachedFiles, setAttachedFiles] = useState([]);
+    const [items, setItems] = useState([]);
     const senderRef = useRef(null);
     const fileInputRef = useRef(null);
 
@@ -20,27 +20,47 @@ const MessageInput = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        setAttachedFiles((prev) => [
-            ...prev,
-            {
-                uid: `${file.name}_${Date.now()}`,
-                name: file.name,
-                byte: file.size,
-                type: file.type,
-            },
-        ]);
+        const newItem = {
+            uid: `${file.name}_${Date.now()}`,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            status: 'done',
+            originFileObj: file,
+            url: URL.createObjectURL(file),
+        };
 
+        setItems((prev) => [...prev, newItem]);
         e.target.value = '';
     };
 
-    const handleRemoveFile = (item) => {
-        setAttachedFiles((prev) => prev.filter((f) => f.uid !== item.uid));
+    const handleAttachmentsChange = ({ file, fileList }) => {
+        if (file.status === 'removed' && file.url?.startsWith('blob:')) {
+            URL.revokeObjectURL(file.url);
+        }
+        setItems(fileList);
     };
 
     const handleSubmit = (v) => {
-        console.log('Отправлено:', v, 'файлы:', attachedFiles);
+        console.log('Отправлено:', v, 'файлы:', items);
+
+        const newMessage = {
+            key: `msg_${Date.now()}`,
+            role: 'user',
+            content: v,
+            attachments: items.map((item) => ({
+                uid: item.uid,
+                name: item.name,
+                byte: item.size,
+                type: item.type,
+                url: item.url,
+            })),
+        };
+
+        onSend(newMessage);
+
         setValue('');
-        setAttachedFiles([]);
+        setItems([]);
     };
 
     return (
@@ -52,7 +72,8 @@ const MessageInput = () => {
                 style={{ display: 'none' }}
             />
 
-            <Sender className='customSender'
+            <Sender
+                className='customSender'
                 ref={senderRef}
                 value={value}
                 onChange={setValue}
@@ -60,17 +81,19 @@ const MessageInput = () => {
                 placeholder="Введите сообщение..."
                 onSubmit={handleSubmit}
                 header={
-                    attachedFiles.length > 0 && (
-                        <div style={{ padding: '8px 12px 0' }}>
-                            <FileCard.List
-                                items={attachedFiles}
-                                size="small"
-                                removable
-                                onRemove={handleRemoveFile}
-                                overflow="scrollX"
-                            />
-                        </div>
-                    )
+                    <Sender.Header
+                        title="Вложения"
+                        open={items.length > 0}
+                        closable={false}
+                        styles={{ content: { padding: 0 } }}
+                    >
+                        <Attachments
+                            beforeUpload={() => false}
+                            items={items}
+                            onChange={handleAttachmentsChange}
+                            getDropContainer={() => senderRef.current?.nativeElement}
+                        />
+                    </Sender.Header>
                 }
                 footer={(actionNode) => (
                     <Flex justify="space-between" align="center">
