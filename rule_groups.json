@@ -1,0 +1,1746 @@
+[
+  {
+    "attribute": "Document Metadata",
+    "rules": [
+      "The document is titled 'Steel Gate Valves—Flanged and Butt-welding Ends, Bolted Bonnets'.",
+      "The document conforms to 'API STANDARD 600'.",
+      "The edition is 'THIRTEENTH EDITION, JANUARY 2015'.",
+      "The effective date is 'JULY 2015'.",
+      "The document is copyrighted by the 'American Petroleum Institute'.",
+      "The document is provided by 'IHS under license with API'.",
+      "Reproduction or networking of the document is not permitted without a license from 'IHS'."
+    ]
+  },
+  {
+    "attribute": "Legal and Liability Disclaimers",
+    "rules": [
+      "API publications do not address specific circumstances; users must review local, state, and federal laws and regulations.",
+      "API and its employees, subcontractors, consultants, committees, or other assignees make no warranty or representation regarding the accuracy, completeness, or usefulness of the information contained in the publications.",
+      "API and its representatives assume no liability or responsibility for any use or results of such use of any information or process disclosed in the publication.",
+      "API publications may be used by anyone desiring to do so, but the Institute makes no representation, warranty, or guarantee in connection with the publication and expressly disclaims any liability or responsibility for loss or damage resulting from its use.",
+      "API publications may conflict with authorities having jurisdiction, and users are responsible for ensuring compliance with such authorities.",
+      "API publications are not intended to obviate the need for applying sound engineering judgment regarding when and where these publications should be utilized.",
+      "API publications are not intended to inhibit anyone from using any other practices.",
+      "Any manufacturer marking equipment or materials in conformance with the marking requirements of an API standard is solely responsible for complying with all applicable requirements of that standard.",
+      "API does not represent, warrant, or guarantee that such products do in fact conform to the applicable API standard.",
+      "Users of this Standard should not rely exclusively on the information contained in this document; sound business, scientific, engineering, and safety judgment should be used in employing the information contained herein."
+    ]
+  },
+  {
+    "attribute": "Copyright and Usage Restrictions",
+    "rules": [
+      "All rights are reserved for API publications.",
+      "No part of this work may be reproduced, translated, stored in a retrieval system, or transmitted by any means, electronic, mechanical, photocopying, recording, or otherwise, without prior written permission from the publisher.",
+      "Contact the Publisher, API Publishing Services, 1220 L Street, NW, Washington, DC 20005, for permission to reproduce or transmit any part of the work.",
+      "Nothing contained in any API publication is to be construed as granting any right, by implication or otherwise, for the manufacture, sale, or use of any method, apparatus, or product covered by letters patent.",
+      "Nothing contained in the publication should be construed as insuring anyone against liability for infringement of letters patent."
+    ]
+  },
+  {
+    "attribute": "API Standard Interpretation and Usage Rules",
+    "rules": [
+      "Nothing contained in any API publication is to be construed as granting any right, by implication or otherwise, for the manufacture, sale, or use of any method, apparatus, or product covered by letters patent.",
+      "Nothing contained in the publication should be construed as insuring anyone against liability for infringement of letters patent.",
+      "The term 'shall' denotes a minimum requirement in order to conform to the specification.",
+      "The term 'should' denotes a recommendation or that which is advised but not required in order to conform to the specification."
+    ]
+  },
+  {
+    "attribute": "API Standard Development and Contact Information",
+    "rules": [
+      "This document was produced under API standardization procedures that ensure appropriate notification and participation in the developmental process.",
+      "Questions concerning the interpretation of the content of this publication or comments and questions concerning the procedures under which this publication was developed should be directed in writing to the Director of Standards, American Petroleum Institute, 1220 L Street, NW, Washington, DC 20005.",
+      "Requests for permission to reproduce or translate all or any part of the material published herein should also be addressed to the director."
+    ]
+  },
+  {
+    "attribute": "API Standard Review and Status",
+    "rules": [
+      "Generally, API standards are reviewed and revised, reaffirmed, or withdrawn at least every five years.",
+      "A one-time extension of up to two years may be added to this review cycle.",
+      "Status of the publication can be ascertained from the API Standards Department, telephone (202) 682-8000."
+    ]
+  },
+  {
+    "attribute": "API Standard Distribution and Copyright",
+    "rules": [
+      "A catalog of API publications and materials is published annually by API, 1220 L Street, NW, Washington, DC 20005.",
+      "Suggested revisions are invited and should be submitted to the Standards Department, API, 1220 L Street, NW, Washington, DC 20005, standards@api.org.",
+      "Copyright American Petroleum Institute.",
+      "Provided by IHS under license with API.",
+      "No reproduction or networking permitted without license from IHS."
+    ]
+  },
+  {
+    "attribute": "Document Structure",
+    "rules": [
+      "The document contains a table listing sections and their corresponding page numbers.",
+      "Section '1' is titled 'Scope' and is located on page '1'.",
+      "Section '2' is titled 'Normative References' and is located on page '2'.",
+      "Section '3' is titled 'Terms and Definitions' and is located on page '3'.",
+      "Section '4' is titled 'Pressure/Temperature Ratings' and is located on page '4'.",
+      "Section '5' is titled 'Design' and is located on page '5'.",
+      "Section '5.1' is titled 'Body Wall Thickness' and is located on page '5'.",
+      "Section '5.2' is titled 'Bonnet Wall Thickness' and is located on page '5'.",
+      "Section '5.3' is titled 'Body Dimensions' and is located on page '5'.",
+      "Section '5.4' is titled 'Bonnet' and is located on page '5'.",
+      "Section '5.5' is titled 'Bonnet-to-body Joint' and is located on page '5'.",
+      "Section '5.6' is titled 'Gate' and is located on page '5'.",
+      "Section '5.7' is titled 'Yoke' and is located on page '5'.",
+      "Section '5.8' is titled 'Stem and Stem Nut' and is located on page '5'.",
+      "Section '5.9' is titled 'Packing and Packing Box' and is located on page '5'.",
+      "Section '5.10' is titled 'Bolting' and is located on page '5'.",
+      "Section '5.11' is titled 'Operation' and is located on page '5'.",
+      "Section '5.12' is titled 'Bypasses and Other Auxiliary Connections' and is located on page '5'.",
+      "Section '6' is titled 'Materials' and is located on page '6'.",
+      "Section '6.1' is titled 'Materials Other Than Trim Materials' and is located on page '6'.",
+      "Section '6.2' is titled 'Trim' and is located on page '6'.",
+      "Section '7' is titled 'Testing, Inspection and Examination' and is located on page '7'.",
+      "Section '7.1' is titled 'Inspection and Examination' and is located on page '7'.",
+      "Section '7.2' is titled 'Pressure Tests' and is located on page '7'.",
+      "Section '7.3' is titled 'Repairs of Defects' and is located on page '7'.",
+      "Section '8' is titled 'Marking' and is located on page '8'.",
+      "Section '8.1' is titled 'General' and is located on page '8'.",
+      "Section '8.2' is titled 'Marking for Unidirectional Valves' and is located on page '8'.",
+      "Section '9' is titled 'Preparation for Shipment' and is located on page '9'.",
+      "Section '9.1' is titled 'Coatings' and is located on page '9'.",
+      "Section '9.2' is titled 'Openings' and is located on page '9'.",
+      "Section '9.3' is titled 'Gate Position' and is located on page '9'.",
+      "Section '9.4' is titled 'Stem Packing' and is located on page '9'.",
+      "Section '9.5' is titled 'Packaging' and is located on page '9'.",
+      "Section '9.6' is titled 'Purchase Order Information' and is located on page '9'.",
+      "Annex A (informative) is titled 'API Monogram Program Use of the API Monogram by Licensees' and is located on page '33'.",
+      "Annex B (normative) is titled 'Information to be Specified by the Purchaser' and is located on page '33'.",
+      "Annex C (informative) is titled 'Identification of Valve Terms' and is located on page '33'.",
+      "Annex D (informative) is titled 'Valve Material Combinations' and is located on page '33'.",
+      "The Bibliography is located on page '33'."
+    ]
+  },
+  {
+    "attribute": "Document Metadata",
+    "rules": [
+      "The document is copyrighted by the American Petroleum Institute.",
+      "The document is provided by IHS under license with API.",
+      "Reproduction or networking of the document is not permitted without a license from IHS."
+    ]
+  },
+  {
+    "attribute": "Table of Contents",
+    "rules": [
+      "The document contains a structured table of contents listing sections and subsections with corresponding page numbers.",
+      "Section 1 is titled 'Identification of Terms' and is located on page 4.",
+      "Section 2 is titled 'Types of Valve Gates' and is located on page 10.",
+      "Section 3 is titled 'Wear Travel' and is located on page 11.",
+      "Subsection C.1 is titled 'Valve Nomenclature' and is located on page 29.",
+      "Section 'Tables' is listed as a separate heading.",
+      "Table 1 is titled 'Minimum Wall Thickness for Body and Bonnet' and is located on page 5.",
+      "Table 2 is titled 'Post Weld Heat Treatment for Flange to Body Weld' and is located on page 6.",
+      "Table 3 is titled 'Minimum Inside Diameter for Sizes DN 800 to DN 1050 (NPS 32 to NPS 42) in Classes 150 and 300' and is located on page 7.",
+      "Table 4 is titled 'Minimum Wear Travel and Maximum Stem Projection' and is located on page 11.",
+      "Table 5 is titled 'Minimum Stem Diameter' and is located on page 12.",
+      "Subtable 5A is titled 'Permitted Undertolerance' and is located on page 13.",
+      "Table 6 is titled 'Nominal Radial Width of Packing' and is located on page 14.",
+      "Table 7 is titled 'Materials for Parts' and is located on page 16.",
+      "Table 8 is titled 'Nominal Seating Surface, Stem and Backseat Bushing or Weld-deposit Materials and Hardness' and is located on page 18.",
+      "Table 9 is titled 'Trim Numbers and Alternative Trim Numbers' and is located on page 21.",
+      "Subtable D.1 is titled 'Material Combinations for Group 1 Body, Bonnet and Cover Materials' and is located on page 30.",
+      "Subtable D.2 is titled 'Material Combinations for Group 2 Body to Bonnet Materials' and is located on page 31.",
+      "Subtable D.3 is titled 'Alternative Body to Bonnet Bolting Materials' and is located on page 32.",
+      "The document includes a copyright notice: 'Copyright American Petroleum Institute Provided by IHS under license with API No reproduction or networking permitted without license from IHS'."
+    ]
+  },
+  {
+    "attribute": "Valve Type and Design",
+    "rules": [
+      "The valves are bolted bonnet steel gate valves with flanged and butt-welding ends.",
+      "The valves feature outside screw and yoke, rising stems, non-rising handwheels, single or double gate, wedge or parallel seating, metallic seating surfaces."
+    ]
+  },
+  {
+    "attribute": "Nominal Pipe Sizes (DN)",
+    "rules": [
+      "The valves are available in DN sizes: 25, 32, 40, 50, 65, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050."
+    ]
+  },
+  {
+    "attribute": "Nominal Pipe Sizes (NPS)",
+    "rules": [
+      "The valves correspond to NPS: 1, 1 1/4, 1 1/2, 2, 2 1/2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42."
+    ]
+  },
+  {
+    "attribute": "Pressure Class Designations",
+    "rules": [
+      "The valves are applicable to pressure class designations: 150, 300, 600, 900, 1500, 2500."
+    ]
+  },
+  {
+    "attribute": "Application Context",
+    "rules": [
+      "The valves are intended for petroleum refinery and related applications where corrosion, erosion, and other service conditions require full port openings, heavy wall sections, and large stem diameters."
+    ]
+  },
+  {
+    "attribute": "API Monogram and Licensing",
+    "rules": [
+      "If the product bears the API Monogram and is manufactured at a facility licensed by API, the requirements of Annex A apply."
+    ]
+  },
+  {
+    "attribute": "Normative References",
+    "rules": [
+      "API Standard 598, Valve Inspection and Testing.",
+      "API Standard 624, Type Testing of Rising Stem Valves Equipped with Graphite Packing for Fugitive Emissions.",
+      "ASME B1.1, Unified Inch Screw Threads (UN and UNR Thread Form).",
+      "ASME B1.5, Acme Screw Threads."
+    ]
+  },
+  {
+    "attribute": "Standards and Specifications",
+    "rules": [
+      "ASME B1.5, Acme Screw Threads",
+      "ASME B1.8, Stub Acme Screw Threads",
+      "ASME B1.12, Class 5 Interference—Fit Thread",
+      "ASME B1.13M, Metric Screw Threads: M Profile",
+      "ASME B16.5, Pipe Flanges and Flanged Fittings NPS 1/2 through NPS 24 Metric/Inch",
+      "ASME B16.10, Face-to Face and End-to-End Dimensions of Valves",
+      "ASME B16.25, Butt welding Ends",
+      "ASME B16.34, Valves—Flanged, Threaded and Welding End",
+      "ASME B16.47, Large Diameter Steel Flanges, NPS 26 Through NPS 60 Metric/Inch Standard",
+      "ASME B18.2.2, Nuts for General Applications: Machine Screw Nuts, Hex, Square, Hex Flange, and Coupling Nuts (Inch Series)",
+      "ASME B18.2.6M, Metric Fasteners for Use in Structural Applications",
+      "ASME B31.3, Process Piping",
+      "ISO 5210, Industrial valves—Multi-turn valve actuator attachments",
+      "ISO 5752, Metal valves for use in flanged pipe systems—Face-to-face and centre-to-face dimensions",
+      "ISO 15649, Petroleum and natural gas industries—Piping",
+      "MSS SP-91, Guidelines for Manual Operation of Valves",
+      "MSS SP-102, Multi-Turn Valve Actuator Attachment—Flange and Driving Component Dimensions and Performance Characteristics",
+      "MSS SP-144, Pressure Seal Bonnet Valves"
+    ]
+  },
+  {
+    "attribute": "Definitions",
+    "rules": [
+      "For the purposes of this document, the following definitions apply.",
+      "3.1 Class: An alphanumeric designation that is used for reference purposes relating to valve pressure/temperature capability, taking into account valve material mechanical properties and valve dimensional characteristics. It comprises “Class” followed by a dimensionless whole number. The number following “Class” does not represent a measurable value and is not used for calculation purposes except where specified in this standard. The allowable pressure for a valve having a class number depends on the valve material and its application temperature and is to be found in tables of pressure/temperature ratings."
+    ]
+  },
+  {
+    "attribute": "References and Notes",
+    "rules": [
+      "2 International Organization for Standardization, 1, ch. de la Voie-Creuse, Case postale 56, CH-1211, Geneva 20, Switzerland, www.iso.org.",
+      "3 Manufacturers Standardization Society of the Valve and Fittings Industry, Inc., 127 Park Street, NE, Vienna, Virginia 22180-4602, www.mss-hq.com."
+    ]
+  },
+  {
+    "attribute": "Pressure/Temperature Ratings",
+    "rules": [
+      "Pressure/temperature ratings shall be in accordance with those specified in the tables of ASME B16.34 for standard class for the applicable material specification and the applicable class.",
+      "Restrictions of temperature and concurrent pressure, or pressure and concurrent temperature, (e.g. those imposed by special soft seals or special trim materials), shall be marked on the valve identification plate (see Section 8).",
+      "The temperature for a corresponding pressure rating is the maximum temperature of the pressure-containing shell of the valve. In general, this temperature is the same as that of the contained fluid. The use of a pressure rating corresponding to a temperature other than that of the contained fluid is the responsibility of the user.",
+      "For temperatures below the lowest temperature listed in the pressure/temperature tables, the service pressure shall be no greater than the pressure for the lowest listed temperature. The use of valves at lower temperatures is the responsibility of the user. Consideration should be given to the loss of ductility and impact strength of many materials at low temperature.",
+      "Double seated valves, in some design configurations, may be capable of trapping liquid in the center cavity of the valve when in the closed position. If subjected to an increase in temperature, an excessive build-up of pressure can occur, which may result in a pressure boundary failure. Where such a condition is possible, it is the responsibility of the user to provide or require to be provided, means in design, installation, or operating procedure, to assure that the pressure in the valve does not exceed that allowed by this standard for the resultant temperature."
+    ]
+  },
+  {
+    "attribute": "Valve Size Designation",
+    "rules": [
+      "An alpha numeric designation of size that is common for components used in a piping system, used for reference purposes, comprising the letters \"DN\" followed by a dimensionless number indirectly related to the physical size of the bore or outside diameter of the end connection as appropriate. The dimensionless number following \"DN\" does not represent a measurable value and is not used for calculation purposes except where specified.",
+      "An alpha numeric designation of size that is common for components used in a piping system, used for reference purposes, comprising the letters \"NPS\" followed by a dimensionless number indirectly related to the physical size of the bore or outside diameter of the end connection as appropriate. The dimensionless number may be used as a valve size identifier without the prefix \"NPS.\" The dimensionless size identification number does not represent a measurable value and is not used for calculation purposes."
+    ]
+  },
+  {
+    "attribute": "Valve Shell Components",
+    "rules": [
+      "Comprised of the body, bonnet and body-bonnet bolting which constitute the pressure boundary of an API 600 valve."
+    ]
+  },
+  {
+    "attribute": "Body Wall Thickness Requirements",
+    "rules": [
+      "A valve body schematic is shown as Figure 1. The minimum body wall thickness, tm, at the time of manufacture shall be as given in Table 1, except as indicated in 5.1.2 for butt-welding valve ends.",
+      "Additional metal thickness needed for assembly stresses, stress concentrations, and shapes other than circular shall be determined by individual manufacturers, since these factors vary widely.",
+      "The weld end preparation in butt-welding end valves (see 5.3.2) shall not reduce the body wall thickness to less than the values specified in 5.1.1 within a region closer than t_m to the outside surface of the body neck, measured along the run direction.",
+      "The transition to the weld preparation shall be gradual and the section shall be essentially circular through the entire length of the transition. Sharp discontinuities or abrupt changes in section in areas that infringe into the transition shall be avoided, except that test collars or bands, either welded or integral, are allowed.",
+      "In no case shall the thickness be less than 0.77t_m at a distance of 2t_m from the weld end."
+    ]
+  },
+  {
+    "attribute": "Body Wall Thickness Requirements",
+    "rules": [
+      "The weld end preparation in butt-welding end valves shall not reduce the body wall thickness to less than the values specified in 5.1.1 within a region closer than t_m to the outside surface of the body neck, measured along the run direction.",
+      "The transition to the weld preparation shall be gradual and the section shall be essentially circular through the entire length of the transition.",
+      "Sharp discontinuities or abrupt changes in section in areas that infringe into the transition shall be avoided, except that test collars or bands, either welded or integral, are allowed.",
+      "In no case shall the thickness be less than 0.77t_m at a distance of 2t_m from the weld end."
+    ]
+  },
+  {
+    "attribute": "Bonnet Wall Thickness",
+    "rules": [
+      "The minimum bonnet wall thickness at the time of manufacture, except for the neck extension that contains the packing, shall be t_m as given in Table 1.",
+      "For the neck extension, the local minimum wall thickness shall be based on the local diameter, e.g. the inside diameter of the stem bore or packing box bore, and shall be in accordance with the valve body neck rules of ASME B16.34."
+    ]
+  },
+  {
+    "attribute": "Flanged Ends Dimensions",
+    "rules": [
+      "Body end flanges shall comply with the dimensional requirements of ASME B16.5 for sizes up to and including DN 600 (NPS 24).",
+      "For sizes over DN 600 (NPS 24), body end flanges shall comply with the dimensional requirements of ASME B16.47 Series A or Series B as specified by the purchaser.",
+      "Unless otherwise specified, raised face end flanges shall be provided.",
+      "The purchaser may specify a flange facing finish other than that specified in ASME B16.5 or ASME B16.47, as applicable."
+    ]
+  },
+  {
+    "attribute": "Face-to-Face Dimensions",
+    "rules": [
+      "Face-to-face dimensions shall be in accordance with ASME B16.10 or ISO 5752.",
+      "For sizes not listed, dimensions shall be as agreed to between purchaser and manufacturer."
+    ]
+  },
+  {
+    "attribute": "Flange Attachment Method",
+    "rules": [
+      "Body end flanges and bonnet flanges shall be cast or forged integral with the body.",
+      "However, flanges may be attached by welding when approved by the purchaser."
+    ]
+  },
+  {
+    "attribute": "Minimum Wall Thickness Requirements by Class Designation and Pressure Rating",
+    "rules": [
+      "For Class Designation 1, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 6.4 (0.25), 6.4 (0.25), 7.9 (0.31), 12.7 (0.50), 12.7 (0.50), and 15.0 (0.59) mm (in.) respectively.",
+      "For Class Designation 1¼/4, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 6.4 (0.25), 6.4 (0.25), 8.6 (0.34), 14.2 (0.56), 14.2 (0.56), and 17.5 (0.69) mm (in.) respectively.",
+      "For Class Designation 1 1¼/2, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 6.4 (0.25), 7.9 (0.31), 9.4 (0.37), 15.0 (0.59), 15.0 (0.59), and 19.1 (0.75) mm (in.) respectively.",
+      "For Class Designation 2, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 8.6 (0.34), 9.7 (0.38), 11.2 (0.44), 19.1 (0.75), 19.1 (0.75), and 22.4 (0.88) mm (in.) respectively.",
+      "For Class Designation 2¼/2, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 9.7 (0.38), 11.2 (0.44), 11.9 (0.47), 22.4 (0.88), 22.4 (0.88), and 25.4 (1.00) mm (in.) respectively.",
+      "For Class Designation 3, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 10.4 (0.41), 11.9 (0.47), 12.7 (0.50), 19.1 (0.75), 23.9 (0.94), and 30.2 (1.19) mm (in.) respectively.",
+      "For Class Designation 4, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 11.2 (0.44), 12.7 (0.50), 16.0 (0.63), 21.3 (0.84), 28.7 (1.13), and 35.8 (1.41) mm (in.) respectively.",
+      "For Class Designation 6, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 11.9 (0.47), 16.0 (0.63), 19.1 (0.75), 26.2 (1.03), 38.1 (1.50), and 48.5 (1.91) mm (in.) respectively.",
+      "For Class Designation 8, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 12.7 (0.50), 17.5 (0.69), 25.4 (1.00), 31.8 (1.25), 47.8 (1.88), and 62.0 (2.44) mm (in.) respectively.",
+      "For Class Designation 10, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 14.2 (0.56), 19.1 (0.75), 28.7 (1.13), 36.6 (1.44), 57.2 (2.25), and 67.6 (2.66) mm (in.) respectively.",
+      "For Class Designation 12, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 16.0 (0.63), 20.6 (0.81), 31.8 (1.25), 42.2 (1.66), 66.8 (2.63), and 86.6 (3.41) mm (in.) respectively.",
+      "For Class Designation 14, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 16.8 (0.66), 22.4 (0.88), 35.1 (1.38), 46.0 (1.81), 69.9 (2.75), and — mm (in.) respectively.",
+      "For Class Designation 16, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 17.5 (0.69), 23.9 (0.94), 38.1 (1.50), 52.3 (2.06), 79.5 (3.13), and — mm (in.) respectively.",
+      "For Class Designation 18, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 18.3 (0.72), 25.4 (1.00), 41.4 (1.63), 57.2 (2.25), 88.9 (3.50), and — mm (in.) respectively.",
+      "For Class Designation 20, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 19.1 (0.75), 26.9 (1.06), 44.5 (1.75), 63.5 (2.50), 98.6 (3.88), and — mm (in.) respectively.",
+      "For Class Designation 24, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 20.6 (0.81), 30.2 (1.19), 50.8 (2.00), 73.2 (2.88), 114.3 (4.50), and — mm (in.) respectively.",
+      "For Class Designation 26, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 21.4 (0.84), 31.6 (1.24), —, —, —, and — mm (in.) respectively.",
+      "For Class Designation 28, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 22.2 (0.87), 33.3 (1.31), —, —, —, and — mm (in.) respectively.",
+      "For Class Designation 30, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 23.0 (0.91), 34.9 (1.37), —, —, —, and — mm (in.) respectively.",
+      "For Class Designation 32, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 23.8 (0.94), 36.0 (1.41), —, —, —, and — mm (in.) respectively.",
+      "For Class Designation 34, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 24.6 (0.97), 38.1 (1.50), —, —, —, and — mm (in.) respectively.",
+      "For Class Designation 36, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 25.3 (1.00), 39.6 (1.56), —, —, —, and — mm (in.) respectively.",
+      "For Class Designation 38, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 26.1 (1.03), 41.3 (1.63), —, —, —, and — mm (in.) respectively.",
+      "For Class Designation 40, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 27.0 (1.06), 43.0 (1.69), —, —, —, and — mm (in.) respectively.",
+      "For Class Designation 42, the minimum wall thickness for 150, 300, 600, 900, 1500, and 2500 pressure ratings is 27.7 (1.09), 44.4 (1.75), —, —, —, and — mm (in.) respectively."
+    ]
+  },
+  {
+    "attribute": "Welding Requirements for Flange to Valve Body",
+    "rules": [
+      "Welding a flange to a valve body shall be by full penetration butt-welding.",
+      "Unless otherwise specified, attachment weld shall conform to ASME B31.3 or ISO 15649 for normal fluid service, including weld quality acceptance criteria and qualifications for the weld procedure and welder or welding operator.",
+      "Heat treatment shall be performed in accordance with Table 2."
+    ]
+  },
+  {
+    "attribute": "Alignment Rings Usage",
+    "rules": [
+      "Integral or other alignment rings (centering backing rings) used to facilitate welding shall be removed after the weld is completed."
+    ]
+  },
+  {
+    "attribute": "Butt-welding Ends Specifications",
+    "rules": [
+      "Butt-welding ends for valve sizes greater than NPS 2 shall conform to the requirements of ASME B16.25 for the bore specified for use without backing rings.",
+      "Butt-welding ends for valves DN 50 (NPS 2) and smaller shall conform to the requirement of API 602.",
+      "Conversion of a flanged end valve to a butt-welding valve is not permitted except by agreement between the purchaser and manufacturer."
+    ]
+  },
+  {
+    "attribute": "Chemical Composition Requirements for Carbon Steel Welding Ends",
+    "rules": [
+      "The carbon content shall not exceed 0.23 % by mass.",
+      "The carbon equivalent, CE, shall not exceed 0.43 as determined by the following formula: CE = C + Mn/6 + (Cr + Mo + V)/5 + (Ni + Cu)/15.",
+      "C is weight % Carbon.",
+      "Mn is weight % Manganese."
+    ]
+  },
+  {
+    "attribute": "Post Weld Heat Treatment for Flange to Body Weld",
+    "rules": [
+      "For Carbon steels with thickness t > 19 (0.75) mm (in.): Temperature Range 593 to 649 °C (1100 to 1200 °F), Holding Time 2.4 (1) minimum time 1 hr., Weld Hardness HBN Max —.",
+      "For Alloy steels: 1/2 % < Cr ≤ 2 % with thickness t > 13 (0.50) mm (in.): Temperature Range 704 to 746 °C (1300 to 1375 °F), Holding Time 2.4 (1) minimum time 2 hr., Weld Hardness HBN Max 225.",
+      "For 2 1/4 % ≤ Cr ≤ 10 % with all thicknesses: Temperature Range 704 to 760 °C (1300 to 1400 °F), Holding Time 2.4 (1) minimum time 2 hr., Weld Hardness HBN Max 241.",
+      "For Nickel alloy steels with thickness t > 19 (0.75) mm (in.): Temperature Range 593 to 635 °C (1100 to 1175 °F), Holding Time 1.2 (1 1/2) minimum time 1 hr., Weld Hardness HBN Max —.",
+      "For Austenitic steels: Temperature Range solution anneal per the material specification, Holding Time —, Weld Hardness HBN Max —.",
+      "For Other materials: Temperature Range per the material specification, Holding Time —, Weld Hardness HBN Max —."
+    ]
+  },
+  {
+    "attribute": "Thickness Definition for Welding",
+    "rules": [
+      "Thickness, t, is the greater thickness of the pieces being joined by welding."
+    ]
+  },
+  {
+    "attribute": "Austenitic Steels Exception",
+    "rules": [
+      "Except when materials being welded are L-Grades or stabilized grades."
+    ]
+  },
+  {
+    "attribute": "Body Seat Dimensions",
+    "rules": [
+      "The inside diameter of the seat opening shall not be less than that specified in ASME B16.34 for all Classes in sizes up to DN 600 (NPS 24).",
+      "The inside diameter of the seat opening shall not be less than that specified in ASME B16.34 for Classes 150 and 300 in sizes DN 650 to DN 750 (NPS 26 to NPS 30).",
+      "For Classes 150 and 300 in sizes DN 800 to DN 1050 (NPS 32 to NPS 42), the minimum inside diameter shall be as per Table 3."
+    ]
+  },
+  {
+    "attribute": "Seating Surface Requirements",
+    "rules": [
+      "Seating surfaces shall be integral or faced with weld metal.",
+      "Finished thickness of any facing material shall be not less than 1.6 mm (0.06 in.)."
+    ]
+  },
+  {
+    "attribute": "Austenitic Stainless Steel Valves",
+    "rules": [
+      "Integral body seats are permitted in austenitic stainless steel valves.",
+      "When an austenitic stainless steel or a hardfacing material is used for the body seat, this material may be weld-deposited directly on the valve body."
+    ]
+  },
+  {
+    "attribute": "Separate Seat Rings",
+    "rules": [
+      "Separate seat rings shall be shoulder or bottom seated.",
+      "They shall be either threaded or seal welded in place.",
+      "For DN ≤ 50 (NPS ≤ 2), rolled or pressed in seat rings may be used.",
+      "Threaded seat rings shall be seal welded; tack welding or stitch welding is not permitted."
+    ]
+  },
+  {
+    "attribute": "Seat Ring Surface and Edge Design",
+    "rules": [
+      "Body seat rings shall have adequate seating area surface.",
+      "Edges shall be equipped with a radius or chamfer as necessary to prevent galling or any other damage to the disc when the valve is operated against pressure."
+    ]
+  },
+  {
+    "attribute": "Assembly of Seat Rings",
+    "rules": [
+      "Sealing compounds or greases shall not be used when assembling seat rings.",
+      "A light lubricant having a viscosity no greater than kerosene may be used to prevent galling of mating threaded surfaces."
+    ]
+  },
+  {
+    "attribute": "End-to-End Dimensions for Butt-Welding Valves",
+    "rules": [
+      "End-to-end dimensions for butt-welding end class designated valves shall be in accordance with ASME B16.10, unless otherwise specified by the purchaser."
+    ]
+  },
+  {
+    "attribute": "Table 3 - Minimum Inside Diameter for DN 800 to DN 1050 (NPS 32 to NPS 42) in Classes 150 and 300",
+    "rules": [
+      "For DN 800 (NPS 32), minimum inside diameter is 779 mm (30.67 in.)",
+      "For DN 850 (NPS 34), minimum inside diameter is 830 mm (32.68 in.)",
+      "For DN 900 (NPS 36), minimum inside diameter is 874 mm (34.41 in.)",
+      "For DN 950 (NPS 38), minimum inside diameter is 925 mm (36.42 in.)",
+      "For DN 1000 (NPS 40), minimum inside diameter is 976 mm (38.43 in.)",
+      "For DN 1050 (NPS 42), minimum inside diameter is 1020 mm (40.16 in.)"
+    ]
+  },
+  {
+    "attribute": "Bonnet Stem Backseat Design",
+    "rules": [
+      "The bonnet shall include a conical or spherical stem backseat in one of the following forms: a bushing positively secured against coming loose, i.e. not relying on friction; an integral surface in the case of an austenitic stainless steel valve; an austenitic stainless steel or hardfaced weld deposit that is a minimum of 1.6 mm (0.06 in.) thick."
+    ]
+  },
+  {
+    "attribute": "Bonnet Construction",
+    "rules": [
+      "Bonnets shall be one-piece castings or forgings."
+    ]
+  },
+  {
+    "attribute": "Gland Bolting Retention",
+    "rules": [
+      "The gland bolting shall be secured to the bonnet so that the bolting is retained during repacking. When eyebolts are used, the eyebolt pin shall be anchored on both sides of the eyebolt. The anchors shall not include open slotted holes or be attached by fillet welds."
+    ]
+  },
+  {
+    "attribute": "Tapped Test Openings",
+    "rules": [
+      "Tapped test openings shall be provided only if specified in the purchase order."
+    ]
+  },
+  {
+    "attribute": "Bonnet-to-Body Joint Type",
+    "rules": [
+      "The bonnet-to-body joint shall be a flange and gasket type.",
+      "For Class 150 valves, the bonnet-to-body joint shall be one of the following types illustrated in ASME B16.5: flat face; raised face; tongue and groove; spigot and recess (i.e. male and female); ring joint.",
+      "For valves having pressure class designation Class > 150, the bonnet-to-body joint shall be as in 5.5.2, except that the flat face joint is not permitted."
+    ]
+  },
+  {
+    "attribute": "Bonnet Flange Gasket Types",
+    "rules": [
+      "The bonnet flange gasket shall be one of the following: solid metal, corrugated or grooved (profiled) metal gasket with graphite filler; metal ring joint; spiral wound metal gasket with filler and a centering/compression ring; spiral wound metal gasket with filler but without a centering/compression ring, to be used only in ‘tongue and groove’ or ‘spigot and recess’ joints that prevent the gasket from unwinding and from buckling damage.",
+      "For Class 150, the following are also acceptable: corrugated metal insert with graphite facings; when approved by the purchaser, flexible graphite sheet, reinforced with a stainless steel flat, perforated, tanged, or corrugated insert equipped with annular containment rings; when approved by the purchaser, other suitable facings may be used."
+    ]
+  },
+  {
+    "attribute": "Gate Valve Bonnet Bolting",
+    "rules": [
+      "The bonnet-to-body joint shall be secured by a minimum of four through type stud bolts.",
+      "The minimum stud bolt size for valves with 25 ≤ DN ≤ 65 (1 ≤ NPS ≤ 2¹/₂) shall be M10 or 3/8.",
+      "The minimum stud bolt size for valves with 80 ≤ DN ≤ 200 (3 ≤ NPS ≤ 8) shall be M12 or 1/2.",
+      "The minimum stud bolt size for valves with DN ≥ 250 (NPS ≥ 10) shall be M16 or 5/8.",
+      "The total cross-sectional area of the bolts in valve bonnet bolting shall be in accordance with the requirements of ASME B16.34."
+    ]
+  },
+  {
+    "attribute": "Gasket Requirements",
+    "rules": [
+      "Except for Class 150, the gasket shall not extend beyond the inner edge of the bolt holes.",
+      "At assembly, gasket contact surfaces shall be free of sealing compounds.",
+      "A light coating of a lubricant, no heavier than kerosene, may be applied if needed to assist in proper gasket assembly."
+    ]
+  },
+  {
+    "attribute": "Bonnet-to-Body Flange Design",
+    "rules": [
+      "Except for Class 150 valves and valves in sizes DN 65 (NPS 2¹/₂) and smaller, bonnet-to-body flanges shall be circular.",
+      "Bonnet and body flange nut bearing surfaces shall be parallel to the flange face within ±1°.",
+      "Spot facing or back-facing required to meet the parallelism requirement shall be in accordance with ASME B16.5."
+    ]
+  },
+  {
+    "attribute": "Gate Configuration",
+    "rules": [
+      "Gate configurations are categorized as illustrated in Figure 2.",
+      "A one-piece wedge gate—as either a solid or flexible wedge design—shall be furnished, unless otherwise specified by the purchaser.",
+      "A two-piece split wedge gate or parallel seat double-disc gate may be furnished when specified by the purchaser.",
+      "A split wedge gate consists of two independent seating parts that conform to the body seats when closed.",
+      "The split wedge shall be designed so that the pieces cannot become separated, regardless of the gate position or valve orientation.",
+      "A double-disc gate has a spreading mechanism (i.e., a wedging device or spring) that forces the two parallel discs to the body seats when closed."
+    ]
+  },
+  {
+    "attribute": "Gate Operation and Seat Clearance",
+    "rules": [
+      "Except for a double-disc gate, in the open position, the gate shall completely clear the valve seat openings."
+    ]
+  },
+  {
+    "attribute": "Gate Guidance and Wear Prevention",
+    "rules": [
+      "The body and gate shall have guide surfaces to minimize wear of the gate seats during operation of the valve, to accurately position the gate throughout the travel distance to its seat, and to ensure the alignment of the gate and stem in all orientations without gate binding or galling.",
+      "For sizes DN 650 (NPS 26) and above, as a minimum, wedge guides and body guides shall be hardfaced and machined with appropriate tolerances and clearances to allow for proper valve operation in any orientation, including effects of wear or galling.",
+      "Wedge guides and/or body guides shall not protrude beyond the seat rings into the port area of the valve.",
+      "The manufacturer shall provide in their installation and operation manual any operational limitations as a result of stem and valve orientation."
+    ]
+  },
+  {
+    "attribute": "Gate Valve Sealing Facings",
+    "rules": [
+      "For Class 150, the following are also acceptable: corrugated metal insert with graphite facings;",
+      "When approved by the purchaser, flexible graphite sheet, reinforced with a stainless steel flat, perforated, tanged, or corrugated insert equipped with annular containment rings;",
+      "When approved by the purchaser, other suitable facings may be used."
+    ]
+  },
+  {
+    "attribute": "Pressure Seal Bonnet Design",
+    "rules": [
+      "If pressure seal bonnet design is specified, the bonnet joint construction shall be in accordance with MSS SP-144 Style B, unless otherwise specified by the purchaser."
+    ]
+  },
+  {
+    "attribute": "Valve Operation and Orientation",
+    "rules": [
+      "Valve shall operate properly in any orientation, including effects of wear or galling.",
+      "Wedge guides and/or body guides shall not protrude beyond the seat rings into the port area of the valve.",
+      "Manufacturer shall provide in their installation and operation manual any operational limitations as a result of stem and valve orientation."
+    ]
+  },
+  {
+    "attribute": "Gate Seating Surfaces",
+    "rules": [
+      "Gate seating surfaces shall be integral or faced with weld metal.",
+      "Unless specified, hardfaced seating surfaces are not required.",
+      "Finished thickness of any facing material shall be not less than 1.6 mm (0.06 in.)."
+    ]
+  },
+  {
+    "attribute": "Wedge Gate Design",
+    "rules": [
+      "Wedge gates shall be designed to account for seat wear.",
+      "The dimensions that fix the position of the gate seats relative to the body seats shall be such that the gate, starting from the time of manufacture, can, as a result of seat wear, move into the seats by a distance, h, defined as wear travel.",
+      "Wear travel is in a direction that is parallel with the valve stem (see Figure 3).",
+      "The required minimum wear travel varies with valve size in accordance with Table 4."
+    ]
+  },
+  {
+    "attribute": "Yoke Design and Function",
+    "rules": [
+      "The yoke may be either an integral part of the bonnet or a separate part.",
+      "The yoke shall retain the stem nut which links the handwheel to the stem.",
+      "The yoke and stem nut assembly design shall permit stem nut removal while the valve is under pressure and backseated.",
+      "Yokes that are separate shall have yoke-to-bonnet mating surfaces machined so as to assure a proper bearing assembly interface."
+    ]
+  },
+  {
+    "attribute": "Wear Travel and Maximum Stem Projection Specifications",
+    "rules": [
+      "For valve sizes DN ≤ 50 (NPS ≤ 2), the minimum wear travel is 2.3 mm (0.09 in.) and the maximum stem projection is 11.5 mm (0.45 in.).",
+      "For valve sizes 65 ≤ DN ≤ 150 (21/2 ≤ NPS ≤ 6), the minimum wear travel is 3.3 mm (0.13 in.) and the maximum stem projection is 16.5 mm (0.65 in.).",
+      "For valve sizes 200 ≤ DN ≤ 300 (8 ≤ NPS ≤ 12), the minimum wear travel is 6.4 mm (0.25 in.) and the maximum stem projection is 19.2 mm (0.75 in.).",
+      "For valve sizes 350 ≤ DN ≤ 450 (14 ≤ NPS ≤ 18), the minimum wear travel is 9.7 mm (0.38 in.) and the maximum stem projection is 29.1 mm (1.14 in.).",
+      "For valve sizes 500 ≤ DN ≤ 600 (20 ≤ NPS ≤ 24), the minimum wear travel is 12.7 mm (0.50 in.) and the maximum stem projection is 38.1 mm (1.50 in.).",
+      "For valve sizes 650 ≤ DN ≤ 700 (26 ≤ NPS ≤ 28), the minimum wear travel is 16.0 mm (0.62 in.) and the maximum stem projection is 48.0 mm (1.86 in.).",
+      "For valve sizes 750 ≤ DN ≤ 900 (30 ≤ NPS ≤ 36), the minimum wear travel is 19.1 mm (0.75 in.) and the maximum stem projection is 57.3 mm (2.25 in.).",
+      "For valve sizes 950 ≤ DN ≤ 1050 (38 ≤ NPS ≤ 42), the minimum wear travel is 25.4 mm (1.00 in.) and the maximum stem projection is 76.2 mm (3.00 in.)."
+    ]
+  },
+  {
+    "attribute": "Yoke-to-Stem Nut Bearing Surfaces",
+    "rules": [
+      "The yoke-to-stem nut bearing surfaces shall be machined flat and parallel.",
+      "A lubricating fitting shall be provided for the bearing surfaces."
+    ]
+  },
+  {
+    "attribute": "Stem and Stem Nut Specifications",
+    "rules": [
+      "The minimum stem diameter, ds, shall be as given in Table 5.",
+      "An undertolerance is permitted in accordance with Table 5A to allow the use of standard diameter round bars.",
+      "The minimum stem diameter applies to the stem along the surface area that comes into contact with the packing and to the major diameter of the trapezoidal stem thread.",
+      "The major diameter of the stem thread may be reduced, at the manufacturer's option, by no more than 1.6 mm (0.06 in.).",
+      "The stem surface area in contact with the packing shall have a surface finish, Ra, of 0.80 μm (32 μin.) or smoother.",
+      "The actual stem diameter shall take into account the valve design details and the stem material strength characteristics.",
+      "The stem strength shall be considered when calculating the maximum input force from the handwheel and gear box (if equipped) in accordance with MSS SP-91 or in accordance with maximum rim pull when specified by the Purchaser."
+    ]
+  },
+  {
+    "attribute": "Minimum Stem Diameter by Class Designation and Nominal Size",
+    "rules": [
+      "For Class Designation 1, the minimum stem diameter is 15.89 (5/8) for all nominal sizes from 150 to 2500.",
+      "For Class Designation 1 1/4, the minimum stem diameter is 15.89 (5/8) for all nominal sizes from 150 to 2500.",
+      "For Class Designation 1 1/2, the minimum stem diameter is 17.46 (11/16) for 150, 19.05 (3/4) for 300, 600; 22.23 (7/8) for 900, 1500, 2500.",
+      "For Class Designation 2, the minimum stem diameter is 19.05 (3/4) for 150, 300, 600; 25.40 (1) for 900, 1500, 2500.",
+      "For Class Designation 2 1/2, the minimum stem diameter is 19.05 (3/4) for 150, 300; 22.23 (7/8) for 600; 28.58 (1 1/8) for 900, 1500; 31.75 (1 1/4) for 2500.",
+      "For Class Designation 3, the minimum stem diameter is 22.23 (7/8) for 150, 300; 25.40 (1) for 600; 28.58 (1 1/8) for 900; 31.75 (1 1/4) for 1500, 2500.",
+      "For Class Designation 4, the minimum stem diameter is 25.40 (1) for 150, 300; 28.58 (1 1/8) for 600; 31.75 (1 1/4) for 900; 34.93 (1 3/8) for 1500, 2500.",
+      "For Class Designation 6, the minimum stem diameter is 28.58 (1 1/8) for 150; 31.75 (1 1/4) for 300; 38.10 (1 1/2) for 600; 41.28 (1 5/8) for 900; 44.45 (1 3/4) for 1500; 47.63 (1 7/8) for 2500.",
+      "For Class Designation 8, the minimum stem diameter is 31.75 (1 1/4) for 150; 34.93 (1 3/8) for 300; 41.28 (1 5/8) for 600; 47.63 (1 7/8) for 900; 53.98 (2 1/8) for 1500; 60.33 (2 3/8) for 2500.",
+      "For Class Designation 10, the minimum stem diameter is 34.93 (1 3/8) for 150; 38.10 (1 1/2) for 300; 47.63 (1 7/8) for 600; 53.98 (2 1/8) for 900; 63.50 (2 1/2) for 1500; 73.03 (2 7/8) for 2500.",
+      "For Class Designation 12, the minimum stem diameter is 38.10 (1 1/2) for 150; 41.28 (1 5/8) for 300; 50.80 (2) for 600; 57.15 (2 1/4) for 900; 69.85 (2 3/4) for 1500; 82.55 (3 1/4) for 2500.",
+      "For Class Designation 14, the minimum stem diameter is 41.28 (1 5/8) for 150; 44.45 (1 3/4) for 300; 57.15 (2 1/4) for 600; 60.33 (2 3/8) for 900; 76.20 (3) for 1500; no data for 2500.",
+      "For Class Designation 16, the minimum stem diameter is 44.45 (1 3/4) for 150; 47.63 (1 7/8) for 300; 60.33 (2 3/8) for 600; 63.50 (2 1/2) for 900; 76.20 (3) for 1500; no data for 2500.",
+      "For Class Designation 18, the minimum stem diameter is 47.63 (1 7/8) for 150; 50.80 (2) for 300; 63.50 (2 1/2) for 600; 69.85 (2 3/4) for 900; no data for 1500 and 2500.",
+      "For Class Designation 20, the minimum stem diameter is 50.80 (2) for 150; 53.98 (2 1/8) for 300; 69.85 (2 3/4) for 600; 76.20 (3) for 900; no data for 1500 and 2500.",
+      "For Class Designation 24, the minimum stem diameter is 57.15 (2 1/4) for 150; 63.50 (2 1/2) for 300; 76.20 (3) for 600; no data for 900, 1500, 2500.",
+      "For Class Designation 26, the minimum stem diameter is 60.33 (2 3/8) for 150; 69.85 (2 3/4) for 300; no data for 600, 900, 1500, 2500.",
+      "For Class Designation 28, the minimum stem diameter is 63.50 (2 1/2) for 150; 76.20 (3) for 300; no data for 600, 900, 1500, 2500.",
+      "For Class Designation 30, the minimum stem diameter is 63.50 (2 1/2) for 150; 82.60 (3 1/4) for 300; no data for 600, 900, 1500, 2500.",
+      "For Class Designation 32, the minimum stem diameter is 66.68 (2 5/8) for 150; 85.73 (3 3/8) for 300; no data for 600, 900, 1500, 2500.",
+      "For Class Designation 34, the minimum stem diameter is 69.85 (2 3/4) for 150; 85.73 (3 3/8) for 300; no data for 600, 900, 1500, 2500.",
+      "For Class Designation 36, the minimum stem diameter is 69.85 (2 3/4) for 150; 88.90 (3 1/2) for 300; no data for 600, 900, 1500, 2500.",
+      "For Class Designation 38, the minimum stem diameter is 76.20 (3) for 150; 95.25 (3 3/4) for 300; no data for 600, 900, 1500, 2500.",
+      "For Class Designation 40, the minimum stem diameter is 79.38 (3 1/8) for 150; 98.43 (3 7/8) for 300; no data for 600, 900, 1500, 2500.",
+      "For Class Designation 42, the minimum stem diameter is 82.60 (3 1/4) for 150; 101.6 (4) for 300; no data for 600, 900, 1500, 2500."
+    ]
+  },
+  {
+    "attribute": "Permitted Undertolerance by Diameter",
+    "rules": [
+      "For Diameter ≤ 5/8, the permitted undertolerance is 0.012.",
+      "For Diameter > 5/8 to 7/8, the permitted undertolerance is 0.013.",
+      "For Diameter > 7/8 to 1, the permitted undertolerance is 0.014.",
+      "For Diameter > 1 to 1 1/8, the permitted undertolerance is 0.015.",
+      "For Diameter > 1 1/8 to 1 1/4, the permitted undertolerance is 0.016.",
+      "For Diameter > 1 1/4 to 1 3/8, the permitted undertolerance is 0.017.",
+      "For Diameter > 1 3/8 to 1 1/2, the permitted undertolerance is 0.019.",
+      "For Diameter > 1 1/2 to 1 5/8, the permitted undertolerance is 0.021.",
+      "For Diameter > 1 5/8 to 2, the permitted undertolerance is 0.026.",
+      "For Diameter > 2 to 3 1/4, the permitted undertolerance is 0.030.",
+      "For Diameter > 3 1/4 to 4, the permitted undertolerance is 0.032."
+    ]
+  },
+  {
+    "attribute": "Stem-Nut-to-Handwheel Attachment",
+    "rules": [
+      "The stem-nut-to-handwheel attachment shall be through a hexagonal interface, a round interface having a keyway or another means of equivalent strength."
+    ]
+  },
+  {
+    "attribute": "Stem Nut Retention in Yoke",
+    "rules": [
+      "When the stem nut is retained in the yoke by means of a threaded bushing, the bushing shall be secured in place using either a lock weld or a positive mechanical lock. Locking by simple metal upsetting such as peening or staking is not permitted."
+    ]
+  },
+  {
+    "attribute": "Closed-Position Stem Thread Projection",
+    "rules": [
+      "The closed-position stem thread projection beyond the stem nut, on a new manual handwheel-operated valve, shall be based on the minimum wear travel values listed in Table 4. The minimum distance shall be equal to the manufacturer’s specified wear travel and the maximum as indicated in Table 4."
+    ]
+  },
+  {
+    "attribute": "Valve Stem Nut Bearings",
+    "rules": [
+      "Valves DN ≥ 150 (NPS ≥ 6) with pressure class ≥ 600, shall be furnished with stem nuts having ball or roller bearings."
+    ]
+  },
+  {
+    "attribute": "Packing Cross-Section",
+    "rules": [
+      "The packing may be square, rectangular or trapezoidal in cross-section."
+    ]
+  },
+  {
+    "attribute": "Packing Nominal Radial Width",
+    "rules": [
+      "The nominal radial width of the packing, w, shall be in accordance with Table 6."
+    ]
+  },
+  {
+    "attribute": "Packing Box Depth",
+    "rules": [
+      "The nominal depth of the packing box shall accommodate a minimum of five uncompressed rings of packing. Unless otherwise specified by the purchaser, the packing box surface area in contact with the packing material shall have a surface finish, Ra, of 4.5 μm (175 μin.) or smoother."
+    ]
+  },
+  {
+    "attribute": "Packing Box Bore Calculation",
+    "rules": [
+      "The nominal bore (inside diameter) of the packing box shall be the sum of the nominal valve stem diameter plus twice the nominal packing width plus a clearance factor, y, i.e. equal to dn + 2w + y. See Table 6 for the required values."
+    ]
+  },
+  {
+    "attribute": "Gland and Gland Flange",
+    "rules": [
+      "A gland and a separate gland flange shall be provided for packing compression. The gland flange shall have two holes to receive the gland bolting. Slots for gland flange bolts shall not be used. The gland and gland flange shall be self-aligning. The gland shall have a shoulder at its outer edge so as to prevent complete entry of the gland into the packing box."
+    ]
+  },
+  {
+    "attribute": "Lantern Ring Provision",
+    "rules": [
+      "A lantern ring shall be provided only if so specified by the purchaser. In order to accommodate the lantern ring, the packing box depth shall be at least equivalent to that of a minimum of three uncompressed rings of packing above the lantern ring and three uncompressed rings of packing below the lantern ring plus the length of the lantern ring."
+    ]
+  },
+  {
+    "attribute": "Clearance Between Packing Box Bore and Gland",
+    "rules": [
+      "The clearance between the packing box bore (inside diameter) and the outside diameter of the gland (see Figure C.1) shall be nominally less than the diametrical clearance between the inside diameter of the gland and the stem diameter."
+    ]
+  },
+  {
+    "attribute": "Valve Type Testing",
+    "rules": [
+      "Valves shall be qualified by type testing to meet the fugitive emissions requirements of API Std. 624."
+    ]
+  },
+  {
+    "attribute": "Bolting Standards",
+    "rules": [
+      "Bolting shall be standard inch series bolting, except if the purchaser specifies metric series bolting.",
+      "Bolting for the bonnet-to-body joint shall be continuously threaded stud bolts with heavy, semi-finished hexagon nuts that are in accordance with ASME B18.2.2 or ASME B18.2.6M.",
+      "Yoke-to-bonnet bolting shall be either continuously threaded stud bolts or headed bolts with hexagon nuts.",
+      "Gland bolts shall be hinged eyebolts, headed bolts, stud bolts or studs. Hexagon nuts shall be used.",
+      "Bolting with diameters 25 mm (1 in.) and smaller shall have coarse (UNC) threads or the most nearly corresponding metric threads.",
+      "Bolting with diameters larger than 25 mm (1 in.) shall be 8-thread series (8UN) or the most nearly corresponding metric threads.",
+      "Bolt threads shall be Class 2A and nut threads shall be Class 2B, in accordance with ASME B1.1.",
+      "Studs used for gland bolting shall use a Class 5 interference fit conforming to ASME B1.12.",
+      "When metric bolting is used, metric bolt threads shall be tolerance Class 6g and nuts tolerance Class 6H in accordance with ASME B1.13M."
+    ]
+  },
+  {
+    "attribute": "Handwheel Specifications",
+    "rules": [
+      "Unless otherwise specified by the purchaser, the valve shall be supplied with a direct operated handwheel that opens the valve when turned in a counter-clockwise direction.",
+      "The handwheel shall be a spoke-rim type with a maximum of six spokes and shall be free from burrs and sharp edges.",
+      "Unless otherwise specified, the handwheel shall be a one-piece casting or forging or a multi-piece carbon steel fabrication that includes other carbon steel product forms.",
+      "Fabricated handwheels shall have strength and toughness characteristics comparable to that of handwheels made as one-piece castings or forgings.",
+      "The handwheel shall be marked with the word “OPEN” and an arrow pointing in the direction of opening, except when the handwheel size makes such marking impractical.",
+      "The handwheel shall be retained on the stem nut by a threaded handwheel nut."
+    ]
+  },
+  {
+    "attribute": "Valve Operation Additions",
+    "rules": [
+      "If operation by a chain wheel, gearbox or power actuator is to be added to the valve, the purchaser shall specify the following, as applicable: for chainwheel operation, the dimension from the centerline of the valve stem or gear input shaft to the bottom of the chain loop;",
+      "spur or bevel gear and the position of gearing handwheel relative to the pipe axis;",
+      "electric, hydraulic, pneumatic or other actuator type;",
+      "maximum service temperature and pressure differential across the valve disc;",
+      "power supply attributes for power actuators."
+    ]
+  },
+  {
+    "attribute": "Flange Mating Dimensions",
+    "rules": [
+      "Valve-to-gear-box or power actuator flange mating dimensions shall be according to ISO 5210 or MSS SP-102, or shall comply with the purchaser’s specifications."
+    ]
+  },
+  {
+    "attribute": "Auxiliary Connections",
+    "rules": [
+      "Auxiliary connections to the body and/or bonnet, such as drains shall be furnished only if specified on the purchase order.",
+      "The design and construction of the joint and the piping of auxiliary connections shall conform to the requirements of ASME B16.34.",
+      "When required for valve DN 50 (NPS 2) or larger, auxiliary connections shall be sized and located as specified in ASME B16.34.",
+      "The size and location of auxiliary connections shall be indicated on the purchase order."
+    ]
+  },
+  {
+    "attribute": "Materials for Valve Parts",
+    "rules": [
+      "The body and bonnet materials shall be selected from ASME B16.34, Group 1 and Group 2.",
+      "Gate material shall be steel, at least equal in corrosion resistance to that of the body material.",
+      "Yoke, separate material shall be carbon steel or same material group as the bonnet.",
+      "Bolting material for body to bonnet shall be as listed in Annex D unless otherwise agreed; for service temperatures below –29 °C (–20 °F) or above 454 °C (850 °F), the purchase order shall specify the bolting material.",
+      "Bonnet gasket shall be suitable for temperature range from –29 °C to 538 °C (–20 °F to 1000 °F), with metallic portion exposed to service environment having corrosion resistance at least equal to that of the body material.",
+      "Bolting material for gland and yoke shall be at least equal to ASTM A307—Grade B.",
+      "Seat ring material shall be as in Table 8, except where seal welds, strength welds or weld deposit facings are used, the base weld material shall have corrosion resistance at least equal to that of the body material.",
+      "Gland flange material shall be steel.",
+      "Gland material shall have melting point above 955 °C (1750 °F).",
+      "Packing shall be suitable for steam and petroleum fluids for temperature range from –29 °C to 538 °C (–20 °F to 1000 °F), and shall contain a corrosion inhibitor.",
+      "Lantern ring or spacer ring material shall have corrosion resistance at least equal to that of the body material.",
+      "Stem nut material shall be austenitic ductile iron or copper alloy with melting point above 955 °C (1750 °F).",
+      "Handwheel material shall be malleable iron, carbon steel, or ductile iron.",
+      "Handwheel nut (retaining) material shall be steel, malleable iron, ductile iron, or non-ferrous copper alloy.",
+      "Pipe plugs nominal composition shall be the same as the shell material; cast iron plugs shall not be used.",
+      "Bypass piping and valves nominal composition shall be the same as the shell material.",
+      "Pin, double disk stem to gate material shall be austenitic stainless steel.",
+      "Identification plate material shall be austenitic stainless steel or nickel alloy, attached to the valve by corrosion-resistant fasteners or by welding."
+    ]
+  },
+  {
+    "attribute": "Trim Components",
+    "rules": [
+      "The trim is comprised of the stem.",
+      "The trim is comprised of the body seating surface.",
+      "The trim is comprised of the gate seating surface.",
+      "The trim is comprised of the bushing, or a deposited weld, for the backseat and stem hole guide.",
+      "The trim is comprised of small internal parts that normally contact the service fluid."
+    ]
+  },
+  {
+    "attribute": "Trim Material Specifications",
+    "rules": [
+      "The trim material, except as stated in Items a) through d) below, shall be the manufacturer's standard material for the type listed in Table 8 for the trim number specified in the purchase order.",
+      "The typical specifications included in Table 8 represent some acceptable grades."
+    ]
+  },
+  {
+    "attribute": "Alternative Trim Number",
+    "rules": [
+      "If a trim number listed in Table 8 is specified, then an alternative trim number as shown in Table 9 may be furnished."
+    ]
+  },
+  {
+    "attribute": "Single Trim Material",
+    "rules": [
+      "If a single trim (e.g. trim 5) is furnished, both the seating surface of the body seat ring and the seating surface of the gate shall be made of the type of material shown in Table 8."
+    ]
+  },
+  {
+    "attribute": "Combination Trim Material",
+    "rules": [
+      "If a combination trim (e.g. trim 8) is furnished, the seating surface of the body seat ring shall be made of one of the two types of material shown in Table 8, and the seating surface of the gate shall be made of the other type of material shown."
+    ]
+  },
+  {
+    "attribute": "Stem, Backseat, Stem Hole Guide, and Small Internal Parts",
+    "rules": [
+      "The stem, backseat, stem hole guide and the small internal parts [see 6.2.1, Item e)] shall be of the type of material and hardness listed in Table 8. The stem shall be a wrought material."
+    ]
+  },
+  {
+    "attribute": "Valve Wedge/ Disc and Body Seat Ring Base Material",
+    "rules": [
+      "The base material of the valve wedge/disc and separate body seat ring, when used, shall be of a nominal material composition equal to the body or to that of the stem material; except for wedge or disc material made of solid trim material."
+    ]
+  },
+  {
+    "attribute": "Valve Inspection and Examination",
+    "rules": [
+      "The valve manufacturer shall examine each valve to assure compliance to this standard."
+    ]
+  },
+  {
+    "attribute": "Purchaser-Specified Inspection",
+    "rules": [
+      "If inspection by the purchaser is specified in the purchase order, inspection shall be in accordance with API 598. Examination by the manufacturer shall be as specified in API 598."
+    ]
+  },
+  {
+    "attribute": "Pressure Testing",
+    "rules": [
+      "Each valve shall be pressure tested as specified in API 598."
+    ]
+  },
+  {
+    "attribute": "Repair of Defects",
+    "rules": [
+      "Defects in the shell of a cast or forged, carbon or alloy steel valve that are revealed by inspection or testing shall be repaired as permitted by the most nearly applicable ASTM cast or forged material specification listed in ASME B16.34."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Hardness (HB) Minimum",
+    "rules": [
+      "For Trim Number 3, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 4, Seat Surface Hardness (HB) Minimum is 750 e.",
+      "For Trim Number 5, Seat Surface Hardness (HB) Minimum is 350 e.",
+      "For Trim Number 5A, Seat Surface Hardness (HB) Minimum is 350 e.",
+      "For Trim Number 6, Seat Surface Hardness (HB) Minimum is 250 i.",
+      "For Trim Number 6, Seat Surface Hardness (HB) Minimum is 175 i.",
+      "For Trim Number 7, Seat Surface Hardness (HB) Minimum is 250 i.",
+      "For Trim Number 7, Seat Surface Hardness (HB) Minimum is 750 i.",
+      "For Trim Number 8, Seat Surface Hardness (HB) Minimum is 250 i.",
+      "For Trim Number 8, Seat Surface Hardness (HB) Minimum is 350 i.",
+      "For Trim Number 8A, Seat Surface Hardness (HB) Minimum is 250 i.",
+      "For Trim Number 8A, Seat Surface Hardness (HB) Minimum is 350 i.",
+      "For Trim Number 9, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 10, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 11, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 11, Seat Surface Hardness (HB) Minimum is 350 i."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Material Type",
+    "rules": [
+      "For Trim Number 3, Seat Surface Material Type is 25Cr-20Ni.",
+      "For Trim Number 4, Seat Surface Material Type is Hard 13Cr.",
+      "For Trim Number 5, Seat Surface Material Type is Co-Cr A 9.",
+      "For Trim Number 5A, Seat Surface Material Type is Ni-Cr.",
+      "For Trim Number 6, Seat Surface Material Type is 13Cr.",
+      "For Trim Number 6, Seat Surface Material Type is Cu-Ni.",
+      "For Trim Number 7, Seat Surface Material Type is 13Cr.",
+      "For Trim Number 7, Seat Surface Material Type is Hard 13Cr.",
+      "For Trim Number 8, Seat Surface Material Type is 13Cr.",
+      "For Trim Number 8, Seat Surface Material Type is Co-Cr A 9.",
+      "For Trim Number 8A, Seat Surface Material Type is 13Cr.",
+      "For Trim Number 8A, Seat Surface Material Type is Ni-Cr.",
+      "For Trim Number 9, Seat Surface Material Type is Ni-Cu Alloy.",
+      "For Trim Number 10, Seat Surface Material Type is 18Cr-8Ni.",
+      "For Trim Number 11, Seat Surface Material Type is Ni-Cu Alloy.",
+      "For Trim Number 11, Seat Surface Material Type is Trim 5 or 5A."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Cast",
+    "rules": [
+      "For Trim Number 3, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 4, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 5, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 5A, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 6, Seat Surface Typical Specifications Grade/Cast is ASTM A 217 (CA 15).",
+      "For Trim Number 6, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 7, Seat Surface Typical Specifications Grade/Cast is ASTM A 217 (CA 15).",
+      "For Trim Number 7, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 8, Seat Surface Typical Specifications Grade/Cast is ASTM A 217 (CA 15).",
+      "For Trim Number 8, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 8A, Seat Surface Typical Specifications Grade/Cast is ASTM A 217 (CA 15).",
+      "For Trim Number 8A, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 9, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 10, Seat Surface Typical Specifications Grade/Cast is ASTM A351 (CF8M).",
+      "For Trim Number 11, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 11, Seat Surface Typical Specifications Grade/Cast is NA."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Forged",
+    "rules": [
+      "For Trim Number 3, Seat Surface Typical Specifications Grade/Forged is ASTM A182 (F310).",
+      "For Trim Number 4, Seat Surface Typical Specifications Grade/Forged is Note f.",
+      "For Trim Number 5, Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 5A, Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 6, Seat Surface Typical Specifications Grade/Forged is ASTM A182 (F6a).",
+      "For Trim Number 6, Seat Surface Typical Specifications Grade/Forged is Note k.",
+      "For Trim Number 7, Seat Surface Typical Specifications Grade/Forged is ASTM A182 (F6a).",
+      "For Trim Number 7, Seat Surface Typical Specifications Grade/Forged is Note f.",
+      "For Trim Number 8, Seat Surface Typical Specifications Grade/Forged is ASTM A182 (F6a).",
+      "For Trim Number 8, Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 8A, Seat Surface Typical Specifications Grade/Forged is ASTM A182 (F6a).",
+      "For Trim Number 8A, Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 9, Seat Surface Typical Specifications Grade/Forged is MFG Standard.",
+      "For Trim Number 10, Seat Surface Typical Specifications Grade/Forged is ASTM A182 (F316).",
+      "For Trim Number 11, Seat Surface Typical Specifications Grade/Forged is MFG Standard.",
+      "For Trim Number 11, Seat Surface Typical Specifications Grade/Forged is NA."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Welded",
+    "rules": [
+      "For Trim Number 3, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER310.",
+      "For Trim Number 4, Seat Surface Typical Specifications Grade/Welded is NA.",
+      "For Trim Number 5, Seat Surface Typical Specifications Grade/Welded is AWS A5.13 ECoCr-A or AWS A5.21 ERCrCo-A.",
+      "For Trim Number 5A, Seat Surface Typical Specifications Grade/Welded is Note h.",
+      "For Trim Number 6, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER410.",
+      "For Trim Number 6, Seat Surface Typical Specifications Grade/Welded is NA.",
+      "For Trim Number 7, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER410.",
+      "For Trim Number 7, Seat Surface Typical Specifications Grade/Welded is NA.",
+      "For Trim Number 8, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER410.",
+      "For Trim Number 8, Seat Surface Typical Specifications Grade/Welded is AWS A5.13 ECoCr-A or AWS A5.21 ERCrCo-A.",
+      "For Trim Number 8A, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER410.",
+      "For Trim Number 8A, Seat Surface Typical Specifications Grade/Welded is Note h.",
+      "For Trim Number 9, Seat Surface Typical Specifications Grade/Welded is NA.",
+      "For Trim Number 10, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER316.",
+      "For Trim Number 11, Seat Surface Typical Specifications Grade/Welded is NA.",
+      "For Trim Number 11, Seat Surface Typical Specifications Grade/Welded is See Trim 5 or 5A."
+    ]
+  },
+  {
+    "attribute": "Stem/Bushing/Material Type",
+    "rules": [
+      "For Trim Number 3, Stem/Bushing/Material Type is 25Cr-20Ni.",
+      "For Trim Number 4, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 5, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 5A, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 6, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 6, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 7, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 7, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 8, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 8, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 8A, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 8A, Stem/Bushing/Material Type is 13Cr.",
+      "For Trim Number 9, Stem/Bushing/Material Type is Ni-Cu Alloy.",
+      "For Trim Number 10, Stem/Bushing/Material Type is 18Cr-8Ni-Mo.",
+      "For Trim Number 11, Stem/Bushing/Material Type is Ni-Cu Alloy.",
+      "For Trim Number 11, Stem/Bushing/Material Type is Ni-Cu Alloy."
+    ]
+  },
+  {
+    "attribute": "Stem/Bushing/Typical Specifications Type",
+    "rules": [
+      "For Trim Number 3, Stem/Bushing/Typical Specifications Type is ASTM A276-T310.",
+      "For Trim Number 4, Stem/Bushing/Typical Specifications Type is ASTM A276-T410 or T420.",
+      "For Trim Number 5, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 5A, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 6, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 6, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 7, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 7, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 8, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 8, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 8A, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 8A, Stem/Bushing/Typical Specifications Type is ASTM A276 T410 or T420.",
+      "For Trim Number 9, Stem/Bushing/Typical Specifications Type is MFG Standard.",
+      "For Trim Number 10, Stem/Bushing/Typical Specifications Type is ASTM A276-T316.",
+      "For Trim Number 11, Stem/Bushing/Typical Specifications Type is MFG Standard.",
+      "For Trim Number 11, Stem/Bushing/Typical Specifications Type is MFG Standard."
+    ]
+  },
+  {
+    "attribute": "Stem Hardness (HB)",
+    "rules": [
+      "For Trim Number 3, Stem Hardness (HB) is Note d.",
+      "For Trim Number 4, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 5, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 5A, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 6, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 6, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 7, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 7, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 8, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 8, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 8A, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 8A, Stem Hardness (HB) is 200 min 275 max.",
+      "For Trim Number 9, Stem Hardness (HB) is Note d.",
+      "For Trim Number 10, Stem Hardness (HB) is Note d.",
+      "For Trim Number 11, Stem Hardness (HB) is Note d.",
+      "For Trim Number 11, Stem Hardness (HB) is Note d."
+    ]
+  },
+  {
+    "attribute": "Backseat Bushing Hardness (HB)",
+    "rules": [
+      "For Trim Number 3, Backseat Bushing Hardness (HB) is Note d.",
+      "For Trim Number 4, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 5, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 5A, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 6, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 6, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 7, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 7, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 8, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 8, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 8A, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 8A, Backseat Bushing Hardness (HB) is 250 min.",
+      "For Trim Number 9, Backseat Bushing Hardness (HB) is Note d.",
+      "For Trim Number 10, Backseat Bushing Hardness (HB) is Note d.",
+      "For Trim Number 11, Backseat Bushing Hardness (HB) is Note d.",
+      "For Trim Number 11, Backseat Bushing Hardness (HB) is Note d."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Hardness (HB) Minimum",
+    "rules": [
+      "For Trim Number 12, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 13, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 14, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 15, Seat Surface Hardness (HB) Minimum is 350 e.",
+      "For Trim Number 16, Seat Surface Hardness (HB) Minimum is 350 e.",
+      "For Trim Number 17, Seat Surface Hardness (HB) Minimum is 350 e.",
+      "For Trim Number 18, Seat Surface Hardness (HB) Minimum is 350 e.",
+      "For Trim Number 19, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 19A, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 19B, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 19C, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 20, Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 20A, Seat Surface Hardness (HB) Minimum is Note d."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Material Type",
+    "rules": [
+      "For Trim Number 12, Seat Surface Material Type is 18Cr-8Ni-Mo.",
+      "For Trim Number 13, Seat Surface Material Type is 19Cr-29Ni.",
+      "For Trim Number 14, Seat Surface Material Type is 19Cr-29Ni.",
+      "For Trim Number 15, Seat Surface Material Type is Co-Cr A 9.",
+      "For Trim Number 16, Seat Surface Material Type is Co-Cr A 9.",
+      "For Trim Number 17, Seat Surface Material Type is Co-Cr A 9.",
+      "For Trim Number 18, Seat Surface Material Type is Co-Cr A 9.",
+      "For Trim Number 19, Seat Surface Material Type is Ni Alloy.",
+      "For Trim Number 19A, Seat Surface Material Type is Alloy 625.",
+      "For Trim Number 19B, Seat Surface Material Type is Alloy C276.",
+      "For Trim Number 19C, Seat Surface Material Type is Alloy 825.",
+      "For Trim Number 20, Seat Surface Material Type is Ni Alloy.",
+      "For Trim Number 20A, Seat Surface Material Type is Alloy 625."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Cast",
+    "rules": [
+      "For Trim Number 12, Seat Surface Typical Specifications Grade/Cast is ASTM A351 (CF8M).",
+      "For Trim Number 13, Seat Surface Typical Specifications Grade/Cast is ASTM A351 (CN7M).",
+      "For Trim Number 14, Seat Surface Typical Specifications Grade/Cast is ASTM A351 (CN7M).",
+      "For Trim Number 15, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 16, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 17, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 18, Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 19, Seat Surface Typical Specifications Grade/Cast is MFG Standard 1.",
+      "For Trim Number 19A, Seat Surface Typical Specifications Grade/Cast is ASTM A494 (CW6MC).",
+      "For Trim Number 19B, Seat Surface Typical Specifications Grade/Cast is ASTM A494 (CW2M).",
+      "For Trim Number 19C, Seat Surface Typical Specifications Grade/Cast is ASTM A494 (CU5MCuC).",
+      "For Trim Number 20, Seat Surface Typical Specifications Grade/Cast is MFG Standard 1.",
+      "For Trim Number 20A, Seat Surface Typical Specifications Grade/Cast is ASTM A494 (CW6MC)."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Forged",
+    "rules": [
+      "For Trim Number 12, Seat Surface Typical Specifications Grade/Forged is ASTM A182 (F316).",
+      "For Trim Number 13, Seat Surface Typical Specifications Grade/Forged is ASTM B473.",
+      "For Trim Number 14, Seat Surface Typical Specifications Grade/Forged is ASTM B473.",
+      "For Trim Number 15, Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 16, Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 17, Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 18, Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 19, Seat Surface Typical Specifications Grade/Forged is MFG Standard 1.",
+      "For Trim Number 19A, Seat Surface Typical Specifications Grade/Forged is ASTM B564 UNS N06625.",
+      "For Trim Number 19B, Seat Surface Typical Specifications Grade/Forged is ASTM B564 UNS N10276.",
+      "For Trim Number 19C, Seat Surface Typical Specifications Grade/Forged is ASTM B564 UNS N08825.",
+      "For Trim Number 20, Seat Surface Typical Specifications Grade/Forged is MFG Standard 1.",
+      "For Trim Number 20A, Seat Surface Typical Specifications Grade/Forged is ASTM B564 UNS N06625."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Welded",
+    "rules": [
+      "For Trim Number 12, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER316.",
+      "For Trim Number 13, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER320.",
+      "For Trim Number 14, Seat Surface Typical Specifications Grade/Welded is AWS A5.9 ER320.",
+      "For Trim Number 15, Seat Surface Typical Specifications Grade/Welded is AWS A5.13 ECoCr-A or AWS A5.21 ERCoCr-A.",
+      "For Trim Number 16, Seat Surface Typical Specifications Grade/Welded is AWS A5.13 ECoCr-A or AWS A5.21 ERCoCr-A.",
+      "For Trim Number 17, Seat Surface Typical Specifications Grade/Welded is AWS A5.13 ECoCr-A or AWS A5.21 ERCoCr-A.",
+      "For Trim Number 18, Seat Surface Typical Specifications Grade/Welded is AWS A5.13 ECoCr-A or AWS A5.21 ERCoCr-A.",
+      "For Trim Number 19, Seat Surface Typical Specifications Grade/Welded is MFG Standard.",
+      "For Trim Number 19A, Seat Surface Typical Specifications Grade/Welded is AWS A5.14 ERNiCrMo-3.",
+      "For Trim Number 19B, Seat Surface Typical Specifications Grade/Welded is AWS A5.14 ERNiCrMo-4.",
+      "For Trim Number 19C, Seat Surface Typical Specifications Grade/Welded is AWS A5.14 ERNiCrMo-3.",
+      "For Trim Number 20, Seat Surface Typical Specifications Grade/Welded is AWS A5.13 ECoCr-A or AWS A5.21 ECoCr-A.",
+      "For Trim Number 20A, Seat Surface Typical Specifications Grade/Welded is AWS A5.14 ERNiCrMo-3."
+    ]
+  },
+  {
+    "attribute": "Stem/Bushing/Material Type",
+    "rules": [
+      "For Trim Number 12, Stem/Bushing/Material Type is 18Cr-8Ni-Mo.",
+      "For Trim Number 13, Stem/Bushing/Material Type is 19Cr-29Ni.",
+      "For Trim Number 14, Stem/Bushing/Material Type is 19Cr-29Ni.",
+      "For Trim Number 15, Stem/Bushing/Material Type is 18Cr-8Ni-Mo.",
+      "For Trim Number 16, Stem/Bushing/Material Type is 18Cr-8Ni-Mo.",
+      "For Trim Number 17, Stem/Bushing/Material Type is 18Cr-10Ni-Cb.",
+      "For Trim Number 18, Stem/Bushing/Material Type is 19Cr-29Ni.",
+      "For Trim Number 19, Stem/Bushing/Material Type is Ni Alloy 1.",
+      "For Trim Number 19A, Stem/Bushing/Material Type is Alloy 625.",
+      "For Trim Number 19B, Stem/Bushing/Material Type is Alloy C276.",
+      "For Trim Number 19C, Stem/Bushing/Material Type is Alloy 825.",
+      "For Trim Number 20, Stem/Bushing/Material Type is Ni Alloy 1.",
+      "For Trim Number 20A, Stem/Bushing/Material Type is Alloy 625."
+    ]
+  },
+  {
+    "attribute": "Stem/Bushing/Typical Specifications Type",
+    "rules": [
+      "For Trim Number 12, Stem/Bushing/Typical Specifications Type is ASTM A276-T316.",
+      "For Trim Number 13, Stem/Bushing/Typical Specifications Type is ASTM B473.",
+      "For Trim Number 14, Stem/Bushing/Typical Specifications Type is ASTM B473.",
+      "For Trim Number 15, Stem/Bushing/Typical Specifications Type is ASTM A276-T316.",
+      "For Trim Number 16, Stem/Bushing/Typical Specifications Type is ASTM A276-T316.",
+      "For Trim Number 17, Stem/Bushing/Typical Specifications Type is ASTM A276-T347.",
+      "For Trim Number 18, Stem/Bushing/Typical Specifications Type is ASTM B473.",
+      "For Trim Number 19, Stem/Bushing/Typical Specifications Type is MFG Standard 1.",
+      "For Trim Number 19A, Stem/Bushing/Typical Specifications Type is ASTM B564 UNS N06625.",
+      "For Trim Number 19B, Stem/Bushing/Typical Specifications Type is ASTM B564 UNS N10276.",
+      "For Trim Number 19C, Stem/Bushing/Typical Specifications Type is ASTM B564 UNS N08825.",
+      "For Trim Number 20, Stem/Bushing/Typical Specifications Type is MFG Standard 1.",
+      "For Trim Number 20A, Stem/Bushing/Typical Specifications Type is ASTM B564 UNS N06625."
+    ]
+  },
+  {
+    "attribute": "Stem Hardness (HB)",
+    "rules": [
+      "For Trim Number 12, Stem Hardness (HB) is Note d.",
+      "For Trim Number 13, Stem Hardness (HB) is Note d.",
+      "For Trim Number 14, Stem Hardness (HB) is Note d.",
+      "For Trim Number 15, Stem Hardness (HB) is Note d.",
+      "For Trim Number 16, Stem Hardness (HB) is Note d.",
+      "For Trim Number 17, Stem Hardness (HB) is Note d.",
+      "For Trim Number 18, Stem Hardness (HB) is Note d.",
+      "For Trim Number 19, Stem Hardness (HB) is Note d.",
+      "For Trim Number 19A, Stem Hardness (HB) is Note d.",
+      "For Trim Number 19B, Stem Hardness (HB) is Note d.",
+      "For Trim Number 19C, Stem Hardness (HB) is Note d.",
+      "For Trim Number 20, Stem Hardness (HB) is Note d.",
+      "For Trim Number 20A, Stem Hardness (HB) is Note d."
+    ]
+  },
+  {
+    "attribute": "Backseat Bushing Hardness (HB)",
+    "rules": [
+      "For Trim Number 12, Backseat Bushing Hardness (HB) is Note d.",
+      "For Trim Number 13, Backseat Bushing Hardness (HB) is Note d.",
+      "For Trim Number 14, Backseat Bushing Hardness (HB) is Note d.",
+      "For Trim Number 15, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 16, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 17, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 18, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 19, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 19A, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 19B, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 19C, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 20, Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 20A, Backseat Bushing Hardness (HB) is Note n."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Hardness (HB) Minimum",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 20B with CoCr-A g, the Seat Surface Hardness (HB) Minimum is 350 i.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Seat Surface Hardness (HB) Minimum is Note d.",
+      "For Trim Number 20C with CoCr-A g, the Seat Surface Hardness (HB) Minimum is 350 i.",
+      "For Trim Number 21 with Hardfaced 1, the Seat Surface Hardness (HB) Minimum is 350 e."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Material Type",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Seat Surface Material Type is Alloy C276.",
+      "For Trim Number 20B with CoCr-A g, the Seat Surface Material Type is CoCr-A g.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Seat Surface Material Type is Alloy 825.",
+      "For Trim Number 20C with CoCr-A g, the Seat Surface Material Type is CoCr-A g.",
+      "For Trim Number 21 with Hardfaced 1, the Seat Surface Material Type is Co-Cr A g."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Cast",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Seat Surface Typical Specifications Grade/Cast is ASTM A494 (CW2M).",
+      "For Trim Number 20B with CoCr-A g, the Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Seat Surface Typical Specifications Grade/Cast is ASTM A494 (CU5MCuC).",
+      "For Trim Number 20C with CoCr-A g, the Seat Surface Typical Specifications Grade/Cast is NA.",
+      "For Trim Number 21 with Hardfaced 1, the Seat Surface Typical Specifications Grade/Cast is NA."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Forged",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Seat Surface Typical Specifications Grade/Forged is ASTM B564 UNS N10276.",
+      "For Trim Number 20B with CoCr-A g, the Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Seat Surface Typical Specifications Grade/Forged is ASTM B564 UNS N08825.",
+      "For Trim Number 20C with CoCr-A g, the Seat Surface Typical Specifications Grade/Forged is NA.",
+      "For Trim Number 21 with Hardfaced 1, the Seat Surface Typical Specifications Grade/Forged is NA."
+    ]
+  },
+  {
+    "attribute": "Seat Surface Typical Specifications Grade/Welded",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Seat Surface Typical Specifications Grade/Welded is AWS A5.14 ERNiCrMo-4.",
+      "For Trim Number 20B with CoCr-A g, the Seat Surface Typical Specifications Grade/Welded is AWS 5.13 ECoCr-A or AWS 5.21 ECoCr-A.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Seat Surface Typical Specifications Grade/Welded is AWS A5.14 ERNiCrMo-3.",
+      "For Trim Number 20C with CoCr-A g, the Seat Surface Typical Specifications Grade/Welded is AWS 5.13 ECoCr-A or AWS 5.21 ECoCr-A.",
+      "For Trim Number 21 with Hardfaced 1, the Seat Surface Typical Specifications Grade/Welded is AWS 5.13 ECoCr-A or AWS 5.21 ECoCr-A."
+    ]
+  },
+  {
+    "attribute": "Stem/Bushing/Material Type",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Stem/Bushing/Material Type is Alloy C276.",
+      "For Trim Number 20B with CoCr-A g, the Stem/Bushing/Material Type is Alloy C276.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Stem/Bushing/Material Type is Alloy 825.",
+      "For Trim Number 20C with CoCr-A g, the Stem/Bushing/Material Type is Alloy 825.",
+      "For Trim Number 21 with Hardfaced 1, the Stem/Bushing/Material Type is Ni Alloy 1."
+    ]
+  },
+  {
+    "attribute": "Stem/Bushing/Typical Specifications Type",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Stem/Bushing/Typical Specifications Type is ASTM B564 UNS N10276.",
+      "For Trim Number 20B with CoCr-A g, the Stem/Bushing/Typical Specifications Type is ASTM B564 UNS N10276.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Stem/Bushing/Typical Specifications Type is ASTM B564 UNS N08825.",
+      "For Trim Number 20C with CoCr-A g, the Stem/Bushing/Typical Specifications Type is ASTM B564 UNS N08825.",
+      "For Trim Number 21 with Hardfaced 1, the Stem/Bushing/Typical Specifications Type is MFG Standard 1."
+    ]
+  },
+  {
+    "attribute": "Stem/Bushing/Stem Hardness (HB)",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Stem/Bushing/Stem Hardness (HB) is Note d.",
+      "For Trim Number 20B with CoCr-A g, the Stem/Bushing/Stem Hardness (HB) is Note d.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Stem/Bushing/Stem Hardness (HB) is Note d.",
+      "For Trim Number 20C with CoCr-A g, the Stem/Bushing/Stem Hardness (HB) is Note d.",
+      "For Trim Number 21 with Hardfaced 1, the Stem/Bushing/Stem Hardness (HB) is Note d."
+    ]
+  },
+  {
+    "attribute": "Backseat Bushing Hardness (HB)",
+    "rules": [
+      "For Trim Number 20B with Alloy C276 and Hardfaced, the Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 20B with CoCr-A g, the Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 20C with Alloy 825 and Hardfaced, the Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 20C with CoCr-A g, the Backseat Bushing Hardness (HB) is Note n.",
+      "For Trim Number 21 with Hardfaced 1, the Backseat Bushing Hardness (HB) is Note n."
+    ]
+  },
+  {
+    "attribute": "Trim Number Specifications",
+    "rules": [
+      "The specified trim number '5A' corresponds to the alternative trim number '5'.",
+      "The specified trim number '8' corresponds to the alternative trim number '5'.",
+      "The specified trim number '8A' corresponds to the alternative trim number '8'.",
+      "The specified trim number '10' corresponds to the alternative trim numbers '12 or 16'.",
+      "The specified trim number '13' corresponds to the alternative trim number '14'.",
+      "The specified trim number '12' corresponds to the alternative trim number '16'."
+    ]
+  },
+  {
+    "attribute": "Valve Marking Requirements",
+    "rules": [
+      "Valves shall be marked in accordance with ASME B16.34, with the additional designation 'API 600' on the nameplate.",
+      "Unidirectional valves shall be marked with a flow direction arrow cast, forged, or stamped into the valve body outer wall, or with a separate identification plate permanently attached to the body indicating the permitted flow direction."
+    ]
+  },
+  {
+    "attribute": "Coating Requirements for Valve Surfaces",
+    "rules": [
+      "Unmachined exterior surfaces of the shell shall be painted per the manufacturer’s standard paint with an aluminum or silver color, except for austenitic stainless steel valves which shall not be painted.",
+      "Machined or threaded surfaces (excluding those on austenitic stainless steel materials) shall be coated with an easily removable rust preventative. The stem does not need coating if the stem packing contains a corrosion inhibitor."
+    ]
+  },
+  {
+    "attribute": "Valve End Flange and Welding End Protection",
+    "rules": [
+      "Valve end flanges and welding ends shall be blanked to protect gasket surfaces and valve internals during shipment and storage.",
+      "Protective covers shall be made of wood, wood fiber, plastic, or metal and securely attached using bolts, steel straps, steel clips, or suitable friction-locking devices.",
+      "Protective covers shall be designed so that the valve cannot be installed without removal of the cover."
+    ]
+  },
+  {
+    "attribute": "Tapped Connection Protection",
+    "rules": [
+      "Tapped connections shall be fitted with fully tightened and sealed threaded plugs.",
+      "The material of the plugs for tapped connections shall have the same nominal chemical composition as the shell material as specified in section 5.12."
+    ]
+  },
+  {
+    "attribute": "Gate Position for Shipment",
+    "rules": [
+      "The valve shall be shipped with the gate closed.",
+      "The valve shall be shipped with the lantern ring, if specified, and the packing installed.",
+      "The remaining adjustment length of the packing gland at the time of shipment, with the gland tight, shall be greater than one-and-one half times the packing width specified in Table 6."
+    ]
+  },
+  {
+    "attribute": "Stem Packing Requirements",
+    "rules": [
+      "The valve shall be shipped with the lantern ring, if specified, and the packing installed.",
+      "The remaining adjustment length of the packing gland at the time of shipment, with the gland tight, shall be greater than one-and-one half times the packing width specified in Table 6."
+    ]
+  },
+  {
+    "attribute": "Packaging Specifications",
+    "rules": [
+      "Unless export packaging is specified in the purchase order, valves may be shipped loose, palletized, or packed in a box or crate.",
+      "When export packaging is specified in the purchase order, valves shall be shipped individually or collectively in wooden boxes or crates in a manner that will prevent shifting within the package."
+    ]
+  },
+  {
+    "attribute": "Purchase Order Information Requirements",
+    "rules": [
+      "Items marked with an asterisk in Annex B are considered an integral part of this standard, and shall be specified by the purchaser."
+    ]
+  },
+  {
+    "attribute": "API Monogram Program Requirements",
+    "rules": [
+      "This annex is only normative for product supplied bearing the API Monogram and manufactured at a facility licensed by API; for all other instances it is not applicable.",
+      "The API Monogram® is a registered certification mark owned by the American Petroleum Institute (API) and authorized for licensing by the API Board of Directors.",
+      "Through the API Monogram Program, API licenses product manufacturers to apply the API Monogram to products which comply with product specifications and have been manufactured under a quality management system that meets the requirements of API Q1.",
+      "API maintains a complete, searchable list of all Monogram licensees on the API Composite List website (www.api.org/compositelist).",
+      "The application of the API Monogram and license number on products constitutes a representation and warranty by the licensee to API and to purchasers of the products that, as of the date indicated, the products were manufactured under a quality management system conforming to the requirements of API Q1 and that the product conforms in every detail with the applicable standard(s) or product specification(s).",
+      "API Monogram program licenses are issued only after an on-site audit has verified that an organization has implemented and continually maintained a quality management system that meets the requirements of API Q1 and that the resulting products satisfy the requirements of the applicable API product specification(s) and/or standard(s).",
+      "Although any manufacturer may claim that its products meet API product requirements without monogramming them, only manufacturers with a license from API can apply the API Monogram to their products.",
+      "Together with the requirements of the API Monogram license agreement, this annex establishes the requirements for those organizations who wish to voluntarily obtain an API license to provide API monogrammed products that satisfy the requirements of the applicable API product specification(s) and/or standard(s) and API Monogram Program requirements."
+    ]
+  },
+  {
+    "attribute": "Normative References",
+    "rules": [
+      "In addition to the referenced standards listed earlier in this document, this annex references the following standard: API Specification Q1, Specification for Quality Management System Requirements for Manufacturing Organizations for the Petroleum and Natural Gas Industry.",
+      "For Licensees under the Monogram Program, the latest version of this document shall be used. The requirements identified therein are mandatory.",
+      "For all organizations desiring to acquire and maintain a license to use the API Monogram, conformance with the following shall be required at all times: API Specification Q1."
+    ]
+  },
+  {
+    "attribute": "Contact Information for API Certification Programs",
+    "rules": [
+      "For information on becoming an API Monogram Licensee, please contact API, Certification Programs, 1220 L Street, N. W., Washington, DC 20005.",
+      "Or call 202-682-8145.",
+      "Or by email at certification@api.org."
+    ]
+  },
+  {
+    "attribute": "API Monogram Program: Licensee Responsibilities",
+    "rules": [
+      "Licensee shall conform to API Q1 quality management system requirements at all times.",
+      "Licensee shall conform to API Q1, Annex A, API Monogram Program requirements at all times.",
+      "Licensee shall conform to the requirements contained in the API product specification(s) to which the organization is licensed.",
+      "Licensee shall conform to the requirements contained in the API Monogram Program License Agreement."
+    ]
+  },
+  {
+    "attribute": "Control of API Monogram Application and Removal",
+    "rules": [
+      "Products that do not conform to API specified requirements shall not bear the API Monogram.",
+      "Each licensee shall develop and maintain an API Monogram marking procedure documenting marking/monogramming requirements specified by this annex and any applicable API product specification(s) and/or standard(s).",
+      "The marking procedure shall define the authority responsible for application and removal of the API Monogram and license number.",
+      "The marking procedure shall define the method(s) used to apply the Monogram and license number.",
+      "The marking procedure shall identify the location on the product where the API Monogram and license number are to be applied.",
+      "The marking procedure shall require the application of the date of manufacture of the product in conjunction with the use of the API Monogram and license number.",
+      "The date of manufacture shall be two digits representing the month and two digits representing the year (e.g. 05-12 for May 2012) unless otherwise stipulated in the applicable API product specification(s) or standard(s).",
+      "The marking procedure shall define the application of all other required API product specification(s) and/or standard(s) marking requirements.",
+      "Only an API licensee shall apply the API Monogram and its designated license number to API monogrammable products.",
+      "The API Monogram and license number, when issued, are site-specific and shall only be applied at that site-specific licensed facility location.",
+      "The API Monogram may be applied at any time appropriate during the production process but shall be removed in accordance with the licensee's API Monogram marking procedure if the product is subsequently found to be out of conformance with any of the requirements of the applicable API product specification(s) and/or standard(s) and API Monogram Program."
+    ]
+  },
+  {
+    "attribute": "Design Documentation Requirements",
+    "rules": [
+      "Each licensee and/or applicant for licensing shall maintain current design documentation as identified in API Q1 for all of the applicable products that fall under the scope of each Monogram license.",
+      "The design document information shall provide objective evidence that the product design meets the requirements of the applicable and most current API product specification(s) and/or standard(s).",
+      "The design documentation shall be made available during API audits of the facility."
+    ]
+  },
+  {
+    "attribute": "Exclusion of Design Activities",
+    "rules": [
+      "In specific instances, the exclusion of design activities is allowed under the Monogram Program, as detailed in Advisory # 6, available on API Monogram Program website at http://www.api.org/advisories."
+    ]
+  },
+  {
+    "attribute": "Manufacturing Capability Assessment",
+    "rules": [
+      "The API Monogram Program is designed to identify facilities that have demonstrated the ability to manufacture equipment that conforms to API specifications and/or standards.",
+      "API may refuse initial licensing or suspend current licensing based on a facility's level of manufacturing capability.",
+      "If API determines that an additional review is warranted, API may perform additional audits (at the organization's expense) of any subcontractors to ensure their conformance with the requirements of the applicable API product specification(s) and/or standard(s)."
+    ]
+  },
+  {
+    "attribute": "Use of API Monogram in Advertising",
+    "rules": [
+      "An API Monogram licensee shall not use the API Monogram and/or license number on letterheads, buildings or other structures, websites or in any advertising without an express statement of fact describing the scope of Licensee's authorization (license number and product specification).",
+      "The Licensee should contact API for guidance on the use of the API Monogram other than on products."
+    ]
+  },
+  {
+    "attribute": "Product Marking Requirements",
+    "rules": [
+      "These marking requirements shall apply only to those API Licensees wishing to mark applicable products in conjunction with the requirements of the API Monogram Program."
+    ]
+  },
+  {
+    "attribute": "Product Specification Identification",
+    "rules": [
+      "Manufacturers shall mark products as specified by the applicable API specifications or standards.",
+      "Marking shall include reference to the applicable API specification and/or standard.",
+      "Unless otherwise specified, reference to the API specifications and/or standards shall be, as a minimum, \"API [Document Number]\" (e.g. API 6A, or API 600).",
+      "Unless otherwise specified, when space allows, the marking may include use of \"Spec\" or \"Std\", as applicable (e.g. API Spec 6A or API Std 600)."
+    ]
+  },
+  {
+    "attribute": "Units for Product Marking",
+    "rules": [
+      "Products shall be marked with units as specified in the API specification and/or standard.",
+      "If not specified, equipment shall be marked with U.S. customary (USC) units.",
+      "Use of dual units [USC units and metric (SI) units] may be acceptable, if such units are allowed by the applicable product specification and/or standard.",
+      "Nameplates, when applicable, shall be made of a corrosion-resistant material unless otherwise specified by the API specification and/or standard.",
+      "Nameplate shall be located as specified by the API specification and/or standard.",
+      "If the location is not specified, then the licensee shall develop and maintain a procedure detailing the location to which the nameplate shall be applied.",
+      "Nameplates may be attached at any time during the manufacturing process."
+    ]
+  },
+  {
+    "attribute": "Nameplate Requirements",
+    "rules": [
+      "Nameplates, when applicable, shall be made of a corrosion-resistant material unless otherwise specified by the API specification and/or standard.",
+      "Nameplate shall be located as specified by the API specification and/or standard.",
+      "If the location is not specified, then the licensee shall develop and maintain a procedure detailing the location to which the nameplate shall be applied.",
+      "Nameplates may be attached at any time during the manufacturing process.",
+      "The API Monogram and license number shall be marked on the nameplate, in addition to the other product marking requirements specified by the applicable product specification and/or standard."
+    ]
+  },
+  {
+    "attribute": "License Number Usage",
+    "rules": [
+      "The API Monogram license number shall not be used unless it is marked in conjunction with the API Monogram.",
+      "The license number shall be used in close proximity to the API Monogram."
+    ]
+  },
+  {
+    "attribute": "Nonconformance Reporting",
+    "rules": [
+      "API solicits information on products that are found to be nonconforming with API specified requirements, as well as field failures (or malfunctions), which are judged to be caused by either specification and/or standard deficiencies or nonconformities against API specified requirements.",
+      "Customers are requested to report to API all problems with API monogrammed products.",
+      "A nonconformance may be reported using the API Nonconformance Reporting System available at http://compositelist.api.org/ncr.aspx.",
+      "Supplemental requirements of this standard shall be specifically stated in the purchase order."
+    ]
+  },
+  {
+    "attribute": "Purchase Order Requirements",
+    "rules": [
+      "Supplemental requirements of this standard shall be specifically stated in the purchase order.",
+      "If no supplemental requirements are to be taken to this standard, the purchase order just needs to refer to API 600 and to specify the items in the following list that are marked with an asterisk (*).",
+      "The items listed below without an asterisk are options that may also be specified."
+    ]
+  },
+  {
+    "attribute": "Valve Specifications",
+    "rules": [
+      "a) valve size *;",
+      "b) pressure class *;",
+      "c) flanged ends, including flange facing finish (for sizes over DN 600 (NPS 24) specify Series A or B); or welding ends, including bore *;",
+      "d) auxiliary connections and openings;",
+      "e) valve orientation;",
+      "f) additional hard facing of body and/or wedge guides;",
+      "g) bonnet gasket and/or bonnet flange facing;",
+      "h) tapped openings;",
+      "i) wedge gate or double-disc gate; also type of wedge, if required *;",
+      "j) lantern ring;",
+      "k) chainwheel and chain;",
+      "l) gear operation, including type and arrangement, and the design maximum pressure differential across the valve;",
+      "m) power operation, including type of power and power unit, and the design maximum pressure differential across the valve; frequency of operation;",
+      "n) bypass—specify either flanged or welded bonnet bypass valve;",
+      "o) material of the valve shell *;",
+      "p) nominal trim material *;",
+      "q) any required exceptions to manufacturer’s permissible options (e.g. NACE MR 0103);",
+      "r) handwheels;",
+      "s) safety shield;",
+      "t) chainwheel and safety cables, if furnished as original equipment;",
+      "u) alternate stem packing material;"
+    ]
+  },
+  {
+    "attribute": "inspection_and_testing_requirements",
+    "rules": [
+      "The purchaser shall inspect alternate stem packing material.",
+      "The purchaser shall inspect bonnet bolting material.",
+      "The purchaser shall conduct inspection as specified.",
+      "The purchaser shall perform high pressure closure test.",
+      "The purchaser shall conduct supplementary examination and testing.",
+      "The purchaser shall inspect export packaging.",
+      "The purchaser shall inspect pressure seal bonnet.",
+      "The purchaser shall verify materials conform to ASME B 16.34 Group 3."
+    ]
+  },
+  {
+    "attribute": "Valve Nomenclature",
+    "rules": [
+      "Figure C.1 illustrates the Valve Nomenclature as per Annex C (informative)."
+    ]
+  },
+  {
+    "attribute": "Valve Material Combinations",
+    "rules": [
+      "For Material Group 1.1, the Body/Bonnet Material Abbreviation includes C-Si, C-Mn-Si, C-Mn-Si-V 3½ Ni, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A105 or A216-WCB, A350-LF2-CL1, A350-LF6-CL1, A350-LF3.",
+      "For Material Group 1.1, the Trim Material CN Designation is 8, 8A, 8, 8A, 10, 10, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B7/2H, B7M/2HM, B8M-CL2/8M bcd, B8M-CL2/8M bcd.",
+      "For Material Group 1.2, the Body/Bonnet Material Abbreviation includes C-Mn-Si, C-Mn-Si-V, 2½Ni, 3½Ni, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A216-WCC, A352-LCC, A350-LF6-CL2, A352-LC2, A352-LC3.",
+      "For Material Group 1.2, the Trim Material CN Designation is 8, 8A, 8, 8A, 10, 10, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B7/2H, B7M/2HM, B8M-CL2/8M bcd, B8M-CL2/8M bcd.",
+      "For Material Group 1.3, the Body/Bonnet Material Abbreviation includes C-Si C-½Mo, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A352-LCB, A217-WC1, A352-LC1.",
+      "For Material Group 1.3, the Trim Material CN Designation is 8, 8A, 8, 8A, 10, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B7/2H, B7M/2HM, B7/2H, B7M/2HM, B8M-CL2/8M bcd.",
+      "For Material Group 1.4, the Body/Bonnet Material Abbreviation includes C-Mn-Si, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A350-LF1.",
+      "For Material Group 1.4, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B7/2H, B7M/2HM.",
+      "For Material Group 1.5, the Body/Bonnet Material Abbreviation includes C-½Mo, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A182-F1.",
+      "For Material Group 1.5, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B7/2H, B7M/2HM.",
+      "For Material Group 1.7, the Body/Bonnet Material Abbreviation includes 1½Cr-½Mo, NI-½Cr-½Mo, ¾Ni-¾Cr-1Mo, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A182-F2, A217-WC4, A217-WC5.",
+      "For Material Group 1.7, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B7/2H, B7M/2HM.",
+      "For Material Group 1.9, the Body/Bonnet Material Abbreviation includes 1¼Cr-½Mo, 1¼Cr-½Mo-Si, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A217-WC6, A182-F11-CL2.",
+      "For Material Group 1.9, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B16/8M e.",
+      "For Material Group 1.10, the Body/Bonnet Material Abbreviation includes 2½Cr-1Mo, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A182-F22-CL3, A217-WC9.",
+      "For Material Group 1.10, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B16/8M e.",
+      "For Material Group 1.13, the Body/Bonnet Material Abbreviation includes 5Cr-½Mo, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A182-F5a or A217-C5.",
+      "For Material Group 1.13, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B16/8M e.",
+      "For Material Group 1.14, the Body/Bonnet Material Abbreviation includes 9Cr-1 Mo, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A182-F9 or A217-C12.",
+      "For Material Group 1.14, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B16/8M e.",
+      "For Material Group 1.15, the Body/Bonnet Material Abbreviation includes 9Cr-1Mo-V, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A182-F91 or A217-C12A.",
+      "For Material Group 1.15, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B16/8M e.",
+      "For Material Group 1.17, the Body/Bonnet Material Abbreviation includes 1Cr-½Mo 5Cr-½Mo, and the corresponding Body, Bonnet, and Cover ASTM Specification includes A182-F12-CL2, A182-F5.",
+      "For Material Group 1.17, the Trim Material CN Designation is 8, and the Body to Bonnet and Body to Cover Bolting ASTM Specification is B16/8M e."
+    ]
+  },
+  {
+    "attribute": "Material Group ASME B16.34",
+    "rules": [
+      "Material Group ASME B16.34 2.1 corresponds to Body/Bonnet Material Abbreviation 18Cr-8Ni and Body, Bonnet, and Cover ASTM Specification A182-F304/A351-CF3, A182-F304H/A351-CF8.",
+      "Material Group ASME B16.34 2.2 corresponds to Body/Bonnet Material Abbreviation 16Cr-12Ni-2Mo, 18Cr-8Ni, 18CR-13Ni-3Mo, 19Cr-10Ni-3Mo and Body, Bonnet, and Cover ASTM Specification A182-F316 or A351-CF3M, A182-F316H or A351-CF8M, A351-CF3A or A351-CF8A, A182-F317, A351-CG8M.",
+      "Material Group ASME B16.34 2.3 corresponds to Body/Bonnet Material Abbreviation 18Cr-8Ni, 16Cr-12Ni-2Mo and Body, Bonnet, and Cover ASTM Specification A182-F304L, A182-F316L.",
+      "Material Group ASME B16.34 2.4 corresponds to Body/Bonnet Material Abbreviation 18Cr-10Ni-Ti and Body, Bonnet, and Cover ASTM Specification A182-F321, A182-F321H.",
+      "Material Group ASME B16.34 2.5 corresponds to Body/Bonnet Material Abbreviation 18Cr-10Ni-Cb and Body, Bonnet, and Cover ASTM Specification A182-F347H, A182-F347, A182-F348, A182-F348H.",
+      "Material Group ASME B16.34 2.7 corresponds to Body/Bonnet Material Abbreviation 25Cr-20Ni and Body, Bonnet, and Cover ASTM Specification A182-F310.",
+      "Material Group ASME B16.34 2.8 corresponds to Body/Bonnet Material Abbreviation 20Cr-18Ni-6Mo, 22Cr-5Ni-3Mo-N, 25Cr-7Ni-4Mo-N, 24Cr-10Ni-4Mo-V, 25Cr-5Ni-2Mo-3Cu, 25Cr-7Ni-3.5MO-W-Cb, 25Cr-7Ni-3.5Mo-N-Cu-W and Body, Bonnet, and Cover ASTM Specification A182-F44, A351-CK3MCuN, A182-F51, A182-F53, A351-CE8MN, A351-CD4MCu, A351-CD3MWCuN, A182-F55.",
+      "Material Group ASME B16.34 2.10 corresponds to Body/Bonnet Material Abbreviation 25Cr-12Ni and Body, Bonnet, and Cover ASTM Specification A351-CH8, A351-CH20.",
+      "Material Group ASME B16.34 2.11 corresponds to Body/Bonnet Material Abbreviation 18Cr-10Ni-Cb and Body, Bonnet, and Cover ASTM Specification A351-CF8C.",
+      "Material Group ASME B16.34 2.12 corresponds to Body/Bonnet Material Abbreviation 25Cr-20Ni and Body, Bonnet, and Cover ASTM Specification A351-CK20."
+    ]
+  },
+  {
+    "attribute": "Body/Bonnet Material Abbreviation",
+    "rules": [
+      "Body/Bonnet Material Abbreviation 18Cr-8Ni corresponds to Material Group ASME B16.34 2.1 and Trim Material CN Designation Note f.",
+      "Body/Bonnet Material Abbreviation 16Cr-12Ni-2Mo, 18Cr-8Ni, 18CR-13Ni-3Mo, 19Cr-10Ni-3Mo corresponds to Material Group ASME B16.34 2.2 and Trim Material CN Designation 10.",
+      "Body/Bonnet Material Abbreviation 18Cr-8Ni, 16Cr-12Ni-2Mo corresponds to Material Group ASME B16.34 2.3 and Trim Material CN Designation 10.",
+      "Body/Bonnet Material Abbreviation 18Cr-10Ni-Ti corresponds to Material Group ASME B16.34 2.4 and Trim Material CN Designation 10.",
+      "Body/Bonnet Material Abbreviation 18Cr-10Ni-Cb corresponds to Material Group ASME B16.34 2.5 and Trim Material CN Designation 10.",
+      "Body/Bonnet Material Abbreviation 25Cr-20Ni corresponds to Material Group ASME B16.34 2.7 and Trim Material CN Designation 10.",
+      "Body/Bonnet Material Abbreviation 20Cr-18Ni-6Mo, 22Cr-5Ni-3Mo-N, 25Cr-7Ni-4Mo-N, 24Cr-10Ni-4Mo-V, 25Cr-5Ni-2Mo-3Cu, 25Cr-7Ni-3.5MO-W-Cb, 25Cr-7Ni-3.5Mo-N-Cu-W corresponds to Material Group ASME B16.34 2.8 and Trim Material CN Designation Note f.",
+      "Body/Bonnet Material Abbreviation 25Cr-12Ni corresponds to Material Group ASME B16.34 2.10 and Trim Material CN Designation Note f.",
+      "Body/Bonnet Material Abbreviation 18Cr-10Ni-Cb corresponds to Material Group ASME B16.34 2.11 and Trim Material CN Designation Note f.",
+      "Body/Bonnet Material Abbreviation 25Cr-20Ni corresponds to Material Group ASME B16.34 2.12 and Trim Material CN Designation Note f."
+    ]
+  },
+  {
+    "attribute": "Body, Bonnet, and Cover ASTM Specification",
+    "rules": [
+      "Body, Bonnet, and Cover ASTM Specification A182-F304/A351-CF3, A182-F304H/A351-CF8 corresponds to Material Group ASME B16.34 2.1.",
+      "Body, Bonnet, and Cover ASTM Specification A182-F316 or A351-CF3M, A182-F316H or A351-CF8M, A351-CF3A or A351-CF8A, A182-F317, A351-CG8M corresponds to Material Group ASME B16.34 2.2.",
+      "Body, Bonnet, and Cover ASTM Specification A182-F304L, A182-F316L corresponds to Material Group ASME B16.34 2.3.",
+      "Body, Bonnet, and Cover ASTM Specification A182-F321, A182-F321H corresponds to Material Group ASME B16.34 2.4.",
+      "Body, Bonnet, and Cover ASTM Specification A182-F347H, A182-F347, A182-F348, A182-F348H corresponds to Material Group ASME B16.34 2.5.",
+      "Body, Bonnet, and Cover ASTM Specification A182-F310 corresponds to Material Group ASME B16.34 2.7.",
+      "Body, Bonnet, and Cover ASTM Specification A182-F44, A351-CK3MCuN, A182-F51, A182-F53, A351-CE8MN, A351-CD4MCu, A351-CD3MWCuN, A182-F55 corresponds to Material Group ASME B16.34 2.8.",
+      "Body, Bonnet, and Cover ASTM Specification A351-CH8, A351-CH20 corresponds to Material Group ASME B16.34 2.10.",
+      "Body, Bonnet, and Cover ASTM Specification A351-CF8C corresponds to Material Group ASME B16.34 2.11.",
+      "Body, Bonnet, and Cover ASTM Specification A351-CK20 corresponds to Material Group ASME B16.34 2.12."
+    ]
+  },
+  {
+    "attribute": "Trim Material CN Designation",
+    "rules": [
+      "Trim Material CN Designation Note f corresponds to Material Group ASME B16.34 2.1, 2.8, 2.10, 2.11, 2.12.",
+      "Trim Material CN Designation 10 corresponds to Material Group ASME B16.34 2.2, 2.3, 2.4, 2.5, 2.7."
+    ]
+  },
+  {
+    "attribute": "Body to Bonnet and Body to Cover Bolting ASTM Specification a",
+    "rules": [
+      "Body to Bonnet and Body to Cover Bolting ASTM Specification a B8M-CL2/8M c d corresponds to Material Group ASME B16.34 2.1, 2.2, 2.3, 2.4, 2.5, 2.7, 2.8, 2.10, 2.11, 2.12."
+    ]
+  },
+  {
+    "attribute": "Bolting Material Equivalency",
+    "rules": [
+      "For ASTM bolting material A193 B7, the corresponding EN 10269 bolting material grade is 42CrMo4 (1.7225)—QT.",
+      "For ASTM bolting material A193 B16, the corresponding EN 10269 bolting material grade is 40CrMoV4-6 (1.7711)—QT.",
+      "For ASTM bolting material A193 B8M, CL 2, the corresponding EN 10269 bolting material grade is X5CrNiMo 17-12-2 (1.4401)—C700.",
+      "For ASTM bolting material A194 2H, the corresponding EN 10269 bolting material grade is C45E (1.1191)—QT.",
+      "For ASTM bolting material A194 8M, the corresponding EN 10269 bolting material grade is X5CrNiMo 17-12-2 (1.4401)—AT.",
+      "For ASTM bolting material A193 B8M2, CL 2B, the corresponding EN 10269 bolting material grade is X5CrNiMo 17-12-2 (1.4401)—C700.",
+      "For ASTM bolting material A193 B8M3, CL 2C, the corresponding EN 10269 bolting material grade is X5CrNiMo 17-12-2 (1.4401)—C700.",
+      "For ASTM bolting material A193 B8M, CL 1, the corresponding EN 10269 bolting material grade is X5CrNiMo 17-12-2 (1.4401)—AT.",
+      "For ASTM bolting material A193 B8MA, CL 1A, the corresponding EN 10269 bolting material grade is X5CrNiMo 17-12-2 (1.4401)—AT.",
+      "For ASTM bolting material A193 B8, CL 1, the corresponding EN 10269 bolting material grade is X5CrNi 18-10 (1.4301)—AT.",
+      "For ASTM bolting material A193 B8A, CL 1A, the corresponding EN 10269 bolting material grade is X5CrNi 18-10 (1.4301)—AT.",
+      "For ASTM bolting material A193, B8 CL 2, the corresponding EN 10269 bolting material grade is X5CrNi 18-10 (1.4301)—C700.",
+      "For ASTM bolting material A320, L7, the corresponding EN 10269 bolting material grade is 42CrMo4 (1.7225)—QT.",
+      "For ASTM bolting material A194 GR 8, the corresponding EN 10269 bolting material grade is X5CrNi 18-10 (1.4301)—AT.",
+      "For ASTM bolting material A194 GR 4, the corresponding EN 10269 bolting material grade is 42CrMo4 (1.7225)—QT.",
+      "For ASTM bolting material A194 GR 7, the corresponding EN 10269 bolting material grade is 42CrMo4 (1.7225)—QT."
+    ]
+  },
+  {
+    "attribute": "Temperature Limitations",
+    "rules": [
+      "Temperature limitations applicable for ASTM bolting materials, as specified in the table notes for Table D.2, also apply to their corresponding substitute EN bolting materials."
+    ]
+  },
+  {
+    "attribute": "Bibliography Entries",
+    "rules": [
+      "The document references ASME B1.20.1, Pipe Threads, General Purpose (Inch).",
+      "The document references ASME B16.11, Forged Steel Fittings, Socket-Welding and Threaded.",
+      "The document references ASME B36.10M, Welded and Seamless Wrought Steel Pipe.",
+      "The document references ASME Boiler and Pressure Vessel Code (BPVC), Section IX: Welding and Brazing Qualifications.",
+      "The document references ASTM A193, Standard Specification for Alloy-Steel and Stainless Steel Bolting Materials for High Temperature of High Pressure Service and Other Special Purpose Applications.",
+      "The document references ASTM A194, Standard Specification for Carbon and Alloy Steel Nuts for Bolts for High Pressure or High Temperature Service, or Both.",
+      "The document references ASTM A307, Standard Specification for Carbon Steel Bolts and Studs, 60 000 PSI Tensile Strength.",
+      "The document references ASTM A320, Standard Specification for Alloy-Steel and Stainless Steel Bolting for Low-Temperature Service.",
+      "The document references EN 1092-1, Flanges and their joints—Circular flanges for pipes, valves, fittings and accessories, PN designated—Part 1: Steel flanges.",
+      "The document references ISO 7-1, Pipe threads where pressure-tight joints are made on the threads—Part 1: Dimensions, tolerances and designation.",
+      "The document references ISO 6708, Pipework components—Definition and selection of DN (nominal size).",
+      "The document references ISO 9606-1, Approval testing of welders—Fusion welding—Part 1: Steels.",
+      "The document references ISO 15607, Specification and qualification of welding procedures for metallic materials—General rules.",
+      "The document references MSS SP-55, Quality Standard for Steel Castings for Valves, Flanges and Fittings and Other Piping Components — Visual Method for Evaluation of Surface Irregularities.",
+      "The document references NACE MR0103, Materials Resistant to Sulfide Stress Cracking in Corrosive Petroleum Refining Environments."
+    ]
+  },
+  {
+    "attribute": "Publisher and Contact Information",
+    "rules": [
+      "ASTM International is located at 100 Barr Harbor Drive, West Conshohocken, Pennsylvania 19428, with website www.astm.org.",
+      "European Committee for Standardization is located at Avenue Marnix 17, B-1000, Brussels, Belgium, with website www.cen.eu.",
+      "NACE International (formerly the National Association of Corrosion Engineers) is located at 1440 South Creek Drive, Houston, Texas 77084-4906, with website www.nace.org."
+    ]
+  },
+  {
+    "attribute": "Document Metadata",
+    "rules": [
+      "The document is sourced from page 41, as indicated by the source_page_index field.",
+      "The detected angle of the document is 0 degrees.",
+      "The confidence level of the document's detection is 10.57.",
+      "The document contains a block of text identifying the publisher as 'energy API AMERICAN PETROLEUM INSTITUTE'.",
+      "The document includes contact information for the American Petroleum Institute, including the address: 1220 L Street, NW, Washington, DC 20005-4070, USA.",
+      "The document provides a phone number: 202-682-8000.",
+      "The document indicates that additional copies are available online at www.api.org/pubs.",
+      "The document lists a toll-free phone order number: 1-800-854-7179 (U.S. and Canada).",
+      "The document lists a local/international phone order number: 303-397-7956.",
+      "The document lists a fax order number: 303-397-2740.",
+      "The document provides a web address for information about API publications, programs, and services: www.api.org.",
+      "The document includes a product number: C60013.",
+      "The document states that it is copyrighted by the American Petroleum Institute.",
+      "The document indicates that it is provided by IHS under license with API.",
+      "The document includes a restriction: 'No reproduction or networking permitted without license from IHS'."
+    ]
+  }
+]

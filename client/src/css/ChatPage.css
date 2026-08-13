@@ -1,0 +1,15 @@
+.chatPage {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 97vh;
+    align-items: center;
+}
+
+.ListBubles {
+    margin-bottom: 30px;
+    width: 800px;
+    background-color: white;
+    flex: 1;
+    overflow-y: auto;
+}
