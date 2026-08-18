@@ -12,4 +12,6 @@
     background-color: white;
     flex: 1;
     overflow-y: auto;
+    background-color: #E6E6FA;
+    border-radius: 15px;
 }

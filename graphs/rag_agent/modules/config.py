@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -10,19 +9,17 @@ from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 import json
 
-# Загружаем .env один раз при импорте config
+BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 
 @dataclass(frozen=True)
 class Settings:
     """Статические настройки приложения."""
-    base_dir: Path = Path(".")
-    input_excel_path: Path = Path("test_attributes.xlsx")
-    output_excel_path: Path = Path("test_first_phase_table2.xlsx")
-    rules_json_path: Path = Path("rules.json")
-    rules_txt_path: Path = Path("rules.txt")
-    vector_store_path: Path = Path("vector_store.json")
+    base_dir: Path = BASE_DIR
+    rules_json_path: Path = BASE_DIR / "data" / "input" / "rules.json"
+    rules_txt_path: Path = BASE_DIR / "data" / "input" / "rules.txt"
+    vector_store_path: Path = BASE_DIR / "data" / "input" / "vector_store.json"
 
     chat_model: str = "gpt-4o"
     router_model: str = "gpt-4o-mini"
@@ -32,12 +29,12 @@ class Settings:
 
 @dataclass
 class AppConfig:
-    """Runtime-зависимости, которые передаются в граф."""
+    """Runtime-зависимости, общие для всех запросов (без пользовательских данных)."""
     settings: Settings
-    data_frame: pd.DataFrame
     store: InMemoryVectorStore
     model: ChatOpenAI
     router_model: ChatOpenAI
+    data_frame: pd.DataFrame | None = None
 
 
 def load_rules(settings: Settings) -> dict[str, str]:
@@ -86,7 +83,6 @@ def load_vector_store(settings: Settings, rules: dict[str, str]) -> InMemoryVect
 def build_app_config(settings: Settings | None = None) -> AppConfig:
     settings = settings or Settings()
 
-    data_frame = pd.read_excel(settings.input_excel_path)
     rules = load_rules(settings)
     store = load_vector_store(settings, rules)
 
@@ -101,7 +97,6 @@ def build_app_config(settings: Settings | None = None) -> AppConfig:
 
     return AppConfig(
         settings=settings,
-        data_frame=data_frame,
         store=store,
         model=model,
         router_model=router_model,

@@ -4,8 +4,8 @@ from pathlib import Path
 
 @dataclass
 class Settings:
-    input_path_document: Path = Path("API-600.pdf")
-    RULES_STORAGE_PATH = Path("rule_groups.json")  # можно вынести в settings
+    input_path_document: Path = Path("data/input/API-600.pdf")
+    RULES_STORAGE_PATH = Path("data/output/rule_groups.json")  # можно вынести в settings
     VL_model : str = "cyankiwi/Qwen3-VL-8B-Instruct-AWQ-4bit"
     VL_url : str = "https://skillet-appealing-broken.ngrok-free.dev/v1"
     VL_api_key : str = "not-needed"

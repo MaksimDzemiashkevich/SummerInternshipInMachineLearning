@@ -19,3 +19,5 @@ langchain-mcp-adapters
 langchain-core>=1.4.0
 pandas
 sentence-transformers
+fastapi
+uvicorn
