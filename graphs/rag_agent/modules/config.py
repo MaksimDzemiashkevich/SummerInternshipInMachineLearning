@@ -18,8 +18,9 @@ class Settings:
     """Статические настройки приложения."""
     base_dir: Path = BASE_DIR
     rules_json_path: Path = BASE_DIR / "data" / "input" / "rules.json"
-    rules_txt_path: Path = BASE_DIR / "data" / "input" / "rules.txt"
+    # rules_txt_path: Path = BASE_DIR / "data" / "input" / "rules.txt"
     vector_store_path: Path = BASE_DIR / "data" / "input" / "vector_store.json"
+    rule_groups_path: Path = BASE_DIR.parent / "structured_documents" / "data" / "output" / "rule_groups.json"
 
     chat_model: str = "gpt-4o"
     router_model: str = "gpt-4o-mini"
@@ -29,7 +30,6 @@ class Settings:
 
 @dataclass
 class AppConfig:
-    """Runtime-зависимости, общие для всех запросов (без пользовательских данных)."""
     settings: Settings
     store: InMemoryVectorStore
     model: ChatOpenAI
@@ -38,24 +38,22 @@ class AppConfig:
 
 
 def load_rules(settings: Settings) -> dict[str, str]:
-
     if settings.rules_json_path.exists():
         with open(settings.rules_json_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
-    with open(settings.rules_txt_path, "r", encoding="utf-8") as f:
-        text = f.read()
+    with open(settings.rule_groups_path, "r", encoding="utf-8") as f:
+        groups: list[dict] = json.load(f)
 
-    chunks = text.split("\n\n\n")[2:]
     rules: dict[str, str] = {}
+    for group in groups:
+        header = group["attribute"].strip()
+        body = "\n".join(rule.strip() for rule in group.get("rules", []))
 
-    for chunk in chunks:
-        parts = chunk.split("\n\n")
-        if len(parts) < 2:
-            continue
-        header = parts[0].strip()
-        body = parts[1].strip()
-        rules[header] = body
+        if header in rules:
+            rules[header] = rules[header] + "\n" + body
+        else:
+            rules[header] = body
 
     with open(settings.rules_json_path, "w", encoding="utf-8") as f:
         json.dump(rules, f, ensure_ascii=False, indent=2)
