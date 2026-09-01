@@ -51,7 +51,7 @@ const MessageInput = ({ onSend }) => {
             return;
         }
 
-        const fileItem = items[0]; // берём первый файл — эндпоинт принимает один
+        const fileItem = items[0];
         const formData = new FormData();
         formData.append('file', fileItem.originFileObj);
 
@@ -76,10 +76,9 @@ const MessageInput = ({ onSend }) => {
         axios
             .post(API_URL, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                responseType: 'blob', // ждём excel-файл в ответе, не JSON
+                responseType: 'blob',
             })
             .then((response) => {
-                // сервер отдаёт excel — сразу скачиваем его
                 const blob = new Blob([response.data], {
                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 });
@@ -89,7 +88,7 @@ const MessageInput = ({ onSend }) => {
                 onSend({
                     key: `msg_${Date.now()}_reply`,
                     role: 'ai',
-                    content: 'Файл обработан, результат скачан.',
+                    content: 'Файл обработан.',
                     attachments: [
                         {
                             uid: `result_${Date.now()}`,

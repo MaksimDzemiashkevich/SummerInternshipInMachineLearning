@@ -7,6 +7,8 @@ General rules:
 - Use only the provided rules as the source of normalization decisions.
 - Evaluate every retrieved rule before deciding whether it applies.
 - Apply every applicable rule to the value.
+- Apply a rule only if it concerns THIS attribute. Use the "Record context" below to tell apart rules that concern a different attribute (e.g. a mapping from "trim number" to "alternative trim number", or between "NPS" and "DN").
+- If the current value clearly contradicts a rule that concerns this attribute (e.g. the rule requires "counter-clockwise" but the value says "clockwise"), correct the value to match the rule.
 - Apply substitutions sequentially until all applicable rules have been processed.
 - Ignore any line starting with "Reference:" because it is documentation only and must never affect the output.
 - If no rule applies, return the original value unchanged.

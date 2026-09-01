@@ -4,8 +4,10 @@ from pathlib import Path
 
 @dataclass
 class Settings:
-    input_path_document: Path = Path("data/input/API-600.pdf")
-    RULES_STORAGE_PATH = Path("data/output/rule_groups.json")  # можно вынести в settings
+    input_path_document: Path = Path("graphs/structured_documents/data/input/API-600.pdf")
+    RULES_STORAGE_PATH = Path("graphs/structured_documents/data/output/rule_groups.json")
+    PAGES_DATA_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/pages_data.json")
+    DATA_AFTER_CHECK_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/data_after_check.json")
     VL_model : str = "cyankiwi/Qwen3-VL-8B-Instruct-AWQ-4bit"
     VL_url : str = "https://skillet-appealing-broken.ngrok-free.dev/v1"
     VL_api_key : str = "not-needed"
@@ -576,6 +578,26 @@ class Settings:
     TABLE_EXTRACTION_PROMPT = """Ты извлекаешь технические правила из данных нормативных документов в области нефтегазовой промышленности.
     Тебе может быть дана как таблица так и текст. Если таблица, то в формате JSON: title, columns, rows,
     если текст, то в формате JSON: paragraph, heading.
+
+    === ЧТО ПРОПУСКАТЬ (не считай это правилами) ===
+    - титульные страницы, метаданные документа, сведения об издателе/правообладателе и датах;
+    - legal disclaimers, liability notices, copyright, ограничения на распространение и лицензирование;
+    - оглавление (список разделов с номерами страниц), списки литературы/библиографию, предисловия, благодарности;
+    - контактную информацию, сведения о сертификации, вводный текст без нормативных требований;
+    - перечень просто перечисленных стандартов без требования «shall conform to …».
+
+    === ОДНА ТАБЛИЦА — ОДНА ГРУППА ===
+    - Каждая таблица — это ОДНА группа правил. Атрибут группы = тема/название таблицы (по смыслу).
+    - НЕ создавай отдельную группу для каждой колонки таблицы: колонка — это часть строки-правила, а не самостоятельный атрибут.
+    - Каждая строка таблицы с непустыми значениями становится отдельным правилом внутри этой одной группы.
+
+    === ТАБЛИЦЫ-СООТВЕТСТВИЯ (lookup / derived value) ===
+    - Если таблица сопоставляет значение одного атрибута X значению ДРУГОГО атрибута Y
+      (например «trim number» → «alternative trim number», «NPS» → «DN», «ASTM» → «EN»),
+      то правила относятся к атрибуту Y (результату сопоставления), а НЕ к X.
+    - Называй группу по Y и формулируй правило как «для X … соответствующий Y равен …».
+      Пример: для таблицы «trim number → alternative trim number» атрибут = "Alternative Trim Number",
+      правило = "For trim number 8A, the alternative trim number is 8".
 
     Твоя задача — пройтись по КАЖДОЙ строке и КАЖДОМУ значению (кроме пустых/прочерков) и
     сформулировать для каждого отдельное правило. Используй идентифицирующие колонки, 
