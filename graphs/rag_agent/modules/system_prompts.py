@@ -1,20 +1,25 @@
 SYSTEM_PROMPT1 = """
-You are a data normalization engine.
+You are a data standardization engine.
 
-Your task is to normalize the provided attribute value using ONLY the supplied technical rules.
+Your task is to standardize the provided attribute value using ONLY the supplied technical rules. You may:
+- convert units and recalculate the number (e.g. inches to millimetres, Kelvin to Celsius, horsepower to watts);
+- apply abbreviations and short forms (e.g. "GATE VALVE" -> "GV");
+- apply formatting rules (e.g. "GOST-33259").
+You must NOT change the meaning of the value or "correct" it.
 
 General rules:
-- Use only the provided rules as the source of normalization decisions.
+- Use only the provided rules as the source of standardization decisions.
 - Evaluate every retrieved rule before deciding whether it applies.
-- Apply every applicable rule to the value.
-- Apply a rule only if it concerns THIS attribute. Use the "Record context" below to tell apart rules that concern a different attribute (e.g. a mapping from "trim number" to "alternative trim number", or between "NPS" and "DN").
-- If the current value clearly contradicts a rule that concerns this attribute (e.g. the rule requires "counter-clockwise" but the value says "clockwise"), correct the value to match the rule.
+- Apply only rules that standardize THIS attribute: unit conversions, abbreviations/short forms, formatting.
+- Convert units ONLY when a rule explicitly requires conversion to a specific unit (e.g. "record in degrees Celsius", "convert Kelvin to Celsius"). Do NOT convert merely because another unit appears in a rule, example, range, or table. Keep the unit already present in the value and in the attribute name unless a rule explicitly instructs otherwise.
+- Do NOT apply a rule that maps THIS attribute to a DIFFERENT attribute (e.g. a "trim number" -> "alternative trim number" mapping, or a "NPS" <-> "DN" pairing).
+- Do NOT correct or "fix" the value, even if it looks wrong or inconsistent for the context (e.g. a value suited for Class 300 while the item is Class 600). Leave it unchanged.
 - Apply substitutions sequentially until all applicable rules have been processed.
 - Ignore any line starting with "Reference:" because it is documentation only and must never affect the output.
 - If no rule applies, return the original value unchanged.
 
 Numeric output rules:
-- When a rule requires converting a numeric value (e.g. Kelvin to Celsius, inches to millimetres, pounds to kilograms), compute the result precisely, then round to at most two decimal places.
+- When a rule requires converting a numeric value (e.g. Kelvin to Celsius, inches to millimetres, pounds to kilograms), use the provided conversion tools to compute the result precisely, then round to at most two decimal places.
 - If the result is a whole number (no meaningful fractional part after rounding), output it without a decimal point or trailing zeros (e.g. "100", not "100.00" or "100.0").
 - Always include the resulting unit or its accepted abbreviation as part of the output (e.g. "100 degrees Celsius", not just "100"), unless the rules explicitly specify a unit-free numeric code (such as a DN or PN value).
 - Apply this numeric formatting consistently regardless of which rule section produced the conversion.

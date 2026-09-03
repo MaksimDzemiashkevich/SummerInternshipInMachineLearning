@@ -2,12 +2,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import json
 import pandas as pd
+
 from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-import json
+
+from .tools import array_of_tools
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
@@ -18,7 +21,6 @@ class Settings:
     """Статические настройки приложения."""
     base_dir: Path = BASE_DIR
     rules_json_path: Path = BASE_DIR / "data" / "input" / "rules.json"
-    # rules_txt_path: Path = BASE_DIR / "data" / "input" / "rules.txt"
     vector_store_path: Path = BASE_DIR / "data" / "input" / "vector_store.json"
     rule_groups_path: Path = BASE_DIR.parent / "structured_documents" / "data" / "output" / "rule_groups.json"
 
@@ -26,6 +28,8 @@ class Settings:
     router_model: str = "gpt-4o-mini"
     embedding_model: str = "text-embedding-3-large"
     temperature: float = 0.0
+    # Для reasoning-моделей (gpt-5.6-luna) тулзы работают только при reasoning_effort="none".
+    reasoning_effort: str | None = "none"
 
 
 @dataclass
@@ -33,7 +37,7 @@ class AppConfig:
     settings: Settings
     store: InMemoryVectorStore
     model: ChatOpenAI
-    # router_model: ChatOpenAI
+    global_rules: str = ""
     data_frame: pd.DataFrame | None = None
 
 
@@ -67,28 +71,31 @@ def filter_non_rule_groups(rules: dict[str, str]) -> dict[str, str]:
     }
 
 
-def load_rules(settings: Settings) -> dict[str, str]:
-    if settings.rules_json_path.exists():
-        with open(settings.rules_json_path, "r", encoding="utf-8") as f:
-            return filter_non_rule_groups(json.load(f))
+def load_rules(settings: Settings) -> tuple[str, dict[str, str]]:
+    """Возвращает (global_rules_text, local_rules_dict).
 
+    global — правила, действующие на все атрибуты (единицы, нотация, общие принципы).
+    local  — правила конкретного атрибута, идут в векторный индекс.
+    """
     with open(settings.rule_groups_path, "r", encoding="utf-8") as f:
         groups: list[dict] = json.load(f)
 
-    rules: dict[str, str] = {}
+    global_rules: list[str] = []
+    local_rules: dict[str, str] = {}
+
     for group in groups:
-        header = group["attribute"].strip()
+        header = group.get("attribute", "").strip()
         body = "\n".join(rule.strip() for rule in group.get("rules", []))
 
-        if header in rules:
-            rules[header] = rules[header] + "\n" + body
+        if group.get("type") == "global":
+            global_rules.append(body)
         else:
-            rules[header] = body
+            if header in local_rules:
+                local_rules[header] = local_rules[header] + "\n" + body
+            else:
+                local_rules[header] = body
 
-    with open(settings.rules_json_path, "w", encoding="utf-8") as f:
-        json.dump(rules, f, ensure_ascii=False, indent=2)
-
-    return filter_non_rule_groups(rules)
+    return "\n".join(global_rules), filter_non_rule_groups(local_rules)
 
 
 def load_vector_store(settings: Settings, rules: dict[str, str]) -> InMemoryVectorStore:
@@ -96,6 +103,7 @@ def load_vector_store(settings: Settings, rules: dict[str, str]) -> InMemoryVect
 
     if settings.vector_store_path.exists():
         return InMemoryVectorStore.load(str(settings.vector_store_path), embeddings)
+
 
     store = InMemoryVectorStore(embeddings)
     docs = [
@@ -111,21 +119,19 @@ def load_vector_store(settings: Settings, rules: dict[str, str]) -> InMemoryVect
 def build_app_config(settings: Settings | None = None) -> AppConfig:
     settings = settings or Settings()
 
-    rules = load_rules(settings)
-    store = load_vector_store(settings, rules)
+    global_rules, local_rules = load_rules(settings)
+    store = load_vector_store(settings, local_rules)
 
     model = ChatOpenAI(
         model=settings.chat_model,
         temperature=settings.temperature,
-    )
-    # router_model = ChatOpenAI(
-    #     model=settings.router_model,
-    #     temperature=settings.temperature,
-    # )
+        reasoning_effort=settings.reasoning_effort,
+    ).bind_tools(array_of_tools)
+
 
     return AppConfig(
         settings=settings,
         store=store,
         model=model,
-        # router_model=router_model,
+        global_rules=global_rules,
     )

@@ -14,10 +14,13 @@ from fastapi.responses import Response
 
 from langgraph.graph import START, StateGraph, MessagesState, END
 from langchain_core.runnables import RunnableConfig
-from langchain_core.messages import RemoveMessage
+from langchain_core.messages import RemoveMessage, ToolMessage
 
 from .modules.config import AppConfig, Settings, build_app_config
 from .modules.system_prompts import SYSTEM_PROMPT1
+from .modules.tools import array_of_tools
+
+TOOLS_BY_NAME = {t.name: t for t in array_of_tools}
 
 load_dotenv()
 
@@ -36,7 +39,6 @@ class GraphState(MessagesState):
     index_row_table: int
     attribute: str
     value: str
-    context: str
     new_rows: Annotated[list[dict], add]
     data_frame: pd.DataFrame
     remaining_chunks: list[str]
@@ -82,15 +84,6 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
 
         update["attribute"] = attribute
         update["value"] = value
-
-        context_lines = []
-        for i in range(data_frame.shape[0]):
-            a = str(data_frame.iloc[i]["Attribute"])
-            v = str(data_frame.iloc[i]["Value"])
-            mark = "  <-- normalize this one" if i == state["index_row_table"] else ""
-            context_lines.append(f"- {a}: {v}{mark}")
-        update["context"] = "\n".join(context_lines)
-
         update["messages"] = [RemoveMessage(id=k.id) for k in state["messages"]]
 
         retrieved_documents = app_config.store.similarity_search(query=f"{attribute}", k=RETRIEVAL_K)
@@ -130,8 +123,6 @@ def process_chunk(state: GraphState, config: RunnableConfig) -> GraphState:
         user_content = (
             f"Attribute: {state['attribute']}\n"
             f"Value: {state['value']}\n\n"
-            f"Record context (other attributes of the same item, for disambiguation only):\n"
-            f"{state.get('context', '')}\n\n"
             f"Relevant rules:\n{current_chunk}"
         )
     else:
@@ -143,9 +134,31 @@ def process_chunk(state: GraphState, config: RunnableConfig) -> GraphState:
 
     user_msg = {"role": "user", "content": user_content}
 
-    response = app_config.model.invoke(
-        [{"role": "system", "content": SYSTEM_PROMPT1}] + state["messages"] + [user_msg]
-    )
+    system_prompt = SYSTEM_PROMPT1
+    if app_config.global_rules:
+        system_prompt = (
+            SYSTEM_PROMPT1
+            + "\n\nGlobal rules (apply to every attribute):\n"
+            + app_config.global_rules
+        )
+
+    messages = [{"role": "system", "content": system_prompt}] + state["messages"] + [user_msg]
+
+    response = app_config.model.invoke(messages)
+    while getattr(response, "tool_calls", None):
+        tool_messages = []
+        for tc in response.tool_calls:
+            tool_fn = TOOLS_BY_NAME.get(tc["name"])
+            if tool_fn is None:
+                content = "unknown tool"
+            else:
+                try:
+                    content = str(tool_fn.invoke(tc["args"]))
+                except Exception as e:
+                    content = f"error: {e}"
+            tool_messages.append(ToolMessage(content=content, tool_call_id=tc["id"]))
+        messages = messages + [response] + tool_messages
+        response = app_config.model.invoke(messages)
 
     return {
         "messages": [user_msg, response],
@@ -196,7 +209,6 @@ def run_pipeline(data_frame: pd.DataFrame, app_config: AppConfig) -> pd.DataFram
         "data_frame": data_frame,
         "remaining_chunks": [],
         "new_rows": [],
-        "context": "",
     }
     final_state = graph.invoke(
         initial_state,
