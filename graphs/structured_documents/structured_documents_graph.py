@@ -12,6 +12,7 @@ _doc_stem = settings.input_path_document.stem
 _out_dir = settings.RULES_STORAGE_PATH.parent
 _pages_cache = _out_dir / f"pages_data_{_doc_stem}.json"
 _check_cache = _out_dir / f"data_after_check_{_doc_stem}.json"
+_rules_per_doc_path = _out_dir / f"rule_groups_{_doc_stem}.json"
 
 import base64
 import fitz
@@ -228,18 +229,16 @@ grouping_llm = ChatOpenAI(
 def grouping_rules_node(state: MessagesState) -> MessagesState:
     source_data = state.get("data_after_check") or state.get("pages_data")
 
-    # Манифест: какие документы уже добавлены в rule_groups.json.
+    # Манифест: какие документы уже обработаны (каждый хранит свои правила отдельно).
     processed_docs = load_json(settings.PROCESSED_DOCS_PATH) or []
     if _doc_stem in processed_docs:
-        existing = load_json(settings.RULES_STORAGE_PATH) or []
+        existing = load_json(_rules_per_doc_path) or []
         print(f"Документ {_doc_stem!r} уже обработан — пропускаем группировку ({len(existing)} групп)")
         return {"rule_groups": existing}
 
-    # Стартуем с уже накопленных правил (от предыдущих документов) и дописываем новые.
-    all_groups: list[dict] = list(load_json(settings.RULES_STORAGE_PATH) or [])
-    known_attributes: list[str] = [
-        g["attribute"] for g in all_groups if isinstance(g, dict) and "attribute" in g
-    ]
+    # Правила каждого документа хранятся отдельно — начинаем с нуля для этого документа.
+    all_groups: list[dict] = []
+    known_attributes: list[str] = []
 
     def prepare(page):
         page_copy = dict(page)
@@ -307,8 +306,8 @@ def grouping_rules_node(state: MessagesState) -> MessagesState:
         for i in range(len(source_data)):
             call_llm([prepare(source_data[i])])
 
-    # --- сохраняем накопленный результат и помечаем документ обработанным ---
-    save_json(all_groups, settings.RULES_STORAGE_PATH)
+    # --- сохраняем правила этого документа в отдельный файл и помечаем документ обработанным ---
+    save_json(all_groups, _rules_per_doc_path)
     processed_docs.append(_doc_stem)
     save_json(processed_docs, settings.PROCESSED_DOCS_PATH)
 

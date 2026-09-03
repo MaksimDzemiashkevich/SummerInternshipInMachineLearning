@@ -67,7 +67,7 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
 
     update: dict = {}
     data_frame = state["data_frame"]
-    app_config: AppConfig = config["configurable"]["app_config"]
+    store = config["configurable"]["store"]
 
     if state["index_row_table"] != 0 and state.get("messages"):
         last_answer = state["messages"][-1].content
@@ -86,7 +86,7 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
         update["value"] = value
         update["messages"] = [RemoveMessage(id=k.id) for k in state["messages"]]
 
-        retrieved_documents = app_config.store.similarity_search(query=f"{attribute}", k=RETRIEVAL_K)
+        retrieved_documents = store.similarity_search(query=f"{attribute}", k=RETRIEVAL_K)
 
         all_chunks: list[str] = []
         for idx, doc in enumerate(retrieved_documents):
@@ -112,7 +112,8 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
 
 
 def process_chunk(state: GraphState, config: RunnableConfig) -> GraphState:
-    app_config: AppConfig = config["configurable"]["app_config"]
+    model = config["configurable"]["model"]
+    global_rules = config["configurable"]["global_rules"]
 
     chunks = state["remaining_chunks"]
     current_chunk, rest_chunks = chunks[0], chunks[1:]
@@ -135,16 +136,16 @@ def process_chunk(state: GraphState, config: RunnableConfig) -> GraphState:
     user_msg = {"role": "user", "content": user_content}
 
     system_prompt = SYSTEM_PROMPT1
-    if app_config.global_rules:
+    if global_rules:
         system_prompt = (
             SYSTEM_PROMPT1
             + "\n\nGlobal rules (apply to every attribute):\n"
-            + app_config.global_rules
+            + global_rules
         )
 
     messages = [{"role": "system", "content": system_prompt}] + state["messages"] + [user_msg]
 
-    response = app_config.model.invoke(messages)
+    response = model.invoke(messages)
     while getattr(response, "tool_calls", None):
         tool_messages = []
         for tc in response.tool_calls:
@@ -158,7 +159,7 @@ def process_chunk(state: GraphState, config: RunnableConfig) -> GraphState:
                     content = f"error: {e}"
             tool_messages.append(ToolMessage(content=content, tool_call_id=tc["id"]))
         messages = messages + [response] + tool_messages
-        response = app_config.model.invoke(messages)
+        response = model.invoke(messages)
 
     return {
         "messages": [user_msg, response],
@@ -202,7 +203,7 @@ builder.add_edge("end_node", END)
 graph = builder.compile()
 
 
-def run_pipeline(data_frame: pd.DataFrame, app_config: AppConfig) -> pd.DataFrame:
+def run_single_rule_set(data_frame: pd.DataFrame, model, store, global_rules: str) -> pd.DataFrame:
     initial_state = {
         "messages": [],
         "index_row_table": 0,
@@ -212,7 +213,7 @@ def run_pipeline(data_frame: pd.DataFrame, app_config: AppConfig) -> pd.DataFram
     }
     final_state = graph.invoke(
         initial_state,
-        config={"configurable": {"app_config": app_config}},
+        config={"configurable": {"model": model, "store": store, "global_rules": global_rules}},
     )
     return pd.DataFrame(final_state["new_rows"])
 
@@ -241,7 +242,10 @@ def process_excel(
     contents = file.file.read()
     data_frame = pd.read_excel(io.BytesIO(contents))
 
-    result_df = run_pipeline(data_frame, app_config)
+    result_df = data_frame[["Attribute", "Value"]].copy()
+    for rule_set in app_config.rule_sets:
+        col_df = run_single_rule_set(data_frame, app_config.model, rule_set.store, rule_set.global_rules)
+        result_df[rule_set.name] = col_df["Rules_Value"].to_list()
 
     output_buffer = io.BytesIO()
     result_df.to_excel(output_buffer, index=False)

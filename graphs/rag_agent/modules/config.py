@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import json
-import pandas as pd
 
 from dotenv import load_dotenv
 from langchain_core.documents import Document
@@ -20,12 +19,10 @@ load_dotenv()
 class Settings:
     """Статические настройки приложения."""
     base_dir: Path = BASE_DIR
-    rules_json_path: Path = BASE_DIR / "data" / "input" / "rules.json"
-    vector_store_path: Path = BASE_DIR / "data" / "input" / "vector_store.json"
-    rule_groups_path: Path = BASE_DIR.parent / "structured_documents" / "data" / "output" / "rule_groups.json"
+    rule_groups_dir: Path = BASE_DIR.parent / "structured_documents" / "data" / "output"
+    vector_store_dir: Path = BASE_DIR / "data" / "input"
 
     chat_model: str = "gpt-5.6-luna"
-    router_model: str = "gpt-4o-mini"
     embedding_model: str = "text-embedding-3-large"
     temperature: float = 0.0
     # Для reasoning-моделей (gpt-5.6-luna) тулзы работают только при reasoning_effort="none".
@@ -33,12 +30,18 @@ class Settings:
 
 
 @dataclass
+class RuleSet:
+    """Правила одного rule-файла: свой векторный индекс + глобальные правила."""
+    name: str
+    store: InMemoryVectorStore
+    global_rules: str
+
+
+@dataclass
 class AppConfig:
     settings: Settings
-    store: InMemoryVectorStore
     model: ChatOpenAI
-    global_rules: str = ""
-    data_frame: pd.DataFrame | None = None
+    rule_sets: list[RuleSet]
 
 
 # Attribute names that mark document front/back matter rather than technical rules.
@@ -71,15 +74,12 @@ def filter_non_rule_groups(rules: dict[str, str]) -> dict[str, str]:
     }
 
 
-def load_rules(settings: Settings) -> tuple[str, dict[str, str]]:
-    """Возвращает (global_rules_text, local_rules_dict).
+def _split_groups(groups: list[dict]) -> tuple[str, dict[str, str]]:
+    """Разбивает группы одного документа на (global_rules_text, local_rules_dict).
 
     global — правила, действующие на все атрибуты (единицы, нотация, общие принципы).
     local  — правила конкретного атрибута, идут в векторный индекс.
     """
-    with open(settings.rule_groups_path, "r", encoding="utf-8") as f:
-        groups: list[dict] = json.load(f)
-
     global_rules: list[str] = []
     local_rules: dict[str, str] = {}
 
@@ -98,29 +98,41 @@ def load_rules(settings: Settings) -> tuple[str, dict[str, str]]:
     return "\n".join(global_rules), filter_non_rule_groups(local_rules)
 
 
-def load_vector_store(settings: Settings, rules: dict[str, str]) -> InMemoryVectorStore:
+def load_vector_store(settings: Settings, rules: dict[str, str], name: str) -> InMemoryVectorStore:
+    """Строит (или грузит из кэша) векторный индекс для одного rule-файла."""
     embeddings = OpenAIEmbeddings(model=settings.embedding_model)
+    cache_path = settings.vector_store_dir / f"vector_store_{name}.json"
 
-    if settings.vector_store_path.exists():
-        return InMemoryVectorStore.load(str(settings.vector_store_path), embeddings)
-
+    if cache_path.exists():
+        return InMemoryVectorStore.load(str(cache_path), embeddings)
 
     store = InMemoryVectorStore(embeddings)
     docs = [
-        Document(page_content=header, metadata={"source": "rules.json", "text": body})
+        Document(page_content=header, metadata={"text": body})
         for header, body in rules.items()
     ]
     store.store.clear()
     store.add_documents(docs)
-    store.dump(str(settings.vector_store_path))
+    store.dump(str(cache_path))
     return store
+
+
+def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
+    """Находит все rule_groups_*.json и собирает по одному RuleSet на каждый файл."""
+    rule_sets: list[RuleSet] = []
+
+    for path in sorted(settings.rule_groups_dir.glob("rule_groups_*.json")):
+        name = path.stem[len("rule_groups_"):]
+        groups: list[dict] = json.loads(path.read_text(encoding="utf-8"))
+        global_rules, local_rules = _split_groups(groups)
+        store = load_vector_store(settings, local_rules, name)
+        rule_sets.append(RuleSet(name=name, store=store, global_rules=global_rules))
+
+    return rule_sets
 
 
 def build_app_config(settings: Settings | None = None) -> AppConfig:
     settings = settings or Settings()
-
-    global_rules, local_rules = load_rules(settings)
-    store = load_vector_store(settings, local_rules)
 
     model = ChatOpenAI(
         model=settings.chat_model,
@@ -128,10 +140,10 @@ def build_app_config(settings: Settings | None = None) -> AppConfig:
         reasoning_effort=settings.reasoning_effort,
     ).bind_tools(array_of_tools)
 
+    rule_sets = load_all_rule_sets(settings)
 
     return AppConfig(
         settings=settings,
-        store=store,
         model=model,
-        global_rules=global_rules,
+        rule_sets=rule_sets,
     )
