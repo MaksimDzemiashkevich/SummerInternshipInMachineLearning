@@ -3,6 +3,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import json
+import re
+
+from rank_bm25 import BM25Okapi
 
 from dotenv import load_dotenv
 from langchain_core.documents import Document
@@ -30,11 +33,21 @@ class Settings:
 
 
 @dataclass
+class GroupEntry:
+    """Одна группа правил: имя атрибута, алиасы и текст правил."""
+    attribute: str
+    aliases: list[str]
+    body: str
+
+
+@dataclass
 class RuleSet:
-    """Правила одного rule-файла: свой векторный индекс + глобальные правила."""
+    """Правила одного rule-файла: semantic-индекс + BM25 + список групп."""
     name: str
-    store: InMemoryVectorStore
     global_rules: str
+    store: InMemoryVectorStore
+    bm25: "BM25Okapi"
+    groups: list[GroupEntry]
 
 
 @dataclass
@@ -45,9 +58,6 @@ class AppConfig:
 
 
 # Attribute names that mark document front/back matter rather than technical rules.
-# Deliberately generic so it applies to any standards/specification document.
-# This is a best-effort safety net; the primary defense against non-normative
-# content is the extraction prompt.
 _NON_RULE_ATTRIBUTE_MARKERS = (
     "metadata",
     "copyright",
@@ -65,23 +75,18 @@ _NON_RULE_ATTRIBUTE_MARKERS = (
 )
 
 
-def filter_non_rule_groups(rules: dict[str, str]) -> dict[str, str]:
-    """Drop groups that describe document front/back matter, not technical rules."""
-    return {
-        header: body
-        for header, body in rules.items()
-        if not any(marker in header.lower() for marker in _NON_RULE_ATTRIBUTE_MARKERS)
-    }
+def _is_non_rule(header: str) -> bool:
+    return any(marker in header.lower() for marker in _NON_RULE_ATTRIBUTE_MARKERS)
 
 
-def _split_groups(groups: list[dict]) -> tuple[str, dict[str, str]]:
-    """Разбивает группы одного документа на (global_rules_text, local_rules_dict).
+def _split_groups(groups: list[dict]) -> tuple[str, list[GroupEntry]]:
+    """Разбивает группы одного документа на (global_rules_text, list[GroupEntry]).
 
-    global — правила, действующие на все атрибуты (единицы, нотация, общие принципы).
-    local  — правила конкретного атрибута, идут в векторный индекс.
+    global — правила, действующие на все атрибуты.
+    GroupEntry — local-группы с именем, алиасами и текстом правил (поиск по атрибуту).
     """
     global_rules: list[str] = []
-    local_rules: dict[str, str] = {}
+    entries: list[GroupEntry] = []
 
     for group in groups:
         header = group.get("attribute", "").strip()
@@ -90,16 +95,25 @@ def _split_groups(groups: list[dict]) -> tuple[str, dict[str, str]]:
         if group.get("type") == "global":
             global_rules.append(body)
         else:
-            if header in local_rules:
-                local_rules[header] = local_rules[header] + "\n" + body
-            else:
-                local_rules[header] = body
+            if _is_non_rule(header):
+                continue
+            aliases = [a.strip() for a in group.get("aliases", []) if a and a.strip()]
+            entries.append(GroupEntry(attribute=header, aliases=aliases, body=body))
 
-    return "\n".join(global_rules), filter_non_rule_groups(local_rules)
+    return "\n".join(global_rules), entries
 
 
-def load_vector_store(settings: Settings, rules: dict[str, str], name: str) -> InMemoryVectorStore:
-    """Строит (или грузит из кэша) векторный индекс для одного rule-файла."""
+def _search_text(entry: GroupEntry) -> str:
+    """Текст, который эмбедится и по которому строится BM25: имя + алиасы."""
+    return " | ".join([entry.attribute] + entry.aliases)
+
+
+def _tokenize(text: str) -> list[str]:
+    return re.findall(r"\w+", text.lower())
+
+
+def load_vector_store(settings: Settings, entries: list[GroupEntry], name: str) -> InMemoryVectorStore:
+    """Строит (или грузит из кэша) semantic-индекс: эмбедится имя + алиасы."""
     embeddings = OpenAIEmbeddings(model=settings.embedding_model)
     cache_path = settings.vector_store_dir / f"vector_store_{name}.json"
 
@@ -108,8 +122,8 @@ def load_vector_store(settings: Settings, rules: dict[str, str], name: str) -> I
 
     store = InMemoryVectorStore(embeddings)
     docs = [
-        Document(page_content=header, metadata={"text": body})
-        for header, body in rules.items()
+        Document(page_content=_search_text(e), metadata={"text": e.body, "index": i})
+        for i, e in enumerate(entries)
     ]
     store.store.clear()
     store.add_documents(docs)
@@ -118,17 +132,43 @@ def load_vector_store(settings: Settings, rules: dict[str, str], name: str) -> I
 
 
 def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
-    """Находит все rule_groups_*.json и собирает по одному RuleSet на каждый файл."""
+    """Находит все <doc_dir>/rule_groups.json и собирает RuleSet на каждый документ."""
     rule_sets: list[RuleSet] = []
 
-    for path in sorted(settings.rule_groups_dir.glob("rule_groups_*.json")):
-        name = path.stem[len("rule_groups_"):]
+    for path in sorted(settings.rule_groups_dir.glob("*/rule_groups.json")):
+        name = path.parent.name
         groups: list[dict] = json.loads(path.read_text(encoding="utf-8"))
-        global_rules, local_rules = _split_groups(groups)
-        store = load_vector_store(settings, local_rules, name)
-        rule_sets.append(RuleSet(name=name, store=store, global_rules=global_rules))
+        global_rules, entries = _split_groups(groups)
+        if not entries:
+            continue
+        store = load_vector_store(settings, entries, name)
+        corpus = [_tokenize(_search_text(e)) for e in entries]
+        bm25 = BM25Okapi(corpus)
+        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries))
 
     return rule_sets
+
+
+def hybrid_search(rule_set: RuleSet, query: str, top_k: int = 4,
+                  k_semantic: int = 8, k_bm25: int = 8) -> list[str]:
+    """Гибридный поиск: semantic + BM25, слияние через RRF. Возвращает тела правил."""
+    # semantic
+    sem_docs = rule_set.store.similarity_search(query, k=k_semantic)
+    sem_ranks = [(d.metadata.get("index", -1), rank) for rank, d in enumerate(sem_docs, start=1)]
+
+    # bm25
+    scores = rule_set.bm25.get_scores(_tokenize(query))
+    order = sorted(range(len(scores)), key=lambda i: -scores[i])
+    bm25_ranks = [(i, rank) for rank, i in enumerate(order[:k_bm25], start=1)]
+
+    # RRF
+    rrf: dict[int, float] = {}
+    for idx, rank in sem_ranks + bm25_ranks:
+        if 0 <= idx < len(rule_set.groups):
+            rrf[idx] = rrf.get(idx, 0.0) + 1.0 / (60 + rank)
+
+    top = sorted(rrf.items(), key=lambda kv: -kv[1])[:top_k]
+    return [rule_set.groups[i].body for i, _ in top]
 
 
 def build_app_config(settings: Settings | None = None) -> AppConfig:

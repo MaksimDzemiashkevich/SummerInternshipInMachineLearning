@@ -607,6 +607,9 @@ class Settings:
 - «DN → DN; DN 80 → DN80» → type="local", attribute="dn";
 - «NPS → NPS; NPS 3 → NPS3» → type="local", attribute="nps".
 
+=== АЛИАСЫ (для local-групп) ===
+Для каждой local-группы сгенерируй поле aliases — список терминов/синонимов/аббревиатур, которые типично покрывает эта группа в нефтегазовой терминологии. Пример: для группы «class» — «grade», «rating», «PN», «pressure rating», «class designation». Дай 3–8 коротких терминов (не предложений).
+
 === ЧТО ПРОПУСКАТЬ ===
 - титульные страницы, метаданные, сведения об издателе/правообладателе/датах;
 - legal disclaimers, liability notices, copyright;
@@ -620,4 +623,22 @@ class Settings:
 
 Верни ТОЛЬКО валидный JSON без markdown и пояснений:
 
-{"groups": [{"attribute": "trim", "type": "local", "rules": ["..."]}, {"attribute": "Global", "type": "global", "rules": ["..."]}]}"""
+{"groups": [{"attribute": "trim", "type": "local", "aliases": ["trim number", "trim code"], "rules": ["..."]}, {"attribute": "Global", "type": "global", "rules": ["..."]}]}"""
+
+    CLUSTERING_PROMPT: str = """Ты группируешь названия атрибутов в родительские темы.
+
+На вход — список названий атрибутов. Сгруппируй в одну родительскую тему ТОЛЬКО те атрибуты, у которых есть ОБЩЕЕ существительное (одно и то же слово). Примеры:
+- «class», «line class», «operating class», «service class» → родитель «class» (общее слово «class»);
+- «temperature», «temperature range» → родитель «temperature» (общее слово «temperature»);
+- «category», «handling category» → родитель «category».
+
+НЕ группируй по теме/смыслу, если общего слова НЕТ. Например «dn», «nps», «size» — общего существительного нет, оставляй каждый сам себе родителем. Не выдумывай обобщающее имя.
+
+Правила:
+- Каждый атрибут относится ровно к одному родителю.
+- Родитель = общее существительное (слово из названий).
+- Если у атрибута нет общего существительного с другими — он сам себе родитель.
+
+Верни ТОЛЬКО валидный JSON без markdown и пояснений:
+
+{"parents": [{"name": "class", "attributes": ["class", "line class", "operating class"]}]}"""

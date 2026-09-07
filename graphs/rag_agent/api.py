@@ -16,7 +16,7 @@ from langgraph.graph import START, StateGraph, MessagesState, END
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import RemoveMessage, ToolMessage
 
-from .modules.config import AppConfig, Settings, build_app_config
+from .modules.config import AppConfig, Settings, build_app_config, hybrid_search
 from .modules.system_prompts import SYSTEM_PROMPT1
 from .modules.tools import array_of_tools
 
@@ -67,7 +67,7 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
 
     update: dict = {}
     data_frame = state["data_frame"]
-    store = config["configurable"]["store"]
+    rule_set = config["configurable"]["rule_set"]
 
     if state["index_row_table"] != 0 and state.get("messages"):
         last_answer = state["messages"][-1].content
@@ -86,17 +86,14 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
         update["value"] = value
         update["messages"] = [RemoveMessage(id=k.id) for k in state["messages"]]
 
-        retrieved_documents = store.similarity_search(query=f"{attribute}", k=RETRIEVAL_K)
+        query = f"{attribute} {value}"
+        rule_bodies = hybrid_search(rule_set, query, top_k=RETRIEVAL_K)
 
         all_chunks: list[str] = []
-        for idx, doc in enumerate(retrieved_documents):
-            doc_text = doc.metadata.get("text", doc.page_content)
-            doc_chunks = split_into_sentence_chunks(doc_text, SENTENCES_PER_CHUNK)
+        for idx, body in enumerate(rule_bodies):
+            doc_chunks = split_into_sentence_chunks(body, SENTENCES_PER_CHUNK)
             all_chunks.extend(doc_chunks)
-            logger.info(
-                "  [SEARCH] Doc %d/%d (%r): %r",
-                idx + 1, len(retrieved_documents), doc.page_content[:], doc_text
-            )
+            logger.info("  [SEARCH] Rule %d/%d: %r", idx + 1, len(rule_bodies), body[:120])
 
         if not all_chunks:
             all_chunks = ["No relevant rules were found in the knowledge base for this attribute."]
@@ -104,8 +101,8 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
         update["remaining_chunks"] = all_chunks
         logger.info("=" * 80)
         logger.info(
-            "Row %d/%d | Attribute: %r | Value: %r | Всего чанков со всех 4 документов: %d",
-            state["index_row_table"] + 1, data_frame.shape[0], attribute, value, len(all_chunks)
+            "Row %d/%d | Attribute: %r | Value: %r | rule bodies: %d",
+            state["index_row_table"] + 1, data_frame.shape[0], attribute, value, len(rule_bodies)
         )
 
     return update
@@ -113,7 +110,7 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
 
 def process_chunk(state: GraphState, config: RunnableConfig) -> GraphState:
     model = config["configurable"]["model"]
-    global_rules = config["configurable"]["global_rules"]
+    global_rules = config["configurable"]["rule_set"].global_rules
 
     chunks = state["remaining_chunks"]
     current_chunk, rest_chunks = chunks[0], chunks[1:]
@@ -124,6 +121,7 @@ def process_chunk(state: GraphState, config: RunnableConfig) -> GraphState:
         user_content = (
             f"Attribute: {state['attribute']}\n"
             f"Value: {state['value']}\n\n"
+            f"Global rules (apply to every attribute):\n{global_rules}\n\n"
             f"Relevant rules:\n{current_chunk}"
         )
     else:
@@ -136,12 +134,6 @@ def process_chunk(state: GraphState, config: RunnableConfig) -> GraphState:
     user_msg = {"role": "user", "content": user_content}
 
     system_prompt = SYSTEM_PROMPT1
-    if global_rules:
-        system_prompt = (
-            SYSTEM_PROMPT1
-            + "\n\nGlobal rules (apply to every attribute):\n"
-            + global_rules
-        )
 
     messages = [{"role": "system", "content": system_prompt}] + state["messages"] + [user_msg]
 
@@ -203,7 +195,7 @@ builder.add_edge("end_node", END)
 graph = builder.compile()
 
 
-def run_single_rule_set(data_frame: pd.DataFrame, model, store, global_rules: str) -> pd.DataFrame:
+def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set) -> pd.DataFrame:
     initial_state = {
         "messages": [],
         "index_row_table": 0,
@@ -213,7 +205,7 @@ def run_single_rule_set(data_frame: pd.DataFrame, model, store, global_rules: st
     }
     final_state = graph.invoke(
         initial_state,
-        config={"configurable": {"model": model, "store": store, "global_rules": global_rules}},
+        config={"configurable": {"model": model, "rule_set": rule_set}},
     )
     return pd.DataFrame(final_state["new_rows"])
 
@@ -244,7 +236,7 @@ def process_excel(
 
     result_df = data_frame[["Attribute", "Value"]].copy()
     for rule_set in app_config.rule_sets:
-        col_df = run_single_rule_set(data_frame, app_config.model, rule_set.store, rule_set.global_rules)
+        col_df = run_single_rule_set(data_frame, app_config.model, rule_set)
         result_df[rule_set.name] = col_df["Rules_Value"].to_list()
 
     output_buffer = io.BytesIO()

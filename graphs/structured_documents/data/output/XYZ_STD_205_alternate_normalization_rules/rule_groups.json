@@ -1,0 +1,1359 @@
+[
+  {
+    "attribute": "Global",
+    "type": "global",
+    "aliases": [],
+    "rules": [
+      "As with XYZ STD 100, every rule in this document changes presentation only.",
+      "No clause in this standard is to be read as authorizing a change to the technical substance of a recorded value, including a specified pressure class, trim number, material selection, dimension, or purchaser-specified deviation from default practice, regardless of what a rating, material, or selection table elsewhere in this standard might otherwise indicate for a typical or default configuration.",
+      "1.1 This clause specifies an alternate required presentation format for attribute values recorded on gate valve data sheets and purchase specifications derived from this standard, for use in place of the presentation format specified in XYZ STD 100 where a purchaser, licensee, or legacy internal register specifically invokes XYZ STD 205.",
+      "1.2 Reformatting performed under this standard shall change presentation only.",
+      "1.2 It shall not alter the technical substance of a recorded value — including, but not limited to, a specified pressure class, trim number, dimension, material selection, or any purchaser-specified deviation from default practice — even where a different value would otherwise be indicated by a rating, material, or selection table elsewhere in this standard.",
+      "1.3 This standard applies to data sheets for gate valves, and by extension, where explicitly invoked by a purchase order, to globe, check, and ball valve data sheets sharing a common attribute register with gate valve data sheets.",
+      "1.4 Where this standard and XYZ STD 100 are both invoked for the same data sheet without an order of precedence being stated, the conflict shall be flagged for manual resolution rather than resolved automatically by either rule set; see also 17.6.",
+      "Normalization — The act of transforming a recorded attribute value into a required presentation form without changing its technical substance.",
+      "Every normalization rule in this standard shall be applied deterministically: for any given raw attribute value and attribute category, exactly one presentation form shall result, and repeated application of the same rule to an already-normalized value shall leave it unchanged (idempotence).",
+      "Where a rule in this standard would produce a presentation form that is ambiguous with the presentation form of a different attribute category, the attribute category label recorded on the data sheet shall be preserved alongside the normalized value so that ambiguity can be resolved by a downstream reader.",
+      "Normalization shall be applied only to the value field of a recorded attribute, never to the attribute label itself, and never to free-text remarks, purchaser notes, or revision markers appearing elsewhere on the data sheet.",
+      "Where an attribute value is missing, marked “N/A”, “by others”, or “not applicable”, no normalization rule in this standard shall be applied, and the field shall be reproduced exactly as recorded.",
+      "Rounding performed under a unit-conversion rule in this standard shall use round-half-away-from-zero, applied after conversion, not before.",
+      "Where a numeral in a recorded value is already expressed to a greater precision than this standard requires, that additional precision shall be preserved rather than truncated, unless the applicable clause states otherwise.",
+      "5.1 All linear dimensions reported for valve components (including, but not limited to, stem diameter, minimum wall thickness, and wear travel) shall be expressed in decimal inches (in.), rounded to three decimal places.",
+      "5.2 All temperature values shall be expressed in degrees Fahrenheit (°F), rounded to the nearest whole degree, and the degree symbol shall immediately precede the unit letter with no intervening space.",
+      "5.4 Where a recorded value is already expressed in the unit required by 5.1 or 5.2, no unit conversion is required, but the decimal-place and symbol-placement rules in 5.1 and 5.2 shall still be applied.",
+      "5.5 Where a recorded dimension is given in millimeters and this standard is the governing normalization standard for the data sheet, the value shall be converted to decimal inches using 1 in. = 25.4 mm exactly, then rounded per 5.1.",
+      "5.6 Where a recorded temperature is given in degrees Celsius and this standard is the governing normalization standard, the value shall be converted to degrees Fahrenheit using °F = (°C × 9/5) + 32, then rounded per 5.2.",
+      "NOTE — Clauses 5.1 and 5.2 are the direct inverse of Clauses 2.1 and 2.2 of XYZ STD 100, which require millimeters and degrees Celsius respectively. A data sheet governed by XYZ STD 205 and a data sheet governed by XYZ STD 100 will therefore present the same underlying dimension or temperature in different, non-interchangeable units, even though neither has altered the technical substance of the value. See 17.2.",
+      "6.1 An attribute value consisting of a keyword followed by a numeric designation shall be written with the numeral first, immediately followed with no intervening space by the invented root word given for that keyword in Table 1, in place of the keyword itself.",
+      "6.2 The invented roots given in Table 1 are not abbreviations of the keywords they replace, and shall not be shortened, truncated, or otherwise altered in use.",
+      "6.3 This rule applies wherever such a designation occurs on the data sheet, including primary and alternative trim number fields, and to any repeated occurrence of the same keyword elsewhere on the data sheet.",
+      "Unlike XYZ STD 100, which excludes bonnet-to-body joint type descriptions and gate type descriptions from reformatting, this standard requires both to be replaced with a joint/gate code (JGC) drawn from the registers in Table 4 and Table 5 respectively.",
+      "The following categories of recorded data shall be reproduced exactly as given, without abbreviation, coding, or unit conversion, since they represent fixed nomenclature, external standard references, engineering formulas, or descriptive categories not governed by any presentation rule in this standard:\n• Face-to-face, flange facing, and nameplate marking references to external dimensional or marking standards (e.g. ASME B16.x)\n• Valve shipping position\n• Engineering formulas (e.g. the carbon equivalent formula)\n• Actuator type descriptions\n• Coating specification callouts referencing an external standard\n• Bolt thread size designations\n• A national or regional equivalent bolting designation stated alongside a base designation (reproduced unchanged in parentheses under 10.3, not omitted)\n• Free-text purchaser remarks and revision markers (see 4.3)",
+      "XYZ STD 205 Convention: Numeral + invented root, no space",
+      "Metric thread size (\"M\" prefix): Exempt from dimension rule (same); Bolt thread size designation: Excluded (reproduced as-is, same); Engineering formulas: Excluded (reproduced as-is, same); External dimensional/markings standard refs: Excluded (reproduced as-is, same)",
+      "Treat the equivalent designation as a separate field from the base designation for the purpose of Clause 10, even where both appear in a single data sheet cell.",
+      "Treat Table 5 (and Table 4) as closed registers; an unmatched description must be flagged, not approximately coded.",
+      "All gate valve data sheets issued under this purchase order shall present attribute values in accordance with XYZ STD 205, Edition 2.",
+      "Where an attribute category is not addressed by XYZ STD 205, the value shall be reproduced exactly as recorded by the responsible engineer, without normalization.",
+      "Data sheets shall be normalized in accordance with XYZ STD 100.",
+      "Where a specific attribute category is listed in Clause 17 of XYZ STD 205 as diverging from XYZ STD 100, the XYZ STD 205 convention for that category shall instead govern.",
+      "All other categories shall follow XYZ STD 100.",
+      "Data sheets shall comply with both XYZ STD 100 and XYZ STD 205.",
+      "The specification language in 22.3 is deliberately unresolvable without further information, per 1.4 and 17.6, and is included as a negative test case: software presented with this invocation language should flag the data sheet for manual resolution rather than silently preferring one standard over the other.",
+      "Specification language of the kind shown in 22.5 creates a purchaser-specific exclusion that is not itself part of this standard; where such language is present, it governs over Clause 10 for the specific data sheet it applies to, consistent with the general principle that a purchaser-specified deviation from default practice is technical substance, not presentation, and is outside the scope of what this standard's clauses can override (see 1.2).",
+      "Roots not listed here have not been assigned and shall not be invented ad hoc by an implementer; an unassigned keyword-number designation shall be flagged as “root pending registration” and reproduced unchanged pending a future amendment to this appendix.",
+      "NOTE — Several roots in this dictionary end in a small number of recurring Latin suffix patterns (-ATUM, -EUS, -ORIS, -IX, -ARIS) purely as a mnemonic aid for implementers memorizing the register; the suffix pattern itself carries no normative meaning and shall not be relied upon to infer the root for an unlisted keyword.",
+      "No. This standard is a separate, alternate presentation convention, provided for synthetic test-corpus purposes so that software can be exercised against two internally consistent but mutually divergent rule sets. Neither standard supersedes the other.",
+      "This document takes no position on that case; see 1.4 and 17.6 for the case where both are cited without an order of precedence, which is the closest analogous situation this standard addresses.",
+      "The divergence is intentional; see the note following 10.3 and row two of the cross-reference table in Clause 17. It exists to give test software a concrete example of a category whose exclusion status differs between two governing standards.",
+      "No; Clause 5 governs only the presentation of a dimension or temperature value already recorded on the data sheet, and 1.2 and 4.1 together require that no rule in this standard alter technical substance.",
+      "A boundary determination is a matter of engineering substance, not presentation, and is outside the scope of this standard.",
+      "Only where explicitly invoked by a purchase order for a related valve type sharing a common attribute register with gate valves; see 1.3.",
+      "The data sheet should be flagged for manual resolution; see 1.4, 17.6, and 22.4. This standard deliberately does not define an automatic tie-breaking rule for that case.",
+      "No. It creates a purchaser-specific exception that applies only to the data sheet it governs; it does not amend the standard itself, and other data sheets governed by this standard without such language continue to follow Clause 10 in full; see 22.6.",
+      "This standard governs presentation of the normalized value only and does not specify data storage or retention practice; that is a matter for the implementing system's own design, not for this standard.",
+      "NOTE — Fields that appear identical between E.1 and E.2 (tag number, body material, nameplate marking reference, stud bolt size, shipping position, and the carbon equivalent formula) are either excluded from reformatting under Clause 16, exempt under 7.3 or 14.1, or were already presented in the required form before normalization; see the individual sub-clauses of Clause 15 for the reasoning in each case.",
+      "Confirm which governing standard applies to the data sheet before selecting a rule table (see 1.1, 1.4, 20.1.1).",
+      "Confirm the unit and decimal-place combination for every linear dimension (5.1) and temperature (5.2) before rounding.",
+      "Use the closed ECC, JGC, and BFC registers (Tables 2–5, Appendix B) and flag unmatched descriptions rather than approximating a code (11.2).",
+      "Leave every attribute in the exclusion list of 16.1 untouched, including formula text, external standard references, and shipping position.",
+      "Never apply a normalization rule to a free-text remark or revision marker (4.3).",
+      "Reproduce a missing, “N/A”, or “by others” value unchanged rather than applying any rule (4.4)."
+    ]
+  },
+  {
+    "attribute": "bolt thread",
+    "type": "local",
+    "aliases": [
+      "thread designation",
+      "thread size",
+      "metric thread",
+      "M-prefix thread",
+      "thread code"
+    ],
+    "rules": [
+      "5.3 Metric thread designations using the \"M\" prefix (e.g. M12) denote a standardized thread size, not a linear dimension, and are exempt from 5.1 (see also Clause 14).",
+      "Metric thread designations using the “M” prefix (e.g. M12) denote a standardized thread size, not a linear dimension, and remain exempt from the dimensional conversion and decimal-place rules of Clause 5 under this standard as well.",
+      "A bolt thread size designation is, for the same reason, excluded from reformatting under this standard exactly as it is under XYZ STD 100 (see also Clause 16).",
+      "A metric “M”-prefixed thread size designation is exempt from Clause 5 under 14.1, and is not a bolting material designation for the purpose of Clause 10, so it is reproduced exactly as recorded.",
+      "Test for the “M” thread-size prefix before applying any dimensional conversion (14.1)."
+    ],
+    "parent": "bolt thread"
+  },
+  {
+    "attribute": "class",
+    "type": "local",
+    "aliases": [
+      "class",
+      "grade",
+      "rating",
+      "pressure class",
+      "class designation"
+    ],
+    "rules": [
+      "Class — CLASSATUM — Class 300 → 300CLASSATUM",
+      "Class 300/600 (dual-rated): Reformat each rating independently under Clause 6 and join with a slash, preserving the original separator position: 300CLASSATUM/600CLASSATUM.",
+      "Keyword: Class; Invented Root: CLASSATUM; Example: Class 300 → 300CLASSATUM",
+      "Pressure class: Class 300 → Pressure class: 300CLASSATUM"
+    ],
+    "parent": "class"
+  },
+  {
+    "attribute": "trim",
+    "type": "local",
+    "aliases": [
+      "trim",
+      "trim number",
+      "trim code",
+      "trim designation"
+    ],
+    "rules": [
+      "Trim — TRIMMEUS — Trim 8A → 8ATRIMMEUS",
+      "The primary trim number shall be normalized under Clause 6 using the TRIMMEEUS root.",
+      "EXAMPLE: “Trim 8A” → “8ATRIMMEEUS”",
+      "An alternative trim number field shall be normalized identically to the primary trim number field; see 15.6 and 6.3.",
+      "EXAMPLE: “Trim 10” → “10TRIMMEEUS”",
+      "A composite nominal trim description naming more than one trim feature joined by the word “and” is not a keyword-number designation and is not subject to Clause 6; it shall be reproduced exactly as recorded, with the conjunction “and” replaced by an ampersand for compactness.",
+      "EXAMPLE: “F6 and Hardfaced” → “F6 & Hardfaced”",
+      "Trim 8A/10 (dual trim callout): Reformat each trim number independently and join with a slash: 8ATRIMMEUS/10TRIMMEUS.",
+      "Trim number blank, nominal trim “Standard”: \"Standard\" is not a keyword-number designation and is not a recognized composite description under 15.8; it is reproduced unchanged.",
+      "Keyword: Trim; Invented Root: TRIMMEUS; Example: Trim 8A → 8ATRIMMEUS",
+      "Trim number: Trim 8A → Trim number: 8ATRIMMEUS",
+      "Alternative trim number: Trim 10 → Alternative trim number: 10TRIMMEUS",
+      "Nominal trim: F6 and Hardfaced → Nominal trim: F6 & Hardfaced"
+    ],
+    "parent": "trim"
+  },
+  {
+    "attribute": "dn",
+    "type": "local",
+    "aliases": [
+      "DN",
+      "nominal diameter",
+      "nominal size",
+      "diameter designation"
+    ],
+    "rules": [
+      "DN — DIAMETRA — DN 80 → 80DIAMETRA",
+      "The DN designation shall be normalized under Clause 6 using the DIAMETRA root.",
+      "EXAMPLE: “DN 80” → “80DIAMETRA”",
+      "DN 80 (NPS 3): Reformat the DN designation under 6.1; the parenthetical NPS cross-reference is reformatted independently under the same rule: 80DIAMETRA (3NOMPASSE).",
+      "DN80 (no space in source): The absence of a space in the raw value does not change the applicability of Clause 6; the result is identical to the space-separated case: 80DIAMETRA.",
+      "Keyword: DN; Invented Root: DIAMETRA; Example: DN 80 → 80DIAMETRA",
+      "Nominal size, DN: DN 80 → Nominal size, DN: 80DIAMETRA"
+    ],
+    "parent": "dn"
+  },
+  {
+    "attribute": "nps",
+    "type": "local",
+    "aliases": [
+      "NPS",
+      "nominal pipe size",
+      "pipe size",
+      "nominal size designation"
+    ],
+    "rules": [
+      "NPS — NOMPASSE — NPS 3 → 3NOMPASSE",
+      "The NPS designation shall be normalized under Clause 6 using the NOMPASSE root.",
+      "EXAMPLE: “NPS 3” → “3NOMPASSE”",
+      "Keyword: NPS; Invented Root: NOMPASSE; Example: NPS 3 → 3NOMPASSE",
+      "Nominal size, NPS: NPS 3 → Nominal size, NPS: 3NOMPASSE"
+    ],
+    "parent": "nps"
+  },
+  {
+    "attribute": "rating",
+    "type": "local",
+    "aliases": [
+      "rating",
+      "pressure rating",
+      "pressure class",
+      "rating designation"
+    ],
+    "rules": [
+      "Rating — RATENDUM — Rating 600 → 600RATENDUM",
+      "The pressure class designation shall be normalized under Clause 6 using the CLASSATUM root.",
+      "EXAMPLE: “Class 300” → “300CLASSATUM”",
+      "Keyword: Rating; Invented Root: RATENDUM; Example: Rating 600 → 600RATENDUM"
+    ],
+    "parent": "rating"
+  },
+  {
+    "attribute": "schedule",
+    "type": "local",
+    "aliases": [
+      "schedule",
+      "pipe schedule",
+      "wall thickness schedule",
+      "schedule designation"
+    ],
+    "rules": [
+      "Schedule — SKEDIRA — Schedule 80 → 80SKEDIRA",
+      "Keyword: Schedule; Invented Root: SKEDIRA; Example: Schedule 80 → 80SKEDIRA"
+    ],
+    "parent": "schedule"
+  },
+  {
+    "attribute": "figure",
+    "type": "local",
+    "aliases": [
+      "figure",
+      "figure number",
+      "illustration number",
+      "figure designation"
+    ],
+    "rules": [
+      "Figure — FIGUREON — Figure 12 → 12FIGUREON",
+      "Keyword: Figure; Invented Root: FIGUREON; Example: Figure 12 → 12FIGUREON"
+    ],
+    "parent": "figure"
+  },
+  {
+    "attribute": "series",
+    "type": "local",
+    "aliases": [
+      "series",
+      "series number",
+      "series designation",
+      "product series"
+    ],
+    "rules": [
+      "Series — SERIATUM — Series 4 → 4SERIATUM",
+      "Keyword: Series; Invented Root: SERIATUM; Example: Series 4 → 4SERIATUM"
+    ],
+    "parent": "series"
+  },
+  {
+    "attribute": "material designation",
+    "type": "local",
+    "aliases": [
+      "material designation",
+      "alloy designation",
+      "material grade",
+      "material specification",
+      "composition abbreviation"
+    ],
+    "rules": [
+      "7.1 Alloy material designations shall be written with the numeric content indicator preceding its element symbol (reversed from the conventional \"symbol-then-number\" order), and successive symbol groups shall be separated by a tilde character (~) rather than a hyphen or no separator.",
+      "EXAMPLE: \"18Cr-8Ni\" → \"Cr18~Ni8\"",
+      "EXAMPLE: \"25Cr-20Ni\" → \"Cr25~Ni20\"",
+      "7.2 This rule applies to body material and bonnet material designations, and to any other alloy composition abbreviation appearing on the data sheet.",
+      "7.3 A material designation that is a plain grade or specification callout rather than an alloy composition abbreviation (for example, \"C-Mn-Si\" used as a shorthand grade name rather than a percentage composition) is not an alloy composition abbreviation for the purpose of 7.1, and the hyphens within it shall be retained unchanged.",
+      "EXAMPLE: \"C-Mn-Si\" → \"C-Mn-Si (unchanged)\""
+    ],
+    "parent": "designation"
+  },
+  {
+    "attribute": "end connection",
+    "type": "local",
+    "aliases": [
+      "end connection description",
+      "end connection type",
+      "connection end",
+      "end preparation",
+      "terminal connection"
+    ],
+    "rules": [
+      "The end connection description shall be replaced by the corresponding three-digit numeric code given in Table 2, prefixed with the literal characters “ECC-”.",
+      "Unlike the letter-abbreviation convention used elsewhere for keyword-number designations, end connection descriptions shall never be abbreviated by initials or truncation; only the numeric code register in Table 2 (reproduced in full in Appendix B) is a valid normalized form.",
+      "Flanged, raised face — ECC-101",
+      "Flanged, flat face — ECC-102",
+      "Butt-welding end — ECC-201",
+      "Socket-welding end — ECC-202",
+      "Threaded end — ECC-301",
+      "Ring-type joint — ECC-401",
+      "Flanged, ring-type joint facing — ECC-402",
+      "Wafer-type, lugged — ECC-501",
+      "Wafer-type, unlugged — ECC-502",
+      "The end connection description shall be normalized under Clause 8 using the ECC register in Table 2.",
+      "EXAMPLE: “Flanged, raised face” → “ECC-101”",
+      "XYZ STD 205 Convention: Three-digit numeric code (ECC-###)",
+      "ECC-1xx — Reserved For: Flanged end connections; Assigned Codes: ECC-101 Flanged, raised face; ECC-102 Flanged, flat face; ECC-103 (reserved, large-bore flanged)",
+      "ECC-2xx — Reserved For: Welded end connections; Assigned Codes: ECC-201 Butt-welding end; ECC-202 Socket-welding end",
+      "ECC-3xx — Reserved For: Threaded end connections; Assigned Codes: ECC-301 Threaded end (NPT); ECC-302 (reserved, BSPT)",
+      "ECC-4xx — Reserved For: Ring-type joint connections; Assigned Codes: ECC-401 Ring-type joint; ECC-402 Flanged, ring-type joint facing",
+      "ECC-5xx — Reserved For: Wafer-type connections; Assigned Codes: ECC-501 Wafer-type, lugged; ECC-502 Wafer-type, unlugge",
+      "End connection: Flanged, raised face → End connection: ECC-101"
+    ],
+    "parent": "end connection"
+  },
+  {
+    "attribute": "hardness",
+    "type": "local",
+    "aliases": [
+      "hardness value",
+      "hardness scale",
+      "hardness notation",
+      "hardness designation"
+    ],
+    "rules": [
+      "The qualifier \"minimum\" immediately following a recorded hardness value shall be replaced by prefixing the numeral with the \"greater than or equal to\" symbol (≥) and removing the word \"minimum\" and any intervening space, so that the hardness scale abbreviation and the numeral remain adjacent.",
+      "The qualifier \"maximum\", where it appears, shall likewise be replaced with the \"less than or equal to\" symbol (≤) applied in the same manner.",
+      "Where a hardness value is recorded as a closed range (for example, \"200–250 HB\"), no symbol is inserted; the range shall be presented as an en-dash-separated pair immediately followed by the scale abbreviation, with no space before the scale abbreviation.",
+      "Seat surface hardness shall be normalized under Clause 9, using the ≥ symbol for a recorded minimum.",
+      "EXAMPLE: “250 HB minimum” → “≥250HB”",
+      "XYZ STD 205 Convention: “minimum” → ≥ symbol",
+      "Detect a range pattern first and apply 9.3 instead of 9.1 or 9.2 where a range is present.",
+      "250–300 HB: A hardness range; apply 9.3, not 9.1: 250–300HB.",
+      "Hardness not specified: No value recorded; per 4.4, no rule is applied and the field is reproduced exactly as given (blank or “N/A”).",
+      "Seat surface hardness: 250 HB minimum → Seat surface hardness: ≥250HB",
+      "Detect a hardness range before applying 9.1 or 9.2, and use 9.3 instead where a range is present."
+    ],
+    "parent": "hardness"
+  },
+  {
+    "attribute": "bolting material designation",
+    "type": "local",
+    "aliases": [
+      "bolting material code",
+      "fastener material designation",
+      "BFC",
+      "bolting/fastener code",
+      "bonnet-to-body bolting designation"
+    ],
+    "rules": [
+      "Unlike XYZ STD 100, which excludes bolting material specification numbers from reformatting (see Clause 7 of that standard), this standard requires bonnet-to-body bolting material designations to be replaced by an internal bolting/fastener code (BFC) drawn from the register in Table 3.",
+      "The BFC shall be formed from the letter \"X\", the material-family letter given in Table 3, the grade digits of the base specification with any internal space removed, and, where a class or type suffix is present in the recorded value, a hyphen followed by a compressed form of that suffix.",
+      "ASTM A193 B8M, CL 2 → XB193B8M-C2",
+      "ASTM A193 B7 → XB193B7",
+      "ASTM A320 L7 → XB320L7",
+      "ASTM A194 2H → XN1942H",
+      "Bonnet-to-body bolting shall be normalized under Clause 10 into a BFC.",
+      "EXAMPLE: “ASTM A193 B8M, CL 2” → “XB193B8M-C2”",
+      "ASTM A193 B8M CL2 (no comma): The absence of a comma before the class suffix does not change the applicability of 10.1–10.2; the BFC is formed identically: XB193B8M-C2."
+    ],
+    "parent": "designation"
+  },
+  {
+    "attribute": "equivalent designation",
+    "type": "local",
+    "aliases": [
+      "equivalent material designation",
+      "national equivalent",
+      "regional equivalent",
+      "EN equivalent",
+      "equivalent specification"
+    ],
+    "rules": [
+      "Where a national or regional equivalent designation is recorded alongside the base designation (for example, an EN equivalent following an ASTM designation), the equivalent designation shall be reproduced exactly as given, without conversion to a BFC, and shall be presented in parentheses immediately after the BFC.",
+      "EXAMPLE: \"ASTM A193 B7 (EN equivalent A193 B7)\" → \"XB193B7 (A193 B7)\"",
+      "A stated national or regional equivalent bolting designation shall be reproduced unchanged under 10.3, in parentheses following the BFC of the base designation.",
+      "EXAMPLE: “A193 B7” → “(A193 B7) [reproduced unchanged; see 10.3]”",
+      "Treat the equivalent designation as a separate field from the base designation for the purpose of Clause 10, even where both appear in a single data sheet cell.",
+      "Reproduce a stated national/regional bolting equivalent unchanged in parentheses rather than converting it to a BFC (10.3)."
+    ],
+    "parent": "designation"
+  },
+  {
+    "attribute": "bonnet-to-body joint type",
+    "type": "local",
+    "aliases": [
+      "bonnet joint",
+      "body-to-bonnet joint",
+      "joint type",
+      "bonnet-to-body connection"
+    ],
+    "rules": [
+      "Flat face → JT-01",
+      "Ring joint → JT-02",
+      "Tongue and groove → JT-03",
+      "Pressure-seal → JT-04",
+      "The joint type shall be normalized under Clause 11 using the JGC register in Table 4.",
+      "EXAMPLE: “Ring joint” → “JT-02”",
+      "XYZ STD 205 Convention: Normalized into JGC (Table 4)",
+      "JT-01 — Flat face",
+      "JT-02 — Ring joint",
+      "JT-03 — Tongue and groove",
+      "JT-04 — Pressure-seal",
+      "Bonnet-to-body joint type: Flat face → Bonnet-to-body joint type: JT-01"
+    ],
+    "parent": "type"
+  },
+  {
+    "attribute": "gate type",
+    "type": "local",
+    "aliases": [
+      "gate design",
+      "gate configuration",
+      "gate description",
+      "closure type"
+    ],
+    "rules": [
+      "One-piece wedge, solid → GT-01",
+      "Flexible wedge, one-piece → GT-02",
+      "Split wedge → GT-03",
+      "Double-disc gate → GT-04",
+      "Parallel slide, single disc → GT-05",
+      "Where a gate type description does not correspond to any entry in Table 5, the description shall be reproduced exactly as recorded and flagged as “JGC pending registration” rather than assigned an approximate code.",
+      "The gate type shall be normalized under Clause 11 using the JGC register in Table 5.",
+      "EXAMPLE: “Double-disc gate” → “GT-04”",
+      "XYZ STD 205 Convention: Normalized into JGC (Table 5)",
+      "Assigning a joint/gate code to a gate type description that has no entry in Table 5, instead of flagging it per 11.2.",
+      "Treat Table 5 (and Table 4) as closed registers; an unmatched description must be flagged, not approximately coded.",
+      "GT-01 — One-piece wedge, solid",
+      "GT-02 — Flexible wedge, one-piece",
+      "GT-03 — Split wedge",
+      "GT-04 — Double-disc gate",
+      "GT-05 — Parallel slide, single disc",
+      "Gate type: One-piece wedge, solid → Gate type: GT-01"
+    ],
+    "parent": "type"
+  },
+  {
+    "attribute": "handwheel",
+    "type": "local",
+    "aliases": [
+      "handwheel direction",
+      "actuation direction",
+      "operating direction",
+      "HAC",
+      "handwheel/actuation code"
+    ],
+    "rules": [
+      "The handwheel operating direction, excluded from reformatting under XYZ STD 100, shall under this standard be replaced with a handwheel/actuation code (HAC) as follows: “CW-OPEN” where the valve opens when the handwheel is turned clockwise, or “CCW-OPEN” where the valve opens when the handwheel is turned counterclockwise.",
+      "Where the recorded direction is stated relative to closing rather than opening, the direction shall first be inverted for the purpose of applying 12.1, since the HAC register is defined only in terms of the opening direction.",
+      "Where an actuator (rather than a handwheel) provides the primary means of operation, and a separate handwheel is fitted for manual override only, the HAC shall be derived from the override handwheel direction and the field label “HAC (override)” shall be used in place of “HAC”.",
+      "Handwheel operating direction shall be normalized under Clause 12 into an HAC.",
+      "EXAMPLE: “Opens when turned clockwise” → “CW-OPEN”",
+      "XYZ STD 205 Convention: Normalized into HAC (Clause 12)",
+      "CW-OPEN — Valve opens when the handwheel is turned clockwise",
+      "CCW-OPEN — Valve opens when the handwheel is turned counterclockwise",
+      "CW-OPEN (override) — As CW-OPEN, but derived from a manual override handwheel per 12.3",
+      "CCW-OPEN (override) — As CCW-OPEN, but derived from a manual override handwheel per 12.3",
+      "Handwheel operation direction: Opens when turned clockwise → Handwheel operation direction: CW-OPEN"
+    ],
+    "parent": "handwheel"
+  },
+  {
+    "attribute": "temperature range",
+    "type": "local",
+    "aliases": [
+      "operating temperature range",
+      "temperature limits",
+      "temperature bounds",
+      "service temperature range",
+      "material temperature range"
+    ],
+    "rules": [
+      "A compound attribute recorded as a temperature range (for example, a packing or seat material suitable operating range) shall have each bound converted independently under Clause 5, then presented as a single en-dash-separated pair with the words \"from\" and \"to\" removed and the unit symbol given once, after the second bound only.",
+      "Where the two bounds of a recorded range are expressed in different units (for example, a lower bound in Celsius and an upper bound in Fahrenheit, as may occur where a range has been assembled from two different source documents), each bound shall first be converted to the unit required by 5.2 independently before the range is assembled under 13.1.",
+      "A negative lower bound shall retain its leading minus sign; the en dash used to join the two bounds shall not be read as a second minus sign, and no space shall separate the en dash from either bound.",
+      "A packing material suitable temperature range is a compound attribute and shall be normalized under Clause 13.",
+      "EXAMPLE: “Suitable from -20 F to 1000 F” → “-20–1000°F”",
+      "-40 F to 250 F (negative lower bound): Apply 13.1 and 13.3; the leading minus sign is retained and not confused with the range dash: -40–250°F.",
+      "0 F to 200 F (zero bound): A zero bound is a valid numeral and is processed identically to a non-zero bound under 13.1: 0–200°F.",
+      "Packing material temperature range: Suitable from -20 F to 1000 F → Packing material temperature range: -20–1000°F"
+    ],
+    "parent": "temperature"
+  },
+  {
+    "attribute": "body material",
+    "type": "local",
+    "aliases": [
+      "body material",
+      "body metallurgy",
+      "body grade",
+      "body material designation"
+    ],
+    "rules": [
+      "An alloy composition body material designation shall be normalized under Clause 7; a plain grade shorthand shall be left unchanged under 7.3.",
+      "EXAMPLE: “18Cr-8Ni” → “Cr18~Ni8”"
+    ],
+    "parent": "material"
+  },
+  {
+    "attribute": "bonnet material",
+    "type": "local",
+    "aliases": [
+      "bonnet material",
+      "bonnet metallurgy",
+      "bonnet grade",
+      "bonnet material designation"
+    ],
+    "rules": [
+      "Bonnet material is normalized identically to body material; see 15.4 and Clause 7.",
+      "EXAMPLE: “25Cr-20Ni” → “Cr25~Ni20”",
+      "Bonnet material: 18Cr-8Ni → Bonnet material: Cr18~Ni8"
+    ],
+    "parent": "material"
+  },
+  {
+    "attribute": "stem diameter",
+    "type": "local",
+    "aliases": [
+      "stem diameter",
+      "minimum stem diameter",
+      "stem size",
+      "stem bore"
+    ],
+    "rules": [
+      "Stem diameter is a linear dimension and shall be normalized under 5.1.",
+      "EXAMPLE: “1.125 in” → “1.125 in.”",
+      "Minimum stem diameter: 1.125 in → Minimum stem diameter: 1.125 in."
+    ],
+    "parent": "diameter"
+  },
+  {
+    "attribute": "wall thickness",
+    "type": "local",
+    "aliases": [
+      "wall thickness",
+      "minimum wall thickness",
+      "shell thickness",
+      "body wall thickness"
+    ],
+    "rules": [
+      "Wall thickness is a linear dimension and shall be normalized under 5.1.",
+      "EXAMPLE: “0.63 in” → “0.630 in.”",
+      "Minimum wall thickness: 0.63 in → Minimum wall thickness: 0.630 in."
+    ],
+    "parent": "wall thickness"
+  },
+  {
+    "attribute": "face-to-face standard",
+    "type": "local",
+    "aliases": [
+      "face-to-face standard",
+      "face-to-face dimension standard",
+      "end-to-end standard",
+      "dimensional standard"
+    ],
+    "rules": [
+      "A reference to an external dimensional standard is excluded from reformatting under 16.1 and shall be reproduced exactly as recorded.",
+      "EXAMPLE: “ASME B16.10” → “ASME B16.10 (unchanged; excluded, see 16.1)”"
+    ],
+    "parent": "standard"
+  },
+  {
+    "attribute": "flange facing standard",
+    "type": "local",
+    "aliases": [
+      "flange facing standard",
+      "flange facing",
+      "facing standard",
+      "flange surface standard"
+    ],
+    "rules": [
+      "A reference to an external dimensional standard is excluded from reformatting under 16.1 and shall be reproduced exactly as recorded.",
+      "Flat face or ring joint (purchaser option, either acceptable): Where a data sheet records two acceptable options joined by “or” rather than a single selected value, each option shall be reformatted independently and the word “or” retained: JT-01 or JT-02."
+    ],
+    "parent": "standard"
+  },
+  {
+    "attribute": "nameplate marking standard",
+    "type": "local",
+    "aliases": [
+      "nameplate standard",
+      "marking standard",
+      "nameplate marking",
+      "external marking standard"
+    ],
+    "rules": [
+      "A reference to an external marking standard is excluded from reformating under 16.1 and shall be reproduced exactly as recorded."
+    ],
+    "parent": "standard"
+  },
+  {
+    "attribute": "wear travel",
+    "type": "local",
+    "aliases": [
+      "wear travel",
+      "travel dimension",
+      "wear distance",
+      "linear travel"
+    ],
+    "rules": [
+      "Wear travel is a linear dimension and shall be normalized under 5.1.",
+      "Wear travel: 0.25 in → Wear travel: 0.250 in."
+    ],
+    "parent": "travel"
+  },
+  {
+    "attribute": "shipping position",
+    "type": "local",
+    "aliases": [
+      "shipping position",
+      "valve shipping position",
+      "transport position",
+      "shipping configuration"
+    ],
+    "rules": [
+      "Valve shipping position is fixed nomenclature, excluded from reformating under 16.1, and shall be reproduced exactly as recorded."
+    ],
+    "parent": "shipping position"
+  },
+  {
+    "attribute": "carbon equivalent formula reference",
+    "type": "local",
+    "aliases": [
+      "carbon equivalent",
+      "CE formula",
+      "carbon equivalent formula",
+      "equivalent carbon"
+    ],
+    "rules": [
+      "An engineering formula is excluded from reformating under 16.1 and shall be reproduced exactly as recorded, including all operators and subscripts."
+    ],
+    "parent": "carbon equivalent formula reference"
+  },
+  {
+    "attribute": "PWHT temperature",
+    "type": "local",
+    "aliases": [
+      "PWHT temperature",
+      "post-weld heat treatment temperature",
+      "heat treatment temperature",
+      "postweld temperature"
+    ],
+    "rules": [
+      "PWHT temperature is a single-value temperature and shall be normalized under 5.2; where already recorded in the required unit, only symbol placement changes.",
+      "PWHT temperature: 1150 F → PWHT temperature: 1150°F"
+    ],
+    "parent": "temperature"
+  },
+  {
+    "attribute": "actuator type",
+    "type": "local",
+    "aliases": [
+      "actuator type",
+      "actuator category",
+      "actuator description",
+      "actuation type"
+    ],
+    "rules": [
+      "Actuator type is a descriptive category, not a keyword-number designation or a member of the joint/gate register, and shall be reproduced exactly as recorded."
+    ],
+    "parent": "type"
+  },
+  {
+    "attribute": "coating specification",
+    "type": "local",
+    "aliases": [
+      "coating specification",
+      "coating callout",
+      "coating standard",
+      "coating designation"
+    ],
+    "rules": [
+      "A coating specification callout referencing an external standard is excluded from reformating under 16.1 in the same manner as 15.19–15.21."
+    ],
+    "parent": "specification"
+  },
+  {
+    "attribute": "inspection class",
+    "type": "local",
+    "aliases": [
+      "inspection class",
+      "inspection category",
+      "inspection level",
+      "inspection designation"
+    ],
+    "rules": [
+      "Inspection class, where recorded as a keyword followed by a numeral, shall be normalized under Clause 6 using the invented root INSPECTUM.",
+      "Keyword: Inspection Class; Invented Root: INSPECTUM; Example: Inspection Class 2 → 2INSPECTUM"
+    ],
+    "parent": "class"
+  },
+  {
+    "attribute": "drain/bypass connection size",
+    "type": "local",
+    "aliases": [
+      "drain connection size",
+      "bypass connection size",
+      "drain size",
+      "bypass size"
+    ],
+    "rules": [
+      "A drain or bypass connection size expressed as an NPS designation shall be normalized identically to 15.2.",
+      "EXAMPLE: “NPS 3/4” → “3/4NOMPASSE”"
+    ],
+    "parent": "size"
+  },
+  {
+    "attribute": "linear dimension unit",
+    "type": "local",
+    "aliases": [
+      "dimension unit",
+      "linear measurement unit",
+      "length unit",
+      "dimensional unit"
+    ],
+    "rules": [
+      "XYZ STD 205 Convention: Decimal inches, 3 decimal places",
+      "Apply the exemption in 14.1 before any dimensional conversion logic; test for the “M” prefix pattern first."
+    ],
+    "parent": "unit"
+  },
+  {
+    "attribute": "temperature unit",
+    "type": "local",
+    "aliases": [
+      "temperature scale",
+      "temperature measurement unit",
+      "thermal unit",
+      "temperature designation"
+    ],
+    "rules": [
+      "XYZ STD 205 Convention: Fahrenheit, whole degree"
+    ],
+    "parent": "temperature"
+  },
+  {
+    "attribute": "alloy composition",
+    "type": "local",
+    "aliases": [
+      "alloy chemistry",
+      "chemical composition",
+      "elemental composition",
+      "material composition"
+    ],
+    "rules": [
+      "XYZ STD 205 Convention: Reversed order, tilde-joined (Cr18~Ni8)",
+      "Maintain an explicit list of recognized plain-grade shorthand names (such as “C-Mn-Si”) that are exempt from 7.1, rather than inferring exemption from the absence of digits, since some plain-grade names do contain digits.",
+      "18Cr-8Ni-2Mo (three-element alloy): Extend 7.1 across all element groups in the designation: Cr18~Ni8~Mo2.",
+      "Apply 7.3 before 7.1 to avoid misreformatting a plain-grade shorthand as an alloy composition string."
+    ],
+    "parent": "alloy composition"
+  },
+  {
+    "attribute": "bonnet-to-body bolting",
+    "type": "local",
+    "aliases": [
+      "bonnet bolting",
+      "bonnet-to-body bolts",
+      "bonnet fasteners",
+      "bonnet body bolting"
+    ],
+    "rules": [
+      "XYZ STD 205 Convention: Normalized into BFC (Clause 10)",
+      "Data sheets shall be normalized in accordance with XYZ STD 205, except that bonnet-to-body bolting designations shall be reproduced exactly as recorded, notwithstanding Clause 10 of XYZ STD 205.",
+      "Bonnet-to-body bolting: ASTM A193 B8M, CL 2 (EN equivalent A193 B7) → Bonnet-to-body bolting: XB193B8M-C2 (A193 B7)"
+    ],
+    "parent": "bonnet-to-body bolting"
+  },
+  {
+    "attribute": "angle",
+    "type": "local",
+    "aliases": [
+      "angle designation",
+      "angle number",
+      "angle code"
+    ],
+    "rules": [
+      "Keyword: Angle; Invented Root: ANGULEX; Example: Angle 45 → 45ANGULEX"
+    ],
+    "parent": "angle"
+  },
+  {
+    "attribute": "bore",
+    "type": "local",
+    "aliases": [
+      "bore designation",
+      "bore number",
+      "bore code"
+    ],
+    "rules": [
+      "Keyword: Bore; Invented Root: BOREOSA; Example: Bore 6 → 6BOREOSA"
+    ],
+    "parent": "bore"
+  },
+  {
+    "attribute": "category",
+    "type": "local",
+    "aliases": [
+      "category designation",
+      "category number",
+      "category code"
+    ],
+    "rules": [
+      "Keyword: Category; Invented Root: CATEGORIUM; Example: Category 3 → 3CATEGORIUM"
+    ],
+    "parent": "category"
+  },
+  {
+    "attribute": "code",
+    "type": "local",
+    "aliases": [
+      "code designation",
+      "code number",
+      "code identifier"
+    ],
+    "rules": [
+      "Keyword: Code; Invented Root: CODIFAX; Example: Code 7 → 7CODIFAX"
+    ],
+    "parent": "code"
+  },
+  {
+    "attribute": "design",
+    "type": "local",
+    "aliases": [
+      "design designation",
+      "design number",
+      "design code"
+    ],
+    "rules": [
+      "Keyword: Design; Invented Root: DESIGNEUM; Example: Design 2 → 2DESIGNEUM"
+    ],
+    "parent": "design"
+  },
+  {
+    "attribute": "division",
+    "type": "local",
+    "aliases": [
+      "division designation",
+      "division number",
+      "division code"
+    ],
+    "rules": [
+      "Keyword: Division; Invented Root: DIVISORA; Example: Division 1 → 1DIVISORA"
+    ],
+    "parent": "division"
+  },
+  {
+    "attribute": "duty",
+    "type": "local",
+    "aliases": [
+      "duty designation",
+      "duty number",
+      "service duty"
+    ],
+    "rules": [
+      "Keyword: Duty; Invented Root: DUTIFEX; Example: Duty 4 → 4DUTIFEX"
+    ],
+    "parent": "duty"
+  },
+  {
+    "attribute": "form",
+    "type": "local",
+    "aliases": [
+      "form designation",
+      "form number",
+      "form code"
+    ],
+    "rules": [
+      "Keyword: Form; Invented Root: FORMATIX; Example: Form 2 → 2FORMATIX"
+    ],
+    "parent": "form"
+  },
+  {
+    "attribute": "grade",
+    "type": "local",
+    "aliases": [
+      "material grade",
+      "grade designation",
+      "grade number",
+      "material class"
+    ],
+    "rules": [
+      "Keyword: Grade; Invented Root: GRADEXA; Example: Grade 5 → 5GRADEXA"
+    ],
+    "parent": "grade"
+  },
+  {
+    "attribute": "group",
+    "type": "local",
+    "aliases": [
+      "group designation",
+      "group number",
+      "group code"
+    ],
+    "rules": [
+      "Keyword: Group; Invented Root: GROUPARIS; Example: Group 2 → 2GROUPARIS"
+    ],
+    "parent": "group"
+  },
+  {
+    "attribute": "level",
+    "type": "local",
+    "aliases": [
+      "level designation",
+      "level number",
+      "level code"
+    ],
+    "rules": [
+      "Keyword: Level; Invented Root: LEVELEX; Example: Level 3 → 3LEVELEX"
+    ],
+    "parent": "level"
+  },
+  {
+    "attribute": "model",
+    "type": "local",
+    "aliases": [
+      "model designation",
+      "model number",
+      "model code"
+    ],
+    "rules": [
+      "Keyword: Model; Invented Root: MODELIS; Example: Model 9 → 9MODELIS"
+    ],
+    "parent": "model"
+  },
+  {
+    "attribute": "revision",
+    "type": "local",
+    "aliases": [
+      "revision designation",
+      "revision number",
+      "revision code"
+    ],
+    "rules": [
+      "Keyword: Revision; Invented Root: REVISORA; Example: Revision 4 → 4REVISORA"
+    ],
+    "parent": "revision"
+  },
+  {
+    "attribute": "size",
+    "type": "local",
+    "aliases": [
+      "size designation",
+      "nominal size",
+      "size number",
+      "size code"
+    ],
+    "rules": [
+      "Keyword: Size; Invented Root: SIZEONIS; Example: Size 6 → 6SIZEONIS"
+    ],
+    "parent": "size"
+  },
+  {
+    "attribute": "stage",
+    "type": "local",
+    "aliases": [
+      "stage designation",
+      "stage number",
+      "stage code"
+    ],
+    "rules": [
+      "Keyword: Stage; Invented Root: STAGEUM; Example: Stage 2 → 2STAGEUM"
+    ],
+    "parent": "stage"
+  },
+  {
+    "attribute": "style",
+    "type": "local",
+    "aliases": [
+      "style designation",
+      "style number",
+      "style code"
+    ],
+    "rules": [
+      "Keyword: Style; Invented Root: STYLEXA; Example: Style 1 → 1STYLEXA"
+    ],
+    "parent": "style"
+  },
+  {
+    "attribute": "tag",
+    "type": "local",
+    "aliases": [
+      "tag number",
+      "tag designation",
+      "equipment tag",
+      "item tag"
+    ],
+    "rules": [
+      "Keyword: Tag; Invented Root: TAGORIS; Example: Tag 14 → 14TAGORIS"
+    ],
+    "parent": "tag"
+  },
+  {
+    "attribute": "type",
+    "type": "local",
+    "aliases": [
+      "type designation",
+      "type number",
+      "type code",
+      "equipment type"
+    ],
+    "rules": [
+      "Keyword: Type; Invented Root: TYPEXIS; Example: Type 3 → 3TYPEXIS"
+    ],
+    "parent": "type"
+  },
+  {
+    "attribute": "zone",
+    "type": "local",
+    "aliases": [
+      "zone designation",
+      "zone number",
+      "zone code",
+      "area zone"
+    ],
+    "rules": [
+      "Keyword: Zone; Invented Root: ZONARIS; Example: Zone 2 → 2ZONARIS"
+    ],
+    "parent": "zone"
+  },
+  {
+    "attribute": "application",
+    "type": "local",
+    "aliases": [
+      "application designation",
+      "application number",
+      "service application",
+      "application code"
+    ],
+    "rules": [
+      "Keyword: Application; Invented Root: APPLICATUM; Example: Application 1 → 1APPLICATUM"
+    ],
+    "parent": "application"
+  },
+  {
+    "attribute": "batch",
+    "type": "local",
+    "aliases": [
+      "batch number",
+      "batch designation",
+      "lot number",
+      "batch code"
+    ],
+    "rules": [
+      "Keyword: Batch; Invented Root: BATCHERIA; Example: Batch 6 → 6BATCHERIA"
+    ],
+    "parent": "batch"
+  },
+  {
+    "attribute": "bulletin",
+    "type": "local",
+    "aliases": [
+      "bulletin number",
+      "bulletin code",
+      "bulletin identifier"
+    ],
+    "rules": [
+      "Keyword: Bulletin; Invented Root: BULLETINEX; Example: Bulletin 9 → 9BULLETINEX"
+    ],
+    "parent": "bulletin"
+  },
+  {
+    "attribute": "cycle",
+    "type": "local",
+    "aliases": [
+      "cycle number",
+      "cycle code",
+      "cycle identifier"
+    ],
+    "rules": [
+      "Keyword: Cycle; Invented Root: CYCLORIS; Example: Cycle 3 → 3CYCLORIS"
+    ],
+    "parent": "cycle"
+  },
+  {
+    "attribute": "diameter",
+    "type": "local",
+    "aliases": [
+      "nominal diameter",
+      "diameter designation",
+      "non-DN diameter",
+      "non-NPS diameter"
+    ],
+    "rules": [
+      "Keyword: Diameter (nominal, non-DN/NPS); Invented Root: DIAMOSA; Example: Diameter 4 → 4DIAMOSA"
+    ],
+    "parent": "diameter"
+  },
+  {
+    "attribute": "edition",
+    "type": "local",
+    "aliases": [
+      "edition number",
+      "edition code",
+      "edition identifier"
+    ],
+    "rules": [
+      "Keyword: Edition; Invented Root: EDITIONEX; Example: Edition 2 → 2EDITIONEX"
+    ],
+    "parent": "edition"
+  },
+  {
+    "attribute": "envelope",
+    "type": "local",
+    "aliases": [
+      "envelope number",
+      "envelope code",
+      "envelope identifier"
+    ],
+    "rules": [
+      "Keyword: Envelope; Invented Root: ENVELOPARIS; Example: Envelope 1 → 1ENVELOPARIS"
+    ],
+    "parent": "envelope"
+  },
+  {
+    "attribute": "facility class",
+    "type": "local",
+    "aliases": [
+      "facility grade",
+      "facility rating",
+      "facility class designation"
+    ],
+    "rules": [
+      "Keyword: Facility Class; Invented Root: FACILITUM; Example: Facility Class 3 → 3FACILITUM"
+    ],
+    "parent": "class"
+  },
+  {
+    "attribute": "gauge",
+    "type": "local",
+    "aliases": [
+      "gauge number",
+      "gauge designation",
+      "gauge code"
+    ],
+    "rules": [
+      "Keyword: Gauge; Invented Root: GAUGEXA; Example: Gauge 14 → 14GAUGEXA"
+    ],
+    "parent": "gauge"
+  },
+  {
+    "attribute": "handling category",
+    "type": "local",
+    "aliases": [
+      "handling class",
+      "handling designation",
+      "handling category code"
+    ],
+    "rules": [
+      "Keyword: Handling Category; Invented Root: HANDLEXIS; Example: Handling Category 2 → 2HANDLEXIS"
+    ],
+    "parent": "category"
+  },
+  {
+    "attribute": "increment",
+    "type": "local",
+    "aliases": [
+      "increment number",
+      "increment value",
+      "increment code"
+    ],
+    "rules": [
+      "Keyword: Increment; Invented Root: INCREMENTUM; Example: Increment 5 → 5INCREMENTUM"
+    ],
+    "parent": "increment"
+  },
+  {
+    "attribute": "junction",
+    "type": "local",
+    "aliases": [
+      "junction number",
+      "junction designation",
+      "junction code"
+    ],
+    "rules": [
+      "Keyword: Junction; Invented Root: JUNCTORIS; Example: Junction 2 → 2JUNCTORIS"
+    ],
+    "parent": "junction"
+  },
+  {
+    "attribute": "kit number",
+    "type": "local",
+    "aliases": [
+      "kit identifier",
+      "kit designation",
+      "kit code"
+    ],
+    "rules": [
+      "Keyword: Kit Number; Invented Root: KITARIS; Example: Kit Number 8 → 8KITARIS"
+    ],
+    "parent": "kit number"
+  },
+  {
+    "attribute": "line class",
+    "type": "local",
+    "aliases": [
+      "line grade",
+      "line rating",
+      "line class designation"
+    ],
+    "rules": [
+      "Keyword: Line Class; Invented Root: LINEATUM; Example: Line Class 6 → 6LINEATUM"
+    ],
+    "parent": "class"
+  },
+  {
+    "attribute": "mounting type",
+    "type": "local",
+    "aliases": [
+      "mounting style",
+      "mounting designation",
+      "mounting configuration"
+    ],
+    "rules": [
+      "Keyword: Mounting Type; Invented Root: MOUNTEUS; Example: Mounting Type 2 → 2MOUNTEUS"
+    ],
+    "parent": "type"
+  },
+  {
+    "attribute": "notch category",
+    "type": "local",
+    "aliases": [
+      "notch class",
+      "notch designation",
+      "notch category code"
+    ],
+    "rules": [
+      "Keyword: Notch Category; Invented Root: NOTCHARIS; Example: Notch Category 1 → 1NOTCHARIS"
+    ],
+    "parent": "category"
+  },
+  {
+    "attribute": "operating class",
+    "type": "local",
+    "aliases": [
+      "operating grade",
+      "operating rating",
+      "operating class designation"
+    ],
+    "rules": [
+      "Keyword: Operating Class; Invented Root: OPERANDUM; Example: Operating Class 4 → 4OPERANDUM"
+    ],
+    "parent": "class"
+  },
+  {
+    "attribute": "package type",
+    "type": "local",
+    "aliases": [
+      "package style",
+      "package designation",
+      "package configuration"
+    ],
+    "rules": [
+      "Keyword: Package Type; Invented Root: PACKAGEXA; Example: Package Type 3 → 3PACKAGEXA"
+    ],
+    "parent": "type"
+  },
+  {
+    "attribute": "quality level",
+    "type": "local",
+    "aliases": [
+      "quality grade",
+      "quality class",
+      "quality designation"
+    ],
+    "rules": [
+      "Keyword: Quality Level; Invented Root: QUALEXIS; Example: Quality Level 2 → 2QUALEXIS"
+    ],
+    "parent": "level"
+  },
+  {
+    "attribute": "reference number",
+    "type": "local",
+    "aliases": [
+      "reference identifier",
+      "reference designation",
+      "reference code"
+    ],
+    "rules": [
+      "Keyword: Reference Number; Invented Root: REFERENDUM; Example: Reference Number 15 → 15REFERENDUM"
+    ],
+    "parent": "reference number"
+  },
+  {
+    "attribute": "service class",
+    "type": "local",
+    "aliases": [
+      "service grade",
+      "service rating",
+      "service class designation"
+    ],
+    "rules": [
+      "Keyword: Service Class; Invented Root: SERVICATUM; Example: Service Class 2 → 2SERVICATUM"
+    ],
+    "parent": "class"
+  },
+  {
+    "attribute": "test level",
+    "type": "local",
+    "aliases": [
+      "test grade",
+      "test class",
+      "test designation"
+    ],
+    "rules": [
+      "Keyword: Test Level; Invented Root: TESTORIS; Example: Test Level 1 → 1TESTORIS"
+    ],
+    "parent": "level"
+  },
+  {
+    "attribute": "unit number",
+    "type": "local",
+    "aliases": [
+      "unit identifier",
+      "unit designation",
+      "unit code"
+    ],
+    "rules": [
+      "Keyword: Unit Number; Invented Root: UNITARIS; Example: Unit Number 7 → 7UNITARIS"
+    ],
+    "parent": "unit number"
+  },
+  {
+    "attribute": "vintage",
+    "type": "local",
+    "aliases": [
+      "vintage year",
+      "manufacturing year",
+      "production year"
+    ],
+    "rules": [
+      "Keyword: Vintage; Invented Root: VINTAGEXA; Example: Vintage 2019 → 2019VINTAGEXA"
+    ],
+    "parent": "vintage"
+  },
+  {
+    "attribute": "weld procedure number",
+    "type": "local",
+    "aliases": [
+      "welding procedure number",
+      "WPS number",
+      "weld procedure identifier"
+    ],
+    "rules": [
+      "Keyword: Weld Procedure Number; Invented Root: WELDORIS; Example: Weld Procedure Number 12 → 12WELDORIS"
+    ],
+    "parent": "weld procedure number"
+  },
+  {
+    "attribute": "keyword-number designation",
+    "type": "local",
+    "aliases": [
+      "keyword-number code",
+      "keyword designation",
+      "root code",
+      "keyword root"
+    ],
+    "rules": [
+      "An unlisted keyword-number designation shall be flagged as “root pending registration” per the note at the start of Appendix A, not guessed.",
+      "Apply Clause 6 only to genuine keyword-number designations, using the closed root register in Table 1 / Appendix A, and flag unlisted keywords rather than inventing a root (Appendix A note)."
+    ],
+    "parent": "designation"
+  },
+  {
+    "attribute": "compound range",
+    "type": "local",
+    "aliases": [
+      "range value",
+      "multi-segment range",
+      "stepped range",
+      "compound attribute",
+      "attribute range"
+    ],
+    "rules": [
+      "This edition does not define a rule for a stepped or multi-segment range; such a value should be flagged for manual handling rather than processed under Clause 13, which covers only simple two-bound ranges.",
+      "Convert each bound of a compound temperature-range attribute independently before assembling the range (13.1, 13.2)."
+    ],
+    "parent": "compound range"
+  },
+  {
+    "attribute": "ECC register",
+    "type": "local",
+    "aliases": [
+      "ECC code register",
+      "equivalent code register",
+      "ECC designation register"
+    ],
+    "rules": [
+      "Within this fictitious document, the register is treated as closed for Edition 2; the reserved code blocks shown in Appendix B.1 (for example ECC-103 and ECC-302) illustrate how a future edition might extend it, without this edition assigning those codes."
+    ],
+    "parent": "ECC register"
+  }
+]

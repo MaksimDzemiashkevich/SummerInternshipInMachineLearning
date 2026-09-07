@@ -22,3 +22,4 @@ sentence-transformers
 fastapi
 uvicorn
 python-dotenv
+rank_bm25

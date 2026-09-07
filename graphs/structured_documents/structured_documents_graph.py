@@ -10,9 +10,10 @@ settings = Settings()
 # экстрактить последовательно и накапливать правила в rule_groups.json.
 _doc_stem = settings.input_path_document.stem
 _out_dir = settings.RULES_STORAGE_PATH.parent
-_pages_cache = _out_dir / f"pages_data_{_doc_stem}.json"
-_check_cache = _out_dir / f"data_after_check_{_doc_stem}.json"
-_rules_per_doc_path = _out_dir / f"rule_groups_{_doc_stem}.json"
+_doc_dir = _out_dir / _doc_stem
+_pages_cache = _doc_dir / "pages_data.json"
+_check_cache = _doc_dir / "data_after_check.json"
+_rules_per_doc_path = _doc_dir / "rule_groups.json"
 
 import base64
 import fitz
@@ -44,10 +45,18 @@ class MessagesState(MessagesState):
 class RuleGroup(BaseModel):
     attribute: str = Field(description="Concrete attribute the rules apply to (e.g. 'trim', 'gate', 'end connection'); use 'Global' for rules that apply to all attributes")
     type: str = Field(default="local", description="'global' if the rule applies to all attributes, 'local' if it applies to one specific attribute")
+    aliases: list[str] = Field(default_factory=list, description="Aliases/synonyms/terms this group typically covers (oil&gas terminology)")
     rules: list[str] = Field(description="List of rules/requirements in this group")
 
 class GroupingResult(BaseModel):
     groups: list[RuleGroup] = Field(description="List of all found rule groups by attribute")
+
+class ParentGroup(BaseModel):
+    name: str = Field(description="Short parent theme name (main noun)")
+    attributes: list[str] = Field(description="Attribute names that belong to this parent")
+
+class ClusteringResult(BaseModel):
+    parents: list[ParentGroup] = Field(description="List of parent groups, each with its attributes")
 
 def load_json(path: Path):
     """Загружает JSON с диска. Возвращает None, если файла нет или он битый."""
@@ -226,6 +235,12 @@ grouping_llm = ChatOpenAI(
     temperature=0,
 )
 
+clustering_llm = ChatOpenAI(
+    model=settings.llmodel,
+    max_tokens=10000,
+    temperature=0,
+)
+
 def grouping_rules_node(state: MessagesState) -> MessagesState:
     source_data = state.get("data_after_check") or state.get("pages_data")
 
@@ -313,14 +328,48 @@ def grouping_rules_node(state: MessagesState) -> MessagesState:
 
     return {"rule_groups": all_groups}
 
+
+def cluster_groups_node(state: MessagesState) -> MessagesState:
+    rule_groups = state.get("rule_groups") or []
+    local_groups = [g for g in rule_groups if g.get("type") != "global"]
+
+    if not local_groups:
+        return {"rule_groups": rule_groups}
+
+    attr_names = [g["attribute"] for g in local_groups]
+    try:
+        response = clustering_llm.invoke([
+            SystemMessage(content=settings.CLUSTERING_PROMPT),
+            HumanMessage(content=json.dumps(attr_names, ensure_ascii=False)),
+        ])
+        parsed = json.loads(response.content)
+        result = ClusteringResult.model_validate(parsed)
+    except Exception as e:
+        print("CLUSTERING ERROR (falling back, no parent):", type(e).__name__, str(e)[:200])
+        return {"rule_groups": rule_groups}
+
+    attr_to_parent = {}
+    for p in result.parents:
+        for a in p.attributes:
+            attr_to_parent[a.strip()] = p.name
+
+    for g in local_groups:
+        g["parent"] = attr_to_parent.get(g["attribute"], g["attribute"])
+
+    save_json(rule_groups, _rules_per_doc_path)
+    return {"rule_groups": rule_groups}
+
+
 builder = StateGraph(MessagesState)
 builder.add_node(first_node)
 builder.add_node(formatting_text_node)
 builder.add_node(grouping_rules_node)
+builder.add_node(cluster_groups_node)
 builder.add_edge(START, "first_node")
 builder.add_edge("first_node", "formatting_text_node")
 builder.add_edge("formatting_text_node", "grouping_rules_node")
-builder.add_edge("grouping_rules_node", END)
+builder.add_edge("grouping_rules_node", "cluster_groups_node")
+builder.add_edge("cluster_groups_node", END)
 graph = builder.compile()
 
 inv = graph.invoke({"messages": []})
