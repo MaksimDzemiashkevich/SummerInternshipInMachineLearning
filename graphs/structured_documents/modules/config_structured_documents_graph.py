@@ -4,7 +4,7 @@ from pathlib import Path
 
 @dataclass
 class Settings:
-    input_path_document: Path = Path("graphs/structured_documents/data/input/XYZ_STD_100_normalization_rules.pdf")
+    input_path_document: Path = Path("graphs/structured_documents/data/input/XYZ_STD_205_alternate_normalization_rules.pdf")
     RULES_STORAGE_PATH = Path("graphs/structured_documents/data/output/rule_groups.json")
     PAGES_DATA_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/pages_data.json")
     DATA_AFTER_CHECK_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/data_after_check.json")
@@ -384,198 +384,6 @@ class Settings:
     }
     using the top-level key "pages", which must contain exactly one page.
     """
-    grouping_rules_model_prompt: str = """You are a business assistant specializing in the analysis of technical standards and regulatory documents in the oil and gas industry (API standards and similar).
-
-    The input is a JSON containing a list of document pages. Each page has a "content" field containing structured blocks (heading, paragraph, table) extracted from the document.
-
-    Your task is to identify technical rules, requirements, or conditions in the document and group them by the attribute (characteristic, parameter, equipment component, etc.) to which they apply.
-
-    Rules may originate from blocks of ALL types:
-
-    - "paragraph" — textual requirements and normative statements;
-    - "table" — specific values (wall thicknesses, pressures, dimensions, materials, etc.) represented by table rows and columns (details below);
-    - "heading" — use only as contextual information about the section. Headings themselves are NOT rules and must not be treated as an independent source of rules.
-
-    An "attribute" is the specific characteristic or component that a rule refers to.
-    Examples include:
-
-    - body material;
-    - minimum wall thickness;
-    - pressure class;
-    - operating temperature;
-    - valve seat hardness.
-
-    Determine the attribute name from the meaning of the text.
-    It is not explicitly provided in the document—you must formulate it yourself.
-
-    Keep the attribute concise and clear (2–4 words), using either English or Russian, matching the language of the source document.
-
-    Formulate each rule as closely as possible to the original document without changing its technical meaning.
-
-    Do NOT paraphrase creatively or shorten the wording if doing so would omit exact numbers, units, applicability conditions, or referenced standards.
-
-    If preserving the technical meaning requires a longer formulation, use it.
-    Brevity must never come at the expense of precision.
-
-    The same attribute may appear across multiple pages.
-    Group all rules belonging to the same attribute together, even if they occur in different parts of the document.
-
-    Ignore text that is not a technical rule or requirement, such as:
-
-    - introductory text;
-    - references to other sections without substantive requirements;
-    - general descriptions lacking normative conditions.
-
-    Do not include such text in any group.
-
-    === RULES FROM TEXT (PARAGRAPHS AND DEFINITIONS) ===
-
-    Technical requirements and restrictions may appear not only in explicitly numbered clauses
-    (such as 4.1 or 5.1.1), but also inside paragraphs within the
-    "Terms and Definitions" section.
-
-    For example, a definition may contain a restriction on how the term may be used or interpreted, such as:
-
-    "not a measurable quantity and shall not be used for calculations unless otherwise specified."
-
-    Such statements are also rules and must be extracted separately,
-    even if they are embedded within a definition rather than presented as a numbered clause.
-
-    Do not skip a paragraph simply because it consists of
-    "a heading + a definition."
-
-    A single paragraph may contain both:
-
-    - a definition;
-    - a normative requirement.
-
-    In such cases, extract ONLY the requirement.
-    Do NOT include the definitional portion.
-
-    Inspect EVERY paragraph for multiple independent normative statements.
-
-    If a paragraph contains several separate requirements,
-    extract them as separate rules rather than combining them into one.
-
-    === RULES FROM TABLES ===
-
-    Tables in these documents are not merely reference material.
-
-    They are often the PRIMARY source of technical requirements,
-    containing specific values for wall thicknesses, pressures, dimensions,
-    material grades, and similar parameters.
-
-    Do not limit yourself to textual references such as
-
-    "shall be as given in Table 1".
-
-    If the table itself is present in the provided blocks,
-    analyze its rows and extract concrete rules from them.
-
-    How to formulate a rule from a table row:
-
-    - Combine into one sentence:
-      - the table title;
-      - the key identifying values from that row
-        (for example, pressure class, nominal size, trim number);
-      - the value from the target column.
-
-    Example:
-
-    If the table "Minimum Wall Thickness" contains the row
-
-    "Class Designation/Nominal Size DN": "25"
-
-    and
-
-    "Minimum Wall Thickness tm mm (in.)/300":
-    "6.4 (0.25)"
-
-    then formulate the rule as:
-
-    "For nominal size DN 25 and pressure class 300,
-    the minimum wall thickness tm shall be
-    6.4 mm (0.25 in.)."
-
-    For table-derived rules, the attribute should generally correspond
-    to the table title
-    (for example, "Minimum Wall Thickness")
-    rather than to an individual column.
-
-    This naturally groups all rows of the same table together.
-
-    Each table row containing meaningful values must become
-    a separate rule within the group.
-
-    Do NOT combine multiple rows into one rule.
-
-    Do NOT summarize the table with statements like
-
-    "wall thickness depends on size and pressure class."
-
-    Instead, extract every specific value from every applicable row.
-
-    Do not include empty ("") or "NA" cells in a rule.
-
-    If a table cell contains a symbolic designation or variable
-    (for example, a single letter)
-    rather than the final value,
-    and you find its explanation in nearby blocks
-    (paragraphs or notes),
-
-    use the decoded meaning when formulating the rule,
-    while optionally preserving the original symbol in parentheses
-    for precision.
-
-    === HANDLING PAGE BOUNDARIES ===
-
-    The input contains either ONE or TWO pages.
-
-    If there are TWO pages:
-
-    - the first page is the primary page from which rules must be extracted
-      (using all of its block types: paragraphs and tables);
-
-    - the second page is provided ONLY as context
-      to determine whether the last statement on the primary page
-      is semantically complete or continues onto the next page.
-
-    Do NOT extract rules from the second page itself.
-
-    It will be processed independently in the next step
-    when it becomes the primary page.
-
-    If there is only ONE page:
-
-    it is the final page of the document.
-
-    Extract rules from it exactly as you would from any other primary page,
-    without any special restrictions caused by the absence of a following page.
-
-    If the last paragraph on the primary page contains a rule
-    whose meaning becomes clear only when considering the beginning
-    of the next page,
-
-    you must still extract that rule.
-
-    Do not discard it merely because it appears at the end of the page.
-
-    === FINAL REMINDER BEFORE RESPONDING ===
-
-    Before producing your output, verify the following:
-
-    1. Have you analyzed EVERY table row by row and extracted the actual values,
-       rather than only the textual references to the table?
-
-    2. Have you inspected definitions in the "Terms and Definitions" section
-       (heading + paragraph) for hidden normative requirements,
-       rather than extracting only explicitly numbered clauses?
-
-    3. Have you avoided duplicating the same rule under different wording?
-
-    4. If a list of previously identified attributes has been provided,
-       have you reused exactly the same attribute names instead of inventing new ones?
-    """
     TABLE_EXTRACTION_PROMPT = """Ты извлекаешь правила стандартизации из нормативного документа (стандарт/спецификация) в нефтегазовой отрасли.
 
 На вход — JSON со страницей, где есть блоки: heading, paragraph, table.
@@ -606,6 +414,15 @@ class Settings:
 - «Trim → T; Trim 8A → T8A» → type="local", attribute="trim";
 - «DN → DN; DN 80 → DN80» → type="local", attribute="dn";
 - «NPS → NPS; NPS 3 → NPS3» → type="local", attribute="nps".
+
+=== ДЕТЕРМИНИРОВАННЫЕ ПРАВИЛА (Keyword → Root) ===
+Детерминированное правило — это безусловное соответствие «ключевое слово → код/корень», которое применяется ВО ВСЕХ обстоятельствах и не зависит ни от каких условий. Это не только сокращения (Class → CL), но и аббревиатуры (NPS → NPS, DN → DN) и любые фиксированные коды (Class → CLASSATUM, Trim → TRIMMEUS).
+Такое правило запиши отдельной строкой в СТРОГОМ формате:
+Keyword: 'Class'; Invented Root: 'CLASSATUM'
+Правило, у которого есть условие или зависимость от контекста («если...», «в зависимости от...»), НЕ детерминированное — формулируй его обычным текстом как семантическое правило.
+
+=== ПРИМЕРЫ ===
+Строки «EXAMPLE: …» в документе — это поясняющие примеры к конкретному правилу, а НЕ самостоятельные правила. Не выноси их в отдельное правило — оставляй как часть того правила, к которому они относятся.
 
 === АЛИАСЫ (для local-групп) ===
 Для каждой local-группы сгенерируй поле aliases — список терминов/синонимов/аббревиатур, которые типично покрывает эта группа в нефтегазовой терминологии. Пример: для группы «class» — «grade», «rating», «PN», «pressure rating», «class designation». Дай 3–8 коротких терминов (не предложений).

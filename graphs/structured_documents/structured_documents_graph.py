@@ -1,4 +1,5 @@
 import json
+import re
 
 from graphs.structured_documents.modules.config_structured_documents_graph import Settings
 from dotenv import load_dotenv
@@ -14,6 +15,12 @@ _doc_dir = _out_dir / _doc_stem
 _pages_cache = _doc_dir / "pages_data.json"
 _check_cache = _doc_dir / "data_after_check.json"
 _rules_per_doc_path = _doc_dir / "rule_groups.json"
+_deterministic_path = _doc_dir / "deterministic_rules.json"
+_deterministic_order_path = _doc_dir / "deterministic_order.json"
+_deterministic_attributes_path = _doc_dir / "deterministic_attributes.json"
+_phrase_path = _doc_dir / "phrase_rules.json"
+_excluded_path = _doc_dir / "excluded_attributes.json"
+_render_path = _doc_dir / "render_templates.json"
 
 import base64
 import fitz
@@ -321,6 +328,16 @@ def grouping_rules_node(state: MessagesState) -> MessagesState:
         for i in range(len(source_data)):
             call_llm([prepare(source_data[i])])
 
+    # --- вычищаем детерминированные/фразовые правила в отдельные файлы и убираем пустые группы ---
+    det, det_order, det_attrs = extract_deterministic_rules(all_groups)
+    save_json(det, _deterministic_path)
+    save_json(det_order, _deterministic_order_path)
+    save_json(det_attrs, _deterministic_attributes_path)
+    save_json(extract_phrase_rules(all_groups), _phrase_path)
+    save_json(extract_excluded_attributes(all_groups), _excluded_path)
+    save_json(extract_render_templates(all_groups), _render_path)
+    all_groups = drop_empty_groups(all_groups)
+
     # --- сохраняем правила этого документа в отдельный файл и помечаем документ обработанным ---
     save_json(all_groups, _rules_per_doc_path)
     processed_docs.append(_doc_stem)
@@ -329,8 +346,171 @@ def grouping_rules_node(state: MessagesState) -> MessagesState:
     return {"rule_groups": all_groups}
 
 
+_DET_RE = re.compile(r"Keyword:\s*(.+?)\s*;\s*Invented Root:\s*(.+?)(?:\s*[;.]|\s*$)")
+
+
+def extract_deterministic_rules(rule_groups: list[dict]) -> tuple[dict[str, str], dict[str, bool], dict[str, str]]:
+    """Извлекает детерминированные «Keyword → Root», порядок конкатенации и атрибут-владельца.
+
+    Порядок вычисляется программно из worked-example («Class 300 → 300CLASSATUM» — число
+    первым; «Class 300 → CL300» — корень первым), а не по фиксированной фразе. Атрибут-владелец
+    сохраняется для attribute-aware матчинга в apply_deterministic. Вычищает строки из групп.
+    """
+    deterministic: dict[str, str] = {}
+    order: dict[str, bool] = {}
+    attributes: dict[str, str] = {}
+    for g in rule_groups:
+        if g.get("type") == "global":
+            continue
+        kept_rules = []
+        for r in g.get("rules", []):
+            m = _DET_RE.search(r)
+            if m:
+                keyword = m.group(1).strip().strip("'\"")
+                root = m.group(2).strip().strip("'\"")
+                deterministic[keyword] = root
+                attributes[keyword] = g["attribute"]
+                # worked-example: «… → 300CLASSATUM» (цифра первым) / «… → CL300» (буква первым)
+                am = re.search(r"→\s*[‘’“”'\"]?(\d|[A-Za-z])", r)
+                if am:
+                    order[keyword] = am.group(1).isdigit()
+            else:
+                kept_rules.append(r)
+        g["rules"] = kept_rules
+    return deterministic, order, attributes
+
+
+_PHRASE_RE = re.compile(r"^\s*(?P<phrase>.+?)\s*→\s*(?P<code>[A-Za-z][A-Za-z0-9\-/]*)\s*$")
+
+
+def extract_phrase_rules(rule_groups: list[dict]) -> dict[str, str]:
+    """Извлекает фразовые соответствия «фраза → код» в dict (НЕ удаляя их из групп).
+
+    Фразовые коды остаются и в теле правил — по ним LLM донормализует не-точные значения
+    (например "Threaded end (NPT)"), а phrase_map даёт детерминированный fast-path для точных.
+    """
+    phrase_map: dict[str, str] = {}
+    for g in rule_groups:
+        if g.get("type") == "global":
+            continue
+        for r in g.get("rules", []):
+            m = _PHRASE_RE.match(r.strip())
+            if (m and " " in m.group("phrase") and ":" not in m.group("phrase")
+                    and not re.search(r"\d", m.group("phrase"))):
+                phrase_map[m.group("phrase").strip()] = m.group("code")
+    return phrase_map
+
+
+_EXCLUSION_MARKERS = (
+    "reproduced exactly",
+    "excluded from reformatting",
+    "reproduced unchanged",
+    "not subject to any presentation rule",
+    "not governed by any presentation rule",
+)
+
+
+def extract_excluded_attributes(rule_groups: list[dict]) -> list[str]:
+    """Извлекает атрибуты/категории, исключённые из реформатирования, по generic-оборотам.
+
+    В global-группе такой оборот обычно сопровождается поимённым списком (маркеры/переносы
+    строк) — каждый пункт списка попадает в исключения. У local-группы флагуется только
+    явное «excluded from reformatting» (не «reproduced exactly», которое часто описывает
+    лишь подслучай вроде «no value recorded» / «composite trim» / «unmatched gate»), и не
+    кросс-ссылки «…under XYZ STD …, shall under this standard be replaced».
+    """
+    excluded: list[str] = []
+    for g in rule_groups:
+        for r in g.get("rules", []):
+            rl = r.lower()
+            if g.get("type") == "global":
+                # только списки (с маркерами/переносами), а не одиночные предложения
+                if any(m in rl for m in _EXCLUSION_MARKERS) and re.search(r"[•–\n]", r):
+                    excluded.extend(_split_exclusion_items(r))
+            else:
+                if "excluded from reformat" in rl and "shall under this standard" not in rl:
+                    excluded.append(g["attribute"])
+    return excluded
+
+
+def _split_exclusion_items(text: str) -> list[str]:
+    """Режет global-список исключений на поимённые пункты (маркеры списка/переносы строк)."""
+    items: list[str] = []
+    for part in re.split(r"[•–\n]", text):
+        p = part.strip(" \t\r-–—:;.")
+        if not p:
+            continue
+        low = p.lower()
+        if low.startswith(("the following", "since", "without", "these", "no clause", "a national", "free-text")):
+            continue
+        items.append(p)
+    return items
+
+
+_RENDER_EX_RE = re.compile(r"→\s*[‘’“”'\"](\d+(?:\.\d+)?)([^‘’“”'\"]*)[‘’“”'\"]")
+
+
+def extract_render_templates(rule_groups: list[dict]) -> dict[str, dict]:
+    """Извлекает шаблон рендера (decimals + suffix) из worked-example «X → Y».
+
+    Берётся только пример с единицей измерения (suffix начинается с пробела или содержит °),
+    а не keyword→root пример («300CLASSATUM», «CL300» — без пробела/градуса).
+    """
+    templates: dict[str, dict] = {}
+    for g in rule_groups:
+        if g.get("type") == "global":
+            continue
+        for r in g.get("rules", []):
+            m = _RENDER_EX_RE.search(r)
+            if m:
+                num = m.group(1)
+                suffix = m.group(2).rstrip()
+                if suffix and (suffix[0].isspace() or "°" in suffix):
+                    decimals = len(num.split(".")[1]) if "." in num else 0
+                    templates[g["attribute"]] = {
+                        "decimals": decimals,
+                        "suffix": suffix,
+                        "aliases": list(g.get("aliases", [])),
+                    }
+                    break
+    return templates
+
+
+def drop_empty_groups(rule_groups: list[dict]) -> list[dict]:
+    """Убирает local-группы, у которых после вычистки не осталось правил."""
+    return [
+        g for g in rule_groups
+        if g.get("type") == "global" or g.get("rules")
+    ]
+
+
+def distill_groups(rule_groups: list[dict]) -> list[dict]:
+    """Сжимает тела групп: убирает разъяснительный текст и список исключений.
+
+    Убирает: NOTE —, кросс-референсы между стандартами, а из global — список «reproduced
+    exactly» (он уже обработан детерминированно в excluded_attributes, в контекст LLM не нужен).
+    """
+    distilled = []
+    for g in rule_groups:
+        kept = []
+        for r in g.get("rules", []):
+            rl = r.lower().strip()
+            if rl.startswith("note"):
+                continue
+            if rl.startswith("unlike xyz std"):
+                continue
+            if g.get("type") == "global" and "reproduced exactly" in rl and re.search(r"[•–\n]", r):
+                continue
+            kept.append(r)
+        ng = dict(g)
+        ng["rules"] = kept
+        distilled.append(ng)
+    return distilled
+
+
 def cluster_groups_node(state: MessagesState) -> MessagesState:
     rule_groups = state.get("rule_groups") or []
+
     local_groups = [g for g in rule_groups if g.get("type") != "global"]
 
     if not local_groups:

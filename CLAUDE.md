@@ -60,8 +60,8 @@ Config for this graph lives in `graphs/structured_documents/modules/config_struc
 
 `graphs/rag_agent/api.py` exposes `POST /process`, which accepts an uploaded `.xlsx` with `Attribute`/`Value` columns and returns a result `.xlsx`. The LangGraph `StateGraph` (`start_row` → `process_chunk` → `next_row` / `end_node`) iterates over rows; for each attribute it does a similarity search (`RETRIEVAL_K = 4`) to fetch relevant rules, splits them into sentence chunks (`SENTENCES_PER_CHUNK = 10`), and asks `gpt-4o` to normalize the value using `SYSTEM_PROMPT1` (`modules/system_prompts.py`).
 
-- `modules/tools.py` contains unit-conversion `@tool` functions that are defined but **not currently wired into the graph**.
-- `modules/system_prompts.py` also has `SYSTEM_PROMPT2` (a routing prompt) that is currently unused.
+- `modules/tools.py` contains unit-conversion `@tool` functions, wired into the model via `bind_tools` in `modules/config.py`.
+- `modules/system_prompts.py` holds `SYSTEM_PROMPT1`, the only runtime system prompt.
 
 ### Frontend
 
