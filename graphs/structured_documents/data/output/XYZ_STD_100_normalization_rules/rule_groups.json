@@ -6,79 +6,46 @@
     "rules": [
       "1.1 This clause specifies the required presentation format for attribute values recorded on gate valve data sheets and purchase specifications derived from this standard.",
       "1.2 Reformatting performed under this standard shall change presentation only. It shall not alter the technical substance of a recorded value — including, but not limited to, a specified pressure class, trim number, dimension, or any purchaser-specified deviation from default practice — even where a different value would otherwise be indicated by a rating, material, or selection table elsewhere in this standard.",
+      "2.1 All linear dimensions reported for valve components (including, but not limited to, stem diameter, minimum wall thickness, and wear travel) shall be expressed in millimeters (mm), rounded to one decimal place.",
+      "2.2 All temperature values shall be expressed in degrees Celsius (°C), rounded to the nearest whole degree.",
+      "2.3 Metric thread designations using the “M” prefix (e.g. M12) denote a standardized thread size, not a linear dimension, and are exempt from 2.1.",
+      "2.4 Where a recorded value is already expressed in the unit required by 2.1 or 2.2, no change is required.",
       "3.1 An attribute value consisting of a keyword followed by a numeric designation shall be written as a single concatenated code, with no space between the abbreviation and the number, using the abbreviations given in Table 1.",
       "3.2 This rule applies wherever such a designation occurs on the data sheet, including primary and alternative trim number fields.",
-      "2.4 Where a recorded value is already expressed in the unit required by 2.1 or 2.2, no change is required.",
+      "4.1 Alloy material designations shall be written without hyphens between element symbols and their content indicators (e.g. “18Cr-8Ni” shall be written “18Cr8Ni”).",
+      "4.2 This rule applies to body material and bonnet material designations, and to any other alloy composition abbreviation appearing on the data sheet.",
       "The following categories of recorded data shall be reproduced exactly as given, without abbreviation or unit conversion, since they represent fixed nomenclature, external standard references, material specification numbers, purchaser-specified operating deviations, or engineering formulas:\n– Bonnet-to-body joint type descriptions\n– Gate type descriptions\n– Bolting material specification numbers and their national/regional equivalents\n– Handwheel operating direction\n– References to external dimensional or marking standards (e.g. ASME B16.x)\n– Bolt thread size designations\n– Valve shipping position\n– Engineering formulas (e.g. carbon equivalent formula)"
     ]
   },
   {
-    "attribute": "dimension",
+    "attribute": "end connection",
     "type": "local",
     "aliases": [
-      "linear dimension",
-      "stem diameter",
-      "wall thickness",
-      "wear travel",
-      "component dimension"
+      "end connection type",
+      "connection end",
+      "terminal connection",
+      "end connection description"
     ],
     "rules": [
-      "2.1 All linear dimensions reported for valve components (including, but not limited to, stem diameter, minimum wall thickness, and wear travel) shall be expressed in millimeters (mm), rounded to one decimal place."
+      "5.1 The end connection description shall be replaced by the corresponding standard abbreviation given in Table 2.",
+      "Joint Type: 'Flanged, raised face'; Abbreviation: 'FLG-RF'",
+      "Joint Type: 'Flanged, flat face'; Abbreviation: 'FLG-FF'",
+      "Joint Type: 'Butt-welding end'; Abbreviation: 'BW'",
+      "Joint Type: 'Socket-welding end'; Abbreviation: 'SW'",
+      "Joint Type: 'Threaded end'; Abbreviation: 'THRD'",
+      "Joint Type: 'Ring-type joint'; Abbreviation: 'RTJ'"
     ],
-    "parent": "dimension"
-  },
-  {
-    "attribute": "temperature",
-    "type": "local",
-    "aliases": [
-      "temperature value",
-      "operating temperature",
-      "service temperature",
-      "temperature rating"
-    ],
-    "rules": [
-      "2.2 All temperature values shall be expressed in degrees Celsius (°C), rounded to the nearest whole degree."
-    ],
-    "parent": "temperature"
-  },
-  {
-    "attribute": "bolt thread",
-    "type": "local",
-    "aliases": [
-      "metric thread",
-      "thread designation",
-      "thread size",
-      "M prefix"
-    ],
-    "rules": [
-      "2.3 Metric thread designations using the “M” prefix (e.g. M12) denote a standardized thread size, not a linear dimension, and are exempt from 2.1."
-    ],
-    "parent": "bolt thread"
-  },
-  {
-    "attribute": "material designation",
-    "type": "local",
-    "aliases": [
-      "material grade",
-      "alloy designation",
-      "body material",
-      "bonnet material",
-      "composition abbreviation"
-    ],
-    "rules": [
-      "4.1 Alloy material designations shall be written without hyphens between element symbols and their content indicators (e.g. “18Cr-8Ni” shall be written “18Cr8Ni”).",
-      "4.2 This rule applies to body material and bonnet material designations, and to any other alloy composition abbreviation appearing on the data sheet."
-    ],
-    "parent": "material designation"
+    "parent": "end connection"
   },
   {
     "attribute": "hardness",
     "type": "local",
     "aliases": [
+      "hardness",
       "hardness value",
       "hardness notation",
-      "HB",
-      "hardness qualifier"
+      "hardness qualifier",
+      "HB"
     ],
     "rules": [
       "The qualifier “minimum” immediately following a recorded hardness value shall be abbreviated “min.” (e.g. “250 HB minimum” shall be written “250 HB min.”)."

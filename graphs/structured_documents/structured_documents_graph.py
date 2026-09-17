@@ -19,6 +19,7 @@ _deterministic_path = _doc_dir / "deterministic_rules.json"
 _deterministic_order_path = _doc_dir / "deterministic_order.json"
 _deterministic_attributes_path = _doc_dir / "deterministic_attributes.json"
 _phrase_path = _doc_dir / "phrase_rules.json"
+_phrase_attributes_path = _doc_dir / "phrase_attributes.json"
 _excluded_path = _doc_dir / "excluded_attributes.json"
 _render_path = _doc_dir / "render_templates.json"
 
@@ -333,7 +334,9 @@ def grouping_rules_node(state: MessagesState) -> MessagesState:
     save_json(det, _deterministic_path)
     save_json(det_order, _deterministic_order_path)
     save_json(det_attrs, _deterministic_attributes_path)
-    save_json(extract_phrase_rules(all_groups), _phrase_path)
+    phrase_map, phrase_attributes = extract_phrase_rules(all_groups)
+    save_json(phrase_map, _phrase_path)
+    save_json(phrase_attributes, _phrase_attributes_path)
     save_json(extract_excluded_attributes(all_groups), _excluded_path)
     save_json(extract_render_templates(all_groups), _render_path)
     all_groups = drop_empty_groups(all_groups)
@@ -346,7 +349,9 @@ def grouping_rules_node(state: MessagesState) -> MessagesState:
     return {"rule_groups": all_groups}
 
 
-_DET_RE = re.compile(r"Keyword:\s*(.+?)\s*;\s*Invented Root:\s*(.+?)(?:\s*[;.]|\s*$)")
+# Захват только содержимого кавычек: root обрывается на закрывающей кавычке, а не на
+# пунктуации после неё (иначе worked-example «(DN 80 → DN80)» попадал в корень).
+_DET_RE = re.compile(r"Keyword:\s*['\"](.+?)['\"]\s*;\s*Invented Root:\s*['\"](.+?)['\"]")
 
 
 def extract_deterministic_rules(rule_groups: list[dict]) -> tuple[dict[str, str], dict[str, bool], dict[str, str]]:
@@ -383,13 +388,19 @@ def extract_deterministic_rules(rule_groups: list[dict]) -> tuple[dict[str, str]
 _PHRASE_RE = re.compile(r"^\s*(?P<phrase>.+?)\s*→\s*(?P<code>[A-Za-z][A-Za-z0-9\-/]*)\s*$")
 
 
-def extract_phrase_rules(rule_groups: list[dict]) -> dict[str, str]:
-    """Извлекает фразовые соответствия «фраза → код» в dict (НЕ удаляя их из групп).
+# «assigned codes: ECC-301 Threaded end (NPT)» — код + фраза + вариант-в-скобках (Задача F).
+_ASSIGNED_CODES_RE = re.compile(r"([A-Za-z][A-Za-z0-9]*-\d+)\s+([^;()]+?)\s*\(([A-Za-z0-9\-/]+)\)")
 
-    Фразовые коды остаются и в теле правил — по ним LLM донормализует не-точные значения
-    (например "Threaded end (NPT)"), а phrase_map даёт детерминированный fast-path для точных.
+
+def extract_phrase_rules(rule_groups: list[dict]) -> tuple[dict[str, str], dict[str, str]]:
+    """Извлекает «фраза → код» и происхождение каждой фразы (attribute-владелец).
+
+    Дополнительно (Задача F): если рядом с кодом в таблице указан вариант в скобках
+    («assigned codes: ECC-301 Threaded end (NPT)»), скобочная часть становится алиасом:
+    phrase_map["Threaded end (NPT)"] = "ECC-301" наравне с phrase_map["Threaded end"].
     """
     phrase_map: dict[str, str] = {}
+    phrase_attributes: dict[str, str] = {}
     for g in rule_groups:
         if g.get("type") == "global":
             continue
@@ -397,8 +408,18 @@ def extract_phrase_rules(rule_groups: list[dict]) -> dict[str, str]:
             m = _PHRASE_RE.match(r.strip())
             if (m and " " in m.group("phrase") and ":" not in m.group("phrase")
                     and not re.search(r"\d", m.group("phrase"))):
-                phrase_map[m.group("phrase").strip()] = m.group("code")
-    return phrase_map
+                phrase = m.group("phrase").strip()
+                phrase_map[phrase] = m.group("code")
+                phrase_attributes[phrase] = g["attribute"]
+            for am in _ASSIGNED_CODES_RE.finditer(r):
+                code = am.group(1)
+                phrase = am.group(2).strip()
+                variant = am.group(3)
+                if phrase and " " in phrase:
+                    alias = f"{phrase} ({variant})"
+                    phrase_map[alias] = code
+                    phrase_attributes[alias] = g["attribute"]
+    return phrase_map, phrase_attributes
 
 
 _EXCLUSION_MARKERS = (

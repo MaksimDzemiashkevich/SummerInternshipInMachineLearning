@@ -4,6 +4,7 @@ from pathlib import Path
 
 import json
 import re
+import logging
 
 from rank_bm25 import BM25Okapi
 
@@ -16,6 +17,8 @@ from .tools import array_of_tools
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -52,13 +55,14 @@ class RuleSet:
     deterministic: dict[str, str] = field(default_factory=dict)
     phrase_map: dict[str, str] = field(default_factory=dict)
     closed_registers: dict[str, dict[str, str]] = field(default_factory=dict)
-    attribute_to_register: dict[str, str] = field(default_factory=dict)
+    attribute_to_register: dict[str, list[str]] = field(default_factory=dict)
     number_first: bool = False
     deterministic_order: dict[str, bool] = field(default_factory=dict)
     deterministic_attributes: dict[str, str] = field(default_factory=dict)
     excluded_attributes: list[str] = field(default_factory=list)
     render_templates: dict[str, dict] = field(default_factory=dict)
     parent_to_indices: dict[str, list[int]] = field(default_factory=dict)
+    clause_index: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -114,6 +118,26 @@ def _split_groups(groups: list[dict]) -> tuple[str, list[GroupEntry]]:
     return "\n".join(global_rules), entries
 
 
+# Строка правила, начинающаяся с номера пункта, — определение этого пункта.
+_CLAUSE_DEF_RE = re.compile(r"^\s*(\d+(?:\.\d+)+)\s")
+
+
+def _build_clause_index(global_rules: str, entries: list[GroupEntry]) -> dict[str, str]:
+    """Номер пункта → его текст, по всему документу.
+
+    Правила постоянно ссылаются друг на друга («см. 13.1», «под Clause 10»), а в промпт строки
+    попадают только global-правила и несколько найденных групп. Индекс позволяет дотянуть
+    текст пункта, на который ссылаются, если сам он в выборку не попал.
+    """
+    index: dict[str, str] = {}
+    for body in [global_rules] + [e.body for e in entries]:
+        for line in body.splitlines():
+            match = _CLAUSE_DEF_RE.match(line)
+            if match:
+                index.setdefault(match.group(1), line.strip())
+    return index
+
+
 def _search_text(entry: GroupEntry) -> str:
     """Текст, который эмбедится и по которому строится BM25: имя + алиасы."""
     return " | ".join([entry.attribute] + entry.aliases)
@@ -160,14 +184,30 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         bm25 = BM25Okapi(corpus)
         deterministic = _load_deterministic(path.parent)
         phrase_map = _load_phrase_rules(path.parent)
+        phrase_attributes = _load_phrase_attributes(path.parent)
+        # таблицы «описание → код», оставшиеся строками правил, тоже образуют закрытый реестр
+        table_pairs, table_attributes = _extract_table_pairs(groups)
+        if table_pairs:
+            logger.info("Документ %r: из текста правил добавлено %d пар закрытого реестра.",
+                        name, len(table_pairs))
+        phrase_map = {**table_pairs, **phrase_map}
+        phrase_attributes = {**table_attributes, **phrase_attributes}
         closed_registers = _build_closed_registers(phrase_map, deterministic)
-        attribute_to_register = _derive_attribute_to_register(groups, closed_registers)
+        deterministic_attributes = _load_deterministic_attributes(path.parent)
+        attribute_to_register = _attribute_to_register_from_origins(
+            closed_registers, phrase_attributes, deterministic_attributes)
+        if not attribute_to_register:
+            attribute_to_register = _derive_attribute_to_register(groups, closed_registers)
+        if phrase_map and not closed_registers:
+            logger.warning(
+                "Документ %r: есть фразовые пары (phrase_rules.json), но ни одна не отнесена "
+                "к закрытому регистру — pending-registration не сработает.", name)
         number_first = _determine_number_first(global_rules)
         deterministic_order = _load_deterministic_order(path.parent)
-        deterministic_attributes = _load_deterministic_attributes(path.parent)
         excluded_attributes = _load_excluded_attributes(path.parent)
         render_templates = _load_render_templates(path.parent)
-        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices))
+        clause_index = _build_clause_index(global_rules, entries)
+        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index))
 
     return rule_sets
 
@@ -185,6 +225,14 @@ def _load_phrase_rules(doc_dir: Path) -> dict[str, str]:
     phrase_path = doc_dir / "phrase_rules.json"
     if phrase_path.exists():
         return json.loads(phrase_path.read_text(encoding="utf-8"))
+    return {}
+
+
+def _load_phrase_attributes(doc_dir: Path) -> dict[str, str]:
+    """Загружает происхождение фраз: phrase → attribute (из phrase_attributes.json)."""
+    path = doc_dir / "phrase_attributes.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
     return {}
 
 
@@ -220,44 +268,122 @@ def _load_render_templates(doc_dir: Path) -> dict[str, dict]:
     return {}
 
 
-_CODE_PREFIX_RE = re.compile(r"^([A-Z]+)[\-]?\d")
+def _extract_code_prefix(code: str) -> str | None:
+    """Буквенная часть кода = префикс регистра. Регистр букв и разделители не важны."""
+    m = re.match(r"^([A-Za-z]+)", code)
+    return m.group(1) if m else None
+
+
+def _is_code_like(code: str) -> bool:
+    """Код ли это (короткий буквенно-цифровой идентификатор с разделителем/цифрой),
+    а не длинный root (CLASSATUM, DIAMOSA, KITARIS)."""
+    return bool(re.search(r"[-_.\d]", code)) or len(code) <= 4
+
+
+def _is_indexed_code(code: str) -> bool:
+    """Код указывает на конкретный пункт реестра (несёт номер/разделитель), а не является
+    чистой буквенной аббревиатурой keyword'а, к которой число добавляется из значения."""
+    return bool(re.search(r"[-_./\d]", code))
+
+
+def _is_register_pair(phrase: str, code: str) -> bool:
+    """Пара «фраза → код закрытого реестра», а не «keyword → invented root».
+
+    Различаем двумя независимыми признаками: многословная фраза (keyword — одно слово)
+    ИЛИ код-индекс с цифрой/разделителем (root — чистые буквы, потому что число приходит
+    из самого значения).
+    """
+    return _is_code_like(code) and (" " in phrase.strip() or _is_indexed_code(code))
+
+
+# Строка правила, которая на самом деле является строкой двухколоночной таблицы:
+# «<подпись колонки>: '<значение>'; <подпись колонки>: '<значение>'».
+_TABLE_ROW_RE = re.compile(
+    r"^\s*[\w /&()-]+?:\s*['\"“”](.+?)['\"“”]\s*;\s*[\w /&()-]+?:\s*['\"“”](.+?)['\"“”]\s*$"
+)
+
+
+def _extract_table_pairs(groups: list[dict]) -> tuple[dict[str, str], dict[str, str]]:
+    """Достаёт из тела local-групп строки таблиц «описание → код» вместе с их атрибутом.
+
+    Документ может не выносить такую таблицу в отдельный файл на этапе извлечения, оставив
+    её строками правил. Без этого закрытый реестр для атрибута не строится вовсе, и код
+    подбирает LLM по тексту — то есть может выдумать отсутствующий в таблице код.
+    """
+    pairs: dict[str, str] = {}
+    origins: dict[str, str] = {}
+    for group in groups:
+        if group.get("type") == "global":
+            continue
+        attribute = (group.get("attribute") or "").strip()
+        for rule in group.get("rules", []):
+            for line in str(rule).splitlines():
+                match = _TABLE_ROW_RE.match(line)
+                if not match:
+                    continue
+                phrase, code = match.group(1).strip(), match.group(2).strip()
+                if phrase and code and _is_register_pair(phrase, code):
+                    pairs[phrase] = code
+                    origins[phrase] = attribute
+    return pairs, origins
+
 
 def _build_closed_registers(phrase_map: dict, deterministic: dict) -> dict[str, dict[str, str]]:
-    """Группирует фразы закрытых регистров по префиксу кода (ECC/JT/GT/...)."""
+    """Группирует фразы закрытых регистров по префиксу кода.
+
+    phrase_map — все записи «фраза → код» (это коды закрытого регистра).
+    deterministic — может содержать и keyword→root, поэтому фильтруется.
+    """
     registers: dict[str, dict[str, str]] = {}
-    for source in (phrase_map, deterministic):
-        for phrase, code in source.items():
-            m = _CODE_PREFIX_RE.match(code)
-            if not m:
-                continue  # не похоже на код таблицы (TRIMMEUS, CLASSATUM и т.п.)
-            prefix = m.group(1)
+    for phrase, code in phrase_map.items():
+        prefix = _extract_code_prefix(code)
+        if prefix:
             registers.setdefault(prefix, {})[phrase] = code
+    for phrase, code in deterministic.items():
+        if _is_register_pair(phrase, code):
+            prefix = _extract_code_prefix(code)
+            if prefix:
+                registers.setdefault(prefix, {})[phrase] = code
     return registers
 
 
-def _derive_attribute_to_register(groups: list[dict], closed_registers: dict[str, dict[str, str]]) -> dict[str, str]:
-    """Выводит attribute (lowercase) -> префикс регистра автономно: ищет в тексте правил группы
-    коды вида ECC-101 / JT-02 / GT-05 (только префиксы, реально присутствующие в closed_registers).
-    Без хардкода списка атрибутов."""
+def _attribute_to_register_from_origins(
+    closed_registers: dict[str, dict[str, str]], *origins: dict[str, str]
+) -> dict[str, list[str]]:
+    """attribute → [префиксы] из происхождения фраз, без сканирования прозы.
+
+    Источники происхождения (phrase_attributes.json, deterministic_attributes.json) —
+    любые словари «фраза → атрибут, из группы которого она извлечена». Пара попадает в
+    маппинг только если сама фраза действительно оказалась в закрытом регистре.
+    """
+    mapping: dict[str, list[str]] = {}
+    for prefix, phrases in closed_registers.items():
+        for phrase in phrases:
+            attr = next((o[phrase] for o in origins if o.get(phrase)), None)
+            if attr and prefix not in mapping.setdefault(attr.strip().lower(), []):
+                mapping[attr.strip().lower()].append(prefix)
+    return mapping
+
+
+def _derive_attribute_to_register(groups: list[dict], closed_registers: dict[str, dict[str, str]]) -> dict[str, list[str]]:
+    """Fallback: attribute → [префиксы] сканированием текста правил (Code: JT-01 / → "ECC-101" / …)."""
     prefixes = list(closed_registers.keys())
     if not prefixes:
         return {}
     alt = "|".join(re.escape(p) for p in sorted(prefixes, key=len, reverse=True))
-    # маппинг в форме «Code: JT-01», «→ "ECC-101"», «Assigned Codes: ECC-101 …»,
-    # а не любое упоминание кода в прозе.
     pat = re.compile(
         r"(?:Code(?:\s+Block)?\s*:\s*|Assigned\s+Codes\s*:\s*|→\s*)"
         r"[“”‘’'\"]?"
         r"(" + alt + r")-?\d+\b"
     )
-    mapping: dict[str, str] = {}
+    mapping: dict[str, list[str]] = {}
     for g in groups:
         if g.get("type") == "global":
             continue
         for r in g.get("rules", []):
             m = pat.search(r)
             if m:
-                mapping[g["attribute"].strip().lower()] = m.group(1)
+                mapping.setdefault(g["attribute"].strip().lower(), []).append(m.group(1))
                 break
     return mapping
 

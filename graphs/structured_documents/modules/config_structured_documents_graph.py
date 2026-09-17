@@ -4,7 +4,7 @@ from pathlib import Path
 
 @dataclass
 class Settings:
-    input_path_document: Path = Path("graphs/structured_documents/data/input/XYZ_STD_205_alternate_normalization_rules.pdf")
+    input_path_document: Path = Path("graphs/structured_documents/data/input/XYZ_STD_100_normalization_rules.pdf")
     RULES_STORAGE_PATH = Path("graphs/structured_documents/data/output/rule_groups.json")
     PAGES_DATA_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/pages_data.json")
     DATA_AFTER_CHECK_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/data_after_check.json")

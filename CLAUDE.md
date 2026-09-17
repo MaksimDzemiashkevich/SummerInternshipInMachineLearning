@@ -27,12 +27,16 @@ cd client && npm install && npm start
 # Offline PDF -> rule_groups.json extraction (runs the graph on import)
 venv2/Scripts/python -m graphs.structured_documents.structured_documents_graph
 
+# Regression eval of the normalization pipeline (calls the LLM, ~2 min)
+venv2/Scripts/python -m graphs.rag_agent.eval.run_eval
+venv2/Scripts/python -m graphs.rag_agent.eval.run_eval --rows 6,8,9 --tag alloy
+
 # Frontend tests (react-scripts / jest)
 cd client && npm test                 # watch mode
 cd client && npm test -- --testPathPattern=MessageInput   # single test file
 ```
 
-There are no Python tests. The `structured_documents_graph` module executes the full pipeline at import time (its bottom line calls `graph.invoke(...)`), so running it has side effects.
+There are no unit tests on the Python side; `graphs/rag_agent/eval` is the regression check for the normalization pipeline (it costs LLM calls, so run it deliberately). The `structured_documents_graph` module executes the full pipeline at import time (its bottom line calls `graph.invoke(...)`), so running it has side effects.
 
 ## Architecture & data flow
 
@@ -54,14 +58,32 @@ Config for this graph lives in `graphs/structured_documents/modules/config_struc
 
 `graphs/rag_agent/modules/config.py` is the entry point for app config:
 
-- `load_rules()` reads `data/input/rules.json`; if absent, it builds it from `structured_documents/data/output/rule_groups.json`.
-- `load_vector_store()` loads `data/input/vector_store.json`; if absent, it embeds each rule-group header (`text-embedding-3-large`) into an `InMemoryVectorStore` keyed by attribute and dumps it. **Delete `vector_store.json` (and `rules.json`) to force regeneration** after changing the rules.
-- `build_app_config()` assembles `AppConfig` (settings + store + `gpt-4o` chat model) and is cached via `lru_cache` in `api.py`.
+- `load_all_rule_sets()` scans `structured_documents/data/output/*/rule_groups.json` and builds one `RuleSet` per document: global rules, local rule groups (name + aliases + body), a semantic index, a BM25 index, and the sidecar files of that document's folder (`deterministic_rules.json`, `phrase_rules.json`, `*_attributes.json`, `excluded_attributes.json`, `render_templates.json`).
+- `load_vector_store()` caches each document's index in `data/input/vector_store_<doc>.json`. **Delete that file to force regeneration** after changing the rules of a document.
+- `_build_closed_registers()` turns "phrase → code" pairs into closed registers, keyed by code prefix; `_attribute_to_register_from_origins()` maps an attribute to its register(s) from where each phrase was extracted. A pair counts as a register entry (not a keyword→root pair) when the phrase is multi-word or the code carries a digit/separator (`_is_register_pair`).
+- `_extract_table_pairs()` additionally recovers tables that the offline extraction left as plain rule lines (`<label>: 'description'; <label>: 'code'`, e.g. Table 2 of XYZ STD 100). Without it such an attribute has no closed register at all and the model picks the code from prose — which is how a code that exists in no table (`FLG-RTJ`) got invented.
+- `hybrid_search()` merges semantic and BM25 hits via RRF and drops groups below `min_score`.
+- `_build_clause_index()` maps a clause number to its text across the whole document, so a rule that says "see 13.1" can have 13.1 pulled into the prompt even when that clause sits in a group the retrieval did not select.
+- `build_app_config()` assembles `AppConfig` (settings + rule sets + chat model) and is cached via `lru_cache` in `api.py`.
 
-`graphs/rag_agent/api.py` exposes `POST /process`, which accepts an uploaded `.xlsx` with `Attribute`/`Value` columns and returns a result `.xlsx`. The LangGraph `StateGraph` (`start_row` → `process_chunk` → `next_row` / `end_node`) iterates over rows; for each attribute it does a similarity search (`RETRIEVAL_K = 4`) to fetch relevant rules, splits them into sentence chunks (`SENTENCES_PER_CHUNK = 10`), and asks `gpt-4o` to normalize the value using `SYSTEM_PROMPT1` (`modules/system_prompts.py`).
+`graphs/rag_agent/api.py` exposes `POST /process`, which accepts an uploaded `.xlsx` with `Attribute`/`Value` columns and returns a result `.xlsx` with one column per rule set (cells needing human review are filled yellow). Any further columns of the upload are passed through to the output and used as row context (`_row_context`): they are never normalized, but they join the retrieval query and the prompts, which is what lets one document's rules for two different subjects ("Item: gate valve" vs "Item: pump") be told apart. Rows with different context are also kept apart by the consistency and reconciliation passes. The rule sets are computed in parallel; rows inside one rule set are processed sequentially by the LangGraph `StateGraph` (`start_row` → `normalize_row` → `next_row` / `end_node`).
+
+Per row, `start_row` first tries the deterministic path (`apply_deterministic`): excluded attribute → unchanged; exact phrase match; closed-register match; keyword→root. Only what is left goes to the model.
+
+- The register step (`match_closed_register`) takes an exact/near-exact fuzzy match as the code. In the gray zone it asks the model to pick from the full register (`REGISTER_PROMPT`), which answers with a code, `AMBIGUOUS` or `UNMATCHED` — a reworded entry ("Gate, solid wedge") is matched, a genuinely absent one is flagged rather than approximated.
+- A code is only ever written into the cell when the wording matches the register entry by word content (`_wording_matches`): word order, commas, hyphens and a bracketed qualifier may differ, an extra or missing word may not. When the entry is merely the closest one ("NPT threaded end" vs "Threaded end"), the recorded value is reproduced as-is and the row is marked for review — approximating a closed register is exactly what the standards forbid. A value listing several items with `;` is matched item by item, so an enumeration is not a wording difference.
+- `apply_deterministic` therefore returns `(value, needs_review)`; the flag travels through the graph as `needs_review_flag` and ends up in the `Ambiguous` column that drives the yellow fill.
+- `expand_references()` then resolves what those rules point at: clause numbers they cite (two levels deep, capped by `MAX_PULLED_CLAUSES`, and only numbers that the clause index actually defines, so decimals inside values are not mistaken for references), and, when the text mentions a table/appendix/register, the document's own entries for this attribute (`_register_lines_for_attribute`). The tables live in the extraction artifacts, not in the rule text — without this step a rule like "use the invented root given in Table 1" reaches the model with no Table 1, and 48 of the 62 roots of XYZ STD 205 appear nowhere in the prose it sees.
+- `normalize_row` sends the **whole** relevant rule text at once (global rules + `RETRIEVAL_K = 4` retrieved groups; the query is attribute **and** value). Rules are not fed in chunks: incremental feeding anchored the answer on whatever arrived first.
+- Each sample is normalize (`SYSTEM_PROMPT1`) + review (`VERIFY_PROMPT`, catches over- and under-application, example leakage, dropped content). `SELF_CONSISTENCY` samples (default 3, override with `NORMALIZER_SAMPLES`) run in parallel and the majority wins; a split vote marks the row for review.
+- Post-passes over the finished column: `_strip_redundant_parenthetical` (drops a parenthetical that only repeats what the code already encodes), `_reconcile_equivalent_rows` (`RECONCILE_PROMPT`, unifies how the rules were *read* for values that mean the same thing — it may only change separators or revert to the recorded value, never reorder content), `_apply_render_template` (re-renders a number to the document's decimals/suffix), `_canonicalize_formatting` (merges results that differ only in whitespace).
 
 - `modules/tools.py` contains unit-conversion `@tool` functions, wired into the model via `bind_tools` in `modules/config.py`.
-- `modules/system_prompts.py` holds `SYSTEM_PROMPT1`, the only runtime system prompt.
+- `modules/system_prompts.py` holds the four runtime prompts (`SYSTEM_PROMPT1`, `VERIFY_PROMPT`, `REGISTER_PROMPT`, `RECONCILE_PROMPT`). They must stay document-agnostic: no attribute names, values or phrasings of a particular standard.
+
+### 3. `rag_agent/eval` — regression harness
+
+`graphs/rag_agent/eval/expected.py` holds the expected output of both rule sets for every row of `data/input/test_attributes_api600_new_new.xlsx`, the rows that must (and must not) be marked for review, and the row pairs that must produce byte-identical results. `run_eval.py` runs the pipeline and prints accuracy, mismatches and inconsistent pairs. Rows where the source standard is genuinely ambiguous are documented there.
 
 ### Frontend
 
