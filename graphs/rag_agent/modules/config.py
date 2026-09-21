@@ -63,6 +63,7 @@ class RuleSet:
     render_templates: dict[str, dict] = field(default_factory=dict)
     parent_to_indices: dict[str, list[int]] = field(default_factory=dict)
     clause_index: dict[str, str] = field(default_factory=dict)
+    group_subjects: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -70,6 +71,8 @@ class AppConfig:
     settings: Settings
     model: ChatOpenAI
     rule_sets: list[RuleSet]
+    # Та же модель без bind_tools: разговорной части тулзы конверсии единиц не нужны.
+    assistant: ChatOpenAI | None = None
 
 
 # Attribute names that mark document front/back matter rather than technical rules.
@@ -192,7 +195,9 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
                         name, len(table_pairs))
         phrase_map = {**table_pairs, **phrase_map}
         phrase_attributes = {**table_attributes, **phrase_attributes}
-        closed_registers = _build_closed_registers(phrase_map, deterministic)
+        deterministic_order = _load_deterministic_order(path.parent)
+        closed_registers = _build_closed_registers(phrase_map, deterministic,
+                                                   set(deterministic_order))
         deterministic_attributes = _load_deterministic_attributes(path.parent)
         attribute_to_register = _attribute_to_register_from_origins(
             closed_registers, phrase_attributes, deterministic_attributes)
@@ -203,11 +208,15 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
                 "Документ %r: есть фразовые пары (phrase_rules.json), но ни одна не отнесена "
                 "к закрытому регистру — pending-registration не сработает.", name)
         number_first = _determine_number_first(global_rules)
-        deterministic_order = _load_deterministic_order(path.parent)
         excluded_attributes = _load_excluded_attributes(path.parent)
         render_templates = _load_render_templates(path.parent)
         clause_index = _build_clause_index(global_rules, entries)
-        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index))
+        group_subjects = _load_subjects(path.parent)
+        distinct_subjects = {s for s in group_subjects.values() if s}
+        if len(distinct_subjects) > 1:
+            logger.info("Документ %r описывает несколько предметов: %s",
+                        name, sorted(distinct_subjects))
+        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects))
 
     return rule_sets
 
@@ -260,6 +269,18 @@ def _load_deterministic_attributes(doc_dir: Path) -> dict[str, str]:
     return {}
 
 
+def _load_subjects(doc_dir: Path) -> dict[str, str]:
+    """Загружает разметку «группа правил → предмет» (subjects.json), если она есть.
+
+    Нужна, когда один документ описывает несколько разных изделий: тогда правила с одинаковым
+    названием атрибута относятся к разным вещам и смешивать их нельзя.
+    """
+    path = doc_dir / "subjects.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    return {}
+
+
 def _load_render_templates(doc_dir: Path) -> dict[str, dict]:
     """Загружает шаблоны рендера (decimals + suffix) для атрибутов с жёстким форматом."""
     render_path = doc_dir / "render_templates.json"
@@ -286,21 +307,43 @@ def _is_indexed_code(code: str) -> bool:
     return bool(re.search(r"[-_./\d]", code))
 
 
-def _is_register_pair(phrase: str, code: str) -> bool:
+def _is_register_pair(phrase: str, code: str, keyword_pairs: set[str] = frozenset()) -> bool:
     """Пара «фраза → код закрытого реестра», а не «keyword → invented root».
 
-    Различаем двумя независимыми признаками: многословная фраза (keyword — одно слово)
-    ИЛИ код-индекс с цифрой/разделителем (root — чистые буквы, потому что число приходит
-    из самого значения).
+    keyword_pairs — ключи, для которых извлечение вывело порядок конкатенации: наличие порядка
+    и означает, что это keyword-number правило («Pressure class» + «600» → «CL600»), а не пункт
+    реестра. Без этого признака различаем по форме: многословная фраза (keyword — одно слово)
+    ИЛИ код-индекс с цифрой/разделителем (root — чистые буквы, число приходит из значения).
     """
+    if phrase.strip() in keyword_pairs:
+        return False
     return _is_code_like(code) and (" " in phrase.strip() or _is_indexed_code(code))
 
 
-# Строка правила, которая на самом деле является строкой двухколоночной таблицы:
-# «<подпись колонки>: '<значение>'; <подпись колонки>: '<значение>'».
-_TABLE_ROW_RE = re.compile(
-    r"^\s*[\w /&()-]+?:\s*['\"“”](.+?)['\"“”]\s*;\s*[\w /&()-]+?:\s*['\"“”](.+?)['\"“”]\s*$"
-)
+# Ячейка строки-таблицы: «<подпись колонки>: '<значение>'». Колонок бывает две и больше.
+_TABLE_CELL_RE = re.compile(r"[\w /&()-]+?:\s*['\"“”](.+?)['\"“”]\s*(?:;|$)")
+
+
+def _looks_like_code(text: str) -> bool:
+    """Похоже ли значение ячейки на идентификатор, а не на описание."""
+    text = text.strip()
+    return bool(text) and " " not in text and (_is_indexed_code(text) or len(text) <= 6)
+
+
+def _orient_table_row(cells: list[str]) -> tuple[str, str] | None:
+    """Возвращает (описание, код) из ячеек строки таблицы, сколько бы колонок в ней ни было.
+
+    Порядок колонок в документе произвольный: «Joint Type: 'X'; Abbreviation: 'Y'» и
+    «Code: 'Y'; Description: 'X'» — одно и то же, поэтому роль колонки определяется по виду
+    значения, а не по позиции. Если описания нет или кодов сразу несколько («Numeric code:
+    'ECC-101'; Description: '...'; Abbreviation: 'RF'»), решить, какой из них требуется,
+    по одной строке нельзя — такую таблицу не трогаем, пусть её читает модель.
+    """
+    codes = [c for c in cells if _looks_like_code(c)]
+    descriptions = [c for c in cells if not _looks_like_code(c)]
+    if len(codes) != 1 or len(descriptions) != 1:
+        return None
+    return descriptions[0], codes[0]
 
 
 def _extract_table_pairs(groups: list[dict]) -> tuple[dict[str, str], dict[str, str]]:
@@ -318,17 +361,21 @@ def _extract_table_pairs(groups: list[dict]) -> tuple[dict[str, str], dict[str, 
         attribute = (group.get("attribute") or "").strip()
         for rule in group.get("rules", []):
             for line in str(rule).splitlines():
-                match = _TABLE_ROW_RE.match(line)
-                if not match:
+                cells = [c.strip() for c in _TABLE_CELL_RE.findall(line)]
+                if len(cells) < 2:
                     continue
-                phrase, code = match.group(1).strip(), match.group(2).strip()
+                oriented = _orient_table_row(cells)
+                if not oriented:
+                    continue
+                phrase, code = oriented
                 if phrase and code and _is_register_pair(phrase, code):
                     pairs[phrase] = code
                     origins[phrase] = attribute
     return pairs, origins
 
 
-def _build_closed_registers(phrase_map: dict, deterministic: dict) -> dict[str, dict[str, str]]:
+def _build_closed_registers(phrase_map: dict, deterministic: dict,
+                            keyword_pairs: set[str] = frozenset()) -> dict[str, dict[str, str]]:
     """Группирует фразы закрытых регистров по префиксу кода.
 
     phrase_map — все записи «фраза → код» (это коды закрытого регистра).
@@ -340,7 +387,7 @@ def _build_closed_registers(phrase_map: dict, deterministic: dict) -> dict[str, 
         if prefix:
             registers.setdefault(prefix, {})[phrase] = code
     for phrase, code in deterministic.items():
-        if _is_register_pair(phrase, code):
+        if _is_register_pair(phrase, code, keyword_pairs):
             prefix = _extract_code_prefix(code)
             if prefix:
                 registers.setdefault(prefix, {})[phrase] = code
@@ -424,11 +471,12 @@ def hybrid_search(rule_set: RuleSet, query: str, top_k: int = 4,
 def build_app_config(settings: Settings | None = None) -> AppConfig:
     settings = settings or Settings()
 
-    model = ChatOpenAI(
+    assistant = ChatOpenAI(
         model=settings.chat_model,
         temperature=settings.temperature,
         reasoning_effort=settings.reasoning_effort,
-    ).bind_tools(array_of_tools)
+    )
+    model = assistant.bind_tools(array_of_tools)
 
     rule_sets = load_all_rule_sets(settings)
 
@@ -436,4 +484,5 @@ def build_app_config(settings: Settings | None = None) -> AppConfig:
         settings=settings,
         model=model,
         rule_sets=rule_sets,
+        assistant=assistant,
     )

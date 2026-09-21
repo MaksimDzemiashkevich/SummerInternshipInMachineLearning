@@ -37,5 +37,27 @@ def convert_fahrenheit_to_celsius(value: float) -> float:
     return round((value - 32) * 5 / 9, 2)
 
 
+@tool
+def remove_characters(text: str, characters: str) -> str:
+    """Remove EVERY occurrence of the given characters from the text and return the result.
+
+    Use this whenever a rule says to drop a separator or punctuation mark, instead of retyping
+    the value: the removal is then applied to every occurrence, and nothing else changes.
+    `characters` is the set of characters to drop, e.g. "-" or "-,".
+    """
+    return "".join(ch for ch in text if ch not in set(characters))
+
+
+@tool
+def replace_substring(text: str, find: str, replace_with: str) -> str:
+    """Replace EVERY occurrence of `find` with `replace_with` in the text and return the result.
+
+    Use this whenever a rule says to swap one separator, word or symbol for another (for example
+    a hyphen for a tilde, or the word "and" for "&"), instead of retyping the value.
+    """
+    return text.replace(find, replace_with)
+
+
 array_of_tools = [convert_bar_to_mpa, convert_psi_to_mpa, convert_inch_to_mm,
-                  convert_lb_to_kg, convert_kelvin_to_celsius, convert_fahrenheit_to_celsius]
+                  convert_lb_to_kg, convert_kelvin_to_celsius, convert_fahrenheit_to_celsius,
+                  remove_characters, replace_substring]

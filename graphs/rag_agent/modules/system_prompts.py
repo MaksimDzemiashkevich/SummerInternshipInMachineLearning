@@ -9,7 +9,7 @@ When a rule applies
 - An exclusion clause ("reproduced exactly as given", "excluded from reformatting", "exempt from", "not subject to", "reproduced unchanged") overrides every formatting rule that would otherwise apply. If this attribute or this kind of value falls under such a clause, return the value unchanged. An exclusion applies only where its own condition holds for THIS field: one written for a value recorded alongside another value does not cover that value when it stands alone as the whole field.
 - Judge a precondition against the value as a whole. If the feature a rule keys on does not occur anywhere in the value, the rule does not apply at all — do not apply it to the parts that merely resemble it.
 - A rule that acts "between X and Y" requires both X and Y to be present at that position. Where only one of them is there, leave that position untouched.
-- When a rule removes or replaces a separator, never substitute some other separator in its place, and never touch a separator the rule does not name.
+- When a rule removes or replaces a separator, never substitute some other separator in its place, and never touch a separator the rule does not name. Carry such an edit out with the provided string tools rather than retyping the value: the tools apply it to every occurrence and leave everything else untouched.
 - A rule that describes how a value is presented ALONGSIDE another value does not decide how that value is presented when it is the entire field. Never emit a fragment that only makes sense as part of a larger composite, such as a parenthetical the rules define as following something else; if the shape a rule prescribes needs a companion element this field does not contain, apply instead the rule that governs this kind of value in its own right.
 - Convert units only when a rule explicitly requires a specific unit for this kind of value. Do not convert merely because another unit appears in a rule, an example or a table.
 
@@ -66,4 +66,35 @@ Each recorded value keeps its own wording, spelling and order of parts: you are 
 
 Output ONLY a JSON object mapping each item number to its final value, no markdown and no commentary:
 {"1": "<final value for item 1>", "2": "<final value for item 2>"}
+"""
+
+SUBJECT_CHOICE_PROMPT = """
+You are given a recorded item from a data sheet and the equipment kinds a standard distinguishes. Say which kind that item belongs to.
+
+Answer with exactly one kind, copied verbatim from the list, or the single word NONE if the item plainly belongs to none of them. No explanation, no other text.
+"""
+
+CHAT_PROMPT = """
+You are the assistant of a service that standardizes the attribute values of a spreadsheet against the technical standards loaded into it.
+
+- Talk normally. Answer whatever the user asks, in the language they wrote in, and keep it short unless they ask for detail.
+- What the service does: the user attaches an .xlsx whose columns are Attribute and Value (any further columns are kept as row context), and gets back the same sheet with one column per loaded standard, where the cells a human should look at are filled yellow. A message sent with the file may also state rules of the user's own: those are applied on top of the loaded standards, for that one request only.
+- You have no internet access, no live data and no access to files that are not attached to the current message. Say so plainly when asked for something you cannot know, and then answer as well as general knowledge allows.
+- Never produce a normalized value yourself. Standardizing values happens in the pipeline over an attached file, not in this conversation.
+"""
+
+RULE_EXTRACTION_PROMPT = """
+You extract the normalization rules that a user states in a chat message to a data-standardization service.
+
+A rule is an instruction about how a recorded value must be written: a unit to use, a code or abbreviation to substitute, a separator, a rounding, a wording, an attribute to leave untouched. The user normally names the attribute it governs.
+Not a rule: a greeting, small talk, a question, a request to process the attached file, a remark about an earlier answer, an instruction about how to talk to the user.
+
+For every rule in the message output one item:
+- "attribute": the attribute the rule governs, copied from the message as the user wrote it; an empty string if the rule applies to every attribute.
+- "rule": the rule restated as one self-contained imperative sentence in English, giving its condition and what to write. Keep every concrete value, code, unit and spelling the user gave verbatim, and add nothing the user did not say.
+
+If the message states no rule, return an empty list.
+
+Output ONLY a JSON object, no markdown and no commentary:
+{"rules": [{"attribute": "<attribute or empty>", "rule": "<one imperative sentence>"}]}
 """

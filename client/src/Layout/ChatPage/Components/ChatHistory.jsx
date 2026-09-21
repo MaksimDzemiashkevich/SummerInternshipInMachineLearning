@@ -44,7 +44,7 @@ const roleConfig = {
                         ))}
                 </div>
                 )}
-                {content && <div>{content}</div>}
+                {content && <div style={{ whiteSpace: "pre-wrap" }}>{content}</div>}
             </div>
         ),
         footer: (content) => (
@@ -71,7 +71,7 @@ const roleConfig = {
                         ))}
                 </div>
                 )}
-                {content && <div>{content}</div>}
+                {content && <div style={{ whiteSpace: "pre-wrap" }}>{content}</div>}
             </div>
         ),
         footer: (content) => (

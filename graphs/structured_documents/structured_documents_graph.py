@@ -26,6 +26,8 @@ _render_path = _doc_dir / "render_templates.json"
 import base64
 import fitz
 from langchain_openai import ChatOpenAI
+
+from graphs.structured_documents.subject_tagging import tag_subjects
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph, MessagesState
 from PIL import Image as PILImage
@@ -561,16 +563,34 @@ def cluster_groups_node(state: MessagesState) -> MessagesState:
     return {"rule_groups": rule_groups}
 
 
+def subject_tagging_node(state: MessagesState) -> MessagesState:
+    """Размечает, к какому изделию/узлу относится каждая группа правил (subjects.json).
+
+    Нужно, когда документ описывает несколько разных предметов: тогда одинаково названные
+    атрибуты означают разное, и применяющий граф не должен смешивать их правила. Шаг
+    необязательный — при ошибке файл просто не пишется, и применение работает как раньше.
+    Этот же шаг можно запустить отдельно, не перегоняя PDF:
+        venv2/Scripts/python -m graphs.structured_documents.subject_tagging
+    """
+    rule_groups = state.get("rule_groups") or []
+    subjects = tag_subjects(rule_groups, clustering_llm)
+    if subjects:
+        save_json(subjects, _doc_dir / "subjects.json")
+    return {"rule_groups": rule_groups}
+
+
 builder = StateGraph(MessagesState)
 builder.add_node(first_node)
 builder.add_node(formatting_text_node)
 builder.add_node(grouping_rules_node)
 builder.add_node(cluster_groups_node)
+builder.add_node(subject_tagging_node)
 builder.add_edge(START, "first_node")
 builder.add_edge("first_node", "formatting_text_node")
 builder.add_edge("formatting_text_node", "grouping_rules_node")
 builder.add_edge("grouping_rules_node", "cluster_groups_node")
-builder.add_edge("cluster_groups_node", END)
+builder.add_edge("cluster_groups_node", "subject_tagging_node")
+builder.add_edge("subject_tagging_node", END)
 graph = builder.compile()
 
 inv = graph.invoke({"messages": []})

@@ -2,6 +2,7 @@ import io
 import os
 import re
 import json
+import base64
 import logging
 from rapidfuzz import fuzz
 from functools import lru_cache
@@ -14,7 +15,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Depends, UploadFile, File
+from fastapi import FastAPI, Depends, UploadFile, File, Form
 from fastapi.responses import Response
 
 from langgraph.graph import START, StateGraph, MessagesState, END
@@ -23,7 +24,8 @@ from langchain_core.messages import RemoveMessage, ToolMessage
 
 from .modules.config import AppConfig, Settings, build_app_config, hybrid_search, _extract_code_prefix
 from .modules.system_prompts import (SYSTEM_PROMPT1, VERIFY_PROMPT, REGISTER_PROMPT,
-                                     RECONCILE_PROMPT)
+                                     RECONCILE_PROMPT, SUBJECT_CHOICE_PROMPT)
+from .modules.chat import AdHocRule, chat_reply, extract_adhoc_rules, format_adhoc_rules
 from .modules.tools import array_of_tools
 
 TOOLS_BY_NAME = {t.name: t for t in array_of_tools}
@@ -56,36 +58,152 @@ class GraphState(MessagesState):
     rules_text: str
     rule_group_names: list[str]
     row_context: str
+    subject_conflict: bool
+
+
+SUBJECT_WORD_THRESHOLD = 85
+
+
+def _words_match(left: str, right: str) -> bool:
+    """Одно ли это слово с точностью до формы: «valve»/«valves», «bolt»/«bolting»."""
+    if fuzz.ratio(left, right) >= SUBJECT_WORD_THRESHOLD:
+        return True
+    shorter, longer = sorted((left, right), key=len)
+    return len(shorter) >= 4 and longer.startswith(shorter)
+
+
+def _subject_matches(context: str, subject: str) -> bool:
+    """Относится ли контекст строки к этому предмету.
+
+    Разметка может перечислять несколько разновидностей через разделитель («pipe/tube») —
+    достаточно совпадения с одной из них. Внутри разновидности сравнение пословное и нестрогое:
+    в разметке «valves», в таблице «Gate Valve». Сравнивать строки целиком нельзя — «gate valve»
+    и «ball valve» тогда неотличимы, поэтому каждое слово разновидности должно найти себе
+    соответствие в контексте.
+    """
+    context_words = re.findall(r"\w+", str(context).lower())
+    if not context_words:
+        return False
+    for alternative in re.split(r"[/,;|]", str(subject).lower()):
+        subject_words = re.findall(r"\w+", alternative)
+        if subject_words and all(any(_words_match(sw, cw) for cw in context_words)
+                                 for sw in subject_words):
+            return True
+    return False
+
+
+_SUBJECT_CHOICE_CACHE: dict[tuple[str, tuple[str, ...]], str] = {}
+
+
+def _subject_by_model(model, context: str, subjects: tuple[str, ...]) -> str:
+    """Спрашивает модель, к какому из предметов документа относится запись строки.
+
+    Нужно там, где словами не сойтись: в таблице «90deg Elbow», а документ называет это
+    «butt-welding fitting». Ответ кэшируется по паре (запись, набор предметов) — в таблице
+    десятки строк на одно и то же изделие, и переспрашивать про каждую не нужно.
+    """
+    key = (context.strip().lower(), subjects)
+    if key in _SUBJECT_CHOICE_CACHE:
+        return _SUBJECT_CHOICE_CACHE[key]
+
+    listing = "\n".join(f"- {s}" for s in subjects)
+    messages = [
+        {"role": "system", "content": SUBJECT_CHOICE_PROMPT},
+        {"role": "user", "content": f"Recorded item: {context}\n\nEquipment kinds:\n{listing}"},
+    ]
+    try:
+        raw = str(model.invoke(messages).content).strip().splitlines()[0].strip(" -*`\"'.")
+    except Exception as e:
+        logger.warning("  [SUBJECT] выбор предмета не удался: %s", e)
+        raw = ""
+    choice = next((s for s in subjects if s.lower() == raw.lower()), "")
+    logger.info("  [SUBJECT] %r -> предмет %r", context, choice or "не определён")
+    _SUBJECT_CHOICE_CACHE[key] = choice
+    return choice
+
+
+def _select_by_subject(rule_set, pairs: list[tuple[str, str]], context: str,
+                       model=None) -> tuple[list[tuple[str, str]], bool]:
+    """Отсеивает найденные группы по предмету строки; сообщает о неразрешимом смешении.
+
+    Если документ описывает несколько изделий, одинаково названные атрибуты означают разное.
+    Группы без предмета относятся ко всему документу и остаются всегда. Из остальных остаются
+    те, чей предмет совпал с записью строки; если не совпал ни один — правила остаются все, но
+    строка идёт к ревьюеру, а не решается подбрасыванием монетки.
+    """
+    subject_of = {name: rule_set.group_subjects.get(name, "") for name, _ in pairs}
+    concrete = {s for s in subject_of.values() if s}
+    if len(concrete) < 2:
+        return pairs, False
+
+    matched = [p for p in pairs if _subject_matches(context, subject_of[p[0]])]
+    if not matched and context:
+        # словами не сошлось — разовый вопрос модели, к какому предмету относится изделие
+        all_subjects = tuple(sorted({s for s in rule_set.group_subjects.values() if s}))
+        choice = _subject_by_model(model, context, all_subjects) if model else ""
+        if choice:
+            matched = [p for p in pairs if _subject_matches(choice, subject_of[p[0]])]
+
+    if matched:
+        kept = [p for p in pairs if not subject_of[p[0]] or p in matched]
+        logger.info("  [SUBJECT] %r -> оставлены правила предметов %s",
+                    context, sorted({subject_of[n] for n, _ in kept if subject_of[n]}))
+        return kept, False
+
+    logger.warning("  [SUBJECT] найдены правила разных предметов %s, контекст %r не уточняет",
+                   sorted(concrete), context)
+    return pairs, True
+
+
+def _adhoc_rules_for_attribute(rules: list[AdHocRule], attribute: str) -> list[AdHocRule]:
+    """Правила пользователя, относящиеся к этой строке: общие + названные для её атрибута.
+
+    Имя атрибута пользователь пишет своими словами («материал» против «Material designation»),
+    поэтому сравнение то же пословное, что и для владельцев правил документа.
+    """
+    return [r for r in rules if not r.attribute or _attribute_matches(attribute, r.attribute)]
 
 
 def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
-                     top_k: int = RETRIEVAL_K) -> tuple[str, list[str]]:
+                     top_k: int = RETRIEVAL_K, model=None,
+                     extra_rules: list[AdHocRule] | None = None) -> tuple[str, list[str], bool]:
     """Полный набор правил для одной строки: global + релевантные local-группы.
 
-    Ретрив видит и атрибут, и само значение (в значении может быть признак исключения —
-    префикс, скобка, диапазон — из-за которого релевантна другая группа правил).
-    Возвращает (текст правил, имена найденных групп).
+    Ретрив видит атрибут, само значение (в нём может быть признак исключения — префикс, скобка,
+    диапазон) и контекст строки. Возвращает (текст правил, имена групп, смешаны ли предметы).
+    extra_rules — правила, названные пользователем в сообщении этого запроса: они действуют
+    только на этот запрос и в базу знаний не попадают.
     """
+    query = " ".join(x for x in (attribute, str(value), context) if x).strip()
+    body_to_name = {g.body: g.attribute for g in rule_set.groups}
+    pairs = [(body_to_name.get(body, ""), body)
+             for body in hybrid_search(rule_set, query, top_k=top_k)]
+    pairs, subject_conflict = _select_by_subject(rule_set, pairs, context, model)
+
     blocks: list[str] = []
     if rule_set.global_rules:
         blocks.append(rule_set.global_rules)
-
-    query = " ".join(x for x in (attribute, str(value), context) if x).strip()
-    body_to_name = {g.body: g.attribute for g in rule_set.groups}
     names: list[str] = []
-    for idx, body in enumerate(hybrid_search(rule_set, query, top_k=top_k)):
-        name = body_to_name.get(body, "")
+    for idx, (name, body) in enumerate(pairs):
         logger.info("  [SEARCH] Rule %d: %r | %r", idx + 1, name, body[:100])
         if name:
             names.append(name)
         if body not in blocks:
             blocks.append(body)
 
+    adhoc = format_adhoc_rules(_adhoc_rules_for_attribute(extra_rules or [], attribute))
+
     if not blocks:
-        return "No relevant rules were found in the knowledge base for this attribute.", names
+        base = "No relevant rules were found in the knowledge base for this attribute."
+        return ("\n\n".join(x for x in (base, adhoc) if x), names, subject_conflict)
 
     text = "\n".join(blocks)
-    return "\n\n".join([text] + expand_references(rule_set, text, attribute)), names
+    parts = [text] + expand_references(rule_set, text, attribute, names, str(value))
+    # Правила пользователя идут последним, отдельным блоком: подтягивать по ним пункты
+    # документа незачем, а приоритет над правилами документа объявлен в самом блоке.
+    if adhoc:
+        parts.append(adhoc)
+    return "\n\n".join(parts), names, subject_conflict
 
 
 _CLAUSE_DEF_RE = re.compile(r"^\s*(\d+(?:\.\d+)+)\s")
@@ -100,25 +218,60 @@ def _context_line(context: str) -> str:
     return f"Row context: {context}\n" if context else ""
 
 
-def _register_lines_for_attribute(rule_set, attribute: str) -> str:
+def _register_lines_for_attribute(rule_set, attribute: str, group_names: list[str] | None = None,
+                                  value: str = "") -> str:
     """Строки таблиц документа, относящиеся к этому атрибуту: keyword→root и фраза→код.
 
     Правило говорит «взять корень из Table 1», но самой таблицы в тексте правил нет — она
     лежит отдельным артефактом извлечения. Без неё модели нечего подставить, и она берёт
     первое похожее значение из примеров соседнего атрибута.
     """
+    # Подпись атрибута в таблице заказчика и имя группы правил — разные тексты («Facing type»
+    # против «end connection»), поэтому владельца ищем и среди групп, которые нашёл ретрив.
+    candidates = [attribute] + list(group_names or [])
     lines: list[str] = []
     for keyword, root in rule_set.deterministic.items():
         owner = rule_set.deterministic_attributes.get(keyword, "")
-        if owner and _attribute_matches(attribute, owner):
+        if owner and any(_attribute_matches(c, owner) for c in candidates):
             lines.append(f"{keyword} -> {root}")
-    for prefix in rule_set.attribute_to_register.get(attribute.strip().lower(), []):
+    prefixes: list[str] = []
+    for candidate in candidates:
+        prefixes.extend(_registers_for_attribute(rule_set, candidate))
+    if not prefixes and value:
+        prefixes = _registers_by_value(rule_set, value)
+    for prefix in dict.fromkeys(prefixes):
         for phrase, code in rule_set.closed_registers.get(prefix, {}).items():
             lines.append(f"{phrase} -> {code}")
     return "\n".join(dict.fromkeys(lines))
 
 
-def expand_references(rule_set, text: str, attribute: str) -> list[str]:
+REGISTER_CONTENT_THRESHOLD = 70
+
+
+def _registers_by_value(rule_set, value: str) -> list[str]:
+    """Ищет реестр по самому значению, когда по имени атрибута он не нашёлся.
+
+    Имена в документе и в таблице заказчика могут не пересекаться вовсе («Facing type» против
+    группы «end connection»), а вот запись «Face, raised» на пункт реестра похожа. Найдя пункт,
+    показываем весь реестр его атрибута-владельца: выбирать нужно из полного списка.
+    """
+    normalized = _normalize_phrase(value)
+    best_prefix, best_score = "", 0
+    for prefix, table in rule_set.closed_registers.items():
+        for phrase in table:
+            score = fuzz.token_sort_ratio(normalized, _normalize_phrase(phrase))
+            if score > best_score:
+                best_prefix, best_score = prefix, score
+    if best_score < REGISTER_CONTENT_THRESHOLD:
+        return []
+    owners = [prefixes for prefixes in rule_set.attribute_to_register.values()
+              if best_prefix in prefixes]
+    logger.info("  [REFS] реестр найден по значению %r (совпадение %d%%)", value, best_score)
+    return owners[0] if owners else [best_prefix]
+
+
+def expand_references(rule_set, text: str, attribute: str, group_names: list[str] | None = None,
+                      value: str = "") -> list[str]:
     """Дотягивает то, на что найденные правила ссылаются: пункты по номеру и таблицы атрибута.
 
     Ссылка разрешается только если её номер реально определён в документе, поэтому десятичные
@@ -147,7 +300,7 @@ def expand_references(rule_set, text: str, attribute: str) -> list[str]:
                       + "\n".join(pulled))
 
     if _TABLE_REF_RE.search(text):
-        register = _register_lines_for_attribute(rule_set, attribute)
+        register = _register_lines_for_attribute(rule_set, attribute, group_names, value)
         if register:
             logger.info("  [REFS] подтянута таблица атрибута: %d строк",
                         len(register.splitlines()))
@@ -213,12 +366,18 @@ def _attribute_is_excluded(attribute: str, excluded: list[str]) -> bool:
 
 
 def _attribute_matches(attribute: str, owner: str) -> bool:
-    """Совпадает ли атрибут строки с атрибутом-владельцем keyword (по подстроке)."""
+    """Совпадает ли атрибут строки с атрибутом-владельцем правила.
+
+    Сравнение по целым словам, а не по подстроке: «design» не должен считаться совпадением
+    с «material designation», иначе к материалу подтягивается keyword совсем другой темы.
+    """
     a = _norm_attr(attribute)
     o = _norm_attr(owner)
     if not a or not o:
         return True  # нет данных о владельце — применяем (backward compat)
-    return o in a or a in o
+    a_words = " " + " ".join(re.findall(r"\w+", a)) + " "
+    o_words = " " + " ".join(re.findall(r"\w+", o)) + " "
+    return o_words in a_words or a_words in o_words
 
 
 def _match_render_template(attribute: str, render_templates: dict,
@@ -263,6 +422,24 @@ def _apply_render_template(answer: str, template: dict) -> str:
     if _unit_key(tail) != _unit_key(template["suffix"]):
         return answer
     return f"{float(number):.{template['decimals']}f}" + template["suffix"]
+
+
+def _partial_separator_edit(original: str, answer: str) -> str | None:
+    """Находит правку, применённую к части одинаковых символов вместо всех.
+
+    Правило про разделители действует на всё значение целиком: «C-Mn-Si» → «C-MnSi» (убран один
+    дефис из двух) — это не прочтение правила, а промах. Сравнение имеет смысл только пока
+    содержимое значения то же самое; если оно заменено кодом или пересобрано, символы исходной
+    записи сравнивать не с чем.
+    """
+    original, answer = str(original), str(answer)
+    if _char_bag(original) != _char_bag(answer):
+        return None
+    for character in sorted(set(re.findall(r"[^\w\s]", original))):
+        before, after = original.count(character), answer.count(character)
+        if 0 < after < before:
+            return f"{character!r}: было {before}, осталось {after}"
+    return None
 
 
 def _digit_groups(text: str) -> set[str]:
@@ -337,7 +514,8 @@ def _reading_signature(value: str, answer: str) -> tuple:
     return False, _char_bag(answer)
 
 
-def _reconcile_equivalent_rows(rows: list[dict], rule_set, model) -> list[dict]:
+def _reconcile_equivalent_rows(rows: list[dict], rule_set, model,
+                               extra_rules: list[AdHocRule] | None = None) -> list[dict]:
     """Сверяет строки, которые по смыслу означают одно и то же, но нормализовались по-разному.
 
     Одинаковое по сути значение, записанное в другом порядке слов, должно трактоваться одним
@@ -362,8 +540,9 @@ def _reconcile_equivalent_rows(rows: list[dict], rule_set, model) -> list[dict]:
             continue  # прочтение одно и то же; сами строки и должны отличаться
         attribute = rows[indices[0]]["Attribute"]
         context = str(rows[indices[0]].get("Context", ""))
-        rules_text, _ = build_rules_text(rule_set, attribute,
-                                         str(rows[indices[0]]["Value"]), context)
+        rules_text, _names, _conflict = build_rules_text(
+            rule_set, attribute, str(rows[indices[0]]["Value"]), context,
+            extra_rules=extra_rules)
         listing = "\n".join(
             f"{n}. recorded: {rows[i]['Value']}  ->  current answer: {rows[i]['Rules_Value']}"
             for n, i in enumerate(indices, start=1)
@@ -542,6 +721,30 @@ def match_closed_register(value: str, table: dict[str, str], threshold: int = FU
     return f"{best_prefix} {PENDING_WORDING}: {value.strip()}", False
 
 
+def _names_token(attribute: str, token: str) -> bool:
+    """Назван ли этот keyword/root отдельным словом в подписи атрибута."""
+    token = str(token).strip().lower()
+    if len(token) < 2:
+        return False
+    return token in re.findall(r"[a-z0-9<>]+", str(attribute).lower())
+
+
+def _registers_for_attribute(rule_set, attribute: str) -> list[str]:
+    """Префиксы реестров, относящихся к атрибуту строки.
+
+    Имя группы правил в документе и подпись атрибута в таблице заказчика — разные тексты
+    («nominal diameter (metric)» против «Nominal size, DN»), поэтому точного совпадения ключа
+    мало: доискиваем по вхождению, как и для владельцев keyword-правил.
+    """
+    exact = rule_set.attribute_to_register.get(attribute.strip().lower())
+    if exact:
+        return exact
+    for owner, prefixes in rule_set.attribute_to_register.items():
+        if _attribute_matches(attribute, owner):
+            return prefixes
+    return []
+
+
 def apply_deterministic(value: str, rule_set, attribute: str,
                         model=None) -> tuple[str, bool] | None:
     """Детерминированные преобразования.
@@ -581,7 +784,7 @@ def apply_deterministic(value: str, rule_set, attribute: str,
             return "; ".join(mapped), False
 
     # 2) сопоставление с закрытыми регистрами, соответствующими атрибуту.
-    prefixes = rule_set.attribute_to_register.get(attribute.strip().lower())
+    prefixes = _registers_for_attribute(rule_set, attribute)
     if prefixes:
         table: dict[str, str] = {}
         for p in prefixes:
@@ -605,11 +808,18 @@ def apply_deterministic(value: str, rule_set, attribute: str,
 
     # 3) keyword → root: всё значение целиком должно быть «keyword число» / «число keyword».
     for keyword in sorted(rule_set.deterministic, key=len, reverse=True):
-        # attribute-aware: применяем keyword только к его атрибуту-владельцу
-        if not _attribute_matches(attribute, rule_set.deterministic_attributes.get(keyword, "")):
-            continue
         root = rule_set.deterministic[keyword]
-        token = rf"(?:{re.escape(keyword)}|{re.escape(root)})"
+        # attribute-aware: применяем keyword только к его атрибуту-владельцу. Имя группы в
+        # документе может не совпадать с подписью атрибута в таблице, поэтому засчитываем и
+        # случай, когда сам keyword или его root назван в подписи («Nominal size, DN» ↔ DN).
+        owner = rule_set.deterministic_attributes.get(keyword, "")
+        if not (_attribute_matches(attribute, owner)
+                or _names_token(attribute, keyword) or _names_token(attribute, root)):
+            continue
+        # В таблице стандарта keyword назван полностью («Pressure class»), а в датащите пишут
+        # его коротко («Class 600»), поэтому значащие слова keyword'а тоже считаются его формой.
+        forms = {keyword, root} | {w for w in re.findall(r"[A-Za-z]{4,}", keyword)}
+        token = "(?:" + "|".join(re.escape(f) for f in sorted(forms, key=len, reverse=True)) + ")"
         num = r"(\d+[A-Za-z]*)"
         m = (re.fullmatch(rf"\s*{token}\s*{num}\s*", result, re.IGNORECASE)
              or re.fullmatch(rf"\s*{num}\s*{token}\s*", result, re.IGNORECASE))
@@ -643,6 +853,7 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
     data_frame = state["data_frame"]
     rule_set = config["configurable"]["rule_set"]
     model = config["configurable"]["model"]
+    extra_rules = config["configurable"].get("extra_rules") or []
 
     # --- фиксируем результат ПРЕДЫДУЩЕЙ строки ---
     if state["index_row_table"] != 0:
@@ -658,7 +869,9 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
             is_ambiguous = _is_ambiguous_answer(last_answer)
             # спорную по правилам строку возвращаем как записана, но помечаем;
             # расхождение сэмплов между собой — тоже повод показать строку человеку
-            needs_review = is_ambiguous or state.get("needs_review_flag", False)
+            # смешение предметов в найденных правилах — тоже повод показать строку человеку
+            needs_review = (is_ambiguous or state.get("needs_review_flag", False)
+                            or state.get("subject_conflict", False))
             rules_value = state["original_value"] if is_ambiguous else last_answer
             if not is_ambiguous:
                 rules_value = _strip_redundant_parenthetical(rules_value, state["original_value"])
@@ -668,6 +881,12 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                                                   state.get("rule_group_names"))
                 if template:
                     rules_value = _apply_render_template(rules_value, template)
+                # правка разделителей, применённая к части вхождений, — повод показать строку
+                partial = _partial_separator_edit(state["original_value"], rules_value)
+                if partial:
+                    logger.info("  [EDIT] %r -> %r: правка не по всем вхождениям (%s)",
+                                state["original_value"], rules_value, partial)
+                    needs_review = True
         else:
             rules_value = state["original_value"]
         new_row = {
@@ -693,8 +912,9 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
         update["needs_review_flag"] = False
         update["messages"] = [RemoveMessage(id=k.id) for k in state["messages"]]
 
+        row_rules = _adhoc_rules_for_attribute(extra_rules, attribute)
         det = apply_deterministic(value, rule_set, attribute, model=model)
-        if det is not None:
+        if det is not None and not row_rules:
             det_value, det_needs_review = det
             # полностью детерминировано — общий LLM-путь не нужен
             update["deterministic_result"] = det_value
@@ -702,20 +922,33 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
             update["value"] = det_value
             update["rules_text"] = ""
             update["rule_group_names"] = []
+            update["subject_conflict"] = False
             logger.info("=" * 80)
             logger.info(
                 "Row %d/%d | Attribute: %r | Value: %r | DETERMINISTIC -> %r",
                 state["index_row_table"] + 1, data_frame.shape[0], attribute, value, det_value,
             )
         else:
+            # Правило пользователя видит только LLM-путь, поэтому строку, к атрибуту которой
+            # он что-то дописал, детерминированным ярлыком не закрываем. Но и ответ документа
+            # не выбрасываем: он становится отправной точкой, поверх которой применяется
+            # правило, — иначе строка теряет и точность документа, и само правило.
+            # исход «требует регистрации» — не значение, а сообщение ревьюеру: нормализовать
+            # поверх него нечего, правило пользователя применяется к самой записи
+            start_value = det[0] if det and not _is_pending_result(det[0]) else value
             update["deterministic_result"] = None
-            update["value"] = value
-            update["rules_text"], update["rule_group_names"] = build_rules_text(
-                rule_set, attribute, value, context)
+            update["value"] = start_value
+            update["needs_review_flag"] = det[1] if det else False
+            (update["rules_text"], update["rule_group_names"],
+             update["subject_conflict"]) = build_rules_text(rule_set, attribute, start_value,
+                                                            context, model=model,
+                                                            extra_rules=extra_rules)
             logger.info("=" * 80)
             logger.info(
-                "Row %d/%d | Attribute: %r | Value: %r | rules: %d chars",
+                "Row %d/%d | Attribute: %r | Value: %r%s | rules: %d chars",
                 state["index_row_table"] + 1, data_frame.shape[0], attribute, value,
+                f" | DETERMINISTIC -> {start_value!r}, дальше по правилам пользователя"
+                if det else "",
                 len(update["rules_text"]),
             )
 
@@ -734,6 +967,7 @@ def _invoke_with_tools(model, messages):
             else:
                 try:
                     content = str(tool_fn.invoke(tc["args"]))
+                    logger.info("  [TOOL] %s(%s) -> %r", tc["name"], tc["args"], content)
                 except Exception as e:
                     content = f"error: {e}"
             tool_messages.append(ToolMessage(content=content, tool_call_id=tc["id"]))
@@ -801,7 +1035,8 @@ def normalize_row(state: GraphState, config: RunnableConfig) -> GraphState:
 
     # разошедшиеся сэмплы = строка, которую правила документа не решают однозначно:
     # значение берём по большинству, но помечаем строку на ручную проверку
-    return {"answer": answer, "needs_review_flag": len(counts) > 1}
+    return {"answer": answer,
+            "needs_review_flag": bool(state.get("needs_review_flag")) or len(counts) > 1}
 
 
 def next_row(state: GraphState) -> GraphState:
@@ -836,7 +1071,8 @@ builder.add_edge("end_node", END)
 graph = builder.compile()
 
 
-def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set) -> pd.DataFrame:
+def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set,
+                        extra_rules: list[AdHocRule] | None = None) -> pd.DataFrame:
     initial_state = {
         "messages": [],
         "index_row_table": 0,
@@ -844,6 +1080,7 @@ def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set) -> pd.DataFra
         "rules_text": "",
         "rule_group_names": [],
         "row_context": "",
+        "subject_conflict": False,
         "new_rows": [],
         "original_value": "",
         "deterministic_result": None,
@@ -853,12 +1090,13 @@ def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set) -> pd.DataFra
     final_state = graph.invoke(
         initial_state,
         config={
-            "configurable": {"model": model, "rule_set": rule_set},
+            "configurable": {"model": model, "rule_set": rule_set,
+                             "extra_rules": extra_rules or []},
             # на строку приходится до 3 шагов графа (start_row/normalize_row/next_row)
             "recursion_limit": 3 * data_frame.shape[0] + 25,
         },
     )
-    rows = _reconcile_equivalent_rows(final_state["new_rows"], rule_set, model)
+    rows = _reconcile_equivalent_rows(final_state["new_rows"], rule_set, model, extra_rules)
     return pd.DataFrame(_canonicalize_formatting(rows))
 
 
@@ -927,21 +1165,20 @@ def check_consistency(result_df: pd.DataFrame, rule_set_names: list[str],
                 seen[key] = (result, signature)
 
 
-@app.post("/process")
-def process_excel(
-        file: UploadFile = File(...),
-        app_config: AppConfig = Depends(get_app_config),
-):
-    contents = file.file.read()
-    data_frame = pd.read_excel(io.BytesIO(contents))
+XLSX_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
+
+def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
+                    extra_rules: list[AdHocRule] | None = None
+                    ) -> tuple[pd.DataFrame, dict[str, list[bool]]]:
+    """Прогоняет таблицу по всем документам; возвращает (таблицу результата, флаги спорных)."""
     # в выдаче сохраняем все исходные колонки: уточняющие колонки нужны ревьюеру
     result_df = data_frame.copy()
     ambiguous_cols: dict[str, list[bool]] = {}
     # документы независимы друг от друга — считаем их колонки параллельно
     with ThreadPoolExecutor(max_workers=max(1, len(app_config.rule_sets))) as pool:
         col_dfs = list(pool.map(
-            lambda rs: run_single_rule_set(data_frame, app_config.model, rs),
+            lambda rs: run_single_rule_set(data_frame, app_config.model, rs, extra_rules),
             app_config.rule_sets,
         ))
     for rule_set, col_df in zip(app_config.rule_sets, col_dfs):
@@ -951,11 +1188,101 @@ def process_excel(
 
     check_consistency(result_df, [rs.name for rs in app_config.rule_sets],
                       [_row_context(data_frame, i) for i in range(len(data_frame))])
+    return result_df, ambiguous_cols
 
+
+@app.post("/process")
+def process_excel(
+        file: UploadFile = File(...),
+        app_config: AppConfig = Depends(get_app_config),
+):
+    contents = file.file.read()
+    data_frame = pd.read_excel(io.BytesIO(contents))
+    result_df, ambiguous_cols = normalize_table(data_frame, app_config)
     output_buffer = _write_excel_with_highlight(result_df, ambiguous_cols)
 
     return Response(
         content=output_buffer.read(),
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        media_type=XLSX_MEDIA_TYPE,
         headers={"Content-Disposition": "attachment; filename=result.xlsx"},
     )
+
+
+def _parse_history(raw: str) -> list[dict]:
+    """История чата приходит с фронта строкой JSON; её порча не должна ронять запрос."""
+    try:
+        parsed = json.loads(raw) if raw else []
+    except ValueError:
+        return []
+    return parsed if isinstance(parsed, list) else []
+
+
+def _processing_reply(row_count: int, column_names: list[str],
+                      ambiguous_cols: dict[str, list[bool]], rules: list[AdHocRule]) -> str:
+    """Что сказать пользователю про обработанный файл."""
+    review = sum(1 for flags in ambiguous_cols.values() for flag in flags if flag)
+    lines = [f"Готово: строк — {row_count}, колонок со стандартами — {len(column_names)}"
+             + (f" ({', '.join(column_names)})." if column_names else ".")]
+    lines.append(f"Помечено на проверку ячеек: {review} (жёлтая заливка)." if review
+                 else "Спорных ячеек нет.")
+    if rules:
+        listing = "\n".join(f"— {r.attribute + ': ' if r.attribute else ''}{r.text}"
+                            for r in rules)
+        lines.append("Учтены ваши правила (только в этом запросе):\n" + listing)
+    return "\n".join(lines)
+
+
+@app.post("/chat")
+def chat(
+        message: str = Form(""),
+        history: str = Form("[]"),
+        file: UploadFile | None = File(None),
+        app_config: AppConfig = Depends(get_app_config),
+):
+    """Единый вход чата: разговор, обработка файла — или то и другое сразу.
+
+    Файл обрабатывается ровно как раньше; текст сообщения при этом не декорация: названные
+    в нём правила применяются поверх правил документов, но только в этом запросе — в базу
+    знаний они не попадают и на следующий запрос не переходят.
+    """
+    assistant = app_config.assistant or app_config.model
+    text = (message or "").strip()
+    past = _parse_history(history)
+
+    rules = extract_adhoc_rules(assistant, text)
+    rules_payload = [{"attribute": r.attribute, "rule": r.text} for r in rules]
+
+    if file is None or not (file.filename or "").strip():
+        if not text:
+            return {"reply": "Напишите сообщение или приложите файл .xlsx — обработаю.",
+                    "rules": rules_payload, "file": None}
+        return {"reply": chat_reply(assistant, text, past, rules),
+                "rules": rules_payload, "file": None}
+
+    contents = file.file.read()
+    try:
+        data_frame = pd.read_excel(io.BytesIO(contents))
+    except Exception as e:
+        logger.warning("[CHAT] файл %r не прочитан: %s", file.filename, e)
+        return {"reply": f"Не удалось прочитать «{file.filename}». Нужен .xlsx с колонками "
+                         f"Attribute и Value.", "rules": rules_payload, "file": None}
+
+    missing = [c for c in ("Attribute", "Value") if c not in data_frame.columns]
+    if missing:
+        return {"reply": f"В файле «{file.filename}» нет колонок: {', '.join(missing)}. "
+                         f"Нужны Attribute и Value, остальные колонки идут как контекст строки.",
+                "rules": rules_payload, "file": None}
+
+    result_df, ambiguous_cols = normalize_table(data_frame, app_config, rules)
+    output_buffer = _write_excel_with_highlight(result_df, ambiguous_cols)
+    reply = _processing_reply(len(data_frame), [rs.name for rs in app_config.rule_sets],
+                              ambiguous_cols, rules)
+    return {
+        "reply": reply,
+        "rules": rules_payload,
+        "file": {
+            "name": "result.xlsx",
+            "media_type": XLSX_MEDIA_TYPE,
+            "content_base64": base64.b64encode(output_buffer.read()).decode("ascii"),
+        },
+    }
