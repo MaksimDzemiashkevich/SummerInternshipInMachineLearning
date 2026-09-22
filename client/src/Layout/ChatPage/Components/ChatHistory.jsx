@@ -1,5 +1,5 @@
 import React from "react";
-import { AntDesignOutlined, RedoOutlined, UserOutlined } from "@ant-design/icons";
+import { AntDesignOutlined, UserOutlined } from "@ant-design/icons";
 import { Actions, Bubble, FileCard } from "@ant-design/x";
 import { Avatar } from "antd";
 import "../../../css/ChatHistory.css"

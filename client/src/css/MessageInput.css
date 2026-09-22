@@ -1,5 +1,14 @@
-.customSender{
-    background-color: white;
-    max-width: 800px;
+.customSender {
     flex-shrink: 0;
+    width: calc(100% - 2 * var(--chat-gutter));
+    max-width: var(--chat-width);
+    margin: 4px auto 24px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(22, 27, 45, 0.08);
+    transition: box-shadow 0.2s ease;
+}
+
+.customSender:focus-within {
+    box-shadow: 0 10px 28px rgba(22, 27, 45, 0.12);
 }

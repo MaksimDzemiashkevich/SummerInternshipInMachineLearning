@@ -26,6 +26,8 @@ const MessageInput = ({ onSend, history = [] }) => {
     const [isSending, setIsSending] = useState(false);
     const senderRef = useRef(null);
     const fileInputRef = useRef(null);
+    // Контроллер текущего запроса: по нему же сверяем, наш ли ответ пришёл.
+    const abortRef = useRef(null);
 
     const handleAttachClick = () => {
         fileInputRef.current?.click();
@@ -54,6 +56,19 @@ const MessageInput = ({ onSend, history = [] }) => {
             URL.revokeObjectURL(file.url);
         }
         setItems(fileList);
+    };
+
+    /** Кнопка в режиме ожидания — это «стоп»: бросаем запрос и освобождаем ввод. */
+    const handleCancel = () => {
+        if (!abortRef.current) return;
+        abortRef.current.abort();
+        abortRef.current = null;
+        setIsSending(false);
+        onSend({
+            key: `msg_${Date.now()}_cancel`,
+            role: 'ai',
+            content: 'Запрос отменён.',
+        });
     };
 
     const handleSubmit = (v) => {
@@ -88,9 +103,19 @@ const MessageInput = ({ onSend, history = [] }) => {
         setItems([]);
         setIsSending(true);
 
+        const controller = new AbortController();
+        abortRef.current = controller;
+        // Ответ брошенного запроса может прийти уже после начала следующего — такой
+        // результат не наш, и ни ленту, ни состояние кнопки трогать не должен.
+        const isCurrent = () => abortRef.current === controller;
+
         axios
-            .post(API_URL, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+            .post(API_URL, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                signal: controller.signal,
+            })
             .then(({ data }) => {
+                if (!isCurrent()) return;
                 const reply = {
                     key: `msg_${Date.now()}_reply`,
                     role: 'ai',
@@ -109,6 +134,7 @@ const MessageInput = ({ onSend, history = [] }) => {
                 onSend(reply);
             })
             .catch((error) => {
+                if (axios.isCancel(error) || !isCurrent()) return;  // отмену уже показали
                 console.error('Ошибка запроса:', error);
                 onSend({
                     key: `msg_${Date.now()}_error`,
@@ -117,6 +143,8 @@ const MessageInput = ({ onSend, history = [] }) => {
                 });
             })
             .finally(() => {
+                if (!isCurrent()) return;
+                abortRef.current = null;
                 setIsSending(false);
             });
     };
@@ -140,6 +168,7 @@ const MessageInput = ({ onSend, history = [] }) => {
                 suffix={false}
                 placeholder="Спросите что-нибудь или приложите файл..."
                 onSubmit={handleSubmit}
+                onCancel={handleCancel}
                 loading={isSending}
                 header={
                     <Sender.Header
@@ -165,7 +194,8 @@ const MessageInput = ({ onSend, history = [] }) => {
                             onClick={handleAttachClick}
                         />
                         {/* Своя кнопка отправки: штатная блокируется на пустом поле, а файл
-                            без сопроводительного текста отправлять нужно. */}
+                            без сопроводительного текста отправлять нужно. В ожидании на её
+                            месте кнопка остановки, её action — onCancel. */}
                         {isSending ? <LoadingButton /> : <SendButton disabled={!canSend} />}
                     </Flex>
                 )}

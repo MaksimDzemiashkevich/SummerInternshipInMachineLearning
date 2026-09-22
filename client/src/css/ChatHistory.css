@@ -1,3 +1,37 @@
 .ListBubles .ant-bubble-content {
-    background-color: white;
+    background-color: #ffffff;
+    border: 1px solid var(--chat-line);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(22, 27, 45, 0.04);
+    line-height: 1.55;
+}
+
+/* Реплика пользователя — приглушённый акцент, чтобы лента читалась сверху вниз. */
+.ListBubles .ant-bubble-end .ant-bubble-content {
+    background-color: #e9edff;
+    border-color: rgba(64, 87, 214, 0.16);
+}
+
+.ListBubles .ant-bubble-start .ant-avatar {
+    background-color: #4057d6;
+}
+
+.ListBubles .ant-bubble-end .ant-avatar {
+    background-color: #98a2c4;
+}
+
+/* Кнопка «копировать» не мозолит глаза: появляется на наведении и по фокусу с клавиатуры. */
+.ListBubles .ant-bubble-footer {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.ListBubles .ant-bubble:hover .ant-bubble-footer,
+.ListBubles .ant-bubble:focus-within .ant-bubble-footer {
+    opacity: 1;
+}
+
+.ListBubles .ant-attachment-file-card,
+.ListBubles .ant-file-card {
+    cursor: pointer;
 }

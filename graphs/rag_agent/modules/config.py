@@ -207,7 +207,7 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
             logger.warning(
                 "Документ %r: есть фразовые пары (phrase_rules.json), но ни одна не отнесена "
                 "к закрытому регистру — pending-registration не сработает.", name)
-        number_first = _determine_number_first(global_rules)
+        number_first = _determine_number_first(deterministic_order)
         excluded_attributes = _load_excluded_attributes(path.parent)
         render_templates = _load_render_templates(path.parent)
         clause_index = _build_clause_index(global_rules, entries)
@@ -435,10 +435,17 @@ def _derive_attribute_to_register(groups: list[dict], closed_registers: dict[str
     return mapping
 
 
-def _determine_number_first(global_rules: str) -> bool:
-    """Определяет порядок keyword→root по тексту глобальных правил:
-    number-first («numeral first» → 300CLASSATUM) или root-first (CL300)."""
-    return bool(re.search(r"numeral\s+first", global_rules.lower()))
+def _determine_number_first(deterministic_order: dict[str, bool]) -> bool:
+    """Порядок по умолчанию для keyword, которому извлечение порядок не вывело.
+
+    Берётся большинством по тем keyword, где порядок известен: внутри документа конвенция
+    обычно одна. Раньше здесь искалась фраза «numeral first» в тексте правил — это была
+    привязка к формулировке конкретного документа, и для документа с другой формулировкой
+    она молча давала неверный порядок.
+    """
+    if not deterministic_order:
+        return False
+    return sum(bool(v) for v in deterministic_order.values()) * 2 > len(deterministic_order)
 
 
 def hybrid_search(rule_set: RuleSet, query: str, top_k: int = 4,
