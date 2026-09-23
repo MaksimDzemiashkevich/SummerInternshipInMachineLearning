@@ -1,10 +1,17 @@
 from __future__ import annotations
-from dataclasses import dataclass
+import os
+from dataclasses import dataclass, field
 from pathlib import Path
+
+# Какой PDF экстрактить, можно задать не правкой файла, а переменной окружения:
+#   STRUCTURED_DOC_PATH=graphs/structured_documents/data/input/<файл>.pdf
+_DEFAULT_DOCUMENT = "graphs/structured_documents/data/input/FGX-STD-227_fire_gas_lifesafety_equipment_normalization_rules.pdf"
+
 
 @dataclass
 class Settings:
-    input_path_document: Path = Path("graphs/structured_documents/data/input/OGX-STD-410_multi_equipment_normalization_rules.pdf")
+    input_path_document: Path = field(
+        default_factory=lambda: Path(os.getenv("STRUCTURED_DOC_PATH", _DEFAULT_DOCUMENT)))
     RULES_STORAGE_PATH = Path("graphs/structured_documents/data/output/rule_groups.json")
     PAGES_DATA_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/pages_data.json")
     DATA_AFTER_CHECK_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/data_after_check.json")

@@ -189,16 +189,17 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         phrase_map = _load_phrase_rules(path.parent)
         phrase_attributes = _load_phrase_attributes(path.parent)
         # таблицы «описание → код», оставшиеся строками правил, тоже образуют закрытый реестр
-        table_pairs, table_attributes = _extract_table_pairs(groups)
+        table_pairs, table_attributes = _extract_table_pairs(groups, deterministic)
         if table_pairs:
             logger.info("Документ %r: из текста правил добавлено %d пар закрытого реестра.",
                         name, len(table_pairs))
         phrase_map = {**table_pairs, **phrase_map}
         phrase_attributes = {**table_attributes, **phrase_attributes}
         deterministic_order = _load_deterministic_order(path.parent)
-        closed_registers = _build_closed_registers(phrase_map, deterministic,
-                                                   set(deterministic_order))
         deterministic_attributes = _load_deterministic_attributes(path.parent)
+        closed_registers = _build_closed_registers(phrase_map, deterministic,
+                                                   set(deterministic_order),
+                                                   deterministic_attributes)
         attribute_to_register = _attribute_to_register_from_origins(
             closed_registers, phrase_attributes, deterministic_attributes)
         if not attribute_to_register:
@@ -210,6 +211,8 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         number_first = _determine_number_first(deterministic_order)
         excluded_attributes = _load_excluded_attributes(path.parent)
         render_templates = _load_render_templates(path.parent)
+        for attribute, template in _render_templates_from_rules(groups).items():
+            render_templates.setdefault(attribute, template)
         clause_index = _build_clause_index(global_rules, entries)
         group_subjects = _load_subjects(path.parent)
         distinct_subjects = {s for s in group_subjects.values() if s}
@@ -346,13 +349,39 @@ def _orient_table_row(cells: list[str]) -> tuple[str, str] | None:
     return descriptions[0], codes[0]
 
 
-def _extract_table_pairs(groups: list[dict]) -> tuple[dict[str, str], dict[str, str]]:
+def _split_table_row(line: str) -> list[str]:
+    """Ячейки строки таблицы в любой из двух форм, которыми её оставляет извлечение.
+
+    Первая — «Joint Type: 'X'; Abbreviation: 'Y'», вторая — колонки через вертикальную черту
+    («Electric motor, squirrel cage | DRV-EM»). Вторую раньше не разбирали вовсе, и таблица
+    кодов такого документа просто не становилась закрытым реестром.
+    """
+    cells = [c.strip() for c in _TABLE_CELL_RE.findall(line)]
+    if len(cells) >= 2:
+        return cells
+    if "|" in line:
+        cells = [c.strip() for c in line.split("|")]
+        return cells if 2 <= len(cells) <= 4 and all(c and len(c) <= 60 for c in cells) else []
+    # третья форма: «Описание -> КОД». Строку примера пропускаем: там стрелка показывает
+    # преобразование значения, а не строку таблицы.
+    if re.search(r"->|→", line) and not re.match(r"\s*EXAMPLE", line, re.I):
+        cells = [c.strip().strip("\"'“”") for c in re.split(r"->|→", line)]
+        return cells if len(cells) == 2 and all(c and len(c) <= 60 for c in cells) else []
+    return []
+
+
+def _extract_table_pairs(groups: list[dict],
+                         deterministic: dict[str, str] | None = None
+                         ) -> tuple[dict[str, str], dict[str, str]]:
     """Достаёт из тела local-групп строки таблиц «описание → код» вместе с их атрибутом.
 
     Документ может не выносить такую таблицу в отдельный файл на этапе извлечения, оставив
     её строками правил. Без этого закрытый реестр для атрибута не строится вовсе, и код
     подбирает LLM по тексту — то есть может выдумать отсутствующий в таблице код.
+    Пары keyword→root (таблица корней обозначений) сюда не попадают: это не список значений,
+    и в закрытом реестре им не место.
     """
+    roots = {k.strip().lower() for k in (deterministic or {})}
     pairs: dict[str, str] = {}
     origins: dict[str, str] = {}
     for group in groups:
@@ -361,21 +390,37 @@ def _extract_table_pairs(groups: list[dict]) -> tuple[dict[str, str], dict[str, 
         attribute = (group.get("attribute") or "").strip()
         for rule in group.get("rules", []):
             for line in str(rule).splitlines():
-                cells = [c.strip() for c in _TABLE_CELL_RE.findall(line)]
+                cells = _split_table_row(line)
                 if len(cells) < 2:
                     continue
                 oriented = _orient_table_row(cells)
                 if not oriented:
                     continue
                 phrase, code = oriented
+                if phrase.strip().lower() in roots:
+                    continue  # это корень обозначения, а не пункт списка значений
                 if phrase and code and _is_register_pair(phrase, code):
                     pairs[phrase] = code
                     origins[phrase] = attribute
     return pairs, origins
 
 
+def _names_its_attribute(phrase: str, owner: str) -> bool:
+    """Фраза называет сам атрибут, а не его значение («Pump size» из группы «pump size»).
+
+    Пункт закрытого реестра описывает ЗНАЧЕНИЕ («Ring-type joint» в группе «end connection»),
+    а keyword→root — имя атрибута, к которому приписывается номер. Если извлечение не выдало
+    deterministic_order.json, отличить их можно только так — и без этого «Pump size 4»
+    сводилось к коду «PS» вместо «PS4».
+    """
+    p_words = re.findall(r"\w+", str(phrase).lower())
+    o_words = re.findall(r"\w+", str(owner).lower())
+    return bool(p_words) and bool(o_words) and (p_words == o_words or set(p_words) <= set(o_words))
+
+
 def _build_closed_registers(phrase_map: dict, deterministic: dict,
-                            keyword_pairs: set[str] = frozenset()) -> dict[str, dict[str, str]]:
+                            keyword_pairs: set[str] = frozenset(),
+                            owners: dict[str, str] | None = None) -> dict[str, dict[str, str]]:
     """Группирует фразы закрытых регистров по префиксу кода.
 
     phrase_map — все записи «фраза → код» (это коды закрытого регистра).
@@ -387,6 +432,8 @@ def _build_closed_registers(phrase_map: dict, deterministic: dict,
         if prefix:
             registers.setdefault(prefix, {})[phrase] = code
     for phrase, code in deterministic.items():
+        if _names_its_attribute(phrase, (owners or {}).get(phrase, "")):
+            continue
         if _is_register_pair(phrase, code, keyword_pairs):
             prefix = _extract_code_prefix(code)
             if prefix:
@@ -433,6 +480,41 @@ def _derive_attribute_to_register(groups: list[dict], closed_registers: dict[str
                 mapping.setdefault(g["attribute"].strip().lower(), []).append(m.group(1))
                 break
     return mapping
+
+
+_UNIT_CELL_RE = re.compile(r"\bunits?\s*[:=]\s*[\'\"“]?([^;,\'\"”\s]{1,10})", re.I)
+_DECIMALS_CELL_RE = re.compile(r"\bdecimals?(?:\s+places)?\s*[:=]\s*[\'\"“]?(\d)", re.I)
+
+
+def _render_templates_from_rules(groups: list[dict]) -> dict[str, dict]:
+    """Шаблоны рендера из строк-таблиц «величина — единица — знаки после запятой».
+
+    Берём строку, только если её подпись совпадает с именем группы: в таблице, расписанной по
+    классам оборудования («Valves (all types) — in. — 3»), подпись к атрибуту не относится, и
+    навязывать её как шаблон нельзя.
+    """
+    templates: dict[str, dict] = {}
+    for group in groups:
+        attribute = (group.get("attribute") or "").strip()
+        if group.get("type") == "global" or not attribute:
+            continue
+        words = set(re.findall(r"\w+", attribute.lower()))
+        for rule in group.get("rules", []):
+            for line in str(rule).splitlines():
+                unit = _UNIT_CELL_RE.search(line)
+                decimals = _DECIMALS_CELL_RE.search(line)
+                if not unit or not decimals:
+                    continue
+                label = re.split(r"[—\-|:]", line, 1)[0]
+                label_words = set(re.findall(r"\w+", label.lower()))
+                if not label_words or not (label_words & words):
+                    continue
+                templates.setdefault(attribute.lower(), {
+                    "decimals": int(decimals.group(1)),
+                    "suffix": " " + unit.group(1),
+                    "aliases": [a for a in group.get("aliases", []) if a],
+                })
+    return templates
 
 
 def _determine_number_first(deterministic_order: dict[str, bool]) -> bool:

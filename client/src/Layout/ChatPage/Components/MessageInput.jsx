@@ -1,12 +1,14 @@
 import { PaperClipOutlined } from '@ant-design/icons';
 import { Attachments, Sender } from '@ant-design/x';
-import { Button, Flex } from 'antd';
-import React, { useRef, useState } from 'react';
+import { Button, Flex, Select } from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import "../../../css/MessageInput.css"
 
 const IconStyle = { fontSize: 16 };
-const API_URL = 'http://localhost:8000/chat';
+const API_BASE = 'http://localhost:8000';
+const CHAT_URL = `${API_BASE}/chat`;
+const STANDARDS_URL = `${API_BASE}/standards`;
 // Сколько последних реплик уходит на бэкенд как контекст разговора.
 const HISTORY_LIMIT = 12;
 
@@ -24,10 +26,34 @@ const MessageInput = ({ onSend, history = [] }) => {
     const [value, setValue] = useState('');
     const [items, setItems] = useState([]);
     const [isSending, setIsSending] = useState(false);
+    const [standards, setStandards] = useState([]);
+    const [selected, setSelected] = useState([]);
     const senderRef = useRef(null);
     const fileInputRef = useRef(null);
     // Контроллер текущего запроса: по нему же сверяем, наш ли ответ пришёл.
     const abortRef = useRef(null);
+    // Идентификатор диалога: по нему бэкенд держит файлы этого разговора, поэтому
+    // «пересчитай тот файл» работает без повторной загрузки.
+    const sessionRef = useRef(
+        (typeof crypto !== 'undefined' && crypto.randomUUID)
+            ? crypto.randomUUID()
+            : `s_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+    );
+    const [lastFileName, setLastFileName] = useState('');
+
+    // Список опций держим стабильным: новый массив на каждый рендер заставляет Select
+    // пересчитывать себя всякий раз, когда в чат приходит сообщение.
+    const standardOptions = useMemo(
+        () => standards.map((s) => ({ value: s.name, label: s.label })),
+        [standards],
+    );
+
+    useEffect(() => {
+        axios
+            .get(STANDARDS_URL)
+            .then(({ data }) => setStandards(data?.standards ?? []))
+            .catch((error) => console.error('Не удалось получить список стандартов:', error));
+    }, []);
 
     const handleAttachClick = () => {
         fileInputRef.current?.click();
@@ -82,8 +108,13 @@ const MessageInput = ({ onSend, history = [] }) => {
         formData.append('history', JSON.stringify(
             history.slice(-HISTORY_LIMIT).map((m) => ({ role: m.role, content: m.content ?? '' })),
         ));
-        if (items[0]?.originFileObj) {
-            formData.append('file', items[0].originFileObj);
+        formData.append('standards', JSON.stringify(selected));
+        formData.append('session_id', sessionRef.current);
+
+        const attached = items[0]?.originFileObj;
+        if (attached) {
+            formData.append('file', attached);
+            setLastFileName(attached.name);
         }
 
         onSend({
@@ -110,26 +141,31 @@ const MessageInput = ({ onSend, history = [] }) => {
         const isCurrent = () => abortRef.current === controller;
 
         axios
-            .post(API_URL, formData, {
+            .post(CHAT_URL, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 signal: controller.signal,
             })
             .then(({ data }) => {
                 if (!isCurrent()) return;
+                if (data?.session_id) sessionRef.current = data.session_id;
                 const reply = {
                     key: `msg_${Date.now()}_reply`,
                     role: 'ai',
                     content: data?.reply ?? '',
                 };
-                if (data?.file?.content_base64) {
-                    const blob = base64ToBlob(data.file.content_base64, data.file.media_type);
-                    reply.attachments = [{
-                        uid: `result_${Date.now()}`,
-                        name: data.file.name || 'result.xlsx',
-                        byte: blob.size,
-                        type: blob.type,
-                        url: URL.createObjectURL(blob),
-                    }];
+                // Агент мог создать несколько файлов за один ход — прикладываем все.
+                const produced = (data?.files ?? []).filter((f) => f?.content_base64);
+                if (produced.length > 0) {
+                    reply.attachments = produced.map((f, index) => {
+                        const blob = base64ToBlob(f.content_base64, f.media_type);
+                        return {
+                            uid: `result_${Date.now()}_${index}`,
+                            name: f.name || 'result.xlsx',
+                            byte: blob.size,
+                            type: blob.type,
+                            url: URL.createObjectURL(blob),
+                        };
+                    });
                 }
                 onSend(reply);
             })
@@ -152,13 +188,34 @@ const MessageInput = ({ onSend, history = [] }) => {
     const canSend = Boolean((value ?? '').trim()) || items.length > 0;
 
     return (
-        <>
+        <div className="composer">
             <input
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 style={{ display: 'none' }}
             />
+
+            <div className="composerBar">
+                <span className="composerLabel">Стандарты:</span>
+                <Select
+                    className="standardsSelect"
+                    mode="multiple"
+                    size="small"
+                    allowClear
+                    maxTagCount={1}
+                    maxTagPlaceholder={(rest) => `ещё ${rest.length}`}
+                    placeholder="все загруженные"
+                    value={selected}
+                    onChange={setSelected}
+                    options={standardOptions}
+                />
+                {/* Место под подсказку есть всегда: иначе её появление в момент отправки
+                    сдвигает строку и Select пересчитывает теги. */}
+                <span className="composerHint" title={lastFileName || undefined}>
+                    {lastFileName ? `в работе: ${lastFileName}` : ''}
+                </span>
+            </div>
 
             <Sender
                 className='customSender'
@@ -200,7 +257,7 @@ const MessageInput = ({ onSend, history = [] }) => {
                     </Flex>
                 )}
             />
-        </>
+        </div>
     );
 };
 

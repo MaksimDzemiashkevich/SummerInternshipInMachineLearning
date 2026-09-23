@@ -5,6 +5,7 @@ import json
 import base64
 import logging
 from rapidfuzz import fuzz
+from uuid import uuid4
 from functools import lru_cache
 from typing import Literal, Annotated
 from operator import add
@@ -22,11 +23,14 @@ from langgraph.graph import START, StateGraph, MessagesState, END
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import RemoveMessage, ToolMessage
 
-from .modules.config import AppConfig, Settings, build_app_config, hybrid_search, _extract_code_prefix
+from .modules.config import AppConfig, Settings, build_app_config, hybrid_search
 from .modules.system_prompts import (SYSTEM_PROMPT1, VERIFY_PROMPT, REGISTER_PROMPT,
-                                     RECONCILE_PROMPT, SUBJECT_CHOICE_PROMPT)
-from .modules.chat import AdHocRule, chat_reply, extract_adhoc_rules, format_adhoc_rules
-from .modules.tools import array_of_tools
+                                     RECONCILE_PROMPT, SUBJECT_CHOICE_PROMPT,
+                                     SCOPE_PROMPT)
+from .modules.agent import build_tools, run_agent
+from .modules.chat import AdHocRule, format_adhoc_rules, history_messages
+from .modules.workspace import get_workspace
+from .modules.tools import array_of_tools, unit_mismatch
 
 TOOLS_BY_NAME = {t.name: t for t in array_of_tools}
 
@@ -59,6 +63,7 @@ class GraphState(MessagesState):
     rule_group_names: list[str]
     row_context: str
     subject_conflict: bool
+    applied: str
 
 
 SUBJECT_WORD_THRESHOLD = 85
@@ -122,6 +127,68 @@ def _subject_by_model(model, context: str, subjects: tuple[str, ...]) -> str:
     return choice
 
 
+_SCOPE_CACHE: dict[tuple[str, str], bool] = {}
+# Сколько текста глобальных правил показываем модели: область действия стоит в начале документа.
+SCOPE_CHARS = 1500
+
+
+def _document_covers_row(rule_set, context: str, model=None) -> bool:
+    """Относится ли этот документ к изделию строки вообще.
+
+    Раньше смотрели только на теги групп (subjects.json): документ, который в своей области
+    действия прямо называет регулирующие клапаны, отказывался их нормализовать, потому что ни
+    одна группа не была помечена этим изделием, — а документ вовсе без разметки принимал любое
+    изделие. Поэтому решает текст области действия, а ответ кэшируется: в таблице десятки
+    строк на одно и то же изделие.
+    """
+    subjects = tuple(sorted({s for s in rule_set.group_subjects.values() if s}))
+    if not context or model is None:
+        return True  # строка без контекста — судить не о чем
+    if any(_subject_matches(context, s) for s in subjects):
+        return True
+
+    key = (rule_set.name, context.strip().lower())
+    if key in _SCOPE_CACHE:
+        return _SCOPE_CACHE[key]
+    if subjects and _subject_by_model(model, context, subjects):
+        _SCOPE_CACHE[key] = True
+        return True
+
+    listing = ", ".join(subjects)
+    messages = [
+        {"role": "system", "content": SCOPE_PROMPT},
+        {"role": "user", "content": (f"Recorded item: {context}\n\n"
+                                     f"Kinds of equipment the standard tags its rules with: "
+                                     f"{listing}\n\nOpening rules of the standard:\n"
+                                     f"{rule_set.global_rules[:SCOPE_CHARS]}")},
+    ]
+    try:
+        answer = str(model.invoke(messages).content).strip().upper()
+    except Exception as e:
+        logger.warning("  [SCOPE] вопрос об области действия не удался: %s", e)
+        answer = "YES"
+    covered = not answer.startswith("NO")
+    logger.info("  [SCOPE] %r в области действия %r: %s", context, rule_set.name, covered)
+    _SCOPE_CACHE[key] = covered
+    return covered
+
+
+def _equipment_kind(rule_set, context: str, model=None) -> str:
+    """Вид изделия этой строки, когда контекст называет его не словами, а кодом.
+
+    Документ на несколько изделий разводит правила (и строки своих таблиц) по видам, а в
+    датащите стоит «Item: GLV-15001». Пайплайн этот код разгадывает — но раньше только для
+    отбора групп, а модель дальше выбирала строку таблицы наугад: «7,62 cm» уезжало в «0.1 m»
+    по правилу для труб. Ответ кэшируется в _subject_by_model, так что вопрос один на контекст.
+    """
+    subjects = tuple(sorted({s for s in rule_set.group_subjects.values() if s}))
+    if len(subjects) < 2 or not context or model is None:
+        return ""
+    if any(_subject_matches(context, s) for s in subjects):
+        return ""  # контекст называет вид словами — модель прочтёт его сама
+    return _subject_by_model(model, context, subjects)
+
+
 def _select_by_subject(rule_set, pairs: list[tuple[str, str]], context: str,
                        model=None) -> tuple[list[tuple[str, str]], bool]:
     """Отсеивает найденные группы по предмету строки; сообщает о неразрешимом смешении.
@@ -139,8 +206,7 @@ def _select_by_subject(rule_set, pairs: list[tuple[str, str]], context: str,
     matched = [p for p in pairs if _subject_matches(context, subject_of[p[0]])]
     if not matched and context:
         # словами не сошлось — разовый вопрос модели, к какому предмету относится изделие
-        all_subjects = tuple(sorted({s for s in rule_set.group_subjects.values() if s}))
-        choice = _subject_by_model(model, context, all_subjects) if model else ""
+        choice = _equipment_kind(rule_set, context, model)
         if choice:
             matched = [p for p in pairs if _subject_matches(choice, subject_of[p[0]])]
 
@@ -165,14 +231,11 @@ def _adhoc_rules_for_attribute(rules: list[AdHocRule], attribute: str) -> list[A
 
 
 def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
-                     top_k: int = RETRIEVAL_K, model=None,
-                     extra_rules: list[AdHocRule] | None = None) -> tuple[str, list[str], bool]:
+                     top_k: int = RETRIEVAL_K, model=None) -> tuple[str, list[str], bool]:
     """Полный набор правил для одной строки: global + релевантные local-группы.
 
     Ретрив видит атрибут, само значение (в нём может быть признак исключения — префикс, скобка,
     диапазон) и контекст строки. Возвращает (текст правил, имена групп, смешаны ли предметы).
-    extra_rules — правила, названные пользователем в сообщении этого запроса: они действуют
-    только на этот запрос и в базу знаний не попадают.
     """
     query = " ".join(x for x in (attribute, str(value), context) if x).strip()
     body_to_name = {g.body: g.attribute for g in rule_set.groups}
@@ -180,7 +243,27 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
              for body in hybrid_search(rule_set, query, top_k=top_k)]
     pairs, subject_conflict = _select_by_subject(rule_set, pairs, context, model)
 
+    # Группа с именем (или алиасом) самого атрибута — это и есть правило для него; ранг
+    # похожести тут ничего не решает, а без неё строка остаётся без своего правила.
+    for group in rule_set.groups:
+        names = [group.attribute] + list(group.aliases)
+        if any(n and _attribute_matches(attribute, n) for n in names):
+            pair = (group.attribute, group.body)
+            if pair not in pairs:
+                logger.info("  [SEARCH] группа по имени атрибута: %r", group.attribute)
+                pairs.insert(0, pair)
+            # правило именно этого атрибута найдено: спор о том, к какому изделию относятся
+            # соседние группы, строку больше не решает
+            subject_conflict = False
+
     blocks: list[str] = []
+    kind = _equipment_kind(rule_set, context, model)
+    if kind:
+        # то, что пайплайн уже выяснил про строку, должно дойти и до модели: таблицы документа
+        # разведены по видам изделий, а в контексте стоит код изделия, а не его название
+        blocks.append(f"The item recorded in this row is a {kind}. Where a rule or a table of "
+                      f"this document distinguishes kinds of equipment, this is the kind whose "
+                      f"entry applies.")
     if rule_set.global_rules:
         blocks.append(rule_set.global_rules)
     names: list[str] = []
@@ -191,19 +274,13 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
         if body not in blocks:
             blocks.append(body)
 
-    adhoc = format_adhoc_rules(_adhoc_rules_for_attribute(extra_rules or [], attribute))
-
     if not blocks:
-        base = "No relevant rules were found in the knowledge base for this attribute."
-        return ("\n\n".join(x for x in (base, adhoc) if x), names, subject_conflict)
+        return ("No relevant rules were found in the knowledge base for this attribute.",
+                names, subject_conflict)
 
     text = "\n".join(blocks)
-    parts = [text] + expand_references(rule_set, text, attribute, names, str(value))
-    # Правила пользователя идут последним, отдельным блоком: подтягивать по ним пункты
-    # документа незачем, а приоритет над правилами документа объявлен в самом блоке.
-    if adhoc:
-        parts.append(adhoc)
-    return "\n\n".join(parts), names, subject_conflict
+    expanded = "\n\n".join([text] + expand_references(rule_set, text, attribute, names, str(value)))
+    return expanded, names, subject_conflict
 
 
 _CLAUSE_DEF_RE = re.compile(r"^\s*(\d+(?:\.\d+)+)\s")
@@ -219,21 +296,27 @@ def _context_line(context: str) -> str:
 
 
 def _register_lines_for_attribute(rule_set, attribute: str, group_names: list[str] | None = None,
-                                  value: str = "") -> str:
-    """Строки таблиц документа, относящиеся к этому атрибуту: keyword→root и фраза→код.
+                                  value: str = "") -> tuple[str, str]:
+    """Строки таблиц документа для этого атрибута: (keyword→root, фраза→код).
 
     Правило говорит «взять корень из Table 1», но самой таблицы в тексте правил нет — она
     лежит отдельным артефактом извлечения. Без неё модели нечего подставить, и она берёт
     первое похожее значение из примеров соседнего атрибута.
+
+    Возвращаются два разных вида таблиц, и смешивать их нельзя: keyword→root — корень для
+    ОБОЗНАЧЕНИЯ («Nominal pipe size» → «NPS»), а фраза→код — закрытый список значений.
+    Поданные вместе под заголовком «выбери запись из списка», корни становятся ответом:
+    размер «7,62 cm» так превратился в «NPS 7,62 cm».
     """
     # Подпись атрибута в таблице заказчика и имя группы правил — разные тексты («Facing type»
     # против «end connection»), поэтому владельца ищем и среди групп, которые нашёл ретрив.
     candidates = [attribute] + list(group_names or [])
+    roots: list[str] = []
     lines: list[str] = []
     for keyword, root in rule_set.deterministic.items():
         owner = rule_set.deterministic_attributes.get(keyword, "")
         if owner and any(_attribute_matches(c, owner) for c in candidates):
-            lines.append(f"{keyword} -> {root}")
+            roots.append(f"{keyword} -> {root}")
     prefixes: list[str] = []
     for candidate in candidates:
         prefixes.extend(_registers_for_attribute(rule_set, candidate))
@@ -242,7 +325,7 @@ def _register_lines_for_attribute(rule_set, attribute: str, group_names: list[st
     for prefix in dict.fromkeys(prefixes):
         for phrase, code in rule_set.closed_registers.get(prefix, {}).items():
             lines.append(f"{phrase} -> {code}")
-    return "\n".join(dict.fromkeys(lines))
+    return "\n".join(dict.fromkeys(roots)), "\n".join(dict.fromkeys(lines))
 
 
 REGISTER_CONTENT_THRESHOLD = 70
@@ -300,15 +383,37 @@ def expand_references(rule_set, text: str, attribute: str, group_names: list[str
                       + "\n".join(pulled))
 
     if _TABLE_REF_RE.search(text):
-        register = _register_lines_for_attribute(rule_set, attribute, group_names, value)
+        roots, register = _register_lines_for_attribute(rule_set, attribute, group_names, value)
         if register:
-            logger.info("  [REFS] подтянута таблица атрибута: %d строк",
+            logger.info("  [REFS] подтянут закрытый реестр атрибута: %d строк",
                         len(register.splitlines()))
             blocks.append(
                 "Register entries this document defines for this attribute. This list is "
                 "complete and closed: use an entry from it, and never invent one that is "
                 "not listed.\n" + register)
+        if roots:
+            logger.info("  [REFS] подтянуты корни обозначений: %d строк", len(roots.splitlines()))
+            blocks.append(
+                "Root words this document assigns to the NAMES of designations. A root "
+                "replaces the name of a designation, never the value itself: use it only "
+                "where the value is that designation together with its number, and never as "
+                "a replacement for a measured quantity carrying a unit. This list is not a "
+                "list of allowed values.\n" + roots)
     return blocks
+
+
+_CITATION_RE = re.compile(r"(?:per|see|under|clause)\s+(\d+(?:\.\d+)+)", re.I)
+
+
+def _unresolved_references(rule_set, text: str) -> list[str]:
+    """Пункты, на которые правила ссылаются, но чей текст в документ не извлёкся.
+
+    Извлечение иногда теряет номер пункта, и тогда «normalized per 3.1» ведёт в никуда:
+    модель видит отсылку и не видит правила. Сказать об этом честнее, чем молча не применить.
+    """
+    present = {m.group(1) for line in str(text).splitlines() if (m := _CLAUSE_DEF_RE.match(line))}
+    return [ref for ref in dict.fromkeys(_CITATION_RE.findall(str(text)))
+            if ref not in present and ref not in rule_set.clause_index]
 
 
 def _is_ambiguous_answer(answer) -> bool:
@@ -324,6 +429,81 @@ def _is_pending_result(answer) -> bool:
     """True, если детерминированный исход — pending/ambiguous (требует ручного решения)."""
     text = str(answer).lower()
     return PENDING_WORDING in text or AMBIGUOUS_WORDING in text
+
+
+# Номер пункта стоит в начале объяснения либо после слова-указателя; «0.4 kV» в середине
+# фразы — это значение, а не ссылка.
+_CITED_CLAUSE_RE = re.compile(
+    r"(?:^|(?:clause|per|see|under|and|,)\s+)(\d{1,2}(?:\.\d+)+)", re.I)
+
+
+def _cited_clauses(payload: dict) -> str:
+    """Номера пунктов, на которые сослалась модель: всё остальное она пересказывает."""
+    entries = payload.get("applied")
+    entries = entries if isinstance(entries, list) else [entries or ""]
+    numbers: list[str] = []
+    for entry in entries:
+        numbers.extend(_CITED_CLAUSE_RE.findall(str(entry).strip()))
+    numbers = list(dict.fromkeys(numbers))
+    return "по пункту " + ", ".join(numbers[:4]) if numbers else ""
+
+
+def _describe_change(value: str, answer: str) -> str:
+    """Чем результат отличается от записи — по самой строке, без слов модели."""
+    before, after = str(value).strip(), str(answer).strip()
+    if before == after:
+        return ""
+    if before.replace(" ", "") == after.replace(" ", ""):
+        return "убраны пробелы" if len(after) < len(before) else "добавлен пробел"
+    if before.lower() == after.lower():
+        return "изменён регистр"
+    if before.replace(" ", "").lower() == after.replace(" ", "").lower():
+        spaces = "добавлен пробел" if after.count(" ") > before.count(" ") else "убраны пробелы"
+        return f"изменён регистр, {spaces}"
+    if _alnum(before) == _alnum(after):
+        was = "".join(dict.fromkeys(c for c in before if not c.isalnum() and not c.isspace()))
+        now = "".join(dict.fromkeys(c for c in after if not c.isalnum() and not c.isspace()))
+        if was != now:
+            return f"разделители: «{was or 'нет'}» → «{now or 'нет'}»"
+        return "изменено написание"
+    was_quantity, now_quantity = _NUM_UNIT_RE.fullmatch(before), _NUM_UNIT_RE.fullmatch(after)
+    if (was_quantity and now_quantity
+            and unit_mismatch(was_quantity.group(3), "count")
+            and unit_mismatch(now_quantity.group(3), "count")):
+        if _unit_key(was_quantity.group(3)) != _unit_key(now_quantity.group(3)):
+            return f"пересчёт: {before} → {after}"
+        return f"округление: {before} → {after}"
+
+    before_words = sorted(re.findall(r"\w+", before.lower()))
+    after_words = sorted(re.findall(r"\w+", after.lower()))
+    if before_words == after_words:
+        return "переставлены части значения"
+    dropped = [w for w in dict.fromkeys(re.findall(r"\w+", before)) if w.lower() not in after_words]
+    added = [w for w in dict.fromkeys(re.findall(r"\w+", after)) if w.lower() not in before_words]
+    parts = []
+    if dropped:
+        parts.append("убрано: " + ", ".join(f"«{w}»" for w in dropped[:3]))
+    if added:
+        parts.append("добавлено: " + ", ".join(f"«{w}»" for w in added[:3]))
+    return "; ".join(parts) or f"значение заменено на «{after}»"
+
+
+def _applied_text(payload: dict) -> str:
+    """Перечень правил из ответа модели: список «applied» либо старое одиночное поле."""
+    entries = payload.get("applied")
+    if isinstance(entries, list):
+        return "; ".join(str(e).strip() for e in entries if str(e).strip())
+    return str(entries or payload.get("precondition", "")).strip()
+
+
+def _parse_payload(answer) -> dict:
+    """Ответ модели как объект: кроме result там лежит и объяснение, почему так."""
+    text = re.sub(r"^```[a-zA-Z]*\s*|\s*```$", "", str(answer).strip()).strip()
+    try:
+        obj = json.loads(text)
+    except Exception:
+        return {}
+    return obj if isinstance(obj, dict) else {}
 
 
 def _parse_result(answer) -> str:
@@ -380,27 +560,53 @@ def _attribute_matches(attribute: str, owner: str) -> bool:
     return o_words in a_words or a_words in o_words
 
 
+def _names_clash(attribute: str, name: str) -> bool:
+    """Разные ли это названные атрибуты: общее слово есть, но ни один не входит в другой.
+
+    «nominal length» и «Nominal size» пересекаются словом «nominal» и при этом означают
+    разное — шаблон одного к другому применять нельзя. А «dimension» и «Wear travel, in»
+    не пересекаются вовсе: это общая группа, которой ретрив вправе накрыть строку.
+    """
+    a = set(re.findall(r"\w+", _norm_attr(attribute)))
+    n = set(re.findall(r"\w+", _norm_attr(name)))
+    if not a or not n or not (a & n):
+        return False
+    return not (a <= n or n <= a)
+
+
 def _match_render_template(attribute: str, render_templates: dict,
-                           group_names: list[str] | None = None) -> dict | None:
+                           group_names: list[str] | None = None,
+                           value: str = "") -> dict | None:
     """Находит шаблон рендера: сперва по группам, которые ретрив счёл релевантными для строки,
     затем по имени самого атрибута (имя группы + алиасы, подстрока).
 
     Имя атрибута в датащите может не иметь ничего общего с именем группы правил
-    («Wear travel, in» ↔ группа «dimension»), поэтому ретрив здесь — основной путь.
+    («Wear travel, in» ↔ группа «dimension»), поэтому ретрив здесь — основной путь. Но группа,
+    спорящая с подписью атрибута по словам, — это другой атрибут, и её шаблон не наш:
+    «nominal length» (м, 1 знак) не должен переписывать «Nominal size».
     """
+    candidates = []
     for name in group_names or []:
         tmpl = render_templates.get(name) or render_templates.get(_norm_attr(name))
-        if tmpl:
-            return tmpl
+        if tmpl and not _names_clash(attribute, name):
+            candidates.append(tmpl)
     a = _norm_attr(attribute)
-    if not a:
+    if a:
+        for attr, tmpl in render_templates.items():
+            for c in [attr] + list(tmpl.get("aliases", [])):
+                c_norm = _norm_attr(c)
+                if c_norm and (c_norm in a or a in c_norm):
+                    candidates.append(tmpl)
+    if not candidates:
         return None
-    for attr, tmpl in render_templates.items():
-        for c in [attr] + list(tmpl.get("aliases", [])):
-            c_norm = _norm_attr(c)
-            if c_norm and (c_norm in a or a in c_norm):
+    # ретрив возвращает несколько групп подряд, и первая может быть про другую величину:
+    # выбираем шаблон, чья единица совпадает с единицей самого значения
+    m = _NUM_UNIT_RE.fullmatch(str(value).strip())
+    if m:
+        for tmpl in candidates:
+            if _unit_key(tmpl.get("suffix", "")) == _unit_key(m.group(3)):
                 return tmpl
-    return None
+    return candidates[0]
 
 
 def _unit_key(text: str) -> str:
@@ -422,6 +628,269 @@ def _apply_render_template(answer: str, template: dict) -> str:
     if _unit_key(tail) != _unit_key(template["suffix"]):
         return answer
     return f"{float(number):.{template['decimals']}f}" + template["suffix"]
+
+
+def _example_keeps_space(rules_text: str, root: str) -> bool:
+    """Показывает ли пример документа этот корень с пробелом перед числом.
+
+    «Class 150» в примере значит, что склеивать нельзя, как бы ни выглядели корни в других
+    документах. Если примера с этим корнем нет, решает общая конвенция keyword→root.
+    """
+    for _, target in _EXAMPLE_RE.findall(str(rules_text)):
+        if re.search(rf"\b{re.escape(root)}\s+\d", target, re.IGNORECASE):
+            return True
+    return False
+
+
+def _align_root_spacing(answer: str, rule_set, rules_text: str = "") -> str:
+    """Корень и число склеиваются так же, как их собирает детерминированный путь: без пробела.
+
+    Один и тот же атрибут давал «TRIM8» в одной строке и «TRIM 12» в другой, «CL600» и
+    «CL 600»: конвенцию документа знает keyword→root, а LLM-путь о ней не знает. Правится
+    только пробел между корнем и числом, содержимое не трогается. Если же документ показал
+    в примере пробел («150 Class» → «Class 150»), его пример и решает.
+    """
+    roots = {root for root in rule_set.deterministic.values() if root and root.isalpha()}
+    if not roots:
+        return answer
+    token = "|".join(re.escape(r) for r in sorted(roots, key=len, reverse=True))
+    number = r"\d+[A-Za-z]*"
+    tail = r"(\s*(?:\([^()]*\)|\S.*))?"
+    m = (re.fullmatch(rf"\s*({token})\s+({number}){tail}\s*", answer)
+         or re.fullmatch(rf"\s*({number})\s+({token}){tail}\s*", answer))
+    if not m:
+        return answer
+    if _example_keeps_space(rules_text, m.group(1)) or _example_keeps_space(rules_text, m.group(2)):
+        return answer
+    aligned = f"{m.group(1)}{m.group(2)}{m.group(3) or ''}"
+    if aligned != answer:
+        logger.info("  [ROOT] %r -> %r (конвенция документа: корень и число слитно)",
+                    answer, aligned)
+    return aligned
+
+
+# Обозначение вида «PN 100»: буквенный префикс из 2–5 заглавных и число (в любом порядке).
+_DESIGNATION_RE = re.compile(r"\s*([A-Z]{2,5})\s*-?\s*(\d+[A-Za-z]*)\s*")
+_DESIGNATION_REV_RE = re.compile(r"\s*(\d+[A-Za-z]*)\s*-?\s*([A-Z]{2,5})\s*")
+
+
+def _designation_parts(text: str) -> tuple[str, str] | None:
+    """(префикс, число) для записи-обозначения; иначе None."""
+    m = _DESIGNATION_RE.fullmatch(str(text))
+    if m:
+        return m.group(1).upper(), m.group(2)
+    m = _DESIGNATION_REV_RE.fullmatch(str(text))
+    return (m.group(2).upper(), m.group(1)) if m else None
+
+
+def _letters_attached_to_digits(value: str) -> bool:
+    """Все буквы записи приклеены к цифрам («10K», «15K»), отдельного слова-префикса нет.
+
+    «PN 100» несёт собственное обозначение отдельным словом, а «10K» — это форма записи
+    номера, и документ вправе задать ей корень.
+    """
+    return not re.search(r"(?<![\d])[A-Za-z]{2,}(?![\d])", str(value))
+
+
+def _root_invented(value: str, answer: str, rule_set, attribute: str = "") -> bool:
+    """Корень обозначения взят из документа, хотя запись это обозначение не называет.
+
+    Корень заменяет имя обозначения: «Trim 8» → «TRIM8», «600#» → «CL600» (у записи вовсе нет
+    букв, только номер и знак класса). Но «F51» — марка стали, и «TRIM51» из неё получается
+    только выбрасыванием буквы; «PN 100» — класс по другой системе, и «CL100» его подменяет.
+    Правило одно: буквы записи должны называть это же обозначение — сам корень или значащее
+    слово его ключа.
+    """
+    parts = _designation_parts(answer)
+    if not parts:
+        return False
+    root = parts[0]
+    known_roots = {r.upper() for r in rule_set.deterministic.values() if r and r.isalpha()}
+    if root not in known_roots:
+        return False  # это не корень документа, а, например, код закрытого реестра
+    markers = {root.lower()}
+    for keyword, keyword_root in rule_set.deterministic.items():
+        if str(keyword_root).upper() == root:
+            markers.update(w.lower() for w in re.findall(r"[A-Za-z]{4,}", str(keyword)))
+    letters = [w for w in re.findall(r"[A-Za-z]+", str(value))]
+    if not letters:
+        return False  # в записи одни цифры: имени обозначения там и не было
+    names_it = any(w.lower() in markers or w.lower() in {m[:len(w)] for m in markers}
+                   for w in letters)
+    if names_it:
+        return False
+    # подпись атрибута называет это обозначение, а буквы записи — часть её номера («10K»):
+    # документ вправе определить такую форму, и подменой обозначения это не является
+    if attribute and _letters_attached_to_digits(value):
+        attribute_words = {w.lower() for w in re.findall(r"[A-Za-z]{3,}", str(attribute))}
+        if attribute_words & markers:
+            return False
+    return True
+
+
+def _root_misapplied(answer: str, rule_set, value: str = "") -> bool:
+    """Корень документа приклеен не к номеру обозначения, а к чему-то другому.
+
+    Корень заменяет ИМЯ обозначения, за которым идёт его номер («Trim 8» → «TRIM8»). За ним не
+    может стоять слово («TRIM f6a», «TRIM F51») и не может стоять измеренная величина: «150 MM»
+    превращалось в «DN5.906 in», где к пересчитанной длине приписан корень условного прохода.
+    """
+    text = str(answer).strip()
+    recorded_has_unit = bool(_NUM_UNIT_RE.fullmatch(str(value).strip()))
+    for root in {r for r in rule_set.deterministic.values() if r and r.isalpha() and len(r) > 1}:
+        # после корня не буква: «DN5.906» — корень с числом, а «BWR» — другое слово
+        m = re.match(rf"^{re.escape(root)}(?![A-Za-z])[\s-]*(.*)$", text, re.IGNORECASE)
+        if not m or not m.group(1):
+            continue
+        rest = m.group(1)
+        if not rest[0].isdigit():
+            return True
+        if recorded_has_unit and _NUM_UNIT_RE.fullmatch(rest):
+            return True
+        if re.match(r"^\d+[.,]\d", rest):
+            return True  # номер обозначения целый: «NPS6.000» — это пересчитанная длина
+    return False
+
+
+def _unit_invented(attribute: str, value: str, answer: str) -> bool:
+    """Единица появилась из ниоткуда: её нет ни в записи, ни в подписи атрибута.
+
+    «150» в графе «Nominal size» превращалось в «150.000 in.» — это уже утверждение о величине,
+    а не о её написании. Документ вправе требовать единицу, но взять её неоткуда: решает человек.
+    """
+    a = _NUM_UNIT_RE.fullmatch(str(answer).strip())
+    if not a or not unit_mismatch(a.group(3), "count"):
+        return False  # ответ без единицы либо единица нечитаемая — судить не о чем
+    if _NUM_UNIT_RE.fullmatch(str(value).strip()) or _LABEL_UNIT_RE.search(str(attribute)):
+        return False
+    return bool(re.fullmatch(r"\s*-?\d+(?:[.,]\d+)?\s*", str(value)))
+
+
+# Единица не может начинаться с точки или запятой, иначе «9.5» разбирается как 9 + «.5».
+_NUM_UNIT_RE = re.compile(r"\s*(-?\d+(?:[.,]\d+)?)(\s*)([^\d\s.,].*?)\s*")
+_LABEL_UNIT_RE = re.compile(r"[,(]\s*([A-Za-z°]{1,6}\.?)\s*\)?\s*$")
+
+
+def _unit_relabelled(attribute: str, value: str, answer: str) -> bool:
+    """Единица подменена без пересчёта: число то же, а единица уже другая.
+
+    «Wall thickness, mm» со значением «9.5» превращалось в «9.50 in.» — запись просто
+    переобозначили дюймами. Если пересчёт был, меняется число; если не был, единица обязана
+    остаться той, что названа в записи или в подписи атрибута.
+    """
+    a = _NUM_UNIT_RE.fullmatch(str(answer))
+    if not a:
+        return False
+    v = _NUM_UNIT_RE.fullmatch(str(value))
+    recorded_unit = v.group(3) if v else ""
+    if not recorded_unit:
+        label = _LABEL_UNIT_RE.search(str(attribute))
+        recorded_unit = label.group(1) if label else ""
+    if not recorded_unit or not unit_mismatch(recorded_unit, a.group(3)):
+        return False
+    number = v.group(1) if v else str(value)
+    try:  # «9.5» и «9.50» — одно и то же число, а вот единица уже другая
+        return abs(float(str(number).replace(",", ".")) - float(a.group(1).replace(",", "."))) < 1e-9
+    except ValueError:
+        return _digit_groups(number) == _digit_groups(a.group(1))
+
+
+_SPACING_RULE_RE = re.compile(
+    r"(?:single|one|a)\s+space|separated\s+from\s+the\s+numera|followed\s+by\s+a\s+space", re.I)
+
+
+def _document_mandates_spacing(rules_text: str) -> bool:
+    """Требует ли документ пробел между числом и единицей явным правилом."""
+    return bool(_SPACING_RULE_RE.search(str(rules_text)))
+
+
+def _restore_unit_spacing(value: str, answer: str) -> str:
+    """Пробел между числом и единицей берётся из записи, если единица та же.
+
+    Документ задаёт единицу и знаки после запятой, но молчит про пробел; модель пишет
+    «16.00mm2» там, где записано «16 mm2». Где правила молчат, формат записи и сохраняем.
+    """
+    v = _NUM_UNIT_RE.fullmatch(str(value))
+    a = _NUM_UNIT_RE.fullmatch(str(answer))
+    if not v or not a or _unit_key(v.group(3)) != _unit_key(a.group(3)):
+        return answer
+    if not unit_mismatch(a.group(3), "count"):
+        return answer  # «- GP - 2» из номера модели — не единица, пробелы там не наши
+    if bool(v.group(2)) == bool(a.group(2)):
+        return answer
+    return f"{a.group(1)}{' ' if v.group(2) else ''}{a.group(3)}"
+
+
+_WORD_RE = re.compile(r"\w+")
+# Пример правила: «"0.075%" -> "0.075 % of span"». Слова, появившиеся справа, документ велит
+# дописать; слова, которые были и слева, он лишь переставляет.
+_EXAMPLE_RE = re.compile(r"[\"“']([^\"“”']{1,120})[\"”']\s*(?:->|→|becomes)\s*[\"“']([^\"“”']{1,120})[\"”']")
+
+
+def _mandated_additions(rules_text: str) -> set:
+    """Слова, которые примеры документа добавляют к записи: их удалять нельзя."""
+    added = set()
+    for source, target in _EXAMPLE_RE.findall(str(rules_text)):
+        source_words = {w.lower() for w in _WORD_RE.findall(source)}
+        added.update(w.lower() for w in _WORD_RE.findall(target)
+                     if w.isalpha() and w.lower() not in source_words)
+    return added
+
+
+def _document_word_tokens(rule_set, attribute: str, group_names: list[str] | None = None) -> set:
+    """Слова, которые документ вправе внести в ответ: корни и коды его таблиц."""
+    tokens = set()
+    for root in rule_set.deterministic.values():
+        tokens.update(w.lower() for w in _WORD_RE.findall(str(root)))
+    for table in rule_set.closed_registers.values():
+        for code in table.values():
+            tokens.update(w.lower() for w in _WORD_RE.findall(str(code)))
+    template = _match_render_template(attribute, rule_set.render_templates, group_names)
+    if template:
+        tokens.update(w.lower() for w in _WORD_RE.findall(str(template.get("suffix", ""))))
+    return tokens
+
+
+def _strip_added_words(value: str, answer: str, allowed: set) -> str:
+    """Убирает слова, дописанные к записи: их нет ни в ней, ни в таблицах документа.
+
+    «A216 WCB» → «ASTM A216 WCB»: пункт про порядок написания спецификации модель читает как
+    разрешение дописать издающий орган, которого в записи нет. Убираем только если после этого
+    ответ совпадает с записью по буквам и цифрам — значит всё остальное осталось на месте.
+    Замена значения («Cu» → «Copper») и дописанная скобка с пересчётом под это не подходят.
+    """
+    value_words = {w.lower() for w in _WORD_RE.findall(str(value))}
+    candidates = [w for w in dict.fromkeys(_WORD_RE.findall(str(answer)))
+                  if w.isalpha() and w.lower() not in value_words and w.lower() not in allowed]
+    if not candidates:
+        return answer
+
+    result = str(answer)
+    for word in candidates:
+        result = re.sub(rf"\b{re.escape(word)}\b", "", result)
+    result = re.sub(r"\s{2,}", " ", result).strip()
+    if _alnum(result) != _alnum(value):
+        return answer  # убрали слова — и ответ перестал быть этой записью: значит не лишние
+    logger.info("  [ADDED] %r -> %r: убраны слова, которых нет в записи (%s)",
+                answer, result, ", ".join(candidates))
+    return result
+
+
+def _rejection_reason(attribute: str, value: str, answer: str, rule_set) -> str:
+    """Почему ответ нельзя принять: одна проверка вместо четырёх подряд у вызывающего.
+
+    Каждая из них появилась из конкретной поломки, но снаружи это один вопрос — обоснован ли
+    ответ правилами документа. Пустая строка значит «принимаем как есть».
+    """
+    if _unit_invented(attribute, value, answer):
+        return "единицы нет ни в записи, ни в подписи — оставлено как записано"
+    if _root_misapplied(answer, rule_set, value):
+        return "корень обозначения навешен не на его номер — оставлено как записано"
+    if _unit_relabelled(attribute, value, answer):
+        return "единица подменена без пересчёта — оставлено как записано"
+    if _root_invented(value, answer, rule_set, attribute):
+        return "запись не называет это обозначение — оставлено как записано"
+    return ""
 
 
 def _partial_separator_edit(original: str, answer: str) -> str | None:
@@ -514,8 +983,7 @@ def _reading_signature(value: str, answer: str) -> tuple:
     return False, _char_bag(answer)
 
 
-def _reconcile_equivalent_rows(rows: list[dict], rule_set, model,
-                               extra_rules: list[AdHocRule] | None = None) -> list[dict]:
+def _reconcile_equivalent_rows(rows: list[dict], rule_set, model) -> list[dict]:
     """Сверяет строки, которые по смыслу означают одно и то же, но нормализовались по-разному.
 
     Одинаковое по сути значение, записанное в другом порядке слов, должно трактоваться одним
@@ -541,8 +1009,7 @@ def _reconcile_equivalent_rows(rows: list[dict], rule_set, model,
         attribute = rows[indices[0]]["Attribute"]
         context = str(rows[indices[0]].get("Context", ""))
         rules_text, _names, _conflict = build_rules_text(
-            rule_set, attribute, str(rows[indices[0]]["Value"]), context,
-            extra_rules=extra_rules)
+            rule_set, attribute, str(rows[indices[0]]["Value"]), context)
         listing = "\n".join(
             f"{n}. recorded: {rows[i]['Value']}  ->  current answer: {rows[i]['Rules_Value']}"
             for n, i in enumerate(indices, start=1)
@@ -556,7 +1023,7 @@ def _reconcile_equivalent_rows(rows: list[dict], rule_set, model,
         messages = [{"role": "system", "content": RECONCILE_PROMPT},
                     {"role": "user", "content": user}]
         try:
-            raw = str(_invoke_with_tools(model, messages).content).strip()
+            raw = str(_invoke_with_tools(model, messages)[0].content).strip()
             raw = re.sub(r"^```[a-zA-Z]*\s*|\s*```$", "", raw).strip()
             decided = json.loads(raw)
         except Exception as e:
@@ -577,32 +1044,86 @@ def _reconcile_equivalent_rows(rows: list[dict], rule_set, model,
                                current, new_value)
                 continue
             logger.info("  [RECONCILE] %r: %r -> %r", rows[i]["Value"], current, new_value)
+            _note_row(rows[i], "сверка одинаковых по смыслу записей: прочтение правил "
+                               "приведено к общему")
             rows[i]["Rules_Value"] = new_value
     return rows
 
 
+def _note_row(row: dict, note: str) -> None:
+    """Дописывает строку объяснения: проходы по всей таблице идут после сборки заметок."""
+    current = str(row.get("Applied", "")).strip()
+    empty = ("правила этого документа к строке не применялись", "")
+    row["Applied"] = note if current in empty else f"{current}; {note}"
+
+
 def _canonicalize_formatting(rows: list[dict]) -> list[dict]:
-    """Приводит к одному написанию результаты, различающиеся ТОЛЬКО пробелами.
+    """Приводит к одному написанию результаты, различающиеся ТОЛЬКО пробелами и точкой единицы.
 
     Одно и то же значение, записанное во входе по-разному ("1200 F" / "1200°F"), не должно
-    давать "649 °C" и "649°C" в одной колонке. Сливаются только варианты, совпадающие после
-    удаления пробелов, — смысловые различия не затрагиваются.
+    давать "649 °C" и "649°C" в одной колонке; так же не должны расходиться "3.000 in" и
+    "11.811 in." — документ пишет единицу с точкой, модель ставит её через раз. Сливаются
+    только варианты, совпадающие после удаления пробелов и завершающей точки: смысловые
+    различия (и точка внутри числа) не затрагиваются.
     """
+    def key_of(value: str) -> str:
+        return re.sub(r"\.$", "", re.sub(r"\s+", "", str(value)))
+
     buckets: dict[tuple[str, str], list[int]] = {}
     for i, row in enumerate(rows):
         key = (_norm_attr(row["Attribute"]), _norm_attr(row.get("Context", "")),
-               re.sub(r"\s+", "", str(row["Rules_Value"])))
+               key_of(row["Rules_Value"]))
         buckets.setdefault(key, []).append(i)
 
     for indices in buckets.values():
         variants = [str(rows[i]["Rules_Value"]) for i in indices]
         if len(set(variants)) < 2:
             continue
-        # самый частый вариант; при равенстве — самый компактный, затем лексикографически
-        canonical = sorted(set(variants), key=lambda v: (-variants.count(v), len(v), v))[0]
+        counts = Counter(variants)
+        (canonical, top), *rest = counts.most_common()
+        if rest and rest[0][1] == top:
+            # ничья: какой из вариантов требует документ, отсюда не видно — не выбираем за него
+            logger.info("  [CANON] %r: большинства нет, оставляем как есть", sorted(set(variants)))
+            continue
         logger.info("  [CANON] %r -> %r", sorted(set(variants)), canonical)
         for i in indices:
+            if str(rows[i]["Rules_Value"]) != canonical:
+                _note_row(rows[i], f"написание сведено к варианту «{canonical}» "
+                                   f"(так нормализованы такие же записи этой таблицы)")
             rows[i]["Rules_Value"] = canonical
+    return rows
+
+
+def _canonicalize_units(rows: list[dict]) -> list[dict]:
+    """Одна единица — одно написание в пределах атрибута: «3.000 in» и «11.811 in.» вместе.
+
+    Значения разные, поэтому предыдущий проход их не сливает, а документ пишет единицу одним
+    способом («in.»), модель же ставит точку через раз. Выбирается самое частое написание, при
+    равенстве — более полное: сокращать то, что документ написал с точкой, мы не вправе.
+    """
+    groups: dict[tuple, list[int]] = {}
+    for i, row in enumerate(rows):
+        m = _NUM_UNIT_RE.fullmatch(str(row["Rules_Value"]))
+        if not m or not unit_mismatch(m.group(3), "count"):
+            continue  # не единица измерения — сводить написание нечего
+        key = (_norm_attr(row["Attribute"]), _norm_attr(row.get("Context", "")),
+               _unit_key(m.group(3)))
+        groups.setdefault(key, []).append(i)
+
+    for indices in groups.values():
+        spellings = [_NUM_UNIT_RE.fullmatch(str(rows[i]["Rules_Value"])).group(3)
+                     for i in indices]
+        if len(set(spellings)) < 2:
+            continue
+        canonical = sorted(set(spellings), key=lambda u: (-spellings.count(u), -len(u), u))[0]
+        logger.info("  [UNIT] %r -> %r", sorted(set(spellings)), canonical)
+        for i in indices:
+            m = _NUM_UNIT_RE.fullmatch(str(rows[i]["Rules_Value"]))
+            fixed = f"{m.group(1)}{m.group(2)}{canonical}"
+            if fixed != str(rows[i]["Rules_Value"]):
+                _note_row(rows[i], f"написание единицы сведено к «{canonical.strip()}» "
+                                   f"(как в остальных строках этого атрибута)")
+            rows[i]["Rules_Value"] = fixed
     return rows
 
 
@@ -612,11 +1133,6 @@ REGISTER_FLOOR = 40
 # Формулировки исходов (легко локализовать/поменять)
 PENDING_WORDING = "pending registration"
 AMBIGUOUS_WORDING = "ambiguous match"
-
-
-def _prefix_of(table: dict[str, str]) -> str:
-    """Буквенная часть первого кода таблицы = префикс регистра."""
-    return _extract_code_prefix(next(iter(table.values()))) or "REG"
 
 
 def _adjudicate_register(model, attribute: str, value: str, table: dict[str, str]) -> str | None:
@@ -674,17 +1190,22 @@ def _wording_matches(value: str, phrase: str) -> bool:
 
 
 def match_closed_register(value: str, table: dict[str, str], threshold: int = FUZZY_THRESHOLD,
-                          prefix: str | None = None, model=None,
-                          attribute: str = "") -> tuple[str, bool] | None:
+                          model=None, attribute: str = "") -> tuple[str, bool, str] | None:
     """Сопоставляет значение с одним закрытым регистром «фраза таблицы -> код».
 
     Возвращает (результат, совпадение точное по составу слов). Точное/почти точное совпадение
     → код; серая зона отдаётся модели-арбитру (выбор только из реестра); «не похоже ни на что»
-    → pending registration; «похоже сразу на два пункта» → ambiguous match. Префикс регистра
-    берётся из самих кодов, не из среза строки.
+    → pending registration; «похоже сразу на два пункта» → ambiguous match. К исходу не
+    приписывается код: раньше это был префикс ближайшего пункта, и ячейка «THRD pending
+    registration: Wafer-type, lugged» читалась как присуждённый код совсем другого соединения.
     """
     if not table:
         return None
+    # запись уже является кодом этого реестра — она нормализована, искать нечего
+    stripped = str(value).strip()
+    for code in table.values():
+        if stripped.lower() == str(code).strip().lower():
+            return str(code), True, f"запись уже код реестра ({code})"
     norm_value = _normalize_phrase(value)
     scored = sorted(
         ((fuzz.token_sort_ratio(norm_value, _normalize_phrase(key)), key) for key in table),
@@ -693,14 +1214,12 @@ def match_closed_register(value: str, table: dict[str, str], threshold: int = FU
     best_score, best_key = scored[0]
     if best_score >= threshold:
         if _wording_matches(value, best_key):
-            return table[best_key], True
+            return table[best_key], True, f"реестр: «{best_key}» → {table[best_key]}"
         # похоже на пункт реестра, но формулировка другая — записываем как есть, не кодируем
         logger.info("  [REGISTER] %r ~ %r, формулировка не совпадает: оставляем как записано",
                     value, best_key)
-        return value.strip(), False
-
-    # Префикс берём от реально ближайшего кандидата, а не от произвольного/первого в списке.
-    best_prefix = _extract_code_prefix(table[best_key]) or prefix or _prefix_of(table)
+        return (value.strip(), False,
+                f"реестр: ближайший пункт «{best_key}», формулировка не совпадает — не кодируем")
 
     if best_score >= REGISTER_FLOOR:
         verdict = _adjudicate_register(model, attribute, value, table)
@@ -710,15 +1229,19 @@ def match_closed_register(value: str, table: dict[str, str], threshold: int = FU
             # запись остаётся как есть и уходит к ревьюеру
             if any(code == verdict and _wording_matches(value, phrase)
                    for phrase, code in table.items()):
-                return verdict, True
+                return verdict, True, f"реестр (выбор модели): {verdict}"
             logger.info("  [REGISTER] %r ~ %r по смыслу, формулировка не совпадает: "
                         "оставляем как записано", value, verdict)
-            return value.strip(), False
+            return (value.strip(), False,
+                    f"реестр: по смыслу {verdict}, но формулировка не совпадает — не кодируем")
         if verdict == "AMBIGUOUS":
-            return f"{best_prefix} {AMBIGUOUS_WORDING}: {value.strip()}", False
+            return (f"{AMBIGUOUS_WORDING}: {value.strip()}", False,
+                    "реестр: значение подходит сразу под несколько пунктов")
         if verdict == "UNMATCHED":
-            return f"{best_prefix} {PENDING_WORDING}: {value.strip()}", False
-    return f"{best_prefix} {PENDING_WORDING}: {value.strip()}", False
+            return (f"{PENDING_WORDING}: {value.strip()}", False,
+                    "реестр: такого пункта в документе нет")
+    return (f"{PENDING_WORDING}: {value.strip()}", False,
+            "реестр: такого пункта в документе нет")
 
 
 def _names_token(attribute: str, token: str) -> bool:
@@ -746,17 +1269,17 @@ def _registers_for_attribute(rule_set, attribute: str) -> list[str]:
 
 
 def apply_deterministic(value: str, rule_set, attribute: str,
-                        model=None) -> tuple[str, bool] | None:
+                        model=None) -> tuple[str, bool, str] | None:
     """Детерминированные преобразования.
 
-    Возвращает (значение, нужна ли ручная проверка), если строка полностью закрыта
-    детерминированными/фразовыми правилами; иначе None (идём в LLM).
+    Возвращает (значение, нужна ли ручная проверка, чем закрыто), если строка полностью
+    закрыта детерминированными/фразовыми правилами; иначе None (идём в LLM).
     """
     result = value.strip()
 
     # 0) атрибут исключён из реформатирования — возвращаем без изменений, LLM не вызываем.
     if _attribute_is_excluded(attribute, rule_set.excluded_attributes):
-        return result, False
+        return result, False, "атрибут исключён из переформатирования"
 
     # 1) точное фразовое совпадение (phrase_rules + бесчисловые deterministic).
     phrase_keys = {}
@@ -781,32 +1304,11 @@ def apply_deterministic(value: str, rule_set, attribute: str,
                 break
             mapped.append(code)
         if ok:
-            return "; ".join(mapped), False
+            return "; ".join(mapped), False, "таблица фраз документа"
 
-    # 2) сопоставление с закрытыми регистрами, соответствующими атрибуту.
-    prefixes = _registers_for_attribute(rule_set, attribute)
-    if prefixes:
-        table: dict[str, str] = {}
-        for p in prefixes:
-            table.update(rule_set.closed_registers.get(p, {}))
-        if table:
-            # значение через ';' — перечисление независимых позиций: каждая ищется отдельно,
-            # иначе целиком оно ни одному пункту реестра не соответствует по определению
-            mapped, needs_review = [], False
-            for part in (p.strip() for p in result.split(";")):
-                if not part:
-                    continue
-                matched = match_closed_register(part, table, prefix=prefixes[0],
-                                                model=model, attribute=attribute)
-                if matched is None:
-                    break
-                code, exact = matched
-                mapped.append(code)
-                needs_review = needs_review or not exact
-            if mapped:
-                return "; ".join(mapped), needs_review
-
-    # 3) keyword → root: всё значение целиком должно быть «keyword число» / «число keyword».
+    # 2) keyword → root: всё значение целиком должно быть «keyword число» / «число keyword».
+    # Идёт раньше реестров: «Connector size 18» — это обозначение, а не пункт таблицы
+    # типов коннекторов, к которой его притягивает нечёткое совпадение имени атрибута.
     for keyword in sorted(rule_set.deterministic, key=len, reverse=True):
         root = rule_set.deterministic[keyword]
         # attribute-aware: применяем keyword только к его атрибуту-владельцу. Имя группы в
@@ -826,9 +1328,92 @@ def apply_deterministic(value: str, rule_set, attribute: str,
         if m:
             num_part = m.group(1)
             nf = rule_set.deterministic_order.get(keyword, rule_set.number_first)
-            return ((num_part + root) if nf else (root + num_part)), False
+            return (((num_part + root) if nf else (root + num_part)), False,
+                    f"корень обозначения: «{keyword}» → {root}")
+
+    # 3) сопоставление с закрытыми регистрами, соответствующими атрибуту.
+    prefixes = _registers_for_attribute(rule_set, attribute)
+    if prefixes:
+        table: dict[str, str] = {}
+        for p in prefixes:
+            table.update(rule_set.closed_registers.get(p, {}))
+        if table:
+            # значение через ';' — перечисление независимых позиций: каждая ищется отдельно,
+            # иначе целиком оно ни одному пункту реестра не соответствует по определению
+            mapped, needs_review, verdict = [], False, ""
+            notes: list[str] = []
+            for part in (p.strip() for p in result.split(";")):
+                if not part:
+                    continue
+                matched = match_closed_register(part, table, model=model, attribute=attribute)
+                if matched is None:
+                    break
+                code, exact, note = matched
+                notes.append(note)
+                if _is_pending_result(code):
+                    # одна позиция перечисления не разобрана: склеивать её исход с кодами
+                    # остальных нельзя — ячейка перестаёт быть и значением, и сообщением
+                    verdict = (AMBIGUOUS_WORDING if AMBIGUOUS_WORDING in code.lower()
+                               else PENDING_WORDING)
+                    break
+                mapped.append(code)
+                needs_review = needs_review or not exact
+            if verdict:
+                return f"{verdict}: {result}", True, "; ".join(dict.fromkeys(notes))
+            if mapped:
+                return "; ".join(mapped), needs_review, "; ".join(dict.fromkeys(notes))
 
     return None
+
+
+# Колонки, которые пайплайн читает как текст: из Excel в них приходит что угодно.
+_TEXT_COLUMNS = ("Attribute", "Value")
+_CONTROL_CHARS_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
+def _cell_text(value) -> str:
+    """Ячейка Excel → строка: пропуск пустой, целое без «.0», дата без нулевого времени.
+
+    Датащит почти никогда не состоит из одних строк: размер лежит числом, дата испытаний —
+    датой, пустая ячейка — NaN. Всё это раньше доезжало до value.strip() и роняло запрос.
+    """
+    if value is None or (not isinstance(value, str) and pd.isna(value)):
+        return ""
+    if isinstance(value, pd.Timestamp):
+        return value.strftime("%Y-%m-%d") if value == value.normalize() else str(value)
+    if isinstance(value, float) and float(value).is_integer():
+        return str(int(value))
+    # управляющие символы Excel не хранит, а модели ломают построчную подачу значения
+    return _CONTROL_CHARS_RE.sub("", str(value))
+
+
+def _unique_columns(columns) -> list[str]:
+    """Повторяющиеся заголовки разводит: вторая «Attribute» становится «Attribute (2)».
+
+    Две колонки с одним именем превращают frame[col] в таблицу вместо ячейки, и строка
+    падает на первой же нормализации имени.
+    """
+    seen: dict[str, int] = {}
+    result = []
+    for column in columns:
+        name = str(column)
+        seen[name] = seen.get(name, 0) + 1
+        result.append(name if seen[name] == 1 else f"{name} ({seen[name]})")
+    return result
+
+
+def prepare_frame(data_frame: pd.DataFrame) -> pd.DataFrame:
+    """Загруженная таблица → таблица, с которой работает пайплайн.
+
+    Заголовки делаются уникальными, а Attribute и Value — текстом. Прочие колонки (контекст)
+    остаются как есть: они идут в выдачу в том виде, в каком их прислали.
+    """
+    frame = data_frame.copy()
+    frame.columns = _unique_columns(frame.columns)
+    for column in _TEXT_COLUMNS:
+        if column in frame.columns:
+            frame[column] = [_cell_text(v) for v in frame[column]]
+    return frame
 
 
 def _row_context(data_frame: pd.DataFrame, index: int) -> str:
@@ -853,12 +1438,12 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
     data_frame = state["data_frame"]
     rule_set = config["configurable"]["rule_set"]
     model = config["configurable"]["model"]
-    extra_rules = config["configurable"].get("extra_rules") or []
 
     # --- фиксируем результат ПРЕДЫДУЩЕЙ строки ---
     if state["index_row_table"] != 0:
         # needs_review — только пометка для ревьюера (жёлтая заливка), значение не подменяет
         needs_review = False
+        applied: list[str] = [n for n in [state.get("applied", "")] if n]
         if state.get("deterministic_result") is not None:
             last_answer = state["deterministic_result"]
             # либо исход требует регистрации, либо код присуждён по смыслу, а не по формулировке
@@ -870,25 +1455,86 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
             # спорную по правилам строку возвращаем как записана, но помечаем;
             # расхождение сэмплов между собой — тоже повод показать строку человеку
             # смешение предметов в найденных правилах — тоже повод показать строку человеку
+            # правила чужих изделий важны, только если они что-то изменили: на нетронутой
+            # записи это не «спорно», а просто «в этом документе для неё правил нет»
+            changed = str(last_answer).strip() != str(state["original_value"]).strip()
             needs_review = (is_ambiguous or state.get("needs_review_flag", False)
-                            or state.get("subject_conflict", False))
+                            or (state.get("subject_conflict", False) and changed))
             rules_value = state["original_value"] if is_ambiguous else last_answer
             if not is_ambiguous:
                 rules_value = _strip_redundant_parenthetical(rules_value, state["original_value"])
                 # финальная строка собирается детерминированным форматтером, если для атрибута
                 # из документа извлечён жёсткий шаблон рендера (знаки после запятой + суффикс)
                 template = _match_render_template(state["attribute"], rule_set.render_templates,
-                                                  state.get("rule_group_names"))
+                                                  state.get("rule_group_names"), rules_value)
                 if template:
-                    rules_value = _apply_render_template(rules_value, template)
+                    rendered = _apply_render_template(rules_value, template)
+                    if rendered != rules_value:
+                        applied.append(f"шаблон рендера документа ({template['decimals']} зн., "
+                                       f"«{template['suffix'].strip()}»)")
+                    rules_value = rendered
+                # проходы идут один за другим: каждый следующий видит результат предыдущего
+                aligned = _align_root_spacing(rules_value, rule_set,
+                                              state.get("rules_text", ""))
+                if aligned != rules_value:
+                    applied.append("написание корня выровнено по документу")
+                rules_value = aligned
+                # если документ прописал пробел, формат записи ему не указ: правило главнее
+                if not _document_mandates_spacing(state.get("rules_text", "")):
+                    spaced = _restore_unit_spacing(state["original_value"], rules_value)
+                    if spaced != rules_value:
+                        applied.append("пробел у единицы взят из записи")
+                    rules_value = spaced
+                stripped_words = _strip_added_words(
+                    state["original_value"], rules_value,
+                    _document_word_tokens(rule_set, state["attribute"],
+                                          state.get("rule_group_names"))
+                    | _mandated_additions(state.get("rules_text", "")))
+                if stripped_words != rules_value:
+                    applied.append("убраны слова, которых нет в записи")
+                rules_value = stripped_words
+                guard = _rejection_reason(state["attribute"], state["original_value"],
+                                          rules_value, rule_set)
+                if guard:
+                    logger.info("  [GUARD] %r -> %r: %s",
+                                state["original_value"], rules_value, guard)
+                    rules_value = state["original_value"]
+                    needs_review = True
+                    applied.append(guard)
                 # правка разделителей, применённая к части вхождений, — повод показать строку
                 partial = _partial_separator_edit(state["original_value"], rules_value)
                 if partial:
                     logger.info("  [EDIT] %r -> %r: правка не по всем вхождениям (%s)",
                                 state["original_value"], rules_value, partial)
                     needs_review = True
+                    applied.append(f"правка разделителя не по всем вхождениям ({partial})")
+            if is_ambiguous:
+                applied.append("правила документа дают два разных ответа")
+            elif state.get("needs_review_flag"):
+                applied.append("прогоны разошлись между собой")
+            if not changed:
+                missing = _unresolved_references(rule_set, state.get("rules_text", ""))
+                if missing:
+                    logger.info("  [REFS] неразрешимые ссылки: %s", missing)
+                    needs_review = True
+                    applied.append("правило ссылается на пункт " + ", ".join(missing)
+                                   + ", которого нет в извлечённом тексте документа")
+            if state.get("subject_conflict"):
+                applied.append("найдены правила разных изделий, контекст строки не уточняет"
+                               if changed else
+                               "правила этого документа относятся к другим изделиям")
         else:
             rules_value = state["original_value"]
+        # что именно изменилось — видно из самой строки, и это честнее пересказа модели
+        change = _describe_change(state["original_value"], rules_value)
+        if change and not any("пересчёт единиц" in n for n in applied):
+            applied.insert(0, change)
+
+        # строка изменилась, а сослаться не на что: это не «правил нет», это повод посмотреть
+        if not [n for n in applied if n] and _alnum(rules_value) != _alnum(state["original_value"]):
+            applied.append("значение изменено, но правило не названо")
+            needs_review = True
+
         new_row = {
             "Attribute": state["attribute"],
             "Value": state["original_value"],
@@ -896,6 +1542,8 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
             "Ambiguous": needs_review,
             "Context": state.get("row_context", ""),
             "Deterministic": state.get("deterministic_result") is not None,
+            "Applied": ("; ".join(dict.fromkeys(n for n in applied if n))
+                        or "правила этого документа к строке не применялись"),
         }
         update["new_rows"] = [new_row]
 
@@ -910,12 +1558,28 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
         update["row_context"] = context
         update["answer"] = None
         update["needs_review_flag"] = False
+        update["applied"] = ""
         update["messages"] = [RemoveMessage(id=k.id) for k in state["messages"]]
 
-        row_rules = _adhoc_rules_for_attribute(extra_rules, attribute)
+        if not _document_covers_row(rule_set, context, model):
+            logger.info("=" * 80)
+            logger.info("Row %d/%d | Attribute: %r | %r — документ не про это изделие, пусто",
+                        state["index_row_table"] + 1, data_frame.shape[0], attribute, context)
+            # пустая ячейка сама по себе говорит «документ не про это изделие» —
+            # заливать её жёлтым не за чем: ревьюеру там нечего решать
+            update["deterministic_result"] = ""
+            update["needs_review_flag"] = False
+            update["applied"] = "документ не распространяется на это изделие"
+            update["value"] = ""
+            update["rules_text"] = ""
+            update["rule_group_names"] = []
+            update["subject_conflict"] = False
+            return update
+
         det = apply_deterministic(value, rule_set, attribute, model=model)
-        if det is not None and not row_rules:
-            det_value, det_needs_review = det
+        if det is not None:
+            det_value, det_needs_review, det_note = det
+            update["applied"] = det_note
             # полностью детерминировано — общий LLM-путь не нужен
             update["deterministic_result"] = det_value
             update["needs_review_flag"] = det_needs_review
@@ -929,34 +1593,51 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                 state["index_row_table"] + 1, data_frame.shape[0], attribute, value, det_value,
             )
         else:
-            # Правило пользователя видит только LLM-путь, поэтому строку, к атрибуту которой
-            # он что-то дописал, детерминированным ярлыком не закрываем. Но и ответ документа
-            # не выбрасываем: он становится отправной точкой, поверх которой применяется
-            # правило, — иначе строка теряет и точность документа, и само правило.
-            # исход «требует регистрации» — не значение, а сообщение ревьюеру: нормализовать
-            # поверх него нечего, правило пользователя применяется к самой записи
-            start_value = det[0] if det and not _is_pending_result(det[0]) else value
             update["deterministic_result"] = None
-            update["value"] = start_value
-            update["needs_review_flag"] = det[1] if det else False
+            update["value"] = value
             (update["rules_text"], update["rule_group_names"],
-             update["subject_conflict"]) = build_rules_text(rule_set, attribute, start_value,
-                                                            context, model=model,
-                                                            extra_rules=extra_rules)
+             update["subject_conflict"]) = build_rules_text(rule_set, attribute, value, context,
+                                                            model=model)
             logger.info("=" * 80)
             logger.info(
-                "Row %d/%d | Attribute: %r | Value: %r%s | rules: %d chars",
+                "Row %d/%d | Attribute: %r | Value: %r | rules: %d chars",
                 state["index_row_table"] + 1, data_frame.shape[0], attribute, value,
-                f" | DETERMINISTIC -> {start_value!r}, дальше по правилам пользователя"
-                if det else "",
                 len(update["rules_text"]),
             )
 
     return update
 
 
-def _invoke_with_tools(model, messages):
-    """Инвокает модель, прогоняя цикл tool-calls (для юнит-конверсий)."""
+def _tool_note(name: str, args: dict, result: str) -> str:
+    """Что именно сделал инструмент — словами, по его же аргументам и ответу.
+
+    Вызов, ничего не изменивший (замена строки на саму себя, пересчёт в ту же единицу),
+    в объяснение не идёт: это не применённое правило, а холостой ход.
+    """
+    if str(result).startswith("cannot convert"):
+        return f"пересчёт не выполнен: {result}"
+    if name == "convert_units":
+        source, target = str(args.get("quantity", "")), str(result)
+        source_unit = _NUM_UNIT_RE.fullmatch(source.strip())
+        target_unit = _NUM_UNIT_RE.fullmatch(target.strip())
+        if (source_unit and target_unit
+                and _unit_key(source_unit.group(3)) == _unit_key(target_unit.group(3))):
+            return "" if source.strip() == target.strip() else f"округление: «{source}» → {target}"
+        return f"пересчёт единиц: «{source}» → {target}"
+    if name == "remove_characters":
+        return (f"удалены символы «{args.get('characters')}» из «{args.get('text')}»"
+                if str(args.get("characters", "")) else "")
+    if name == "replace_substring":
+        if str(args.get("find")) == str(args.get("replace_with")):
+            return ""
+        return (f"замена «{args.get('find')}» на «{args.get('replace_with')}» "
+                f"в «{args.get('text')}»")
+    return f"{name}: {result}"
+
+
+def _invoke_with_tools(model, messages) -> tuple:
+    """Инвокает модель, прогоняя цикл tool-calls. Возвращает (ответ, что сделали инструменты)."""
+    notes: list[str] = []
     response = model.invoke(messages)
     while getattr(response, "tool_calls", None):
         tool_messages = []
@@ -968,16 +1649,19 @@ def _invoke_with_tools(model, messages):
                 try:
                     content = str(tool_fn.invoke(tc["args"]))
                     logger.info("  [TOOL] %s(%s) -> %r", tc["name"], tc["args"], content)
+                    note = _tool_note(tc["name"], tc["args"], content)
+                    if note:
+                        notes.append(note)
                 except Exception as e:
                     content = f"error: {e}"
             tool_messages.append(ToolMessage(content=content, tool_call_id=tc["id"]))
         messages = messages + [response] + tool_messages
         response = model.invoke(messages)
-    return response
+    return response, notes
 
 
 def _normalize_once(model, attribute: str, value: str, rules_text: str,
-                    context: str = "") -> str:
+                    context: str = "") -> tuple[str, str]:
     """Один сэмпл: применение правил + проверка кандидата на overreach.
 
     Правила подаются целиком за раз, а не порциями: при инкрементальной подаче ранний
@@ -990,9 +1674,12 @@ def _normalize_once(model, attribute: str, value: str, rules_text: str,
                                      f"Value: {value}\n\n"
                                      f"Rules:\n{rules_text}")},
     ]
-    candidate = _parse_result(_invoke_with_tools(model, messages).content).strip()
+    response, tool_notes = _invoke_with_tools(model, messages)
+    payload = _parse_payload(response.content)
+    candidate = _parse_result(json.dumps(payload) if payload else "").strip()
+    applied = "; ".join(x for x in (*tool_notes, _cited_clauses(payload)) if x)
     if not candidate or _is_ambiguous_answer(candidate):
-        return candidate
+        return candidate, applied
 
     # второй проход: precondition, исключения, утечка из worked-example, полнота
     messages = [
@@ -1002,41 +1689,53 @@ def _normalize_once(model, attribute: str, value: str, rules_text: str,
                                      f"Candidate answer: {candidate}\n\n"
                                      f"Rules:\n{rules_text}")},
     ]
-    checked = _parse_result(_invoke_with_tools(model, messages).content).strip()
+    review_response, review_tools = _invoke_with_tools(model, messages)
+    review = _parse_payload(review_response.content)
+    checked = str(review.get("result", "")).strip()
     if checked and checked != candidate:
         logger.info("  [VERIFY] %r -> %r", candidate, checked)
-    return checked or candidate
+        extra = "; ".join(x for x in (*review_tools, _cited_clauses(review)) if x)
+        applied = "; ".join(x for x in (applied, extra) if x)
+    return (checked or candidate), applied
+
+
+def _vote_normalize(model, attribute: str, value: str, rules_text: str,
+                    context: str, samples: int) -> tuple[str, bool, str]:
+    """Несколько независимых сэмплов и большинство; второй элемент — разошлись ли они.
+
+    Спорные строки модель трактует по-разному от запуска к запуску, поэтому берётся
+    несколько сэмплов: это и повышает точность, и делает результат воспроизводимым
+    (одна и та же таблица даёт одну и ту же выдачу).
+    """
+    args = (model, attribute, value, rules_text, context)
+    if samples <= 1:
+        sampled = [_normalize_once(*args)]
+    else:
+        with ThreadPoolExecutor(max_workers=samples) as pool:
+            sampled = list(pool.map(lambda _: _normalize_once(*args), range(samples)))
+
+    # большинство; при равенстве — вариант, встретившийся раньше (стабильный tie-break)
+    candidates = [value for value, _ in sampled]
+    counts = Counter(candidates)
+    answer = max(candidates, key=lambda c: (counts[c], -candidates.index(c)))
+    applied = next((note for value, note in sampled if value == answer), "")
+    if len(counts) > 1:
+        logger.info("  [VOTE] %r -> %r", dict(counts), answer)
+    return answer, len(counts) > 1, applied
 
 
 def normalize_row(state: GraphState, config: RunnableConfig) -> GraphState:
-    """Ответ модели по полному набору правил, устойчивый к разбросу между прогонами.
-
-    Спорные строки модель трактует по-разному от запуска к запуску, поэтому берётся
-    несколько независимых сэмплов и большинство: это и повышает точность, и делает
-    результат воспроизводимым (одна и та же таблица даёт одну и ту же выдачу).
-    """
+    """Ответ модели по полному набору правил, устойчивый к разбросу между прогонами."""
     model = config["configurable"]["model"]
     samples = max(1, int(config["configurable"].get("self_consistency", SELF_CONSISTENCY)))
-    args = (model, state["attribute"], state["value"], state["rules_text"],
-            state.get("row_context", ""))
-
-    if samples == 1:
-        candidates = [_normalize_once(*args)]
-    else:
-        with ThreadPoolExecutor(max_workers=samples) as pool:
-            candidates = list(pool.map(lambda _: _normalize_once(*args), range(samples)))
-
-    # большинство; при равенстве — вариант, встретившийся раньше (стабильный tie-break)
-    counts = Counter(candidates)
-    answer = max(candidates, key=lambda c: (counts[c], -candidates.index(c)))
-    if len(counts) > 1:
-        logger.info("  [VOTE] %r -> %r", dict(counts), answer)
+    answer, split, applied = _vote_normalize(model, state["attribute"], state["value"],
+                                             state["rules_text"], state.get("row_context", ""),
+                                             samples)
     logger.info("  [NORMALIZE] %r -> %r", state["value"], answer)
 
     # разошедшиеся сэмплы = строка, которую правила документа не решают однозначно:
     # значение берём по большинству, но помечаем строку на ручную проверку
-    return {"answer": answer,
-            "needs_review_flag": bool(state.get("needs_review_flag")) or len(counts) > 1}
+    return {"answer": answer, "needs_review_flag": split, "applied": applied}
 
 
 def next_row(state: GraphState) -> GraphState:
@@ -1071,8 +1770,13 @@ builder.add_edge("end_node", END)
 graph = builder.compile()
 
 
-def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set,
-                        extra_rules: list[AdHocRule] | None = None) -> pd.DataFrame:
+# Колонки, которые отдаёт проход по одному документу: задаются явно, иначе таблица из
+# нуля строк приходит вовсе без колонок и валит сборку результата.
+ROW_COLUMNS = ["Attribute", "Value", "Rules_Value", "Ambiguous", "Context", "Deterministic",
+               "Applied"]
+
+
+def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set) -> pd.DataFrame:
     initial_state = {
         "messages": [],
         "index_row_table": 0,
@@ -1086,18 +1790,73 @@ def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set,
         "deterministic_result": None,
         "answer": None,
         "needs_review_flag": False,
+        "applied": "",
     }
     final_state = graph.invoke(
         initial_state,
         config={
-            "configurable": {"model": model, "rule_set": rule_set,
-                             "extra_rules": extra_rules or []},
+            "configurable": {"model": model, "rule_set": rule_set},
             # на строку приходится до 3 шагов графа (start_row/normalize_row/next_row)
             "recursion_limit": 3 * data_frame.shape[0] + 25,
         },
     )
-    rows = _reconcile_equivalent_rows(final_state["new_rows"], rule_set, model, extra_rules)
-    return pd.DataFrame(_canonicalize_formatting(rows))
+    rows = _reconcile_equivalent_rows(final_state["new_rows"], rule_set, model)
+    return pd.DataFrame(_canonicalize_units(_canonicalize_formatting(rows)), columns=ROW_COLUMNS)
+
+
+# Колонка под правила, названные пользователем в сообщении.
+USER_RULES_COLUMN = "Мои правила"
+# Суффикс колонки-объяснения: что именно сработало на этой строке.
+APPLIED_SUFFIX = " — применено"
+# Строки этого прохода независимы друг от друга, поэтому считаются параллельно; ширина
+# подобрана так, чтобы вместе с сэмплами не устраивать шквал запросов к модели.
+USER_RULES_WORKERS = 4
+
+
+def run_user_rules_column(data_frame: pd.DataFrame, model,
+                          rules: list[AdHocRule],
+                          samples: int = SELF_CONSISTENCY) -> pd.DataFrame:
+    """Отдельная колонка под правила пользователя: они применяются к самой записи.
+
+    Стандарты в этой колонке не участвуют — по ним считаются свои колонки, и правило
+    пользователя их не трогает. Строка, к атрибуту которой правил нет, остаётся как
+    записана: колонка показывает ровно то, что делают правила пользователя, и ничего сверх.
+    """
+    samples = max(1, int(samples))
+
+    def one_row(index: int) -> dict:
+        attribute = data_frame.iloc[index]["Attribute"]
+        value = data_frame.iloc[index]["Value"]
+        context = _row_context(data_frame, index)
+        row = {"Attribute": attribute, "Value": value, "Rules_Value": value,
+               "Ambiguous": False, "Context": context, "Deterministic": False, "Applied": ""}
+
+        row_rules = _adhoc_rules_for_attribute(rules, attribute)
+        if not row_rules:
+            return row
+
+        answer, split, applied = _vote_normalize(model, attribute, value,
+                                                 format_adhoc_rules(row_rules), context, samples)
+        row["Applied"] = "; ".join(
+            [f"ваше правило: {r.text}" for r in row_rules] + ([applied] if applied else []))
+        logger.info("  [USER RULES] %r | %r -> %r", attribute, value, answer)
+        if _is_ambiguous_answer(answer):
+            # правила пользователя противоречат друг другу на этой строке — решать не нам
+            row["Ambiguous"] = True
+            return row
+
+        row["Rules_Value"] = answer
+        # разошедшиеся сэмплы и правка разделителей не по всем вхождениям — к ревьюеру
+        partial = _partial_separator_edit(value, answer)
+        if partial:
+            logger.info("  [USER RULES] %r -> %r: правка не по всем вхождениям (%s)",
+                        value, answer, partial)
+        row["Ambiguous"] = split or bool(partial)
+        return row
+
+    with ThreadPoolExecutor(max_workers=USER_RULES_WORKERS) as pool:
+        rows = list(pool.map(one_row, range(data_frame.shape[0])))
+    return pd.DataFrame(_canonicalize_formatting(rows), columns=ROW_COLUMNS)
 
 
 app = FastAPI()
@@ -1116,6 +1875,19 @@ def get_app_config() -> AppConfig:
     return build_app_config(Settings())
 
 
+# Excel не принимает управляющие символы и обрывается на ячейке длиннее 32767 знаков.
+_ILLEGAL_XLSX_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+EXCEL_CELL_LIMIT = 32767
+
+
+def _excel_safe(value):
+    """Значение → то, что Excel примет: без управляющих символов и не длиннее предела."""
+    if not isinstance(value, str):
+        return value
+    cleaned = _ILLEGAL_XLSX_RE.sub("", value)
+    return cleaned[:EXCEL_CELL_LIMIT] if len(cleaned) > EXCEL_CELL_LIMIT else cleaned
+
+
 def _write_excel_with_highlight(df: pd.DataFrame, ambiguous_cols: dict[str, list[bool]]) -> io.BytesIO:
     """Пишет DataFrame в Excel, заливая спорные ячейки жёлтым."""
     from openpyxl import Workbook
@@ -1125,9 +1897,15 @@ def _write_excel_with_highlight(df: pd.DataFrame, ambiguous_cols: dict[str, list
     ws = wb.active
     yellow = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
 
-    ws.append(list(df.columns))
+    ws.append([_excel_safe(c) for c in df.columns])
     for _, row in df.iterrows():
-        ws.append(row.tolist())
+        ws.append([_excel_safe(v) for v in row.tolist()])
+    # записанное значение — это данные, а не формула: «=SUM(...)» из датащита должно
+    # остаться текстом, а не вычисляться при открытии файла
+    for row in ws.iter_rows():
+        for cell in row:
+            if cell.data_type == "f":
+                cell.data_type = "s"
 
     col_index = {name: i for i, name in enumerate(df.columns, start=1)}
     for col_name, flags in ambiguous_cols.items():
@@ -1168,26 +1946,65 @@ def check_consistency(result_df: pd.DataFrame, rule_set_names: list[str],
 XLSX_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 
+def _free_column_name(frame: pd.DataFrame, name: str) -> str:
+    """Имя для новой колонки, не затирающее уже существующую («STD-A» → «STD-A (2)»).
+
+    Заказчик мог прислать таблицу, где такая колонка уже есть — например прошлый результат.
+    Молча её перезаписать значит потерять данные пользователя.
+    """
+    if name not in frame.columns:
+        return name
+    suffix = 2
+    while f"{name} ({suffix})" in frame.columns:
+        suffix += 1
+    return f"{name} ({suffix})"
+
+
 def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
-                    extra_rules: list[AdHocRule] | None = None
+                    rule_sets: list | None = None,
+                    user_rules: list[AdHocRule] | None = None
                     ) -> tuple[pd.DataFrame, dict[str, list[bool]]]:
-    """Прогоняет таблицу по всем документам; возвращает (таблицу результата, флаги спорных)."""
+    """Прогоняет таблицу по выбранным документам; возвращает (таблицу, флаги спорных ячеек).
+
+    Правила пользователя считаются отдельным проходом ПОСЛЕ стандартов и ложатся в свою
+    колонку: колонки стандартов остаются чистыми — в них ровно то, что говорит документ.
+    """
+    rule_sets = list(app_config.rule_sets if rule_sets is None else rule_sets)
+    data_frame = prepare_frame(data_frame)
     # в выдаче сохраняем все исходные колонки: уточняющие колонки нужны ревьюеру
     result_df = data_frame.copy()
     ambiguous_cols: dict[str, list[bool]] = {}
     # документы независимы друг от друга — считаем их колонки параллельно
-    with ThreadPoolExecutor(max_workers=max(1, len(app_config.rule_sets))) as pool:
-        col_dfs = list(pool.map(
-            lambda rs: run_single_rule_set(data_frame, app_config.model, rs, extra_rules),
-            app_config.rule_sets,
-        ))
-    for rule_set, col_df in zip(app_config.rule_sets, col_dfs):
-        result_df[rule_set.name] = col_df["Rules_Value"].to_list()
-        if "Ambiguous" in col_df:
-            ambiguous_cols[rule_set.name] = col_df["Ambiguous"].to_list()
+    if rule_sets:
+        with ThreadPoolExecutor(max_workers=len(rule_sets)) as pool:
+            col_dfs = list(pool.map(
+                lambda rs: run_single_rule_set(data_frame, app_config.model, rs),
+                rule_sets,
+            ))
+        column_names = []
+        for rule_set, col_df in zip(rule_sets, col_dfs):
+            column = _free_column_name(result_df, rule_set.name)
+            column_names.append(column)
+            result_df[column] = col_df["Rules_Value"].to_list()
+            if "Applied" in col_df:
+                result_df[_free_column_name(result_df, column + APPLIED_SUFFIX)] = (
+                    col_df["Applied"].to_list())
+            if "Ambiguous" in col_df:
+                ambiguous_cols[column] = col_df["Ambiguous"].to_list()
 
-    check_consistency(result_df, [rs.name for rs in app_config.rule_sets],
-                      [_row_context(data_frame, i) for i in range(len(data_frame))])
+        check_consistency(result_df, column_names,
+                          [_row_context(data_frame, i) for i in range(len(data_frame))])
+
+    if user_rules:
+        logger.info("Колонка %r: правил пользователя — %d", USER_RULES_COLUMN, len(user_rules))
+        col_df = run_user_rules_column(data_frame, app_config.model, user_rules)
+        column = _free_column_name(result_df, USER_RULES_COLUMN)
+        result_df[column] = col_df["Rules_Value"].to_list()
+        if "Applied" in col_df:
+            result_df[_free_column_name(result_df, column + APPLIED_SUFFIX)] = (
+                col_df["Applied"].to_list())
+        ambiguous_cols[column] = col_df["Ambiguous"].to_list()
+
     return result_df, ambiguous_cols
 
 
@@ -1208,8 +2025,24 @@ def process_excel(
     )
 
 
-def _parse_history(raw: str) -> list[dict]:
-    """История чата приходит с фронта строкой JSON; её порча не должна ронять запрос."""
+_LABEL_TAIL_RE = re.compile(r"\s*(?:normalization\s+)?rules$", re.I)
+
+
+def _display_name(name: str) -> str:
+    """Имя папки документа → ярлык для интерфейса: подчёркивания в пробелы, хвост долой."""
+    label = _LABEL_TAIL_RE.sub("", name.replace("_", " ")).strip()
+    return re.sub(r"\s+", " ", label) or name
+
+
+@app.get("/standards")
+def list_standards(app_config: AppConfig = Depends(get_app_config)):
+    """Какие стандарты загружены — фронт даёт из них выбрать."""
+    return {"standards": [{"name": rs.name, "label": _display_name(rs.name)}
+                          for rs in app_config.rule_sets]}
+
+
+def _parse_json_list(raw: str) -> list:
+    """Список приходит с фронта строкой JSON; его порча не должна ронять запрос."""
     try:
         parsed = json.loads(raw) if raw else []
     except ValueError:
@@ -1217,72 +2050,94 @@ def _parse_history(raw: str) -> list[dict]:
     return parsed if isinstance(parsed, list) else []
 
 
-def _processing_reply(row_count: int, column_names: list[str],
-                      ambiguous_cols: dict[str, list[bool]], rules: list[AdHocRule]) -> str:
-    """Что сказать пользователю про обработанный файл."""
-    review = sum(1 for flags in ambiguous_cols.values() for flag in flags if flag)
-    lines = [f"Готово: строк — {row_count}, колонок со стандартами — {len(column_names)}"
-             + (f" ({', '.join(column_names)})." if column_names else ".")]
-    lines.append(f"Помечено на проверку ячеек: {review} (жёлтая заливка)." if review
-                 else "Спорных ячеек нет.")
-    if rules:
-        listing = "\n".join(f"— {r.attribute + ': ' if r.attribute else ''}{r.text}"
-                            for r in rules)
-        lines.append("Учтены ваши правила (только в этом запросе):\n" + listing)
-    return "\n".join(lines)
+def _selected_standard_names(app_config: AppConfig, raw: str) -> list[str]:
+    """Имена стандартов, выбранных в интерфейсе; неизвестные отбрасываем."""
+    known = {rs.name for rs in app_config.rule_sets}
+    return [n for n in (str(x).strip() for x in _parse_json_list(raw)) if n in known]
+
+
+def _rule_sets_by_name(app_config: AppConfig, names: list[str]) -> list:
+    """Имена → наборы правил. Пустой список (и список из одних неизвестных) — значит все."""
+    by_name = {rs.name: rs for rs in app_config.rule_sets}
+    chosen = [by_name[n] for n in names if n in by_name]
+    return chosen or list(app_config.rule_sets)
+
+
+def _uploaded(file: UploadFile | None) -> UploadFile | None:
+    """Пустое поле формы приходит как файл без имени — это не вложение."""
+    return file if file is not None and (file.filename or "").strip() else None
+
+
+def _download_name(stored) -> str:
+    """Имя файла для скачивания: то же, что у файла в рабочей области."""
+    name = stored.name.strip() or f"{stored.file_id}.xlsx"
+    return name if name.lower().endswith(".xlsx") else f"{name}.xlsx"
 
 
 @app.post("/chat")
 def chat(
         message: str = Form(""),
         history: str = Form("[]"),
+        standards: str = Form("[]"),
+        session_id: str = Form(""),
         file: UploadFile | None = File(None),
         app_config: AppConfig = Depends(get_app_config),
 ):
-    """Единый вход чата: разговор, обработка файла — или то и другое сразу.
+    """Вход чата: сообщение ведёт агент, файлы диалога лежат в его рабочей области.
 
-    Файл обрабатывается ровно как раньше; текст сообщения при этом не декорация: названные
-    в нём правила применяются поверх правил документов, но только в этом запросе — в базу
-    знаний они не попадают и на следующий запрос не переходят.
+    Сам агент ничего не нормализует — он выбирает файл, стандарты и правила и зовёт
+    пайплайн инструментом. Поэтому «пересчитай тот файл, я забыл правило» работает без
+    повторной загрузки: файл никуда не девался, пока жив диалог.
     """
-    assistant = app_config.assistant or app_config.model
+    session = (session_id or "").strip() or uuid4().hex
+    workspace = get_workspace(session)
     text = (message or "").strip()
-    past = _parse_history(history)
+    uploaded = _uploaded(file)
 
-    rules = extract_adhoc_rules(assistant, text)
-    rules_payload = [{"attribute": r.attribute, "rule": r.text} for r in rules]
+    if not text and uploaded is None:
+        return {"reply": "Напишите сообщение или приложите файл .xlsx — обработаю.",
+                "session_id": session, "files": []}
 
-    if file is None or not (file.filename or "").strip():
-        if not text:
-            return {"reply": "Напишите сообщение или приложите файл .xlsx — обработаю.",
-                    "rules": rules_payload, "file": None}
-        return {"reply": chat_reply(assistant, text, past, rules),
-                "rules": rules_payload, "file": None}
+    notes: list[str] = []
+    if uploaded is not None:
+        try:
+            frame = pd.read_excel(io.BytesIO(uploaded.file.read()))
+        except Exception as e:
+            logger.warning("[CHAT] файл %r не прочитан: %s", uploaded.filename, e)
+            return {"reply": f"Не удалось прочитать «{uploaded.filename}». Нужен .xlsx с "
+                             f"колонками Attribute и Value.",
+                    "session_id": session, "files": []}
+        stored = workspace.add(name=uploaded.filename, frame=frame)
+        columns = ", ".join(str(c) for c in frame.columns)
+        notes.append(f"The user has just attached the file {stored.name} "
+                     f"(file_id={stored.file_id}), {frame.shape[0]} rows, columns: {columns}.")
 
-    contents = file.file.read()
-    try:
-        data_frame = pd.read_excel(io.BytesIO(contents))
-    except Exception as e:
-        logger.warning("[CHAT] файл %r не прочитан: %s", file.filename, e)
-        return {"reply": f"Не удалось прочитать «{file.filename}». Нужен .xlsx с колонками "
-                         f"Attribute и Value.", "rules": rules_payload, "file": None}
+    selected = _selected_standard_names(app_config, standards)
+    notes.append("Standards picked in the interface: "
+                 + (", ".join(selected) if selected else "none, so all of them") + ".")
 
-    missing = [c for c in ("Attribute", "Value") if c not in data_frame.columns]
-    if missing:
-        return {"reply": f"В файле «{file.filename}» нет колонок: {', '.join(missing)}. "
-                         f"Нужны Attribute и Value, остальные колонки идут как контекст строки.",
-                "rules": rules_payload, "file": None}
+    produced: list[str] = []
+    catalogue = [{"name": rs.name, "label": _display_name(rs.name)} for rs in app_config.rule_sets]
+    tools = build_tools(
+        workspace, catalogue, selected,
+        lambda frame, names, rules: normalize_table(
+            frame, app_config, _rule_sets_by_name(app_config, names), rules),
+        produced,
+    )
+    prompt = f"[Context: {' '.join(notes)}]\n\n{text or 'Обработай приложенный файл.'}"
+    reply = run_agent(app_config.assistant or app_config.model, tools,
+                      history_messages(_parse_json_list(history)), prompt)
 
-    result_df, ambiguous_cols = normalize_table(data_frame, app_config, rules)
-    output_buffer = _write_excel_with_highlight(result_df, ambiguous_cols)
-    reply = _processing_reply(len(data_frame), [rs.name for rs in app_config.rule_sets],
-                              ambiguous_cols, rules)
-    return {
-        "reply": reply,
-        "rules": rules_payload,
-        "file": {
-            "name": "result.xlsx",
+    files = []
+    for file_id in produced:
+        stored = workspace.get(file_id)
+        if stored is None:
+            continue
+        buffer = _write_excel_with_highlight(stored.frame, stored.ambiguous)
+        files.append({
+            "name": _download_name(stored),
             "media_type": XLSX_MEDIA_TYPE,
-            "content_base64": base64.b64encode(output_buffer.read()).decode("ascii"),
-        },
-    }
+            "content_base64": base64.b64encode(buffer.read()).decode("ascii"),
+        })
+
+    return {"reply": reply, "session_id": session, "files": files}

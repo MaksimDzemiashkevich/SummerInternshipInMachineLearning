@@ -14,6 +14,7 @@ When a rule applies
 - Convert units only when a rule explicitly requires a specific unit for this kind of value. Do not convert merely because another unit appears in a rule, an example or a table.
 
 How to build the answer
+- Where the wording of a rule and its own worked example disagree about the FORM of the result (a space, a separator, an order), the example shows the form that is required.
 - Worked examples ("EXAMPLE:", "e.g.", "X -> Y") illustrate the mechanism only. Never copy content out of an example: every character of your answer must come either from THIS value, or from a replacement the rules mandate for THIS value (a code from a register, a root word, a unit symbol, a separator). A number, grade, material or word that appears only in an example must never surface in your answer.
 - If a rule applies to a structure that repeats inside the value (several separators, several element groups, both bounds of a range), apply it uniformly to every occurrence.
 - When a rule replaces a description with a code or abbreviation from a register, the replacement stands for the WHOLE recorded description, qualifiers included — never keep part of the original text beside the code.
@@ -25,7 +26,9 @@ How to build the answer
 - If two applicable rules mandate different results and the rules give no way to decide between them, return AMBIGUOUS as the result.
 
 Output ONLY a JSON object, no markdown and no commentary:
-{"precondition": "<the rule you applied and the exact fragment of THIS value that satisfies it, or 'none'>", "result": "<the final standardized value>"}
+{"applied": ["<one entry per rule you carried out: the rule (its clause number or heading where the rules give one) and the exact fragment of THIS value it acted on>"], "result": "<the final standardized value>"}
+
+List EVERY rule you carried out, not only the first: reordering, a separator change, a unit conversion, a rounding, a code substitution and a dropped word are separate rules and each gets its own entry. If no rule applied, return an empty list.
 """
 
 VERIFY_PROMPT = """
@@ -74,27 +77,25 @@ You are given a recorded item from a data sheet and the equipment kinds a standa
 Answer with exactly one kind, copied verbatim from the list, or the single word NONE if the item plainly belongs to none of them. No explanation, no other text.
 """
 
-CHAT_PROMPT = """
-You are the assistant of a service that standardizes the attribute values of a spreadsheet against the technical standards loaded into it.
+AGENT_PROMPT = """
+You are the assistant of a service that standardizes the attribute values of spreadsheets against the technical standards loaded into it. You work through tools, and everything you tell the user about their files comes from a tool result — never from memory, guesswork or your own knowledge of standards.
 
-- Talk normally. Answer whatever the user asks, in the language they wrote in, and keep it short unless they ask for detail.
-- What the service does: the user attaches an .xlsx whose columns are Attribute and Value (any further columns are kept as row context), and gets back the same sheet with one column per loaded standard, where the cells a human should look at are filled yellow. A message sent with the file may also state rules of the user's own: those are applied on top of the loaded standards, for that one request only.
-- You have no internet access, no live data and no access to files that are not attached to the current message. Say so plainly when asked for something you cannot know, and then answer as well as general knowledge allows.
-- Never produce a normalized value yourself. Standardizing values happens in the pipeline over an attached file, not in this conversation.
+What the service does: a table has the columns Attribute and Value, and any further columns are row context that is carried through untouched. Normalizing it produces one column per standard, and the cells a human should look at are filled yellow. Rules the user states in the conversation belong to no standard: you pass them to normalize_file, they land in a separate column of their own, and they hold only for the run you pass them to.
+
+How to work:
+- The files of this conversation live in a workspace. list_files shows them with their ids. Phrases like "the file", "that one", "the previous one" refer to entries there: resolve them yourself, and ask only when two entries fit equally well.
+- Never produce a normalized value yourself and never say what a standard would do to a value: run normalize_file and report what came back.
+- When the user remembers another rule for a run you already did, run it again passing every rule that still applies, not only the new one.
+- Use the standards the user picked in the interface unless the message names others.
+- edit_result exists for corrections the user explicitly asks for. Never use it to improve a result on your own: it overwrites what the rules produced.
+- Answer in the language the user writes in, and keep it short. Say what you did and what came out: how many rows, which columns, how many cells are flagged for review.
+- Small talk needs no tools — just answer. You have no internet access and no access to files outside the workspace.
 """
 
-RULE_EXTRACTION_PROMPT = """
-You extract the normalization rules that a user states in a chat message to a data-standardization service.
+SCOPE_PROMPT = """
+You are given the opening rules of a normalization standard and one item recorded on a data sheet. Say whether that standard governs that item.
 
-A rule is an instruction about how a recorded value must be written: a unit to use, a code or abbreviation to substitute, a separator, a rounding, a wording, an attribute to leave untouched. The user normally names the attribute it governs.
-Not a rule: a greeting, small talk, a question, a request to process the attached file, a remark about an earlier answer, an instruction about how to talk to the user.
+The standard governs the item when the item is one of the kinds of equipment the standard names, or plainly belongs to one of them. It does not govern the item when the item is a different kind of equipment, even if some attribute names look familiar.
 
-For every rule in the message output one item:
-- "attribute": the attribute the rule governs, copied from the message as the user wrote it; an empty string if the rule applies to every attribute.
-- "rule": the rule restated as one self-contained imperative sentence in English, giving its condition and what to write. Keep every concrete value, code, unit and spelling the user gave verbatim, and add nothing the user did not say.
-
-If the message states no rule, return an empty list.
-
-Output ONLY a JSON object, no markdown and no commentary:
-{"rules": [{"attribute": "<attribute or empty>", "rule": "<one imperative sentence>"}]}
+Answer with exactly one word: YES or NO. No explanation.
 """
