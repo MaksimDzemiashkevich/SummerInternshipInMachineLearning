@@ -788,6 +788,8 @@ def _unit_relabelled(attribute: str, value: str, answer: str) -> bool:
         recorded_unit = label.group(1) if label else ""
     if not recorded_unit or not unit_mismatch(recorded_unit, a.group(3)):
         return False
+    if _unit_key(recorded_unit) == _unit_key(a.group(3)):
+        return False  # отличие только в регистре или знаках — это приведение к форме, не подмена
     number = v.group(1) if v else str(value)
     try:  # «9.5» и «9.50» — одно и то же число, а вот единица уже другая
         return abs(float(str(number).replace(",", ".")) - float(a.group(1).replace(",", "."))) < 1e-9
@@ -1115,7 +1117,12 @@ def _canonicalize_units(rows: list[dict]) -> list[dict]:
                      for i in indices]
         if len(set(spellings)) < 2:
             continue
-        canonical = sorted(set(spellings), key=lambda u: (-spellings.count(u), -len(u), u))[0]
+        counts = Counter(spellings)
+        (canonical, top), *rest = counts.most_common()
+        if rest and rest[0][1] == top:
+            # ничья: «Pa» и «PA» — разные единицы, выбирать за документ мы не вправе
+            logger.info("  [UNIT] %r: большинства нет, оставляем как есть", sorted(set(spellings)))
+            continue
         logger.info("  [UNIT] %r -> %r", sorted(set(spellings)), canonical)
         for i in indices:
             m = _NUM_UNIT_RE.fullmatch(str(rows[i]["Rules_Value"]))
@@ -1512,6 +1519,8 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                 applied.append("правила документа дают два разных ответа")
             elif state.get("needs_review_flag"):
                 applied.append("прогоны разошлись между собой")
+            if any("ответ модели не получен" in n for n in applied):
+                needs_review = True  # строка осталась как записана не по правилу, а по сбою
             if not changed:
                 missing = _unresolved_references(rule_set, state.get("rules_text", ""))
                 if missing:
@@ -1635,27 +1644,64 @@ def _tool_note(name: str, args: dict, result: str) -> str:
     return f"{name}: {result}"
 
 
+# Потолок шагов цикла инструментов на один сэмпл. Штатной строке хватает одного-двух
+# вызовов; без потолка модель, зациклившаяся на холостой замене, молотит бесконечно.
+MAX_TOOL_STEPS = 6
+_REPEATED_CALL_REPLY = ("this exact call was already made and returned the same result; "
+                        "do not call it again — answer now with the JSON object")
+_BUDGET_REPLY = ("no more tool calls are available for this value; answer now with the "
+                 "JSON object, using what the previous calls returned")
+
+
+def _run_tool_call(tc: dict, notes: list[str]) -> str:
+    """Выполняет один вызов и копит заметку о сделанном."""
+    tool_fn = TOOLS_BY_NAME.get(tc["name"])
+    if tool_fn is None:
+        return "unknown tool"
+    try:
+        content = str(tool_fn.invoke(tc["args"]))
+    except Exception as e:
+        return f"error: {e}"
+    logger.info("  [TOOL] %s(%s) -> %r", tc["name"], tc["args"], content)
+    note = _tool_note(tc["name"], tc["args"], content)
+    if note:
+        notes.append(note)
+    return content
+
+
 def _invoke_with_tools(model, messages) -> tuple:
-    """Инвокает модель, прогоняя цикл tool-calls. Возвращает (ответ, что сделали инструменты)."""
+    """Инвокает модель, прогоняя цикл tool-calls. Возвращает (ответ, что сделали инструменты).
+
+    Повторный вызов с теми же аргументами не выполняется, а число шагов ограничено: иначе
+    модель, которой инструмент возвращает то же самое, вызывает его снова и снова.
+    """
     notes: list[str] = []
+    seen: set = set()
     response = model.invoke(messages)
-    while getattr(response, "tool_calls", None):
+
+    for _ in range(MAX_TOOL_STEPS):
+        calls = getattr(response, "tool_calls", None)
+        if not calls:
+            return response, notes
         tool_messages = []
-        for tc in response.tool_calls:
-            tool_fn = TOOLS_BY_NAME.get(tc["name"])
-            if tool_fn is None:
-                content = "unknown tool"
+        for tc in calls:
+            key = (tc["name"], json.dumps(tc["args"], sort_keys=True, default=str))
+            if key in seen:
+                logger.info("  [TOOL] повтор %s(%s) — не выполняем", tc["name"], tc["args"])
+                content = _REPEATED_CALL_REPLY
             else:
-                try:
-                    content = str(tool_fn.invoke(tc["args"]))
-                    logger.info("  [TOOL] %s(%s) -> %r", tc["name"], tc["args"], content)
-                    note = _tool_note(tc["name"], tc["args"], content)
-                    if note:
-                        notes.append(note)
-                except Exception as e:
-                    content = f"error: {e}"
+                seen.add(key)
+                content = _run_tool_call(tc, notes)
             tool_messages.append(ToolMessage(content=content, tool_call_id=tc["id"]))
         messages = messages + [response] + tool_messages
+        response = model.invoke(messages)
+
+    if getattr(response, "tool_calls", None):
+        logger.warning("  [TOOL] исчерпан лимит вызовов (%d), просим ответить без инструментов",
+                       MAX_TOOL_STEPS)
+        closing = [ToolMessage(content=_BUDGET_REPLY, tool_call_id=tc["id"])
+                   for tc in response.tool_calls]
+        messages = messages + [response] + closing
         response = model.invoke(messages)
     return response, notes
 
@@ -1678,6 +1724,11 @@ def _normalize_once(model, attribute: str, value: str, rules_text: str,
     payload = _parse_payload(response.content)
     candidate = _parse_result(json.dumps(payload) if payload else "").strip()
     applied = "; ".join(x for x in (*tool_notes, _cited_clauses(payload)) if x)
+    if not candidate:
+        # модель не дала разбираемого ответа (например, упёрлась в лимит вызовов):
+        # запись остаётся как есть, а строка получает пометку
+        logger.warning("  [NORMALIZE] ответа нет, оставляем запись %r", value)
+        return str(value), "; ".join(x for x in (applied, "ответ модели не получен") if x)
     if not candidate or _is_ambiguous_answer(candidate):
         return candidate, applied
 

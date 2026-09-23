@@ -129,6 +129,8 @@ def remove_characters(text: str, characters: str) -> str:
     the value: the removal is then applied to every occurrence, and nothing else changes.
     `characters` is the set of characters to drop, e.g. "-" or "-,".
     """
+    if not characters or not any(ch in text for ch in characters):
+        return f"no change: none of {characters!r} occurs in the text"
     return "".join(ch for ch in text if ch not in set(characters))
 
 
@@ -139,6 +141,10 @@ def replace_substring(text: str, find: str, replace_with: str) -> str:
     Use this whenever a rule says to swap one separator, word or symbol for another (for example
     a hyphen for a tilde, or the word "and" for "&"), instead of retyping the value.
     """
+    if find == replace_with:
+        return "no change: what you are replacing and what you replace it with are the same"
+    if find not in text:
+        return f"no change: {find!r} does not occur in the text"
     return text.replace(find, replace_with)
 
 
