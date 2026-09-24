@@ -23,14 +23,15 @@ from langgraph.graph import START, StateGraph, MessagesState, END
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import RemoveMessage, ToolMessage
 
-from .modules.config import AppConfig, Settings, build_app_config, hybrid_search
+from .modules.config import (AppConfig, Settings, build_app_config, hybrid_search,
+                             RULE_SET_LIBRARY, document_id, value_shape)
 from .modules.system_prompts import (SYSTEM_PROMPT1, VERIFY_PROMPT, REGISTER_PROMPT,
                                      RECONCILE_PROMPT, SUBJECT_CHOICE_PROMPT,
                                      SCOPE_PROMPT)
 from .modules.agent import build_tools, run_agent
 from .modules.chat import AdHocRule, format_adhoc_rules, history_messages
 from .modules.workspace import get_workspace
-from .modules.tools import array_of_tools, unit_mismatch
+from .modules.tools import array_of_tools, unit_mismatch, is_unit
 
 TOOLS_BY_NAME = {t.name: t for t in array_of_tools}
 
@@ -44,6 +45,8 @@ if not logger.handlers:
     logger.addHandler(handler)
 
 RETRIEVAL_K = 4
+# Сколько групп добавить по форме значения, когда имя атрибута не привело ни к одной.
+MAX_SHAPE_GROUPS = 2
 # Сколько независимых сэмплов усредняется голосованием на LLM-пути (1 — выключено).
 # Больше сэмплов — устойчивее ответ на спорных строках, но дороже прогон.
 SELF_CONSISTENCY = int(os.getenv("NORMALIZER_SAMPLES", "3"))
@@ -130,6 +133,8 @@ def _subject_by_model(model, context: str, subjects: tuple[str, ...]) -> str:
 _SCOPE_CACHE: dict[tuple[str, str], bool] = {}
 # Сколько текста глобальных правил показываем модели: область действия стоит в начале документа.
 SCOPE_CHARS = 1500
+# Сколько раз спросить модель об области действия; изделие чужое, только если все сказали «нет».
+SCOPE_VOTES = 3
 
 
 def _document_covers_row(rule_set, context: str, model=None) -> bool:
@@ -154,20 +159,28 @@ def _document_covers_row(rule_set, context: str, model=None) -> bool:
         _SCOPE_CACHE[key] = True
         return True
 
-    listing = ", ".join(subjects)
+    # Теги групп в вопрос не идут: помечены обычно лишь несколько групп, и список из одного
+    # «rotary lobe blower» модель читала как «документ только про воздуходувки» — винтовой
+    # компрессор из области действия получал пустые ячейки. Решает текст области действия.
     messages = [
         {"role": "system", "content": SCOPE_PROMPT},
-        {"role": "user", "content": (f"Recorded item: {context}\n\n"
-                                     f"Kinds of equipment the standard tags its rules with: "
-                                     f"{listing}\n\nOpening rules of the standard:\n"
+        {"role": "user", "content": (f"Recorded item: {context}\n\nOpening rules of the standard:\n"
                                      f"{rule_set.global_rules[:SCOPE_CHARS]}")},
     ]
-    try:
-        answer = str(model.invoke(messages).content).strip().upper()
-    except Exception as e:
-        logger.warning("  [SCOPE] вопрос об области действия не удался: %s", e)
-        answer = "YES"
-    covered = not answer.startswith("NO")
+
+    def ask(_):
+        try:
+            return str(model.invoke(messages).content).strip().upper()
+        except Exception as e:
+            logger.warning("  [SCOPE] вопрос об области действия не удался: %s", e)
+            return "YES"
+
+    # пустая колонка — самое разрушительное решение пайплайна, а ответ модели на варианте
+    # названия («Screw Chiller» против «water chillers») колебался 50/50: изделие считается
+    # чужим, только если так ответили все опросы
+    with ThreadPoolExecutor(max_workers=SCOPE_VOTES) as pool:
+        answers = list(pool.map(ask, range(SCOPE_VOTES)))
+    covered = not all(a.startswith("NO") for a in answers)
     logger.info("  [SCOPE] %r в области действия %r: %s", context, rule_set.name, covered)
     _SCOPE_CACHE[key] = covered
     return covered
@@ -245,16 +258,35 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
 
     # Группа с именем (или алиасом) самого атрибута — это и есть правило для него; ранг
     # похожести тут ничего не решает, а без неё строка остаётся без своего правила.
+    named = False
     for group in rule_set.groups:
         names = [group.attribute] + list(group.aliases)
         if any(n and _attribute_matches(attribute, n) for n in names):
+            named = True
             pair = (group.attribute, group.body)
             if pair not in pairs:
                 logger.info("  [SEARCH] группа по имени атрибута: %r", group.attribute)
-                pairs.insert(0, pair)
+            else:
+                # уже найдена по похожести, но не первой: вперёд её, иначе шаблон рендера
+                # соседней группы с той же единицей («cooling capacity», 0 зн. kW) побеждал
+                # собственный шаблон атрибута («Fan power» → «electrical power», 1 зн.)
+                pairs.remove(pair)
+            pairs.insert(0, pair)
             # правило именно этого атрибута найдено: спор о том, к какому изделию относятся
             # соседние группы, строку больше не решает
             subject_conflict = False
+
+    # Имя атрибута ни к одной группе не привело («Precharge», «Plate size»): тогда правило
+    # узнаётся по форме значения — пример документа «"2.5 bar" → "250 kPa"» той же формы, что
+    # и запись «1.5 bar». Только как запасной путь: у названной группы свой пример главнее.
+    shape = value_shape(value)
+    if not named and shape:
+        by_shape = [g for g in rule_set.groups if shape in g.shapes][:MAX_SHAPE_GROUPS]
+        for group in by_shape:
+            pair = (group.attribute, group.body)
+            if pair not in pairs:
+                logger.info("  [SEARCH] группа по форме значения %r: %r", shape, group.attribute)
+                pairs.insert(0, pair)
 
     blocks: list[str] = []
     kind = _equipment_kind(rule_set, context, model)
@@ -353,16 +385,101 @@ def _registers_by_value(rule_set, value: str) -> list[str]:
     return owners[0] if owners else [best_prefix]
 
 
+# Ссылка на пункт ДРУГОГО документа: «per 6.2 of OGX-STD 410», «Clauses 2.1 and 2.2 of XYZ STD 100»,
+# «Clause 6 of O GX-STD 410» (распознавание разрывает обозначение пробелом — сравниваем без них).
+_NUMS = r"\d+(?:\.\d+)*(?:\s*(?:,|and|or)\s*\d+(?:\.\d+)*)*"
+_EXTERNAL_REF_RE = re.compile(
+    r"(?i:clauses?|sections?|per|under|in)\s+(?P<nums>" + _NUMS + r")\s*,?\s+(?i:of)\s+"
+    r"(?P<doc>[A-Z][A-Za-z0-9 ._/-]{1,24}?\d{2,5})\b")
+# и обратный порядок: «under XYZ STD 100 2.3», «per OGX-STD 410, 6.2»
+_EXTERNAL_REF_REV_RE = re.compile(
+    r"(?P<doc>\b[A-Z][A-Z0-9 _/-]{1,20}?\d{2,5})\s*,?\s*(?i:clauses?\s+|sections?\s+)?"
+    r"(?P<nums>\d+\.\d+(?:\.\d+)*)\b")
+MAX_EXTERNAL_CLAUSES = 8
+
+
+def _external_references(rule_set, text: str) -> list[tuple[str, list[str], tuple[int, int]]]:
+    """Ссылки текста правил на пункты других документов: (обозначение, номера, позиция).
+
+    Ссылка на самого себя («per 7.1 of HVX-STD 134» внутри HVX-STD 134) — обычная внутренняя.
+    Упоминание документа без номера пункта («in the same manner as OGX-STD 410») ссылкой на
+    правило не считается: подтянуть по нему нечего.
+    """
+    own = document_id(rule_set.name)
+    found: list[tuple[str, list[str], tuple[int, int]]] = []
+    for pattern in (_EXTERNAL_REF_RE, _EXTERNAL_REF_REV_RE):
+        for m in pattern.finditer(str(text)):
+            doc = m.group("doc").strip()
+            key = document_id(doc)
+            if (key == own or not re.search(r"[A-Z]{2}", doc.replace(" ", ""))
+                    or re.match(r"(?:table|appendix|annex|clause|section|figure)\b", doc, re.I)):
+                continue
+            if pattern is _EXTERNAL_REF_REV_RE and key not in RULE_SET_LIBRARY:
+                continue  # обратный порядок слишком похож на обычный текст — только известные документы
+            if any(start <= m.start() < end for _, _, (start, end) in found):
+                continue
+            nums = re.findall(r"\d+(?:\.\d+)*", m.group("nums"))
+            found.append((doc, nums, m.span()))
+    return found
+
+
+def _without_external_references(rule_set, text: str) -> str:
+    """Текст правил, где ссылки на чужие пункты заменены пробелами.
+
+    Иначе «per 6.2 of OGX-STD 410» разрешалось как СВОЙ пункт 6.2 — в строку про температуру
+    приезжало правило давления этого же документа.
+    """
+    chars = list(str(text))
+    for _, _, (start, end) in _external_references(rule_set, text):
+        chars[start:end] = " " * (end - start)
+    return "".join(chars)
+
+
+def _external_clause_lines(target, number: str) -> list[str]:
+    """Текст пункта другого документа; для «Clause 6» — все его подпункты «6.x»."""
+    index = target.clause_index
+    lines = [index[number]] if number in index else []
+    lines += [line for key, line in index.items() if key.startswith(number + ".")]
+    return lines[:MAX_EXTERNAL_CLAUSES]
+
+
+def _resolve_external(rule_set, text: str) -> tuple[list[str], list[str]]:
+    """(цитаты чужих пунктов для промпта, ссылки, которые разрешить нечем)."""
+    quoted: list[str] = []
+    missing: list[str] = []
+    for doc, nums, _ in _external_references(rule_set, text):
+        target = RULE_SET_LIBRARY.get(document_id(doc))
+        for number in nums:
+            lines = _external_clause_lines(target, number) if target else []
+            if lines:
+                quoted.append(f"[{doc}, {number}]\n" + "\n".join(lines))
+            else:
+                missing.append(f"{number} документа {doc}"
+                               + ("" if target else " (документа нет в базе)"))
+    return list(dict.fromkeys(quoted)), list(dict.fromkeys(missing))
+
+
 def expand_references(rule_set, text: str, attribute: str, group_names: list[str] | None = None,
                       value: str = "") -> list[str]:
     """Дотягивает то, на что найденные правила ссылаются: пункты по номеру и таблицы атрибута.
 
     Ссылка разрешается только если её номер реально определён в документе, поэтому десятичные
     числа в значениях («0.25 in») за ссылку не принимаются. Глубина — два уровня, с потолком
-    по количеству, чтобы контекст строки не разрастался.
+    по количеству, чтобы контекст строки не разрастался. Пункт другого загруженного документа
+    («per 6.2 of OGX-STD 410») цитируется из того документа, а не из своего.
     """
     blocks: list[str] = []
 
+    external, _ = _resolve_external(rule_set, text)
+    if external:
+        logger.info("  [REFS] подтянуто пунктов других документов: %d", len(external))
+        blocks.append(
+            "Clauses of OTHER documents that the rules above cite, quoted from those documents. "
+            "Apply such a clause only as far as the citing rule adopts it (for the quantity it "
+            "names); where the citing rule contrasts itself with it, the citing rule governs.\n"
+            + "\n\n".join(external))
+
+    text = _without_external_references(rule_set, text)
     present = {m.group(1) for line in text.splitlines() if (m := _CLAUSE_DEF_RE.match(line))}
     pending = [r for r in dict.fromkeys(_CLAUSE_REF_RE.findall(text))
                if r in rule_set.clause_index and r not in present]
@@ -405,15 +522,31 @@ def expand_references(rule_set, text: str, attribute: str, group_names: list[str
 _CITATION_RE = re.compile(r"(?:per|see|under|clause)\s+(\d+(?:\.\d+)+)", re.I)
 
 
+def _own_rules_text(rule_set, attribute: str, group_names: list[str] | None,
+                    rules_text: str) -> str:
+    """Правила, которые относятся к атрибуту строки: группы, названные его именем или алиасом.
+
+    Неразрешимая ссылка важна строке, только если её делает правило этого атрибута. Соседняя
+    группа, попавшая в выдачу по похожести («Sound pressure level … per 4.2 of ZZX-STD 000»),
+    не повод метить «Motor power». Если своей группы нет, судим по всему тексту, как раньше.
+    """
+    names = set(group_names or [])
+    own = [g.body for g in rule_set.groups if g.attribute in names
+           and any(n and _attribute_matches(attribute, n) for n in [g.attribute] + list(g.aliases))]
+    return "\n".join(own) if own else rules_text
+
+
 def _unresolved_references(rule_set, text: str) -> list[str]:
     """Пункты, на которые правила ссылаются, но чей текст в документ не извлёкся.
 
     Извлечение иногда теряет номер пункта, и тогда «normalized per 3.1» ведёт в никуда:
     модель видит отсылку и не видит правила. Сказать об этом честнее, чем молча не применить.
     """
-    present = {m.group(1) for line in str(text).splitlines() if (m := _CLAUSE_DEF_RE.match(line))}
-    return [ref for ref in dict.fromkeys(_CITATION_RE.findall(str(text)))
-            if ref not in present and ref not in rule_set.clause_index]
+    _, external_missing = _resolve_external(rule_set, str(text))
+    text = _without_external_references(rule_set, str(text))
+    present = {m.group(1) for line in text.splitlines() if (m := _CLAUSE_DEF_RE.match(line))}
+    return [ref for ref in dict.fromkeys(_CITATION_RE.findall(text))
+            if ref not in present and ref not in rule_set.clause_index] + external_missing
 
 
 def _is_ambiguous_answer(answer) -> bool:
@@ -588,7 +721,9 @@ def _match_render_template(attribute: str, render_templates: dict,
     candidates = []
     for name in group_names or []:
         tmpl = render_templates.get(name) or render_templates.get(_norm_attr(name))
-        if tmpl and not _names_clash(attribute, name):
+        # «Fan power» спорит словами с «electrical power», но это его алиас: не другой атрибут
+        aliased = tmpl and any(_attribute_matches(attribute, a) for a in tmpl.get("aliases", []) if a)
+        if tmpl and (aliased or not _names_clash(attribute, name)):
             candidates.append(tmpl)
     a = _norm_attr(attribute)
     if a:
@@ -878,7 +1013,81 @@ def _strip_added_words(value: str, answer: str, allowed: set) -> str:
     return result
 
 
-def _rejection_reason(attribute: str, value: str, answer: str, rule_set) -> str:
+def _relabel_sanctioned(value: str, answer: str, rules_text: str) -> bool:
+    """Показывает ли документ ту же смену единицы при том же числе своим примером.
+
+    Разность температур пишется в K тем же числом, что и в °C («5 °C» → «5 K»): это не подмена,
+    а правило, и пример документа говорит об этом прямо.
+    """
+    v = _NUM_UNIT_RE.fullmatch(str(value))
+    a = _NUM_UNIT_RE.fullmatch(str(answer))
+    if not v or not a:
+        return False
+    for source, target in _EXAMPLE_RE.findall(str(rules_text)):
+        s = _NUM_UNIT_RE.fullmatch(source.strip())
+        t = _NUM_UNIT_RE.fullmatch(target.strip())
+        if (s and t and _unit_key(s.group(3)) == _unit_key(v.group(3))
+                and _unit_key(t.group(3)) == _unit_key(a.group(3))
+                and s.group(1).replace(",", ".") == t.group(1).replace(",", ".")):
+            return True
+    return False
+
+
+# Обе стороны примеров документа: запись «до» и её нормализованный вид.
+_EXAMPLE_CELL_RE = re.compile(
+    r"\b(?:recorded|raw|normalized)\s+value\s*:\s*['\"“]([^'\"”]{1,120})['\"”]", re.I)
+_EXAMPLE_RECORD_RE = re.compile(r"\b(?:raw|normalized)\s+record\b[^:]*:\s*(.+)$", re.I)
+_BARE_ARROW_RE = re.compile(r"^\s*(?:\[[^\]]*\]\s*)?([^\"“'→]{1,80}?)\s*(?:->|→)\s*([^\"“'→]{1,80})$")
+
+
+def _example_texts(rules_text: str) -> list[str]:
+    """Текст примеров документа, обе стороны: EXAMPLE, образец датащита, worked example, «X → Y».
+
+    Смотреть только на запись «до» мало: «Cu» превращалось в «Aluminium» — результат примера
+    «Al → Aluminium», слова из исходной стороны там нет вовсе.
+    """
+    texts = [part for pair in _EXAMPLE_RE.findall(str(rules_text)) for part in pair]
+    for line in str(rules_text).splitlines():
+        texts += _EXAMPLE_CELL_RE.findall(line)
+        record = _EXAMPLE_RECORD_RE.search(line)
+        if record:
+            texts.append(record.group(1))
+        bare = _BARE_ARROW_RE.match(line)
+        if bare and not _EXAMPLE_RE.search(line):
+            texts += [bare.group(1), bare.group(2)]
+    return texts
+
+
+def _example_leak(value: str, answer: str, rules_text: str, allowed: set = frozenset()) -> list[str]:
+    """Слова ответа, взятые из записи-примера документа, а не из этой записи.
+
+    «Dependent, pressure» превращалось в «Pressure independent»: пример документа —
+    «Independent, pressure» → «Pressure independent», и модель перенесла из него слово. Слово
+    из исходной стороны примера — это содержимое чужой записи; в ответ оно может попасть, только
+    если есть и в этой записи. Исключение — пример, чья исходная запись целиком входит в эту
+    («Al» → «Aluminium» для записи «Al»): тогда его результат и есть предписанный ответ.
+    """
+    # слова — буквенные цепочки: в «DN32» слово «DN» есть, и «DN 32» из записи не заимствует
+    words = lambda text: {w.lower() for w in re.findall(r"[^\W\d_]+", str(text)) if len(w) > 1}
+    value_words = words(value)
+    licensed: set = set()
+    for left, right in _EXAMPLE_RE.findall(str(rules_text)):
+        if words(left) and words(left) <= value_words:
+            licensed |= words(right)
+    foreign = set().union(*[words(s) for s in _example_texts(rules_text)]) if rules_text else set()
+    # единица («in» против записанного «inch») — не содержимое чужой записи; pint различает
+    # регистр («kPa», но не «kpa»), поэтому проверяется написание из самого ответа
+    written = {w.lower(): w for w in re.findall(r"[^\W\d_]+", str(answer))}
+    # код или корень, который документ велит подставить («CCW-OPEN», «XB» в «XB193B7»), пишется
+    # заглавными так же, как в правилах: это обозначение документа, а не содержимое чужой записи
+    codes = {w for w in re.findall(r"[^\W\d_]+", str(rules_text)) if len(w) > 1 and w.isupper()}
+    return sorted(w for w in words(answer) - value_words
+                  if w in foreign and w not in licensed and w not in allowed
+                  and not is_unit(written.get(w, w)) and written.get(w, w) not in codes)
+
+
+def _rejection_reason(attribute: str, value: str, answer: str, rule_set,
+                      rules_text: str = "") -> str:
     """Почему ответ нельзя принять: одна проверка вместо четырёх подряд у вызывающего.
 
     Каждая из них появилась из конкретной поломки, но снаружи это один вопрос — обоснован ли
@@ -888,10 +1097,15 @@ def _rejection_reason(attribute: str, value: str, answer: str, rule_set) -> str:
         return "единицы нет ни в записи, ни в подписи — оставлено как записано"
     if _root_misapplied(answer, rule_set, value):
         return "корень обозначения навешен не на его номер — оставлено как записано"
-    if _unit_relabelled(attribute, value, answer):
+    if (_unit_relabelled(attribute, value, answer)
+            and not _relabel_sanctioned(value, answer, rules_text)):
         return "единица подменена без пересчёта — оставлено как записано"
     if _root_invented(value, answer, rule_set, attribute):
         return "запись не называет это обозначение — оставлено как записано"
+    leak = _example_leak(value, answer, rules_text, _document_word_tokens(rule_set, attribute))
+    if leak:
+        return ("в ответе слово из примера документа, которого нет в записи («"
+                + "», «".join(leak) + "») — оставлено как записано")
     return ""
 
 
@@ -934,7 +1148,9 @@ def _strip_redundant_parenthetical(answer: str, original: str) -> str:
         return inner_only.group(1).strip()
     if _normalize_phrase(answer) == _normalize_phrase(original):
         return answer  # значение воспроизведено как есть — удалять нечего
-    m = re.fullmatch(r"([^()]+?)\s*\(([^()]+)\)", str(answer).strip())
+    # скобка, прижатая к слову («bar(g)», «dB(A)»), — часть обозначения единицы, а не
+    # приписанное значение: раньше «13.0 bar(g)» так обрезалось до «13.0 bar»
+    m = re.fullmatch(r"([^()]+?)\s+\(([^()]+)\)", str(answer).strip())
     if not m:
         return answer
     head, inner = m.group(1).strip(), m.group(2).strip()
@@ -1501,7 +1717,7 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                     applied.append("убраны слова, которых нет в записи")
                 rules_value = stripped_words
                 guard = _rejection_reason(state["attribute"], state["original_value"],
-                                          rules_value, rule_set)
+                                          rules_value, rule_set, state.get("rules_text", ""))
                 if guard:
                     logger.info("  [GUARD] %r -> %r: %s",
                                 state["original_value"], rules_value, guard)
@@ -1522,12 +1738,15 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
             if any("ответ модели не получен" in n for n in applied):
                 needs_review = True  # строка осталась как записана не по правилу, а по сбою
             if not changed:
-                missing = _unresolved_references(rule_set, state.get("rules_text", ""))
+                missing = _unresolved_references(
+                    rule_set, _own_rules_text(rule_set, state["attribute"],
+                                              state.get("rule_group_names"),
+                                              state.get("rules_text", "")))
                 if missing:
                     logger.info("  [REFS] неразрешимые ссылки: %s", missing)
                     needs_review = True
                     applied.append("правило ссылается на пункт " + ", ".join(missing)
-                                   + ", которого нет в извлечённом тексте документа")
+                                   + " — его текста нет в базе")
             if state.get("subject_conflict"):
                 applied.append("найдены правила разных изделий, контекст строки не уточняет"
                                if changed else
@@ -1751,7 +1970,7 @@ def _normalize_once(model, attribute: str, value: str, rules_text: str,
 
 
 def _vote_normalize(model, attribute: str, value: str, rules_text: str,
-                    context: str, samples: int) -> tuple[str, bool, str]:
+                    context: str, samples: int, allowed: set = frozenset()) -> tuple[str, bool, str]:
     """Несколько независимых сэмплов и большинство; второй элемент — разошлись ли они.
 
     Спорные строки модель трактует по-разному от запуска к запуску, поэтому берётся
@@ -1764,6 +1983,25 @@ def _vote_normalize(model, attribute: str, value: str, rules_text: str,
     else:
         with ThreadPoolExecutor(max_workers=samples) as pool:
             sampled = list(pool.map(lambda _: _normalize_once(*args), range(samples)))
+
+    # сэмпл, перенёсший слово из записи-примера, не голосует: иначе при двух таких из трёх
+    # побеждал чужой ответ. Если перенесли все, решает guard после голосования
+    leaks = [_example_leak(value, v, rules_text, allowed) for v, _ in sampled]
+    clean = [s for s, leak in zip(sampled, leaks) if not leak]
+    if clean and len(clean) < len(sampled):
+        logger.info("  [LEAK] отброшено сэмплов со словами из примеров: %d", len(sampled) - len(clean))
+        sampled = clean
+    elif not clean and any(leaks):
+        # перенесли все: ещё одна попытка, где названо, какое слово чужое. Удалась — ответ
+        # берём, но строку помечаем: сама модель с первого раза этого не увидела
+        borrowed = sorted(set().union(*map(set, leaks)))
+        note = ("\n\nNote on earlier attempts: they put " + ", ".join(f'"{w}"' for w in borrowed)
+                + " into the answer. That comes from a worked example of the document, not from "
+                  "this value. Apply the rule's mechanism to this value's own words only.")
+        retry, retry_applied = _normalize_once(model, attribute, value, rules_text + note, context)
+        if not _example_leak(value, retry, rules_text, allowed):
+            logger.info("  [LEAK] все сэмплы взяли %s из примеров, повтор дал %r", borrowed, retry)
+            return retry, True, retry_applied
 
     # большинство; при равенстве — вариант, встретившийся раньше (стабильный tie-break)
     candidates = [value for value, _ in sampled]
@@ -1779,9 +2017,11 @@ def normalize_row(state: GraphState, config: RunnableConfig) -> GraphState:
     """Ответ модели по полному набору правил, устойчивый к разбросу между прогонами."""
     model = config["configurable"]["model"]
     samples = max(1, int(config["configurable"].get("self_consistency", SELF_CONSISTENCY)))
+    rule_set = config["configurable"]["rule_set"]
     answer, split, applied = _vote_normalize(model, state["attribute"], state["value"],
                                              state["rules_text"], state.get("row_context", ""),
-                                             samples)
+                                             samples,
+                                             _document_word_tokens(rule_set, state["attribute"]))
     logger.info("  [NORMALIZE] %r -> %r", state["value"], answer)
 
     # разошедшиеся сэмплы = строка, которую правила документа не решают однозначно:

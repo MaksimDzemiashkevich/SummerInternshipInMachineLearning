@@ -27,7 +27,9 @@ load_dotenv()
 
 settings = Settings()
 OUTPUT_DIR = Path(__file__).resolve().parent / "data" / "output"
-SNIPPET = 220  # сколько символов тела группы показывать модели
+# Сколько символов тела группы показывать модели. По 220 символам модель видела лишь начало
+# правила и первый пример, и пример про фильтр делал «Airflow rate» правилом фильтров.
+SNIPPET = 1200
 
 
 def _payload(rule_groups: list[dict]) -> str:
@@ -38,7 +40,7 @@ def _payload(rule_groups: list[dict]) -> str:
     )[:2000]
     groups = [
         {"id": i, "attribute": group.get("attribute", ""),
-         "rules": " ".join(group.get("rules", []))[:SNIPPET]}
+         "rules": "\n".join(group.get("rules", []))[:SNIPPET]}
         for i, group in enumerate(g for g in rule_groups if g.get("type") != "global")
     ]
     return json.dumps({"document": global_text, "groups": groups}, ensure_ascii=False)

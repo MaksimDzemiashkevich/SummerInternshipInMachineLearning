@@ -89,6 +89,14 @@ def unit_mismatch(left: str, right: str) -> bool:
         return False
 
 
+def is_unit(word: str) -> bool:
+    """Читается ли слово как единица измерения («in», «kPa», «rpm»), а не как содержимое записи."""
+    try:
+        return not _UREG.Unit(_prepare(word)).dimensionless
+    except Exception:
+        return False
+
+
 @tool
 def convert_units(quantity: str, to_unit: str, decimals: int = -1) -> str:
     """Convert a physical quantity into another unit, exactly.

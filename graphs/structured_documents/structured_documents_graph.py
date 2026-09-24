@@ -1,6 +1,8 @@
 import json
+import os
 import re
 
+from graphs.structured_documents.block_grouping import build_units, group_units
 from graphs.structured_documents.modules.config_structured_documents_graph import Settings
 from dotenv import load_dotenv
 
@@ -241,9 +243,13 @@ def formatting_text_node(state: MessagesState) -> MessagesState:
 
 grouping_llm = ChatOpenAI(
     model=settings.llmodel,
-    max_tokens=10000,
+    max_tokens=16000,
     temperature=0,
 )
+
+# «blocks» — весь документ разом, модель назначает блоки группам (block_grouping.py);
+# «pages» — прежний режим: модель переписывает правила каждой страницы в группы.
+GROUPING_MODE = os.getenv("GROUPING_MODE", "blocks")
 
 clustering_llm = ChatOpenAI(
     model=settings.llmodel,
@@ -325,7 +331,14 @@ def grouping_rules_node(state: MessagesState) -> MessagesState:
             if attr not in known_attributes:
                 known_attributes.append(attr)
 
-    if len(source_data) == 1:
+    if GROUPING_MODE == "blocks":
+        # модель раскладывает номера блоков, текст правил собирается дословно (block_grouping.py)
+        units = build_units(source_data)
+        all_groups, lost = group_units(units, grouping_llm, settings.BLOCK_GROUPING_PROMPT)
+        print(f"Блоков: {len(units)}, групп: {len(all_groups)}")
+        for unit in lost:
+            print(f"WARNING: блок {unit['id']} не попал ни в одну группу: {unit['text'][:120]!r}")
+    elif len(source_data) == 1:
         call_llm([prepare(source_data[0])])
     else:
         for i in range(len(source_data)):

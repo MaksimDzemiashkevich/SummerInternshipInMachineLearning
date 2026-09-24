@@ -42,6 +42,32 @@ class GroupEntry:
     aliases: list[str]
     body: str
     parent: str = ""
+    shapes: set[str] = field(default_factory=set)
+
+
+_SHAPE_NUMBER_RE = re.compile(r"\d+(?:[.,]\d+)?")
+_SHAPE_EXAMPLE_RE = re.compile(
+    r"[\"“']([^\"“”']{1,80})[\"”']\s*(?:->|→|becomes)\s*[\"“']([^\"“”']{1,80})[\"”']")
+
+
+def value_shape(text: str) -> str:
+    """Форма числового значения: числа → «9», без пробелов и регистра.
+
+    «600 x 600mm» и «500 x 1200mm» — одна форма «9x9mm», «2.5 bar» и «1.5 bar» — «9bar».
+    У значения без цифр формы нет: по словам совпадает слишком многое.
+    """
+    text = str(text).strip().lower()
+    if not re.search(r"\d", text):
+        return ""
+    return re.sub(r"\s+", "", _SHAPE_NUMBER_RE.sub("9", text))
+
+
+def _example_shapes(body: str) -> set[str]:
+    """Формы обеих сторон примеров группы («"2.5 bar" → "250 kPa"» → {"9bar", "9kpa"})."""
+    shapes = set()
+    for left, right in _SHAPE_EXAMPLE_RE.findall(body):
+        shapes.update(s for s in (value_shape(left), value_shape(right)) if s)
+    return shapes
 
 
 @dataclass
@@ -115,8 +141,15 @@ def _split_groups(groups: list[dict]) -> tuple[str, list[GroupEntry]]:
         else:
             if _is_non_rule(header):
                 continue
+            # правила идентичности изделия («какие атрибуты делают две записи одним изделием»)
+            # называют те же атрибуты, что и правила записи значения, и отъедали у них места
+            # в выдаче ретрива, ничего не говоря о том, как значение записать
+            if group.get("kind") == "identity":
+                continue
             aliases = [a.strip() for a in group.get("aliases", []) if a and a.strip()]
-            entries.append(GroupEntry(attribute=header, aliases=aliases, body=body, parent=group.get("parent", "") or header))
+            entries.append(GroupEntry(attribute=header, aliases=aliases, body=body,
+                                      parent=group.get("parent", "") or header,
+                                      shapes=_example_shapes(body)))
 
     return "\n".join(global_rules), entries
 
@@ -138,6 +171,45 @@ def _build_clause_index(global_rules: str, entries: list[GroupEntry]) -> dict[st
             match = _CLAUSE_DEF_RE.match(line)
             if match:
                 index.setdefault(match.group(1), line.strip())
+    return index
+
+
+_ATTACHED_RE = re.compile(r"^\s*(?:EXAMPLE|NOTE)\b", re.I)
+
+
+def _clause_index_from_pages(doc_dir: Path) -> dict[str, str]:
+    """Номер пункта → текст пункта (с его EXAMPLE/NOTE), прямо по тексту страниц документа.
+
+    Индекс по группам зависит от того, сохранила ли группировка номера пунктов, а она их
+    теряла массово (в иных документах ни одного): ссылка «see 6.2» тогда вела в никуда, хотя
+    сам пункт извлечён. Текст страниц (data_after_check.json) номера хранит всегда.
+    """
+    path = doc_dir / "data_after_check.json"
+    if not path.exists():
+        return {}
+    try:
+        pages = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    index: dict[str, str] = {}
+    last = ""
+    for page in pages:
+        content = page.get("content") if isinstance(page, dict) else None
+        if isinstance(content, str):
+            try:
+                content = json.loads(content)
+            except json.JSONDecodeError:
+                continue
+        for block in (content or {}).get("blocks", []):
+            if block.get("type") != "paragraph":
+                continue
+            text = str(block.get("text", "")).strip()
+            match = _CLAUSE_DEF_RE.match(text)
+            if match:
+                last = match.group(1)
+                index.setdefault(last, text)
+            elif last and _ATTACHED_RE.match(text) and last in index:
+                index[last] += "\n" + text  # пример пункта, даже если он на следующей странице
     return index
 
 
@@ -167,6 +239,25 @@ def load_vector_store(settings: Settings, entries: list[GroupEntry], name: str) 
     store.add_documents(docs)
     store.dump(str(cache_path))
     return store
+
+
+# Все загруженные документы по их обозначению («OGXSTD410»): правило одного документа может
+# ссылаться на пункт другого («per 6.2 of OGX-STD 410»), и текст этого пункта берётся отсюда.
+RULE_SET_LIBRARY: dict[str, "RuleSet"] = {}
+
+
+def document_id(text: str) -> str:
+    """Обозначение документа без разделителей и регистра: «O GX-STD 410» → «OGXSTD410».
+
+    Из имени папки берутся ведущие части до первого слова в нижнем регистре:
+    «OGX-STD-410_multi_equipment_…» → «OGXSTD410», «XYZ_STD_100_normalization_rules» → «XYZSTD100».
+    """
+    parts = []
+    for token in re.split(r"_", str(text)):
+        if token and token == token.lower() and not token.isdigit():
+            break
+        parts.append(token)
+    return re.sub(r"[^A-Z0-9]", "", "".join(parts or [str(text)]).upper())
 
 
 def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
@@ -213,13 +304,22 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         render_templates = _load_render_templates(path.parent)
         for attribute, template in _render_templates_from_rules(groups).items():
             render_templates.setdefault(attribute, template)
-        clause_index = _build_clause_index(global_rules, entries)
+        for attribute, template in _pattern_templates_from_rules(groups).items():
+            render_templates.setdefault(attribute, template)
+        varying = _decimals_vary_by_class(groups)
+        for attribute in [a for a in render_templates if a.strip().lower() in varying]:
+            if render_templates.pop(attribute, None):
+                logger.info("Документ %r: шаблон %r снят — знаки зависят от класса оборудования",
+                            name, attribute)
+        clause_index = {**_build_clause_index(global_rules, entries),
+                        **_clause_index_from_pages(path.parent)}
         group_subjects = _load_subjects(path.parent)
         distinct_subjects = {s for s in group_subjects.values() if s}
         if len(distinct_subjects) > 1:
             logger.info("Документ %r описывает несколько предметов: %s",
                         name, sorted(distinct_subjects))
         rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects))
+        RULE_SET_LIBRARY[document_id(name)] = rule_sets[-1]
 
     return rule_sets
 
@@ -330,7 +430,9 @@ _TABLE_CELL_RE = re.compile(r"[\w /&()-]+?:\s*['\"“”](.+?)['\"“”]\s*(?:;
 def _looks_like_code(text: str) -> bool:
     """Похоже ли значение ячейки на идентификатор, а не на описание."""
     text = text.strip()
-    return bool(text) and " " not in text and (_is_indexed_code(text) or len(text) <= 6)
+    # «Close-coupled» — слово через дефис, а не код: у кодов нет строчных слов
+    return (bool(text) and " " not in text and not re.search(r"[a-z]{3,}", text)
+            and (_is_indexed_code(text) or len(text) <= 6))
 
 
 def _orient_table_row(cells: list[str]) -> tuple[str, str] | None:
@@ -515,6 +617,52 @@ def _render_templates_from_rules(groups: list[dict]) -> dict[str, dict]:
                     "aliases": [a for a in group.get("aliases", []) if a],
                 })
     return templates
+
+
+# Форма значения, заданная шаблоном: «<n.n> kW», «<n> Pa» — вся строка, без оговорок после.
+_PATTERN_FORM_RE = re.compile(
+    r"(?:^|[\s:'\"“])<n(?:\.(?P<dec>n+))?>(?P<space>\s?)(?P<unit>[^\s<>'\"“”()\[\];,]{1,8})\s*['\"”]?\s*\.?\s*$")
+# Ячейка «Decimal places: '1'» в строке таблицы, расписанной по классам оборудования.
+_DECIMALS_VALUE_RE = re.compile(r"\bdecimal(?:s| places)?[^:;]*:\s*['\"“]?(\d)\b", re.I)
+
+
+def _pattern_templates_from_rules(groups: list[dict]) -> dict[str, dict]:
+    """Шаблоны рендера из словаря форм («Rated power | <n.n> kW»).
+
+    Иной документ задаёт число знаков только так — в приложении, а в самом пункте пишет «в форме,
+    данной в Appendix A». Без шаблона «9.0 kW» и «9 kW» сводились друг к другу как попало.
+    Строка с оговоркой после формы («<n.n> m3/h (decimals per Table 1)») шаблоном не считается.
+    """
+    templates: dict[str, dict] = {}
+    for group in groups:
+        attribute = (group.get("attribute") or "").strip()
+        if group.get("type") == "global" or not attribute:
+            continue
+        for rule in group.get("rules", []):
+            for line in str(rule).splitlines():
+                m = _PATTERN_FORM_RE.search(line)
+                if m:
+                    templates.setdefault(attribute.lower(), {
+                        "decimals": len(m.group("dec") or ""),
+                        "suffix": m.group("space") + m.group("unit"),
+                        "aliases": [a for a in group.get("aliases", []) if a],
+                    })
+    return templates
+
+
+def _decimals_vary_by_class(groups: list[dict]) -> set[str]:
+    """Группы, где число знаков задано таблицей по классам оборудования и различается.
+
+    Шаблон из одного примера («45 m3/h» → «45.0 m3/h», насос) у такой группы верен лишь для
+    одного класса: у чиллера того же документа знаков ноль. Подставлять его всем нельзя.
+    """
+    varying: set[str] = set()
+    for group in groups:
+        values = {m.group(1) for rule in group.get("rules", [])
+                  for m in _DECIMALS_VALUE_RE.finditer(str(rule))}
+        if len(values) > 1:
+            varying.add((group.get("attribute") or "").strip().lower())
+    return varying
 
 
 def _determine_number_first(deterministic_order: dict[str, bool]) -> bool:
