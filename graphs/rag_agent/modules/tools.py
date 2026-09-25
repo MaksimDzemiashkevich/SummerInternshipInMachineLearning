@@ -97,6 +97,41 @@ def is_unit(word: str) -> bool:
         return False
 
 
+# Единица в подписи атрибута: «Weight, kg», «Rated power (kW)».
+_LABEL_UNIT_RE = re.compile(r"[,(]\s*([^,()]{1,12}?)\s*\)?\s*$")
+
+
+def _dimensionality(text: str):
+    """Размерность записи с единицей («343.9 lb» → [mass]); None — не величина или без единицы."""
+    prepared = _prepare(text)
+    if not re.search(r"[a-zA-Z°]", prepared):
+        return None
+    try:
+        parsed = _UREG.Quantity(prepared)
+    except Exception:
+        return None
+    return None if parsed.dimensionless else parsed.dimensionality
+
+
+def same_quantity(value: str, unit: str, label: str = "") -> bool:
+    """Та же ли это величина, что и `unit`: «343.9 lb» и «t» — обе масса.
+
+    Нужна правилам вида «всю массу — в тонны»: масса в датащите зовётся Weight, Mass, Agent
+    charge, Safe working load, и по имени атрибута такое правило не находит ни одной строки.
+    Число без единицы берёт её из подписи атрибута («Weight, kg» + «156»).
+    """
+    try:
+        target = _UREG.Unit(_prepare(unit)).dimensionality
+    except Exception:
+        return False
+    found = _dimensionality(value)
+    if found is None and re.fullmatch(r"\s*-?\d+(?:[.,]\d+)?\s*", str(value)):
+        label_unit = _LABEL_UNIT_RE.search(str(label))
+        if label_unit:
+            found = _dimensionality(f"{str(value).strip()} {label_unit.group(1)}")
+    return found is not None and found == target
+
+
 @tool
 def convert_units(quantity: str, to_unit: str, decimals: int = -1) -> str:
     """Convert a physical quantity into another unit, exactly.

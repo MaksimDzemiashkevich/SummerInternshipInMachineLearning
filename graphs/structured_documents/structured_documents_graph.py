@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-from graphs.structured_documents.block_grouping import build_units, group_units
+from graphs.structured_documents.block_grouping import build_units, group_units, parse_page_content
 from graphs.structured_documents.modules.config_structured_documents_graph import Settings
 from dotenv import load_dotenv
 
@@ -171,63 +171,44 @@ def formatting_text_node(state: MessagesState) -> MessagesState:
 
     llm = ChatOpenAI(model=settings.llmodel, model_kwargs={"response_format": {"type": "json_object"}})
 
-    pages_after_llm = []
     pages = state.get("pages_data")
 
-    if len(pages) == 1:
-        # отдельная обработка единственной страницы без пары
-        page_copy = dict(pages[0])
-        try:
-            page_copy["content"] = json.loads(pages[0]["content"])
-        except json.JSONDecodeError:
-            print("error pass")
+    def prepared(page: dict) -> dict:
+        page_copy = dict(page)
+        content = parse_page_content(page.get("content"))
+        if content is None:
+            print(f"WARNING: страница {page.get('page_number')}: ответ VLM не разбирается как JSON, "
+                  f"проверка получит сырой текст")
+        else:
+            page_copy["content"] = content
+        return page_copy
 
+    def check(window: list[dict]) -> dict:
+        """Проверка первой страницы окна (вторая — только контекст для переноса абзацев)."""
+        own = prepared(window[0])
         result = llm.invoke([
             SystemMessage(content=settings.llm_prompt),
-            HumanMessage(content=json.dumps([page_copy], ensure_ascii=False)),
+            HumanMessage(content=json.dumps([prepared(p) for p in window], ensure_ascii=False)),
         ])
-        parsed = json.loads(result.content)
-        print(f"\n\nsource: {parsed}\n\n")
-        result_page = parsed["pages"][0]
-        pages_after_llm.append(result_page)
-        print(f"\n\n{result.response_metadata.get('token_usage')}\n\npage {result_page}\n\n")
-
-    else:
-        for i in range(0, len(pages) - 1):
-            page_copy = [dict(pages[i]), dict(pages[i + 1])]
-            for index, original in enumerate((pages[i], pages[i + 1])):
-                try:
-                    page_copy[index]["content"] = json.loads(original["content"])
-                except json.JSONDecodeError:
-                    print("error pass")
-
-            result = llm.invoke([
-                SystemMessage(content=settings.llm_prompt),
-                HumanMessage(content=json.dumps(page_copy, ensure_ascii=False)),
-            ])
-            # ожидаем, что модель вернёт только одну страницу (первую из пары)
-            parsed = json.loads(result.content)
-            print(f"\n\nsource: {parsed}\n\n")
-            result_page = parsed["pages"][0]
-            pages_after_llm.append(result_page)
-            print(f"\n\n{result.response_metadata.get('token_usage')}\n\npage {result_page}\n\n")
-
-        # последняя страница никогда не была "первой" в паре — обработать отдельно
-        last_page = dict(pages[-1])
+        print(f"page {own.get('page_number')}: {result.response_metadata.get('token_usage')}")
         try:
-            last_page["content"] = json.loads(pages[-1]["content"])
-        except json.JSONDecodeError:
-            print("error pass")
+            result_page = json.loads(result.content)["pages"][0]
+        except (json.JSONDecodeError, KeyError, IndexError, TypeError) as e:
+            result_page, content = None, None
+            print(f"WARNING: страница {own.get('page_number')}: ответ проверки не разобран ({e})")
+        else:
+            content = parse_page_content(result_page.get("content"))
+        # Проверка иногда обрывает JSON страницы (не закрыт массив блоков) — такую страницу
+        # группировка потеряла бы целиком, поэтому остаётся страница VLM, а не ответ проверки.
+        if content is None or not content.get("blocks"):
+            print(f"WARNING: страница {own.get('page_number')}: проверка вернула негодную страницу, "
+                  f"оставлена страница VLM")
+            return own
+        result_page["content"] = content
+        return result_page
 
-        result = llm.invoke([
-            SystemMessage(content=settings.llm_prompt),
-            HumanMessage(content=json.dumps([last_page], ensure_ascii=False)),
-        ])
-        parsed = json.loads(result.content)
-        print(f"\n\nsource: {parsed}\n\n")
-        result_page = parsed["pages"][0]
-        pages_after_llm.append(result_page)
-        print(f"\n\n{result.response_metadata.get('token_usage')}\n\npage {result_page}\n\n")
+    # окно из двух страниц — чтобы склеить абзац, разорванный границей; последняя идёт одна
+    pages_after_llm = [check(pages[i:i + 2]) for i in range(len(pages))]
 
     # print(f"\n\ndata_after_check {pages_after_llm}\n\n")
 

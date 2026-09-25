@@ -87,6 +87,7 @@ How to work:
 - The files of this conversation live in a workspace. list_files shows them with their ids. Phrases like "the file", "that one", "the previous one" refer to entries there: resolve them yourself, and ask only when two entries fit equally well.
 - Never produce a normalized value yourself and never say what a standard would do to a value: run normalize_file and report what came back.
 - When the user remembers another rule for a run you already did, run it again passing every rule that still applies, not only the new one.
+- normalize_file reports how many rows each of the user's rules matched. Never say a rule was applied when it matched no rows: tell the user it matched nothing and why (no attribute of that name in the file, no value of that kind), and offer the fix.
 - Use the standards the user picked in the interface unless the message names others.
 - edit_result exists for corrections the user explicitly asks for. Never use it to improve a result on your own: it overwrites what the rules produced.
 - Answer in the language the user writes in, and keep it short. Say what you did and what came out: how many rows, which columns, how many cells are flagged for review.
@@ -101,6 +102,15 @@ The standard governs the item when the item is one of the kinds of equipment the
 A word that only describes a variant, construction, operating principle, size or material of a named kind does not make the item a different kind: the item is still that kind even if the standard never mentions that variant.
 
 Judge by the head noun of the item's name, the word that says what the item is: when it is the head noun of a kind the standard names (a "Lever Hoist" against "chain hoists and wire rope hoists"), the item is that kind unless the standard explicitly excludes it. The other words of the name, tag numbers and sizes do not decide it.
+
+Answer with exactly one word: YES or NO. No explanation.
+"""
+
+
+QUANTITY_KIND_PROMPT = """
+You are given one attribute of a data sheet, the item it belongs to, a value recorded for it, and a unit. Say whether this attribute records a physical quantity of the same kind as that unit (a mass for kg, a length for mm, a temperature for degC).
+
+It does not when the attribute is a class, rating, grade, size designation or code whose written form merely borrows a unit's name: a pressure class written "300 lb" is a rating, not a mass of 300 pounds; a nominal size written in inches is a designation, not a measured length.
 
 Answer with exactly one word: YES or NO. No explanation.
 """

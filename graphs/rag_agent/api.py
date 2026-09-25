@@ -27,11 +27,12 @@ from .modules.config import (AppConfig, Settings, build_app_config, hybrid_searc
                              RULE_SET_LIBRARY, document_id, value_shape)
 from .modules.system_prompts import (SYSTEM_PROMPT1, VERIFY_PROMPT, REGISTER_PROMPT,
                                      RECONCILE_PROMPT, SUBJECT_CHOICE_PROMPT,
-                                     SCOPE_PROMPT)
+                                     SCOPE_PROMPT, QUANTITY_KIND_PROMPT)
 from .modules.agent import build_tools, run_agent
 from .modules.chat import AdHocRule, format_adhoc_rules, history_messages
 from .modules.workspace import get_workspace
-from .modules.tools import array_of_tools, unit_mismatch, is_unit
+from .modules.tables import form_key, table_references
+from .modules.tools import array_of_tools, unit_mismatch, is_unit, same_quantity
 
 TOOLS_BY_NAME = {t.name: t for t in array_of_tools}
 
@@ -137,6 +138,24 @@ SCOPE_CHARS = 1500
 SCOPE_VOTES = 3
 
 
+def _row_class(rule_set, context: str, model=None) -> str:
+    """Класс изделия строки среди классов, которые документ описывает своими разделами.
+
+    Сначала по словам: «Item: Gate valve GV-1101» называет класс «Gate valve» (из нескольких
+    подошедших берётся самый длинный — «Pressure relief valve», а не «Valve»). Если класс
+    назван кодом или иначе, чем в документе, — один вопрос модели на контекст (кэшируется).
+    """
+    classes = getattr(rule_set, "class_blocks", None) or {}
+    if not classes or not context:
+        return ""
+    named = [c for c in classes if _subject_matches(context, c)]
+    if named:
+        return max(named, key=lambda c: len(re.findall(r"\w+", c)))
+    if model is None:
+        return ""
+    return _subject_by_model(model, context, tuple(sorted(classes)))
+
+
 def _document_covers_row(rule_set, context: str, model=None) -> bool:
     """Относится ли этот документ к изделию строки вообще.
 
@@ -150,6 +169,10 @@ def _document_covers_row(rule_set, context: str, model=None) -> bool:
     if not context or model is None:
         return True  # строка без контекста — судить не о чем
     if any(_subject_matches(context, s) for s in subjects):
+        return True
+    # у изделия есть свой раздел в документе — документ его описывает, спрашивать не о чем;
+    # по одному началу документа модель «громкоговоритель» из области действия исключала
+    if _row_class(rule_set, context, model):
         return True
 
     key = (rule_set.name, context.strip().lower())
@@ -234,13 +257,67 @@ def _select_by_subject(rule_set, pairs: list[tuple[str, str]], context: str,
     return pairs, True
 
 
-def _adhoc_rules_for_attribute(rules: list[AdHocRule], attribute: str) -> list[AdHocRule]:
+_QUANTITY_KIND_CACHE: dict[tuple[str, str, str], bool] = {}
+
+
+def _records_quantity(model, attribute: str, value: str, unit: str, context: str = "") -> bool:
+    """Записывает ли атрибут величину того же рода, что `unit`, а не класс/обозначение.
+
+    По единице значения этого не понять: «Inlet rating: 300 lbs» — класс давления, а читается
+    как масса. Внутри нормализации модель на этот вопрос отвечала плохо (переводила класс в
+    тонны), отдельным вопросом — уверенно. Один вопрос на пару (атрибут, единица).
+    """
+    key = (str(attribute).strip().lower(), str(unit).strip().lower(), str(context).strip().lower())
+    if key in _QUANTITY_KIND_CACHE:
+        return _QUANTITY_KIND_CACHE[key]
+    messages = [
+        {"role": "system", "content": QUANTITY_KIND_PROMPT},
+        {"role": "user", "content": (f"{_context_line(context)}Attribute: {attribute}\n"
+                                     f"Recorded value: {value}\nUnit: {unit}")},
+    ]
+    try:
+        answer = str(model.invoke(messages).content).strip().upper()
+    except Exception as e:
+        logger.warning("  [USER RULES] вопрос о роде величины не удался: %s", e)
+        answer = "YES"  # по единице величина та же — без ответа модели этого и держимся
+    verdict = not answer.startswith("NO")
+    logger.info("  [USER RULES] %r (%r) — величина рода %r: %s", attribute, value, unit, verdict)
+    _QUANTITY_KIND_CACHE[key] = verdict
+    return verdict
+
+
+def _adhoc_rules_for_attribute(rules: list[AdHocRule], attribute: str, value: str = "",
+                               model=None, context: str = "") -> list[AdHocRule]:
     """Правила пользователя, относящиеся к этой строке: общие + названные для её атрибута.
 
     Имя атрибута пользователь пишет своими словами («материал» против «Material designation»),
-    поэтому сравнение то же пословное, что и для владельцев правил документа.
+    поэтому сравнение то же пословное, что и для владельцев правил документа. Правило о роде
+    величины («всю массу — в тонны») решается не по имени, а по самому значению: масса
+    называлась «Weight», правило пришло с атрибутом «Mass» и не нашло ни одной строки. Единица
+    значения ещё не значит величину, поэтому модель (если есть) подтверждает, что атрибут —
+    величина этого рода, а не класс, записанный «в фунтах».
     """
-    return [r for r in rules if not r.attribute or _attribute_matches(attribute, r.attribute)]
+    def applies(rule: AdHocRule) -> bool:
+        if rule.quantity:
+            return (same_quantity(value, rule.quantity, attribute)
+                    and (model is None
+                         or _records_quantity(model, attribute, value, rule.quantity, context)))
+        return not rule.attribute or _attribute_matches(attribute, rule.attribute)
+
+    return [r for r in rules if applies(r)]
+
+
+def user_rule_hits(data_frame: pd.DataFrame, rules: list[AdHocRule], model=None) -> list[int]:
+    """Скольким строкам таблицы подходит каждое правило пользователя (в порядке правил)."""
+    frame = prepare_frame(data_frame)
+    hits = [0] * len(rules)
+    for index in range(frame.shape[0]):
+        matched = _adhoc_rules_for_attribute(rules, frame.iloc[index]["Attribute"],
+                                             frame.iloc[index]["Value"], model,
+                                             _row_context(frame, index))
+        for i, rule in enumerate(rules):
+            hits[i] += rule in matched
+    return hits
 
 
 def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
@@ -298,6 +375,12 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
                       f"entry applies.")
     if rule_set.global_rules:
         blocks.append(rule_set.global_rules)
+    row_class = _row_class(rule_set, context, model)
+    if row_class:
+        # раздел класса изделия строки: какие у него атрибуты и в какой форме пишется каждый
+        logger.info("  [CLASS] %r -> правила класса %r", context, row_class)
+        blocks.append(f"Rules of the equipment class of this row ({row_class}):\n"
+                      + rule_set.class_blocks[row_class])
     names: list[str] = []
     for idx, (name, body) in enumerate(pairs):
         logger.info("  [SEARCH] Rule %d: %r | %r", idx + 1, name, body[:100])
@@ -311,8 +394,42 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
                 names, subject_conflict)
 
     text = "\n".join(blocks)
-    expanded = "\n\n".join([text] + expand_references(rule_set, text, attribute, names, str(value)))
+    local_text = "\n".join(body for _, body in pairs)
+    expanded = "\n\n".join([text] + expand_references(rule_set, text, attribute, names, str(value))
+                           + _table_blocks(rule_set, attribute, local_text, text))
     return expanded, names, subject_conflict
+
+
+MAX_PULLED_TABLES = 4
+MAX_TABLE_ROWS = 60
+
+
+def _table_blocks(rule_set, attribute: str, local_text: str, text: str) -> list[str]:
+    """Таблицы, на которые ссылаются найденные правила атрибута, — цитатой из документа.
+
+    «Written form: Canonical value of Table 12.88» без самой таблицы 12.88 модели ничего не
+    говорит, а подтягивание по ссылкам знало только номера пунктов. Ссылки берутся из групп,
+    найденных для строки, а не из общих положений: те ссылаются на десятки таблиц разом.
+    Таблицы синонимов самого атрибута идут первыми, даже если на них никто не сослался.
+    """
+    tables = getattr(rule_set, "tables", None) or {}
+    if not tables:
+        return []
+    wanted = _synonym_tables_for_attribute(rule_set, attribute) + table_references(local_text)
+    quoted: list[str] = []
+    for table_id in dict.fromkeys(wanted):
+        table = tables.get(table_id)
+        if table is None or (table.title and table.title in text):
+            continue  # такой таблицы нет или она уже в тексте правил
+        quoted.append("\n".join(table.lines()[:MAX_TABLE_ROWS + 1]))
+        if len(quoted) >= MAX_PULLED_TABLES:
+            break
+    if not quoted:
+        return []
+    logger.info("  [REFS] подтянуто таблиц по ссылкам: %d", len(quoted))
+    return ["Tables that the rules above refer to, quoted from the same document. Where a table "
+            "lists other written forms of a value, a recorded value that is one of those forms is "
+            "written as the value of that row.\n\n" + "\n\n".join(quoted)]
 
 
 _CLAUSE_DEF_RE = re.compile(r"^\s*(\d+(?:\.\d+)+)\s")
@@ -982,6 +1099,10 @@ def _document_word_tokens(rule_set, attribute: str, group_names: list[str] | Non
     for table in rule_set.closed_registers.values():
         for code in table.values():
             tokens.update(w.lower() for w in _WORD_RE.findall(str(code)))
+    # канонические значения таблиц синонимов атрибута: «Bellows» → «Balanced bellows» по таблице
+    for table_id in _synonym_tables_for_attribute(rule_set, attribute) + rule_set.universal_synonyms:
+        for canonical in rule_set.synonyms.get(table_id, {}).values():
+            tokens.update(w.lower() for w in _WORD_RE.findall(str(canonical)))
     template = _match_render_template(attribute, rule_set.render_templates, group_names)
     if template:
         tokens.update(w.lower() for w in _WORD_RE.findall(str(template.get("suffix", ""))))
@@ -1491,6 +1612,66 @@ def _registers_for_attribute(rule_set, attribute: str) -> list[str]:
     return []
 
 
+def _synonym_tables_for_attribute(rule_set, attribute: str) -> list[str]:
+    """Таблицы синонимов атрибута строки: по точному имени, иначе — всех совпавших владельцев.
+
+    Подпись в таблице заказчика («Roof type») и владелец в документе («tank roof type») — разные
+    тексты, поэтому, как и у реестров, сравниваем по целым словам. Совпавших владельцев может
+    быть несколько; решает тогда только форма, которая во всех их таблицах ведёт к одному значению.
+    """
+    owners = getattr(rule_set, "synonym_owners", None) or {}
+    exact = owners.get(attribute.strip().lower())
+    if exact:
+        return list(exact)
+    found: list[str] = []
+    for owner, table_ids in owners.items():
+        if _attribute_matches(attribute, owner):
+            found.extend(t for t in table_ids if t not in found)
+    return found
+
+
+def _canonical_form(value: str, rule_set, table_ids: list[str]) -> tuple[str, str] | None:
+    """(каноническое значение, номер таблицы), если запись — принятая форма из таблиц; иначе None.
+
+    Только точное совпадение формы (без учёта регистра и лишних пробелов): таблица перечисляет
+    написания, и «похоже на форму» — уже не форма. Если одна и та же форма в разных таблицах
+    ведёт к разным значениям, детерминированно решить нельзя — решает модель по правилам.
+    """
+    key = form_key(value)
+    hits: dict[str, str] = {}
+    for table_id in table_ids:
+        canonical = rule_set.synonyms.get(table_id, {}).get(key)
+        if canonical is not None:
+            hits.setdefault(canonical, table_id)
+    if len(hits) != 1:
+        return None
+    return next(iter(hits.items()))
+
+
+def _apply_synonyms(value: str, rule_set, attribute: str) -> tuple[str, bool, str] | None:
+    """Запись — принятая форма из таблицы синонимов документа → её каноническое значение.
+
+    Сначала таблицы, действующие для всех атрибутов (значения «не применимо»/«уточняется»),
+    потом таблицы самого атрибута. Значение через «;» — перечисление: каждая позиция отдельно,
+    и заменяется, только если заменяются все. Промах — не «pending registration»: таблица
+    синонимов не обязана перечислять все значения (номерные обозначения описаны пунктом),
+    поэтому такая строка идёт к модели, а таблица — в её промпт.
+    """
+    if not getattr(rule_set, "synonyms", None):
+        return None
+    parts = [p.strip() for p in value.split(";") if p.strip()]
+    for table_ids in (rule_set.universal_synonyms, _synonym_tables_for_attribute(rule_set, attribute)):
+        if not table_ids or not parts:
+            continue
+        whole = _canonical_form(value, rule_set, table_ids)
+        mapped = [whole] if whole else [_canonical_form(p, rule_set, table_ids) for p in parts]
+        if all(mapped):
+            result = "; ".join(canonical for canonical, _ in mapped)
+            tables = ", ".join(dict.fromkeys(t for _, t in mapped))
+            return result, False, f"таблица {tables}: «{value.strip()}» → {result}"
+    return None
+
+
 def apply_deterministic(value: str, rule_set, attribute: str,
                         model=None) -> tuple[str, bool, str] | None:
     """Детерминированные преобразования.
@@ -1503,6 +1684,11 @@ def apply_deterministic(value: str, rule_set, attribute: str,
     # 0) атрибут исключён из реформатирования — возвращаем без изменений, LLM не вызываем.
     if _attribute_is_excluded(attribute, rule_set.excluded_attributes):
         return result, False, "атрибут исключён из переформатирования"
+
+    # 0.5) запись — принятая форма из таблицы синонимов документа
+    synonym = _apply_synonyms(result, rule_set, attribute)
+    if synonym:
+        return synonym
 
     # 1) точное фразовое совпадение (phrase_rules + бесчисловые deterministic).
     phrase_keys = {}
@@ -2122,7 +2308,7 @@ def run_user_rules_column(data_frame: pd.DataFrame, model,
         row = {"Attribute": attribute, "Value": value, "Rules_Value": value,
                "Ambiguous": False, "Context": context, "Deterministic": False, "Applied": ""}
 
-        row_rules = _adhoc_rules_for_attribute(rules, attribute)
+        row_rules = _adhoc_rules_for_attribute(rules, attribute, value, model, context)
         if not row_rules:
             return row
 
@@ -2414,6 +2600,7 @@ def chat(
         lambda frame, names, rules: normalize_table(
             frame, app_config, _rule_sets_by_name(app_config, names), rules),
         produced,
+        lambda frame, rules: user_rule_hits(frame, rules, app_config.model),
     )
     prompt = f"[Context: {' '.join(notes)}]\n\n{text or 'Обработай приложенный файл.'}"
     reply = run_agent(app_config.assistant or app_config.model, tools,

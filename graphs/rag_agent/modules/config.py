@@ -13,6 +13,7 @@ from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
+from .tables import DocTable, load_tables, synonym_map, synonym_owners
 from .tools import array_of_tools
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -90,6 +91,13 @@ class RuleSet:
     parent_to_indices: dict[str, list[int]] = field(default_factory=dict)
     clause_index: dict[str, str] = field(default_factory=dict)
     group_subjects: dict[str, str] = field(default_factory=dict)
+    # таблицы документа по номеру и таблицы синонимов «принятая форма → каноническое значение»
+    tables: dict[str, DocTable] = field(default_factory=dict)
+    synonyms: dict[str, dict[str, str]] = field(default_factory=dict)
+    synonym_owners: dict[str, list[str]] = field(default_factory=dict)
+    universal_synonyms: list[str] = field(default_factory=list)
+    # класс изделия → его правила (определение, таблица атрибутов, пункты раздела класса)
+    class_blocks: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -128,6 +136,7 @@ def _split_groups(groups: list[dict]) -> tuple[str, list[GroupEntry]]:
 
     global — правила, действующие на все атрибуты.
     GroupEntry — local-группы с именем, алиасами и текстом правил (поиск по атрибуту).
+    Группы класса изделия (kind="class") сюда не входят — см. _class_blocks.
     """
     global_rules: list[str] = []
     entries: list[GroupEntry] = []
@@ -138,6 +147,8 @@ def _split_groups(groups: list[dict]) -> tuple[str, list[GroupEntry]]:
 
         if group.get("type") == "global":
             global_rules.append(body)
+        elif group.get("kind") == "class":
+            continue
         else:
             if _is_non_rule(header):
                 continue
@@ -152,6 +163,25 @@ def _split_groups(groups: list[dict]) -> tuple[str, list[GroupEntry]]:
                                       shapes=_example_shapes(body)))
 
     return "\n".join(global_rules), entries
+
+
+def _class_blocks(groups: list[dict]) -> dict[str, str]:
+    """Название класса изделия → его правила (группы kind="class").
+
+    Документ на много классов оборудования описывает каждый класс своим разделом: что это,
+    какие у него атрибуты и в какой форме пишется каждый. Это правила «на все атрибуты» — но
+    одного класса, и в Global им не место: там строка задвижки получала описания всех
+    пятидесяти классов. Блок класса в поиск по похожести не идёт — его подмешивают по классу
+    строки (api._row_class).
+    """
+    blocks: dict[str, str] = {}
+    for group in groups:
+        if group.get("kind") == "class" and group.get("type") != "global":
+            name = str(group.get("attribute", "")).strip()
+            body = "\n".join(str(r).strip() for r in group.get("rules", []))
+            if name and body:
+                blocks[name] = (blocks[name] + "\n" + body) if name in blocks else body
+    return blocks
 
 
 # Строка правила, начинающаяся с номера пункта, — определение этого пункта.
@@ -279,8 +309,17 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         deterministic = _load_deterministic(path.parent)
         phrase_map = _load_phrase_rules(path.parent)
         phrase_attributes = _load_phrase_attributes(path.parent)
-        # таблицы «описание → код», оставшиеся строками правил, тоже образуют закрытый реестр
-        table_pairs, table_attributes = _extract_table_pairs(groups, deterministic)
+        tables = load_tables(path.parent)
+        synonyms = {tid: m for tid, table in tables.items() if (m := synonym_map(table))}
+        owners, universal = synonym_owners(groups, tables, synonyms)
+        if synonyms:
+            logger.info("Документ %r: таблиц синонимов %d, атрибутов с ними %d.",
+                        name, len(synonyms), len(owners))
+        # таблицы «описание → код», оставшиеся строками правил, тоже образуют закрытый реестр;
+        # строки таблиц синонимов туда не идут — там направление обратное (много форм → одна)
+        table_pairs, table_attributes = _extract_table_pairs(
+            groups, deterministic, [tables[t].title for t in synonyms],
+            [{c.strip().lower() for c in tables[t].columns} for t in synonyms])
         if table_pairs:
             logger.info("Документ %r: из текста правил добавлено %d пар закрытого реестра.",
                         name, len(table_pairs))
@@ -318,7 +357,7 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         if len(distinct_subjects) > 1:
             logger.info("Документ %r описывает несколько предметов: %s",
                         name, sorted(distinct_subjects))
-        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects))
+        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects, tables=tables, synonyms=synonyms, synonym_owners=owners, universal_synonyms=universal, class_blocks=_class_blocks(groups)))
         RULE_SET_LIBRARY[document_id(name)] = rule_sets[-1]
 
     return rule_sets
@@ -472,8 +511,18 @@ def _split_table_row(line: str) -> list[str]:
     return []
 
 
+# Подписи ячеек строки таблицы: «<подпись>: '<значение>'».
+_CELL_LABEL_RE = re.compile(r"(?:^|;\s*)(?:\[[^\]]*\]\s*)?([\w /&()-]+?):\s*['\"“”]")
+# Колонка, которая держит ГОТОВУЮ форму значения («Written form», «Canonical value»,
+# «Normalized value»): строка такой таблицы читается от записи к этой форме, и прочесть её как
+# «описание → код» значит перевернуть — «SCH STD» стал описанием кода «STD».
+_RESULT_LABEL_RE = re.compile(r"\b(?:written form|canonical|normali[sz]ed)\b")
+
+
 def _extract_table_pairs(groups: list[dict],
-                         deterministic: dict[str, str] | None = None
+                         deterministic: dict[str, str] | None = None,
+                         skip_titles: list[str] | None = None,
+                         skip_columns: list[set[str]] | None = None
                          ) -> tuple[dict[str, str], dict[str, str]]:
     """Достаёт из тела local-групп строки таблиц «описание → код» вместе с их атрибутом.
 
@@ -492,6 +541,12 @@ def _extract_table_pairs(groups: list[dict],
         attribute = (group.get("attribute") or "").strip()
         for rule in group.get("rules", []):
             for line in str(rule).splitlines():
+                if any(t and t in line for t in skip_titles or ()):
+                    continue
+                labels = {l.strip().lower() for l in _CELL_LABEL_RE.findall(line)}
+                if any(labels == c for c in skip_columns or ()) or any(
+                        _RESULT_LABEL_RE.search(l) for l in labels):
+                    continue
                 cells = _split_table_row(line)
                 if len(cells) < 2:
                     continue
@@ -712,6 +767,9 @@ def build_app_config(settings: Settings | None = None) -> AppConfig:
         model=settings.chat_model,
         temperature=settings.temperature,
         reasoning_effort=settings.reasoning_effort,
+        # без таймаута SDK ждёт повисший запрос по 600 с на попытку — прогон стоял полчаса
+        timeout=120,
+        max_retries=2,
     )
     model = assistant.bind_tools(array_of_tools)
 

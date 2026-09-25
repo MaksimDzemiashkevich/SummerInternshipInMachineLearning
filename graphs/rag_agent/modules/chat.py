@@ -14,9 +14,15 @@ MAX_HISTORY_MESSAGES = 12
 
 @dataclass(frozen=True)
 class AdHocRule:
-    """Правило пользователя. attribute пуст — правило общее для всех строк."""
+    """Правило пользователя.
+
+    attribute — атрибут, которому правило адресовано; пуст — правило общее для всех строк.
+    quantity — единица величины, о которой правило («kg» для «всю массу — в тонны»): тогда оно
+    относится к строкам, чьё значение — величина этого рода, как бы ни звался их атрибут.
+    """
     text: str
     attribute: str = ""
+    quantity: str = ""
 
 
 def format_adhoc_rules(rules: list[AdHocRule]) -> str:
@@ -25,7 +31,15 @@ def format_adhoc_rules(rules: list[AdHocRule]) -> str:
         return ""
     lines = []
     for rule in rules:
-        prefix = f"For the attribute {rule.attribute}: " if rule.attribute else ""
+        if rule.quantity:
+            # строка отобрана по единице значения, а единица ещё не значит величину:
+            # «Pressure rating: 300 lbs» — класс давления, а не масса в фунтах
+            prefix = (f"For a value that is a physical quantity of the same kind as {rule.quantity} "
+                      f"(apply this only if the attribute really records such a quantity; a class, "
+                      f"rating or designation that merely borrows a unit's name is not one and "
+                      f"stays exactly as recorded): ")
+        else:
+            prefix = f"For the attribute {rule.attribute}: " if rule.attribute else ""
         lines.append(f"- {prefix}{rule.text}")
     return ("Rules supplied by the user for this request. They are the only rules that govern "
             "this value: apply them and change nothing else.\n" + "\n".join(lines))
