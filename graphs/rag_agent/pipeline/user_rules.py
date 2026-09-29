@@ -3,45 +3,15 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pandas as pd
 
-from ..modules.system_prompts import QUANTITY_KIND_PROMPT
 from ..modules.chat import AdHocRule, format_adhoc_rules
 from ..modules.tools import same_quantity
-from .common import _attribute_matches, _context_line, logger
+from .common import _attribute_matches, logger
 from .answers import _is_ambiguous_answer
-from .guards import _partial_separator_edit
+from .guards import _partial_separator_edit, _records_quantity
 from .postprocess import _canonicalize_formatting
 from .frames import _row_context, prepare_frame
 from .normalizer import SELF_CONSISTENCY, _vote_normalize
 from .graph import ROW_COLUMNS
-
-
-_QUANTITY_KIND_CACHE: dict[tuple[str, str, str], bool] = {}
-
-
-def _records_quantity(model, attribute: str, value: str, unit: str, context: str = "") -> bool:
-    """Записывает ли атрибут величину того же рода, что `unit`, а не класс/обозначение.
-
-    По единице значения этого не понять: «Inlet rating: 300 lbs» — класс давления, а читается
-    как масса. Внутри нормализации модель на этот вопрос отвечала плохо (переводила класс в
-    тонны), отдельным вопросом — уверенно. Один вопрос на пару (атрибут, единица).
-    """
-    key = (str(attribute).strip().lower(), str(unit).strip().lower(), str(context).strip().lower())
-    if key in _QUANTITY_KIND_CACHE:
-        return _QUANTITY_KIND_CACHE[key]
-    messages = [
-        {"role": "system", "content": QUANTITY_KIND_PROMPT},
-        {"role": "user", "content": (f"{_context_line(context)}Attribute: {attribute}\n"
-                                     f"Recorded value: {value}\nUnit: {unit}")},
-    ]
-    try:
-        answer = str(model.invoke(messages).content).strip().upper()
-    except Exception as e:
-        logger.warning("  [USER RULES] вопрос о роде величины не удался: %s", e)
-        answer = "YES"  # по единице величина та же — без ответа модели этого и держимся
-    verdict = not answer.startswith("NO")
-    logger.info("  [USER RULES] %r (%r) — величина рода %r: %s", attribute, value, unit, verdict)
-    _QUANTITY_KIND_CACHE[key] = verdict
-    return verdict
 
 
 def _adhoc_rules_for_attribute(rules: list[AdHocRule], attribute: str, value: str = "",

@@ -19,6 +19,7 @@ How to build the answer
 - Where a rule says values are written in the form its examples or a sample data sheet show, and it does not restrict the values to the ones listed, the examples define a pattern, not a closed list: when this value has the same structure as those examples, carry out the same transformation on this value's own words, even though this value itself is not listed. Only the transformation is taken from the example, never its words.
 - If a rule applies to a structure that repeats inside the value (several separators, several element groups, both bounds of a range), apply it uniformly to every occurrence.
 - When a rule replaces a description with a code or abbreviation from a register, the replacement stands for the WHOLE recorded description, qualifiers included — never keep part of the original text beside the code.
+- When a rule names one written form of a value and lists other forms as accepted, also accepted, tolerated or recognised ("X ('a' and 'b' accepted)", "X; we also accept 'a', 'b'"), those other forms are inputs the rule recognises, not outputs it allows: a value recorded in one of them is written as the named form X, and an accepted form is never itself the result. The same holds when the listed form is only a spelling variant of X (a different case, spacing or punctuation), and when a general rule says listed spellings are written exactly as the rules write them: that decides how the named form X is spelled, it does not make an accepted form a result.
 - Follow the rounding, decimal-place, unit and symbol-placement requirements exactly as the rules state them. Where no rule states a format, keep the format of the input; for a number you converted, use at most 2 decimals and drop trailing zeros.
 - Change only what a rule explicitly changes. Do not add or drop words, parentheses or punctuation that no rule asks for.
 - Be deterministic and idempotent: two inputs with the same meaning must produce the same string, and re-applying the rules to your own answer must leave it unchanged.
@@ -110,7 +111,9 @@ Answer with exactly one word: YES or NO. No explanation.
 QUANTITY_KIND_PROMPT = """
 You are given one attribute of a data sheet, the item it belongs to, a value recorded for it, and a unit. Say whether this attribute records a physical quantity of the same kind as that unit (a mass for kg, a length for mm, a temperature for degC).
 
-It does not when the attribute is a class, rating, grade, size designation or code whose written form merely borrows a unit's name: a pressure class written "300 lb" is a rating, not a mass of 300 pounds; a nominal size written in inches is a designation, not a measured length.
+It does when the value is an amount of that quantity, including a rated, allowed or limiting amount: a safe working load of 500 kg, a rated power of 15 kW, a set pressure of 10 barg are real amounts that can be converted to another unit.
+
+It does not when the value is a designation: a class, grade, size or code taken from a fixed series, whose number is a name rather than an amount and whose written form merely borrows a unit's name. A pressure class written "300 lb" or "600#" names a class of the series, it is not a mass of 300 pounds; a nominal size written in inches names a size, it is not a measured length.
 
 Answer with exactly one word: YES or NO. No explanation.
 """

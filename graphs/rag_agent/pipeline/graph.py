@@ -14,7 +14,8 @@ from .deterministic import apply_deterministic
 from .retrieval import _own_rules_text, _unresolved_references, build_rules_text
 from .guards import (_align_root_spacing, _apply_render_template, _document_mandates_spacing,
                      _document_word_tokens, _match_render_template, _partial_separator_edit,
-                     _rejection_reason, _restore_unit_spacing)
+                     _rejection_reason, _restore_unit_spacing,
+                     _conversion_of_designation)
 from .postprocess import (_canonicalize_formatting, _canonicalize_units, _reconcile_equivalent_rows,
                           _strip_redundant_parenthetical)
 from .frames import _row_context
@@ -96,6 +97,9 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                 # поднялся с 80 до 92 из 100, EMD — с 89 до 94, остальные наборы не изменились.
                 guard = _rejection_reason(state["attribute"], state["original_value"],
                                           rules_value, rule_set, state.get("rules_text", ""))
+                guard = guard or _conversion_of_designation(
+                    state["attribute"], state["original_value"], rules_value,
+                    config["configurable"].get("model"), state.get("row_context", ""))
                 if guard:
                     logger.info("  [GUARD] %r -> %r: %s",
                                 state["original_value"], rules_value, guard)

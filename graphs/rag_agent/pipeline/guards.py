@@ -1,9 +1,10 @@
 """Проверки ответа модели: чего правила не оправдывают, то отклоняется или снимается."""
 import re
 
-from ..modules.tools import unit_mismatch, is_unit
-from .common import (_NUM_UNIT_RE, _WORD_RE, _alnum, _attribute_matches, _char_bag, _digit_groups,
-                     _names_clash, _norm_attr, _unit_key, logger)
+from ..modules.system_prompts import QUANTITY_KIND_PROMPT
+from ..modules.tools import unit_mismatch, is_unit, unit_converted
+from .common import (_NUM_UNIT_RE, _WORD_RE, _alnum, _attribute_matches, _char_bag, _context_line,
+                     _digit_groups, _names_clash, _norm_attr, _unit_key, logger)
 from .deterministic import _synonym_tables_for_attribute
 
 
@@ -427,3 +428,54 @@ def _partial_separator_edit(original: str, answer: str) -> str | None:
         if 0 < after < before:
             return f"{character!r}: было {before}, осталось {after}"
     return None
+
+
+_QUANTITY_KIND_CACHE: dict[tuple[str, str, str], bool] = {}
+
+
+def _records_quantity(model, attribute: str, value: str, unit: str, context: str = "") -> bool:
+    """Записывает ли атрибут величину того же рода, что `unit`, а не класс/обозначение.
+
+    По единице значения этого не понять: «Inlet rating: 300 lbs» — класс давления, а читается
+    как масса. Внутри нормализации модель на этот вопрос отвечала плохо (переводила класс в
+    тонны), отдельным вопросом — уверенно. Один вопрос на пару (атрибут, единица).
+    """
+    key = (str(attribute).strip().lower(), str(unit).strip().lower(), str(context).strip().lower())
+    if key in _QUANTITY_KIND_CACHE:
+        return _QUANTITY_KIND_CACHE[key]
+    messages = [
+        {"role": "system", "content": QUANTITY_KIND_PROMPT},
+        {"role": "user", "content": (f"{_context_line(context)}Attribute: {attribute}\n"
+                                     f"Recorded value: {value}\nUnit: {unit}")},
+    ]
+    try:
+        answer = str(model.invoke(messages).content).strip().upper()
+    except Exception as e:
+        logger.warning("  [QUANTITY] вопрос о роде величины не удался: %s", e)
+        answer = "YES"  # по единице величина та же — без ответа модели этого и держимся
+    verdict = not answer.startswith("NO")
+    logger.info("  [QUANTITY] %r (%r) — величина рода %r: %s", attribute, value, unit, verdict)
+    _QUANTITY_KIND_CACHE[key] = verdict
+    return verdict
+
+
+# Единица записи: «800 lbs» → «lbs», «1200°F» → «°F».
+_VALUE_UNIT_RE = re.compile(r"^\s*-?[\d.,]+\s*(.+?)\s*$")
+
+
+def _conversion_of_designation(attribute: str, value: str, answer: str, model,
+                               context: str = "") -> str:
+    """Пересчитала ли модель в другую единицу то, что величиной не является.
+
+    Класс давления пишут «в фунтах» («Rating: 800 lbs»), и модель честно переводила его в
+    килограммы — 362.87 kg. По одной записи класс от массы не отличить, это видно по атрибуту,
+    поэтому, только когда ответ — пересчёт, модель один раз на атрибут отвечает, величина ли он.
+    Пустая строка — пересчёт законный или его не было.
+    """
+    if model is None or not unit_converted(value, answer):
+        return ""
+    unit = _VALUE_UNIT_RE.match(str(value))
+    if _records_quantity(model, attribute, value, unit.group(1) if unit else value, context):
+        return ""
+    return ("атрибут — класс или обозначение, а не величина: пересчёт единиц отменён — "
+            "оставлено как записано")

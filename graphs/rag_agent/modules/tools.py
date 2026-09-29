@@ -113,6 +113,22 @@ def _dimensionality(text: str):
     return None if parsed.dimensionless else parsed.dimensionality
 
 
+def unit_converted(value: str, answer: str) -> bool:
+    """Пересчитана ли запись в другую единицу той же величины («800 lbs» → «362.87 kg»).
+
+    И запись, и ответ должны читаться как величины одной размерности с разными единицами;
+    «Class 300», «CL 600» и прочие обозначения величинами не читаются — это не пересчёт.
+    """
+    try:
+        left = _UREG.Quantity(_prepare(value))
+        right = _UREG.Quantity(_prepare(answer))
+    except Exception:
+        return False
+    if getattr(left, "dimensionless", True) or getattr(right, "dimensionless", True):
+        return False
+    return left.dimensionality == right.dimensionality and left.units != right.units
+
+
 def same_quantity(value: str, unit: str, label: str = "") -> bool:
     """Та же ли это величина, что и `unit`: «343.9 lb» и «t» — обе масса.
 

@@ -39,3 +39,4 @@ __pycache__/
 *.md
 *.pptx
 *.png
+/graphs/rag_agent/test/
