@@ -14,55 +14,6 @@ from langchain.tools import tool
 
 _UREG = pint.UnitRegistry()
 
-# Как единицы пишут в датащитах, но не понимает pint.
-_UNIT_ALIASES = (
-    (r'(?<=\d)\s*"', " inch"),
-    (r"(?<=\d)\s*'", " foot"),
-    (r"°\s*F\b|(?<=\d)\s*F\b|\bdeg\s*F\b", " degF"),
-    (r"°\s*C\b|(?<=\d)\s*C\b|\bdeg\s*C\b", " degC"),
-    (r"\bin\.(?=\s|$)", " inch"),
-    (r"\blbs\b", " lb"),
-    (r"(?<=[a-zA-Z])2\b", "**2"),      # mm2, in2 → mm**2
-    (r"(?<=[a-zA-Z])3\b", "**3"),
-)
-
-
-# Дюймовые доли в трубопроводной записи: знаменатель всегда степень двойки. Это же условие
-# защищает от подмены обозначений вида «0,6/1 kV», где косая черта — не дробь.
-_FRACTION_DENOMINATORS = "(?:2|4|8|16|32|64)"
-_VULGAR_FRACTIONS = {"½": " 1/2", "¼": " 1/4", "¾": " 3/4", "⅛": " 1/8", "⅜": " 3/8",
-                     "⅝": " 5/8", "⅞": " 7/8", "⅓": " 1/3", "⅔": " 2/3"}
-
-
-def _expand_fractions(text: str) -> str:
-    """«2 1/2 in» → «2.5 in», «3/4"» → «0.75"», «2½» → «2.5».
-
-    Без этого pint читает «2 1/2» как 2/(1/2) и молча возвращает 1 дюйм: ошибки нет,
-    а число чужое. Смешанная запись размера в дюймах — норма в трубопроводной арматуре.
-    """
-    for sign, plain in _VULGAR_FRACTIONS.items():
-        text = text.replace(sign, plain)
-
-    def mixed(match):
-        whole, num, den = int(match.group(1)), int(match.group(2)), int(match.group(3))
-        return f"{whole + num / den:g}"
-
-    def simple(match):
-        return f"{int(match.group(1)) / int(match.group(2)):g}"
-
-    text = re.sub(rf"(?<![\d./])(\d+)\s*[-\s]\s*(\d+)/({_FRACTION_DENOMINATORS})(?![\d/])",
-                  mixed, text)
-    return re.sub(rf"(?<![\d./])(\d+)/({_FRACTION_DENOMINATORS})(?![\d/])", simple, text)
-
-
-def _prepare(text: str) -> str:
-    """Запись из таблицы → выражение, понятное pint: дроби, запятая-разделитель, ° и ″, mm2."""
-    prepared = _expand_fractions(str(text).strip())
-    prepared = re.sub(r"(?<=\d),(?=\d)", ".", prepared)
-    for pattern, replacement in _UNIT_ALIASES:
-        prepared = re.sub(pattern, replacement, prepared)
-    return re.sub(r"\s+", " ", prepared).strip()
-
 
 def _format(magnitude: float, decimals: int) -> str:
     """Число в строку: с заданным количеством знаков либо без хвостовых нулей."""
@@ -72,19 +23,33 @@ def _format(magnitude: float, decimals: int) -> str:
     return text or "0"
 
 
+_UNIT_NAME_HINT = ("give units as standard names or symbols: inch, ft, mm, m, kg, lb, t, psi, bar, "
+                   "kPa, MPa, degC, degF, K, kW, hp, m**3/h, mm**2, rpm; give a gauge or absolute "
+                   "pressure without its mark (barg -> bar)")
+
+
+def _unit(name: str):
+    """Единица по стандартному имени, которое дала модель.
+
+    Строки значений код не разбирает — это делает модель (convert_units, pipeline/parsing.py).
+    Здесь только то, чего нет в словаре pint: одинокие F и C в датащите — градусы, а не фарад и
+    кулон, и инженерная запись степени («mm2», «m3/h», «m²»).
+    """
+    name = str(name).strip()
+    name = {"F": "degF", "C": "degC", "°F": "degF", "°C": "degC"}.get(name, name)
+    name = name.replace("²", "**2").replace("³", "**3")
+    return _UREG.Unit(re.sub(r"(?<=[A-Za-z])([23])\b", r"**\1", name))
+
+
 def unit_mismatch(left: str, right: str) -> bool:
     """Разные ли это единицы по существу. Не единицы (или нечитаемое) — не разные.
 
-    Сравнивать написанием нельзя: «in.», «inch» и «in» — одно и то же, а «HB minimum» и
-    «Cr-10Ni-Mo» вообще не единицы. Разбор и сравнение отдаём pint, он же знает синонимы.
+    Сравнивать написанием нельзя: «in.», «inch» и «in» — одно и то же. Сравнивает pint, он знает
+    синонимы. Отметку манометрического/абсолютного давления сюда не передают: её отделяет разбор
+    модели (parsing.units_differ).
     """
-    def as_unit(text: str):
-        # одинокие F и C для pint — фарад и кулон, а в датащите это градусы
-        prepared = _prepare(text).strip()
-        return _UREG.Unit({"F": "degF", "C": "degC"}.get(prepared, prepared))
-
     try:
-        return as_unit(left) != as_unit(right)
+        return _unit(left) != _unit(right)
     except Exception:
         return False
 
@@ -92,91 +57,57 @@ def unit_mismatch(left: str, right: str) -> bool:
 def is_unit(word: str) -> bool:
     """Читается ли слово как единица измерения («in», «kPa», «rpm»), а не как содержимое записи."""
     try:
-        return not _UREG.Unit(_prepare(word)).dimensionless
+        return not _unit(word).dimensionless
     except Exception:
         return False
 
 
-# Единица в подписи атрибута: «Weight, kg», «Rated power (kW)».
-_LABEL_UNIT_RE = re.compile(r"[,(]\s*([^,()]{1,12}?)\s*\)?\s*$")
+def same_dimension(left: str, right: str) -> bool:
+    """Одна ли величина у двух единиц (стандартные имена, как их даёт разбор модели): lb и t — да."""
+    try:
+        return _unit(left).dimensionality == _unit(right).dimensionality
+    except Exception:
+        return False
 
 
-def _dimensionality(text: str):
-    """Размерность записи с единицей («343.9 lb» → [mass]); None — не величина или без единицы."""
-    prepared = _prepare(text)
-    if not re.search(r"[a-zA-Z°]", prepared):
+def convert_value(value: float, from_unit: str, to_unit: str) -> float | None:
+    """Точное число после пересчёта (для проверки ответа) или None, если пересчитать нельзя."""
+    try:
+        return float(_UREG.Quantity(float(value), _unit(from_unit)).to(_unit(to_unit)).magnitude)
+    except Exception:
         return None
-    try:
-        parsed = _UREG.Quantity(prepared)
-    except Exception:
-        return None
-    return None if parsed.dimensionless else parsed.dimensionality
-
-
-def unit_converted(value: str, answer: str) -> bool:
-    """Пересчитана ли запись в другую единицу той же величины («800 lbs» → «362.87 kg»).
-
-    И запись, и ответ должны читаться как величины одной размерности с разными единицами;
-    «Class 300», «CL 600» и прочие обозначения величинами не читаются — это не пересчёт.
-    """
-    try:
-        left = _UREG.Quantity(_prepare(value))
-        right = _UREG.Quantity(_prepare(answer))
-    except Exception:
-        return False
-    if getattr(left, "dimensionless", True) or getattr(right, "dimensionless", True):
-        return False
-    return left.dimensionality == right.dimensionality and left.units != right.units
-
-
-def same_quantity(value: str, unit: str, label: str = "") -> bool:
-    """Та же ли это величина, что и `unit`: «343.9 lb» и «t» — обе масса.
-
-    Нужна правилам вида «всю массу — в тонны»: масса в датащите зовётся Weight, Mass, Agent
-    charge, Safe working load, и по имени атрибута такое правило не находит ни одной строки.
-    Число без единицы берёт её из подписи атрибута («Weight, kg» + «156»).
-    """
-    try:
-        target = _UREG.Unit(_prepare(unit)).dimensionality
-    except Exception:
-        return False
-    found = _dimensionality(value)
-    if found is None and re.fullmatch(r"\s*-?\d+(?:[.,]\d+)?\s*", str(value)):
-        label_unit = _LABEL_UNIT_RE.search(str(label))
-        if label_unit:
-            found = _dimensionality(f"{str(value).strip()} {label_unit.group(1)}")
-    return found is not None and found == target
 
 
 @tool
-def convert_units(quantity: str, to_unit: str, decimals: int = -1) -> str:
-    """Convert a physical quantity into another unit, exactly.
+def convert_units(value: float, from_unit: str, to_unit: str, decimals: int = -1) -> str:
+    """Convert a number from one unit to another, exactly.
 
-    `quantity` is the recorded value with its unit, copied as it stands: "7,62 cm", "300 psi",
-    "1200 F", '6"', "25 lbs", "150 mm". A decimal comma, a degree sign, an inch mark and a
-    squared unit written as "mm2" are all understood.
-    `to_unit` is the unit wanted: "in", "mm", "MPa", "degC", "kg", "mm**2" and so on.
+    Read the recorded value yourself and pass it already taken apart: `value` is the number
+    alone and `from_unit` the unit it is recorded in. For "0.5-inch" pass value=0.5,
+    from_unit="inch"; for '2 1/2"' value=2.5, from_unit="inch"; for "7,62 cm" value=7.62,
+    from_unit="cm"; for "1200 F" value=1200, from_unit="degF". A range or a list is converted
+    one number per call.
+    `to_unit` is the unit wanted. Units are standard names or symbols: inch, ft, mm, m, kg, lb,
+    t, psi, bar, kPa, MPa, degC, degF, K, kW, hp, m**3/h, mm**2, rpm and so on. A gauge or
+    absolute pressure is passed without its mark ("barg" -> "bar", "psia" -> "psi"); put the
+    mark back when you write the answer, as the rules require it.
     `decimals` rounds the result to that many decimal places; leave it out for the exact value
     with trailing zeros dropped.
 
-    Returns "<number> <to_unit>", or a line starting with "cannot convert" when the value has
-    no unit, the unit is unknown, or the two units measure different things — in that case do
-    not invent a number, treat the conversion as not possible.
+    Returns "<number> <to_unit>", or a line starting with "cannot convert" when a unit is not
+    known or the two units measure different things — then do not invent a number: fix the
+    unit name and call again, or treat the conversion as not possible.
     """
-    prepared = _prepare(quantity)
-    target = _prepare(to_unit)
     try:
-        parsed = _UREG.Quantity(prepared)
+        source, target = _unit(from_unit), _unit(to_unit)
     except Exception as e:
-        return f"cannot convert: {quantity!r} is not a quantity pint can read ({e})"
-    if getattr(parsed, "dimensionless", False) and not re.search(r"[a-zA-Z]", prepared):
-        return f"cannot convert: {quantity!r} carries no unit"
+        return f"cannot convert: unknown unit ({e}); {_UNIT_NAME_HINT}"
     try:
-        converted = parsed.to(target)
+        converted = _UREG.Quantity(float(value), source).to(target)
     except pint.DimensionalityError as e:
         return f"cannot convert: {e}"
     except Exception as e:
-        return f"cannot convert: unit {to_unit!r} is not known ({e})"
+        return f"cannot convert: {e}; {_UNIT_NAME_HINT}"
     return f"{_format(converted.magnitude, decimals)} {to_unit}"
 
 

@@ -2,10 +2,11 @@
 import re
 
 from ..modules.system_prompts import QUANTITY_KIND_PROMPT
-from ..modules.tools import unit_mismatch, is_unit, unit_converted
-from .common import (_NUM_UNIT_RE, _WORD_RE, _alnum, _attribute_matches, _char_bag, _context_line,
-                     _digit_groups, _names_clash, _norm_attr, _unit_key, logger)
+from ..modules.tools import convert_value, is_unit, same_dimension, unit_mismatch
+from .common import (_WORD_RE, _alnum, _attribute_matches, _char_bag, _context_line,
+                     _names_clash, _norm_attr, _unit_key, logger)
 from .deterministic import _synonym_tables_for_attribute
+from .parsing import Parsed, is_measure, parse, recorded_quantity, recorded_unit, units_differ
 
 
 def _match_render_template(attribute: str, render_templates: dict,
@@ -36,39 +37,51 @@ def _match_render_template(attribute: str, render_templates: dict,
     if not candidates:
         return None
     # ретрив возвращает несколько групп подряд, и первая может быть про другую величину:
-    # выбираем шаблон, чья единица совпадает с единицей самого значения
-    m = _NUM_UNIT_RE.fullmatch(str(value).strip())
-    if m:
+    # выбираем шаблон, чья единица совпадает с единицей самого значения (разбор модели)
+    parsed = parse(value, attribute) if value else None
+    quantity = parsed.single if parsed else None
+    if quantity:
         for tmpl in candidates:
-            if _unit_key(tmpl.get("suffix", "")) == _unit_key(m.group(3)):
+            if _suffix_is_unit(tmpl.get("suffix", ""), quantity):
                 return tmpl
     return candidates[0]
+
+
+def _suffix_is_unit(suffix: str, quantity) -> bool:
+    """Суффикс шаблона — это единица величины: то же написание либо та же единица у pint."""
+    suffix = str(suffix).strip()
+    if not suffix or not quantity.unit_text:
+        return False
+    return (_unit_key(suffix) == _unit_key(quantity.unit_text)
+            or (is_unit(suffix) and quantity.unit and not unit_mismatch(suffix, quantity.unit)))
 
 
 def _apply_render_template(answer: str, template: dict) -> str:
     """Детерминированно переформатирует ответ под шаблон (decimals + suffix).
 
     Шаблон только ПЕРЕрисовывает уже полученное значение и никогда не навешивает единицу:
-    применяется, лишь если ответ — одно число со «своим» суффиксом, совпадающим с шаблонным
-    с точностью до пробелов/точек. Иначе (диапазон, код, другая единица) ответ не трогаем.
+    применяется, лишь если ответ — одно число со «своим» суффиксом (разбор модели). Иначе
+    (диапазон, код, другая единица) ответ не трогаем.
     """
-    m = re.fullmatch(r"\s*(-?\d+(?:\.\d+)?)(.*)", str(answer).strip())
-    if not m:
+    parsed = parse(answer)
+    q = parsed.single if parsed else None
+    if q is None or q.value is None or not _suffix_is_unit(template["suffix"], q):
         return answer
-    number, tail = m.group(1), m.group(2)
-    if _unit_key(tail) != _unit_key(template["suffix"]):
-        return answer
-    return f"{float(number):.{template['decimals']}f}" + template["suffix"]
+    if f"{q.number}{' ' if q.space else ''}{q.unit_text}" != str(answer).strip():
+        return answer  # в ответе есть что-то кроме числа с единицей
+    return f"{q.value:.{template['decimals']}f}" + template["suffix"]
 
 
-def _example_keeps_space(rules_text: str, root: str) -> bool:
+def _example_keeps_space(rule_set, rules_text: str, root: str) -> bool:
     """Показывает ли пример документа этот корень с пробелом перед числом.
 
     «Class 150» в примере значит, что склеивать нельзя, как бы ни выглядели корни в других
-    документах. Если примера с этим корнем нет, решает общая конвенция keyword→root.
+    документах. Если примера с этим корнем нет, решает общая конвенция keyword→root. Примеры —
+    из карточек документа, корень и пробел в них — по разбору модели.
     """
-    for _, target in _EXAMPLE_RE.findall(str(rules_text)):
-        if re.search(rf"\b{re.escape(root)}\s+\d", target, re.IGNORECASE):
+    for _, target in _examples_in(rule_set, rules_text):
+        d = (parse(target) or Parsed("text")).designation
+        if d and d.space and d.root.upper() == str(root).upper():
             return True
     return False
 
@@ -79,21 +92,20 @@ def _align_root_spacing(answer: str, rule_set, rules_text: str = "") -> str:
     Один и тот же атрибут давал «TRIM8» в одной строке и «TRIM 12» в другой, «CL600» и
     «CL 600»: конвенцию документа знает keyword→root, а LLM-путь о ней не знает. Правится
     только пробел между корнем и числом, содержимое не трогается. Если же документ показал
-    в примере пробел («150 Class» → «Class 150»), его пример и решает.
+    в примере пробел («150 Class» → «Class 150»), его пример и решает. Где в ответе корень и
+    номер, говорит разбор модели (parsing.py), а не шаблон.
     """
-    roots = {root for root in rule_set.deterministic.values() if root and root.isalpha()}
+    roots = {root.upper() for root in rule_set.deterministic.values() if root and root.isalpha()}
     if not roots:
         return answer
-    token = "|".join(re.escape(r) for r in sorted(roots, key=len, reverse=True))
-    number = r"\d+[A-Za-z]*"
-    tail = r"(\s*(?:\([^()]*\)|\S.*))?"
-    m = (re.fullmatch(rf"\s*({token})\s+({number}){tail}\s*", answer)
-         or re.fullmatch(rf"\s*({number})\s+({token}){tail}\s*", answer))
-    if not m:
+    parsed = parse(answer)
+    d = parsed.designation if parsed else None
+    if d is None or not d.space or d.root.upper() not in roots:
         return answer
-    if _example_keeps_space(rules_text, m.group(1)) or _example_keeps_space(rules_text, m.group(2)):
+    if _example_keeps_space(rule_set, rules_text, d.root):
         return answer
-    aligned = f"{m.group(1)}{m.group(2)}{m.group(3) or ''}"
+    first, second = (d.number, d.root) if d.number_first else (d.root, d.number)
+    aligned = re.sub(rf"({re.escape(first)})\s+({re.escape(second)})", r"\1\2", str(answer), count=1)
     if aligned != answer:
         logger.info("  [ROOT] %r -> %r (конвенция документа: корень и число слитно)",
                     answer, aligned)
@@ -132,12 +144,12 @@ def _root_invented(value: str, answer: str, rule_set, attribute: str = "") -> bo
     букв, только номер и знак класса). Но «F51» — марка стали, и «TRIM51» из неё получается
     только выбрасыванием буквы; «PN 100» — класс по другой системе, и «CL100» его подменяет.
     Правило одно: буквы записи должны называть это же обозначение — сам корень или значащее
-    слово его ключа.
+    слово его ключа. Корень ответа берётся из разбора модели.
     """
-    parts = _designation_parts(answer)
-    if not parts:
+    parsed = parse(answer)
+    if parsed is None or parsed.designation is None:
         return False
-    root = parts[0]
+    root = parsed.designation.root.upper()
     known_roots = {r.upper() for r in rule_set.deterministic.values() if r and r.isalpha()}
     if root not in known_roots:
         return False  # это не корень документа, а, например, код закрытого реестра
@@ -167,21 +179,23 @@ def _root_misapplied(answer: str, rule_set, value: str = "") -> bool:
     Корень заменяет ИМЯ обозначения, за которым идёт его номер («Trim 8» → «TRIM8»). За ним не
     может стоять слово («TRIM f6a», «TRIM F51») и не может стоять измеренная величина: «150 MM»
     превращалось в «DN5.906 in», где к пересчитанной длине приписан корень условного прохода.
+    Номер обозначения целый: «NPS6.000» — это пересчитанная длина. Что корень, а что номер,
+    говорит разбор модели.
     """
-    text = str(answer).strip()
-    recorded_has_unit = bool(_NUM_UNIT_RE.fullmatch(str(value).strip()))
-    for root in {r for r in rule_set.deterministic.values() if r and r.isalpha() and len(r) > 1}:
-        # после корня не буква: «DN5.906» — корень с числом, а «BWR» — другое слово
-        m = re.match(rf"^{re.escape(root)}(?![A-Za-z])[\s-]*(.*)$", text, re.IGNORECASE)
-        if not m or not m.group(1):
-            continue
-        rest = m.group(1)
-        if not rest[0].isdigit():
-            return True
-        if recorded_has_unit and _NUM_UNIT_RE.fullmatch(rest):
-            return True
-        if re.match(r"^\d+[.,]\d", rest):
-            return True  # номер обозначения целый: «NPS6.000» — это пересчитанная длина
+    roots = {r.upper() for r in rule_set.deterministic.values() if r and r.isalpha() and len(r) > 1}
+    if not roots:
+        return False
+    parsed = parse(answer)
+    if parsed is None:
+        return False
+    d = parsed.designation
+    if d is not None and d.root.upper() in roots:
+        number = d.number.strip()
+        return not number[:1].isdigit() or bool(re.match(r"^\d+[.,]\d", number))
+    # корень стоит в начале, а ответ модель прочла как величину: корень навешен на измерение
+    head = str(answer).strip().upper()
+    if parsed.quantities and any(head.startswith(r) for r in roots):
+        return bool(recorded_unit(parse(value)))
     return False
 
 
@@ -190,13 +204,13 @@ def _unit_invented(attribute: str, value: str, answer: str) -> bool:
 
     «150» в графе «Nominal size» превращалось в «150.000 in.» — это уже утверждение о величине,
     а не о её написании. Документ вправе требовать единицу, но взять её неоткуда: решает человек.
+    Что в записи голое число и что подпись единицы не называет, говорит разбор модели.
     """
-    a = _NUM_UNIT_RE.fullmatch(str(answer).strip())
-    if not a or not unit_mismatch(a.group(3), "count"):
-        return False  # ответ без единицы либо единица нечитаемая — судить не о чем
-    if _NUM_UNIT_RE.fullmatch(str(value).strip()) or _LABEL_UNIT_RE.search(str(attribute)):
-        return False
-    return bool(re.fullmatch(r"\s*-?\d+(?:[.,]\d+)?\s*", str(value)))
+    answer_parsed = parse(answer)
+    if answer_parsed is None or not answer_parsed.single or not is_measure(answer_parsed.single.unit):
+        return False  # ответ без единицы — судить не о чем
+    recorded = parse(value, attribute)
+    return recorded is not None and recorded.kind == "number" and not recorded.label_unit
 
 
 _LABEL_UNIT_RE = re.compile(r"[,(]\s*([A-Za-z°]{1,6}\.?)\s*\)?\s*$")
@@ -207,51 +221,52 @@ def _unit_relabelled(attribute: str, value: str, answer: str) -> bool:
 
     «Wall thickness, mm» со значением «9.5» превращалось в «9.50 in.» — запись просто
     переобозначили дюймами. Если пересчёт был, меняется число; если не был, единица обязана
-    остаться той, что названа в записи или в подписи атрибута.
+    остаться той, что названа в записи или в подписи атрибута. Единицы сравнивает pint по
+    стандартным именам из разбора, отметку давления — разбор модели: «in.» и «inch» — одно,
+    «barg» и «bara» — нет, «barg» и «bar(g)» — одно.
     """
-    a = _NUM_UNIT_RE.fullmatch(str(answer))
-    if not a:
+    answer_parsed = parse(answer)
+    now = answer_parsed.single if answer_parsed else None
+    was = recorded_quantity(parse(value, attribute))
+    if now is None or was is None or not now.unit or not units_differ(was, now):
         return False
-    v = _NUM_UNIT_RE.fullmatch(str(value))
-    recorded_unit = v.group(3) if v else ""
-    if not recorded_unit:
-        label = _LABEL_UNIT_RE.search(str(attribute))
-        recorded_unit = label.group(1) if label else ""
-    if not recorded_unit or not unit_mismatch(recorded_unit, a.group(3)):
-        return False
-    if _unit_key(recorded_unit) == _unit_key(a.group(3)):
-        return False  # отличие только в регистре или знаках — это приведение к форме, не подмена
-    number = v.group(1) if v else str(value)
-    try:  # «9.5» и «9.50» — одно и то же число, а вот единица уже другая
-        return abs(float(str(number).replace(",", ".")) - float(a.group(1).replace(",", "."))) < 1e-9
-    except ValueError:
-        return _digit_groups(number) == _digit_groups(a.group(1))
+    return was.value is not None and now.value is not None and abs(was.value - now.value) < 1e-9
 
 
-_SPACING_RULE_RE = re.compile(
-    r"(?:single|one|a)\s+space|separated\s+from\s+the\s+numera|followed\s+by\s+a\s+space", re.I)
+def _document_mandates_spacing(rule_set, group_names: list[str] | None = None) -> bool:
+    """Решает ли документ сам, ставить ли пробел между числом и единицей.
+
+    Ответ берётся из карточек (поле unit_spacing): общих положений и групп этой строки. Раньше
+    его искали в тексте правил по оборотам вроде «one space» — и пропускали любую другую
+    формулировку, в том числе требование, показанное только примером.
+    """
+    cards = getattr(rule_set, "cards", None) or {}
+    if (getattr(rule_set, "global_card", None) or {}).get("unit_spacing"):
+        return True
+    return any((cards.get(name) or {}).get("unit_spacing") for name in group_names or [])
 
 
-def _document_mandates_spacing(rules_text: str) -> bool:
-    """Требует ли документ пробел между числом и единицей явным правилом."""
-    return bool(_SPACING_RULE_RE.search(str(rules_text)))
-
-
-def _restore_unit_spacing(value: str, answer: str) -> str:
+def _restore_unit_spacing(value: str, answer: str, attribute: str = "") -> str:
     """Пробел между числом и единицей берётся из записи, если единица та же.
 
     Документ задаёт единицу и знаки после запятой, но молчит про пробел; модель пишет
     «16.00mm2» там, где записано «16 mm2». Где правила молчат, формат записи и сохраняем.
+    Что число, что единица и был ли между ними пробел, говорит разбор модели.
     """
-    v = _NUM_UNIT_RE.fullmatch(str(value))
-    a = _NUM_UNIT_RE.fullmatch(str(answer))
-    if not v or not a or _unit_key(v.group(3)) != _unit_key(a.group(3)):
+    recorded, parsed = parse(value, attribute), parse(answer)
+    if recorded is None or parsed is None or not recorded.single or not parsed.single:
         return answer
-    if not unit_mismatch(a.group(3), "count"):
+    was, now = recorded.single, parsed.single
+    if not was.unit_text or not now.unit_text or not is_measure(now.unit):
         return answer  # «- GP - 2» из номера модели — не единица, пробелы там не наши
-    if bool(v.group(2)) == bool(a.group(2)):
+    # пробел переносим только при том же написании единицы: у «0.5-inch» пробела нет, но
+    # «0.500 in.» — уже другое написание, и склеивать «0.500in.» значит испортить ответ
+    if (unit_mismatch(was.unit, now.unit) or _unit_key(was.unit_text) != _unit_key(now.unit_text)
+            or was.space == now.space):
         return answer
-    return f"{a.group(1)}{' ' if v.group(2) else ''}{a.group(3)}"
+    if f"{now.number}{' ' if now.space else ''}{now.unit_text}" != str(answer).strip():
+        return answer  # ответ не состоит из одного числа с единицей — не перекраиваем
+    return f"{now.number}{' ' if was.space else ''}{now.unit_text}"
 
 
 # Пример правила: «"0.075%" -> "0.075 % of span"». Слова, появившиеся справа, документ велит
@@ -312,56 +327,51 @@ def _strip_added_words(value: str, answer: str, allowed: set) -> str:
     return result
 
 
-def _relabel_sanctioned(value: str, answer: str, rules_text: str) -> bool:
+def _relabel_sanctioned(value: str, answer: str, rule_set, rules_text: str,
+                        attribute: str = "") -> bool:
     """Показывает ли документ ту же смену единицы при том же числе своим примером.
 
     Разность температур пишется в K тем же числом, что и в °C («5 °C» → «5 K»): это не подмена,
-    а правило, и пример документа говорит об этом прямо.
+    а правило, и пример документа говорит об этом прямо. Примеры — из карточек, числа и единицы
+    в них — по разбору модели.
     """
-    v = _NUM_UNIT_RE.fullmatch(str(value))
-    a = _NUM_UNIT_RE.fullmatch(str(answer))
-    if not v or not a:
+    was = recorded_quantity(parse(value, attribute))
+    answer_parsed = parse(answer)
+    now = answer_parsed.single if answer_parsed else None
+    if was is None or now is None:
         return False
-    for source, target in _EXAMPLE_RE.findall(str(rules_text)):
-        s = _NUM_UNIT_RE.fullmatch(source.strip())
-        t = _NUM_UNIT_RE.fullmatch(target.strip())
-        if (s and t and _unit_key(s.group(3)) == _unit_key(v.group(3))
-                and _unit_key(t.group(3)) == _unit_key(a.group(3))
-                and s.group(1).replace(",", ".") == t.group(1).replace(",", ".")):
+    for source, target in _examples_in(rule_set, rules_text):
+        s_parsed, t_parsed = parse(source), parse(target)
+        s_q = s_parsed.single if s_parsed else None
+        t_q = t_parsed.single if t_parsed else None
+        if (s_q and t_q and s_q.value is not None and s_q.value == t_q.value
+                and not units_differ(s_q, was) and not units_differ(t_q, now)):
             return True
     return False
 
 
-# Обе стороны примеров документа: запись «до» и её нормализованный вид.
-_EXAMPLE_CELL_RE = re.compile(
-    r"\b(?:recorded|raw|normalized)\s+value\s*:\s*['\"“]([^'\"”]{1,120})['\"”]", re.I)
+def _norm_text(text: str) -> str:
+    """Для поиска примера в тексте правил: регистр, кавычки и пробелы не важны."""
+    return re.sub(r"\s+", " ", re.sub(r"[‘’“”'\"]", "", str(text).lower())).strip()
 
 
-_EXAMPLE_RECORD_RE = re.compile(r"\b(?:raw|normalized)\s+record\b[^:]*:\s*(.+)$", re.I)
+def _examples_in(rule_set, rules_text: str) -> list[tuple[str, str]]:
+    """Примеры «было → стало» из карточек документа, которые стоят в этом тексте правил.
 
-
-_BARE_ARROW_RE = re.compile(r"^\s*(?:\[[^\]]*\]\s*)?([^\"“'→]{1,80}?)\s*(?:->|→)\s*([^\"“'→]{1,80})$")
-
-
-def _example_texts(rules_text: str) -> list[str]:
-    """Текст примеров документа, обе стороны: EXAMPLE, образец датащита, worked example, «X → Y».
-
-    Смотреть только на запись «до» мало: «Cu» превращалось в «Aluminium» — результат примера
-    «Al → Aluminium», слова из исходной стороны там нет вовсе.
+    Раньше примеры выискивались в тексте регулярками (EXAMPLE, стрелки, raw/normalized record,
+    ячейки образца датащита) — и пропускали любую другую подачу. Теперь их один раз при
+    загрузке выписывает модель в карточки, а код берёт те, что попали в промпт строки.
     """
-    texts = [part for pair in _EXAMPLE_RE.findall(str(rules_text)) for part in pair]
-    for line in str(rules_text).splitlines():
-        texts += _EXAMPLE_CELL_RE.findall(line)
-        record = _EXAMPLE_RECORD_RE.search(line)
-        if record:
-            texts.append(record.group(1))
-        bare = _BARE_ARROW_RE.match(line)
-        if bare and not _EXAMPLE_RE.search(line):
-            texts += [bare.group(1), bare.group(2)]
-    return texts
+    examples = getattr(rule_set, "examples", None) or []
+    if not examples or not rules_text:
+        return []
+    haystack = _norm_text(rules_text)
+    return [(e["from"], e["to"]) for e in examples
+            if _norm_text(e["from"]) in haystack and _norm_text(e["to"]) in haystack]
 
 
-def _example_leak(value: str, answer: str, rules_text: str, allowed: set = frozenset()) -> list[str]:
+def _example_leak(value: str, answer: str, rules_text: str, allowed: set = frozenset(),
+                  examples: list[tuple[str, str]] | None = None) -> list[str]:
     """Слова ответа, взятые из записи-примера документа, а не из этой записи.
 
     «Dependent, pressure» превращалось в «Pressure independent»: пример документа —
@@ -369,15 +379,17 @@ def _example_leak(value: str, answer: str, rules_text: str, allowed: set = froze
     из исходной стороны примера — это содержимое чужой записи; в ответ оно может попасть, только
     если есть и в этой записи. Исключение — пример, чья исходная запись целиком входит в эту
     («Al» → «Aluminium» для записи «Al»): тогда его результат и есть предписанный ответ.
+    Примеры (обе стороны) — из карточек документа (_examples_in).
     """
     # слова — буквенные цепочки: в «DN32» слово «DN» есть, и «DN 32» из записи не заимствует
     words = lambda text: {w.lower() for w in re.findall(r"[^\W\d_]+", str(text)) if len(w) > 1}
     value_words = words(value)
+    pairs = examples or []
     licensed: set = set()
-    for left, right in _EXAMPLE_RE.findall(str(rules_text)):
+    for left, right in pairs:
         if words(left) and words(left) <= value_words:
             licensed |= words(right)
-    foreign = set().union(*[words(s) for s in _example_texts(rules_text)]) if rules_text else set()
+    foreign = set().union(*[words(side) for pair in pairs for side in pair]) if pairs else set()
     # единица («in» против записанного «inch») — не содержимое чужой записи; pint различает
     # регистр («kPa», но не «kpa»), поэтому проверяется написание из самого ответа
     written = {w.lower(): w for w in re.findall(r"[^\W\d_]+", str(answer))}
@@ -401,11 +413,12 @@ def _rejection_reason(attribute: str, value: str, answer: str, rule_set,
     if _root_misapplied(answer, rule_set, value):
         return "корень обозначения навешен не на его номер — оставлено как записано"
     if (_unit_relabelled(attribute, value, answer)
-            and not _relabel_sanctioned(value, answer, rules_text)):
+            and not _relabel_sanctioned(value, answer, rule_set, rules_text, attribute)):
         return "единица подменена без пересчёта — оставлено как записано"
     if _root_invented(value, answer, rule_set, attribute):
         return "запись не называет это обозначение — оставлено как записано"
-    leak = _example_leak(value, answer, rules_text, _document_word_tokens(rule_set, attribute))
+    leak = _example_leak(value, answer, rules_text, _document_word_tokens(rule_set, attribute),
+                         _examples_in(rule_set, rules_text))
     if leak:
         return ("в ответе слово из примера документа, которого нет в записи («"
                 + "», «".join(leak) + "») — оставлено как записано")
@@ -470,12 +483,72 @@ def _conversion_of_designation(attribute: str, value: str, answer: str, model,
     Класс давления пишут «в фунтах» («Rating: 800 lbs»), и модель честно переводила его в
     килограммы — 362.87 kg. По одной записи класс от массы не отличить, это видно по атрибуту,
     поэтому, только когда ответ — пересчёт, модель один раз на атрибут отвечает, величина ли он.
+    Пересчёт ли это (та же размерность, другая единица), решает pint по разбору модели.
     Пустая строка — пересчёт законный или его не было.
     """
-    if model is None or not unit_converted(value, answer):
+    if model is None:
         return ""
-    unit = _VALUE_UNIT_RE.match(str(value))
-    if _records_quantity(model, attribute, value, unit.group(1) if unit else value, context):
+    recorded, parsed = parse(value, attribute), parse(answer)
+    if recorded is None or parsed is None or not recorded.single or not parsed.single:
+        return ""
+    was, now = recorded.single, parsed.single
+    if not (was.unit and now.unit and same_dimension(was.unit, now.unit)
+            and unit_mismatch(was.unit, now.unit)):  # отметка давления — не пересчёт
+        return ""
+    if _records_quantity(model, attribute, value, was.unit_text or was.unit, context):
         return ""
     return ("атрибут — класс или обозначение, а не величина: пересчёт единиц отменён — "
             "оставлено как записано")
+
+
+CONVERSION_TOLERANCE = 0.01  # относительная; номинальные размеры («4 in» → «100 mm») на 1.6% — не ошибка счёта
+
+
+def _decimals_of(number: str) -> int:
+    """Знаков после запятой в числе как записано: «3.50» → 2, «1 000,5» → 1."""
+    text = str(number).strip().replace(",", ".")
+    return len(text.rsplit(".", 1)[1]) if "." in text else 0
+
+
+def _conversion_arithmetic(attribute: str, value: str, answer: str) -> str:
+    """Сходится ли число в ответе с пересчётом записи: «350 kPag» → «35 barg» не сходится.
+
+    Модель то вызывает инструмент пересчёта, то считает в уме и ошибается на порядок, а ни одна
+    другая проверка этого не видит: единицы в ответе законные. Считает pint по разбору записи
+    и ответа; расхождение больше округления ответа и CONVERSION_TOLERANCE — повод показать
+    строку человеку (ответ не откатывается: правило документа могло велеть округлить иначе).
+    Пустая строка — пересчёта нет или он верный. Отметка давления у сторон разная — не судим.
+    """
+    recorded, parsed = recorded_quantity(parse(value, attribute)), parse(answer)
+    now = parsed.single if parsed else None
+    if recorded is None or now is None or recorded.value is None or now.value is None:
+        return ""
+    if not (recorded.unit and now.unit and same_dimension(recorded.unit, now.unit)
+            and unit_mismatch(recorded.unit, now.unit)):
+        return ""  # единица та же или это не пересчёт
+    if recorded.reference != now.reference:
+        return ""  # манометрическое ↔ абсолютное: к пересчёту добавляется атмосфера
+    expected = convert_value(recorded.value, recorded.unit, now.unit)
+    if expected is None:
+        return ""
+    allowed = max(abs(expected) * CONVERSION_TOLERANCE, 0.5 * 10 ** -_decimals_of(now.number))
+    if abs(expected - now.value) <= allowed:
+        return ""
+    return (f"число не сходится с пересчётом: {recorded.number} {recorded.unit} = "
+            f"{expected:.6g} {now.unit}, в ответе {now.number} — проверьте вручную")
+
+
+# Число с нулями в конце дробной части: «20.0», «5.50», «0.00». Не трогаем число внутри
+# обозначения («B16.10», «2.50X»): перед ним буква или цифра, после — буква.
+_TRAILING_ZERO_RE = re.compile(r"(?<![A-Za-z\d.])(\d+)\.(\d*?)0+(?=\s|$|[^\w.])")
+
+
+def _drop_trailing_zeros(answer: str) -> str:
+    """«20.0 mbarg» → «20 mbarg», «5.50 m» → «5.5 m», «0.00 to 0.25 bar» → «0 to 0.25 bar».
+
+    Только для документа, чьи общие положения прямо велят убирать такие нули (поле
+    trailing_zeros карточки). Модель читала «округлить до одного знака» как «показать один знак»
+    и писала «50.0 kg»; документ с фиксированным числом знаков («0.630 in.») сюда не попадает.
+    """
+    return _TRAILING_ZERO_RE.sub(lambda m: m.group(1) + (f".{m.group(2)}" if m.group(2) else ""),
+                                 str(answer))

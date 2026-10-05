@@ -95,9 +95,15 @@ def build_units(pages: list[dict]) -> list[dict]:
         if text in running or re.fullmatch(r"Page \d+ of \d+", text):
             continue
         if kind == "heading":
-            section = text
             match = CLAUSE_RE.match(text)
             heading_clause = match.group(1) if match else ""
+            # VLM размечает заголовком и целый пункт правила («11.4 Valve operators are written
+            # Handwheel, with 'HW'…»). Как название раздела его текст в правила не попадал:
+            # в одном документе так пропал 31 пункт. Пункт — это номер x.y и полноценный текст.
+            if match and "." in match.group(1) and (len(text) > 80 or text.rstrip().endswith(".")):
+                units.append({"kind": "clause", "section": section, "text": text})
+                continue
+            section = text
             continue
         last = units[-1] if units else None
         if kind == "paragraph" and last and last["kind"] == "clause" and ATTACHED_RE.match(text):

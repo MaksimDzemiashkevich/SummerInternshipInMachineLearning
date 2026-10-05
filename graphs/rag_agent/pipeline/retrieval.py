@@ -7,7 +7,7 @@ from ..modules.config import hybrid_search, RULE_SET_LIBRARY, document_id, value
 from ..modules.tables import table_references
 from .common import _attribute_matches, _normalize_phrase, logger
 from .subjects import _equipment_kind, _row_class, _select_by_subject
-from .deterministic import _registers_for_attribute, _synonym_tables_for_attribute
+from .deterministic import RULE_CARDS, _registers_for_attribute, _synonym_tables_for_attribute
 
 
 RETRIEVAL_K = 4
@@ -15,6 +15,49 @@ RETRIEVAL_K = 4
 
 # Сколько групп добавить по форме значения, когда имя атрибута не привело ни к одной.
 MAX_SHAPE_GROUPS = 2
+
+
+def _render_card(name: str, card: dict) -> str:
+    """Карточка группы для промпта: только непустые поля, коротко."""
+    lines = [f"Rule card — {name} (the document's rules for this attribute, restated "
+             f"unambiguously; the source text follows where it is given):"]
+    if card.get("written_form"):
+        lines.append(f"- Written form: {card['written_form']}")
+    if card.get("unit") or card.get("decimals") is not None:
+        unit = f"unit {card['unit']}" if card.get("unit") else ""
+        decimals = (f"{card['decimals']} decimal places" if card.get("decimals") is not None else "")
+        lines.append("- Stored as: " + ", ".join(x for x in (unit, decimals) if x))
+    if card.get("values"):
+        closed = ("closed list: a value not in it is not approximated"
+                  if card.get("closed") else "examples, not a closed list")
+        lines.append(f"- Values ({closed}): " + "; ".join(map(str, card["values"])))
+    if card.get("not_listed"):
+        lines.append(f"- A value not listed: {card['not_listed']}")
+    if card.get("accepted"):
+        lines.append("- Accepted forms, each written as the form after the arrow: "
+                     + "; ".join(f"{p['form']} -> {p['written']}" for p in card["accepted"]))
+    for i, step in enumerate(card.get("steps") or [], 1):
+        lines.append(f"- Step {i}: {step}")
+    for exception in card.get("exceptions") or []:
+        lines.append(f"- Exception: {exception}")
+    for unclear in card.get("unclear") or []:
+        lines.append(f"- Left open by the document: {unclear}")
+    return "\n".join(lines)
+
+
+def _render_global_card(card: dict) -> str:
+    lines = ["General rules of this document for every attribute, restated unambiguously:"]
+    lines += [f"- {step}" for step in card.get("steps") or []]
+    if card.get("accepted"):
+        lines.append("- Forms written as the form after the arrow, for any attribute: "
+                     + "; ".join(f"{p['form']} -> {p['written']}" for p in card["accepted"]))
+    lines += [f"- Left open by the document: {u}" for u in card.get("unclear") or []]
+    return "\n".join(lines)
+
+
+def _starts_with_name(body: str, name: str) -> bool:
+    """Тело группы уже начинается с её имени — заголовок только повторил бы его."""
+    return body.lstrip().lower().startswith(name.strip().lower())
 
 
 def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
@@ -33,10 +76,12 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
     # Группа с именем (или алиасом) самого атрибута — это и есть правило для него; ранг
     # похожести тут ничего не решает, а без неё строка остаётся без своего правила.
     named = False
+    own: set[str] = set()  # группы, названные именем или алиасом самого атрибута
     for group in rule_set.groups:
         names = [group.attribute] + list(group.aliases)
         if any(n and _attribute_matches(attribute, n) for n in names):
             named = True
+            own.add(group.attribute)
             pair = (group.attribute, group.body)
             if pair not in pairs:
                 logger.info("  [SEARCH] группа по имени атрибута: %r", group.attribute)
@@ -70,7 +115,12 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
         blocks.append(f"The item recorded in this row is a {kind}. Where a rule or a table of "
                       f"this document distinguishes kinds of equipment, this is the kind whose "
                       f"entry applies.")
-    if rule_set.global_rules:
+    cards = getattr(rule_set, "cards", None) or {}
+    use_cards = RULE_CARDS in ("on", "compact") and bool(cards)
+    if use_cards and rule_set.global_card:
+        blocks.append(_render_global_card(rule_set.global_card))
+    # в компактном режиме сырые общие положения заменены их карточкой
+    if rule_set.global_rules and not (RULE_CARDS == "compact" and use_cards and rule_set.global_card):
         blocks.append(rule_set.global_rules)
     row_class = _row_class(rule_set, context, model)
     if row_class:
@@ -83,8 +133,20 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
         logger.info("  [SEARCH] Rule %d: %r | %r", idx + 1, name, body[:100])
         if name:
             names.append(name)
+        card = cards.get(name) if use_cards else None
+        if card:
+            rendered = _render_card(name, card)
+            if rendered not in blocks:
+                blocks.append(rendered)
+            # компактно: сырой текст — только у группы самого атрибута, у соседних — карточка
+            if RULE_CARDS == "compact" and name not in own:
+                continue
         if body not in blocks:
-            blocks.append(body)
+            # В извлечённой таблице-словаре «атрибут — форма записи» название атрибута в тексте
+            # не остаётся, и модель не узнаёт правило как своё («Accuracy: 0.1% FS» не получал
+            # «Standard form: +/-, the number…»). Имя группы конвейер знает — ставим его заголовком.
+            blocks.append(f"Rules for {name}:\n{body}" if name and not _starts_with_name(body, name)
+                          else body)
 
     if not blocks:
         return ("No relevant rules were found in the knowledge base for this attribute.",
@@ -114,7 +176,9 @@ def _table_blocks(rule_set, attribute: str, local_text: str, text: str) -> list[
     tables = getattr(rule_set, "tables", None) or {}
     if not tables:
         return []
-    wanted = _synonym_tables_for_attribute(rule_set, attribute) + table_references(local_text)
+    # перечень синонимов назван своим заголовком («Table 12.41 — Roof types»): номер — из него
+    wanted = ([n for list_id in _synonym_tables_for_attribute(rule_set, attribute)
+               for n in table_references(list_id)] + table_references(local_text))
     quoted: list[str] = []
     for table_id in dict.fromkeys(wanted):
         table = tables.get(table_id)

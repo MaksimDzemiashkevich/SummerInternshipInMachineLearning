@@ -4,9 +4,8 @@ import re
 from collections import Counter
 
 from ..modules.system_prompts import RECONCILE_PROMPT
-from ..modules.tools import unit_mismatch
-from .common import (_NUM_UNIT_RE, _alnum, _char_bag, _digit_groups, _norm_attr, _normalize_phrase,
-                     _unit_key, logger)
+from .parsing import is_measure, parse, parse_many
+from .common import _alnum, _char_bag, _digit_groups, _norm_attr, _normalize_phrase, logger
 from .retrieval import build_rules_text
 from .normalizer import _invoke_with_tools
 
@@ -187,20 +186,25 @@ def _canonicalize_units(rows: list[dict]) -> list[dict]:
 
     Значения разные, поэтому предыдущий проход их не сливает, а документ пишет единицу одним
     способом («in.»), модель же ставит точку через раз. Выбирается самое частое написание, при
-    равенстве — более полное: сокращать то, что документ написал с точкой, мы не вправе.
+    равенстве — ничего: сокращать то, что документ написал с точкой, мы не вправе. Число,
+    единицу и её написание даёт разбор модели; одна ли это единица, решает pint.
     """
+    parse_many([(str(row["Rules_Value"]), "") for row in rows])
+    parts: dict[int, tuple] = {}
     groups: dict[tuple, list[int]] = {}
     for i, row in enumerate(rows):
-        m = _NUM_UNIT_RE.fullmatch(str(row["Rules_Value"]))
-        if not m or not unit_mismatch(m.group(3), "count"):
-            continue  # не единица измерения — сводить написание нечего
-        key = (_norm_attr(row["Attribute"]), _norm_attr(row.get("Context", "")),
-               _unit_key(m.group(3)))
+        answer = str(row["Rules_Value"]).strip()
+        parsed = parse(answer)
+        q = parsed.single if parsed else None
+        if (q is None or not q.unit_text or not is_measure(q.unit)
+                or f"{q.number}{' ' if q.space else ''}{q.unit_text}" != answer):
+            continue  # не одно число с единицей — сводить написание нечего
+        parts[i] = (q.number, " " if q.space else "", q.unit_text)
+        key = (_norm_attr(row["Attribute"]), _norm_attr(row.get("Context", "")), q.unit, q.reference)
         groups.setdefault(key, []).append(i)
 
     for indices in groups.values():
-        spellings = [_NUM_UNIT_RE.fullmatch(str(rows[i]["Rules_Value"])).group(3)
-                     for i in indices]
+        spellings = [parts[i][2] for i in indices]
         if len(set(spellings)) < 2:
             continue
         counts = Counter(spellings)
@@ -211,10 +215,12 @@ def _canonicalize_units(rows: list[dict]) -> list[dict]:
             continue
         logger.info("  [UNIT] %r -> %r", sorted(set(spellings)), canonical)
         for i in indices:
-            m = _NUM_UNIT_RE.fullmatch(str(rows[i]["Rules_Value"]))
-            fixed = f"{m.group(1)}{m.group(2)}{canonical}"
+            number, space, _ = parts[i]
+            fixed = f"{number}{space}{canonical}"
             if fixed != str(rows[i]["Rules_Value"]):
                 _note_row(rows[i], f"написание единицы сведено к «{canonical.strip()}» "
                                    f"(как в остальных строках этого атрибута)")
             rows[i]["Rules_Value"] = fixed
     return rows
+
+

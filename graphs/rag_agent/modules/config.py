@@ -13,7 +13,7 @@ from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
-from .tables import DocTable, load_tables, synonym_map, synonym_owners
+from .tables import MAX_FORM_CHARS, DocTable, form_key, load_tables, table_references
 from .tools import array_of_tools
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,28 +47,19 @@ class GroupEntry:
 
 
 _SHAPE_NUMBER_RE = re.compile(r"\d+(?:[.,]\d+)?")
-_SHAPE_EXAMPLE_RE = re.compile(
-    r"[\"“']([^\"“”']{1,80})[\"”']\s*(?:->|→|becomes)\s*[\"“']([^\"“”']{1,80})[\"”']")
 
 
 def value_shape(text: str) -> str:
     """Форма числового значения: числа → «9», без пробелов и регистра.
 
     «600 x 600mm» и «500 x 1200mm» — одна форма «9x9mm», «2.5 bar» и «1.5 bar» — «9bar».
-    У значения без цифр формы нет: по словам совпадает слишком многое.
+    У значения без цифр формы нет: по словам совпадает слишком многое. Формы групп берутся
+    из примеров их карточек (rule_cards.json), а не из стрелок, найденных в тексте регуляркой.
     """
     text = str(text).strip().lower()
     if not re.search(r"\d", text):
         return ""
     return re.sub(r"\s+", "", _SHAPE_NUMBER_RE.sub("9", text))
-
-
-def _example_shapes(body: str) -> set[str]:
-    """Формы обеих сторон примеров группы («"2.5 bar" → "250 kPa"» → {"9bar", "9kpa"})."""
-    shapes = set()
-    for left, right in _SHAPE_EXAMPLE_RE.findall(body):
-        shapes.update(s for s in (value_shape(left), value_shape(right)) if s)
-    return shapes
 
 
 @dataclass
@@ -98,6 +89,13 @@ class RuleSet:
     universal_synonyms: list[str] = field(default_factory=list)
     # класс изделия → его правила (определение, таблица атрибутов, пункты раздела класса)
     class_blocks: dict[str, str] = field(default_factory=dict)
+    # карточки правил (rule_cards.json): однозначный пересказ групп и общих положений,
+    # и принятые формы из них, годные для детерминированной замены (группа → форма → запись)
+    cards: dict[str, dict] = field(default_factory=dict)
+    global_card: dict = field(default_factory=dict)
+    card_forms: dict[str, dict[str, str]] = field(default_factory=dict)
+    # примеры «было → стало» из карточек: [{"from", "to", "group"}]
+    examples: list[dict] = field(default_factory=list)
 
 
 @dataclass
@@ -159,10 +157,40 @@ def _split_groups(groups: list[dict]) -> tuple[str, list[GroupEntry]]:
                 continue
             aliases = [a.strip() for a in group.get("aliases", []) if a and a.strip()]
             entries.append(GroupEntry(attribute=header, aliases=aliases, body=body,
-                                      parent=group.get("parent", "") or header,
-                                      shapes=_example_shapes(body)))
+                                      parent=group.get("parent", "") or header))
 
     return "\n".join(global_rules), entries
+
+
+def _load_rule_cards(doc_dir: Path) -> tuple[dict, dict[str, dict], dict[str, dict[str, str]]]:
+    """(общая карточка, карточки групп, принятые формы групп) из rule_cards.json, если он есть.
+
+    Для детерминированной замены берутся только пары, чья запись входит в перечень значений
+    самой карточки: карточку пишет модель, и пара «Cv → the number only» — описание шага, а
+    не значение. Такие пары остаются в карточке для модели, но вслепую не применяются.
+    """
+    path = doc_dir / "rule_cards.json"
+    if not path.exists():
+        return {}, {}, {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}, {}, {}
+    cards = data.get("groups") or {}
+    forms: dict[str, dict[str, str]] = {}
+    for name, card in cards.items():
+        values = {form_key(v): str(v).strip() for v in card.get("values") or [] if str(v).strip()}
+        mapping: dict[str, str] = {}
+        for pair in card.get("accepted") or []:
+            written = values.get(form_key(pair.get("written", "")))
+            if written:
+                mapping.setdefault(form_key(pair.get("form", "")), written)
+        # сама запись в другом регистре — тоже она: «seamless» → «Seamless»
+        for key, written in values.items():
+            mapping.setdefault(key, written)
+        if mapping:
+            forms[name.strip().lower()] = mapping
+    return data.get("global") or {}, cards, forms
 
 
 def _class_blocks(groups: list[dict]) -> dict[str, str]:
@@ -310,21 +338,12 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         phrase_map = _load_phrase_rules(path.parent)
         phrase_attributes = _load_phrase_attributes(path.parent)
         tables = load_tables(path.parent)
-        synonyms = {tid: m for tid, table in tables.items() if (m := synonym_map(table))}
-        owners, universal = synonym_owners(groups, tables, synonyms)
+        roles = _load_table_roles(path.parent)
+        _link_cited_lists(roles, groups, tables)
+        synonyms, owners, universal = roles.synonyms, roles.synonym_owners, roles.universal
         if synonyms:
-            logger.info("Документ %r: таблиц синонимов %d, атрибутов с ними %d.",
+            logger.info("Документ %r: перечней синонимов %d, атрибутов с ними %d.",
                         name, len(synonyms), len(owners))
-        # таблицы «описание → код», оставшиеся строками правил, тоже образуют закрытый реестр;
-        # строки таблиц синонимов туда не идут — там направление обратное (много форм → одна)
-        table_pairs, table_attributes = _extract_table_pairs(
-            groups, deterministic, [tables[t].title for t in synonyms],
-            [{c.strip().lower() for c in tables[t].columns} for t in synonyms])
-        if table_pairs:
-            logger.info("Документ %r: из текста правил добавлено %d пар закрытого реестра.",
-                        name, len(table_pairs))
-        phrase_map = {**table_pairs, **phrase_map}
-        phrase_attributes = {**table_attributes, **phrase_attributes}
         deterministic_order = _load_deterministic_order(path.parent)
         deterministic_attributes = _load_deterministic_attributes(path.parent)
         closed_registers = _build_closed_registers(phrase_map, deterministic,
@@ -334,6 +353,13 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
             closed_registers, phrase_attributes, deterministic_attributes)
         if not attribute_to_register:
             attribute_to_register = _derive_attribute_to_register(groups, closed_registers)
+        # реестры кодов, которые модель нашла в тексте групп при загрузке документа
+        # (table_roles.json); раньше их выискивал в строках правил разбор регулярками
+        closed_registers.update(roles.registers)
+        for attribute, register_ids in roles.register_owners.items():
+            for register_id in register_ids:
+                if register_id not in attribute_to_register.setdefault(attribute, []):
+                    attribute_to_register[attribute].append(register_id)
         if phrase_map and not closed_registers:
             logger.warning(
                 "Документ %r: есть фразовые пары (phrase_rules.json), но ни одна не отнесена "
@@ -350,6 +376,15 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
             if render_templates.pop(attribute, None):
                 logger.info("Документ %r: шаблон %r снят — знаки зависят от класса оборудования",
                             name, attribute)
+        global_card, cards, card_forms = _load_rule_cards(path.parent)
+        examples = [{**e, "group": name} for name, card in cards.items()
+                    for e in card.get("examples") or []]
+        examples += [{**e, "group": ""} for e in global_card.get("examples") or []]
+        # форма значения группы — по её примерам из карточки, а не по стрелкам в тексте
+        for entry in entries:
+            card_examples = (cards.get(entry.attribute) or {}).get("examples") or []
+            entry.shapes = {sh for e in card_examples
+                            for sh in (value_shape(e["from"]), value_shape(e["to"])) if sh}
         clause_index = {**_build_clause_index(global_rules, entries),
                         **_clause_index_from_pages(path.parent)}
         group_subjects = _load_subjects(path.parent)
@@ -357,7 +392,7 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         if len(distinct_subjects) > 1:
             logger.info("Документ %r описывает несколько предметов: %s",
                         name, sorted(distinct_subjects))
-        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects, tables=tables, synonyms=synonyms, synonym_owners=owners, universal_synonyms=universal, class_blocks=_class_blocks(groups)))
+        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects, tables=tables, synonyms=synonyms, synonym_owners=owners, universal_synonyms=universal, class_blocks=_class_blocks(groups), global_card=global_card, cards=cards, card_forms=card_forms, examples=examples))
         RULE_SET_LIBRARY[document_id(name)] = rule_sets[-1]
 
     return rule_sets
@@ -462,104 +497,118 @@ def _is_register_pair(phrase: str, code: str, keyword_pairs: set[str] = frozense
     return _is_code_like(code) and (" " in phrase.strip() or _is_indexed_code(code))
 
 
-# Ячейка строки-таблицы: «<подпись колонки>: '<значение>'». Колонок бывает две и больше.
-_TABLE_CELL_RE = re.compile(r"[\w /&()-]+?:\s*['\"“”](.+?)['\"“”]\s*(?:;|$)")
+@dataclass
+class TableRoles:
+    synonyms: dict[str, dict[str, str]] = field(default_factory=dict)  # перечень → форма → запись
+    synonym_owners: dict[str, list[str]] = field(default_factory=dict)  # атрибут → перечни
+    universal: list[str] = field(default_factory=list)                  # перечни для любого атрибута
+    registers: dict[str, dict[str, str]] = field(default_factory=dict)  # реестр → наименование → код
+    register_owners: dict[str, list[str]] = field(default_factory=dict)
 
 
-def _looks_like_code(text: str) -> bool:
-    """Похоже ли значение ячейки на идентификатор, а не на описание."""
-    text = text.strip()
-    # «Close-coupled» — слово через дефис, а не код: у кодов нет строчных слов
-    return (bool(text) and " " not in text and not re.search(r"[a-z]{3,}", text)
-            and (_is_indexed_code(text) or len(text) <= 6))
+def _load_table_roles(doc_dir: Path) -> TableRoles:
+    """Перечни соответствий значений из table_roles.json (graphs/structured_documents/table_roles.py).
 
-
-def _orient_table_row(cells: list[str]) -> tuple[str, str] | None:
-    """Возвращает (описание, код) из ячеек строки таблицы, сколько бы колонок в ней ни было.
-
-    Порядок колонок в документе произвольный: «Joint Type: 'X'; Abbreviation: 'Y'» и
-    «Code: 'Y'; Description: 'X'» — одно и то же, поэтому роль колонки определяется по виду
-    значения, а не по позиции. Если описания нет или кодов сразу несколько («Numeric code:
-    'ECC-101'; Description: '...'; Abbreviation: 'RF'»), решить, какой из них требуется,
-    по одной строке нельзя — такую таблицу не трогаем, пусть её читает модель.
+    Роль каждого перечня (реестр кодов, синонимы, пересчёт, примеры, прочее) определила модель
+    при загрузке документа, а пары проверены по тексту группы. Код здесь не решает, какая
+    колонка — код, а какая — описание: раньше это угадывалось по виду ячейки, и таблица
+    коэффициентов пересчёта становилась реестром. Перечень общих положений действует, только
+    если модель отметила его как применимый к любому атрибуту; реестры общих положений не берутся.
+    Форма, которая в одном перечне ведёт к двум разным записям, отбрасывается: решает модель.
     """
-    codes = [c for c in cells if _looks_like_code(c)]
-    descriptions = [c for c in cells if not _looks_like_code(c)]
-    if len(codes) != 1 or len(descriptions) != 1:
-        return None
-    return descriptions[0], codes[0]
-
-
-def _split_table_row(line: str) -> list[str]:
-    """Ячейки строки таблицы в любой из двух форм, которыми её оставляет извлечение.
-
-    Первая — «Joint Type: 'X'; Abbreviation: 'Y'», вторая — колонки через вертикальную черту
-    («Electric motor, squirrel cage | DRV-EM»). Вторую раньше не разбирали вовсе, и таблица
-    кодов такого документа просто не становилась закрытым реестром.
-    """
-    cells = [c.strip() for c in _TABLE_CELL_RE.findall(line)]
-    if len(cells) >= 2:
-        return cells
-    if "|" in line:
-        cells = [c.strip() for c in line.split("|")]
-        return cells if 2 <= len(cells) <= 4 and all(c and len(c) <= 60 for c in cells) else []
-    # третья форма: «Описание -> КОД». Строку примера пропускаем: там стрелка показывает
-    # преобразование значения, а не строку таблицы.
-    if re.search(r"->|→", line) and not re.match(r"\s*EXAMPLE", line, re.I):
-        cells = [c.strip().strip("\"'“”") for c in re.split(r"->|→", line)]
-        return cells if len(cells) == 2 and all(c and len(c) <= 60 for c in cells) else []
-    return []
-
-
-# Подписи ячеек строки таблицы: «<подпись>: '<значение>'».
-_CELL_LABEL_RE = re.compile(r"(?:^|;\s*)(?:\[[^\]]*\]\s*)?([\w /&()-]+?):\s*['\"“”]")
-# Колонка, которая держит ГОТОВУЮ форму значения («Written form», «Canonical value»,
-# «Normalized value»): строка такой таблицы читается от записи к этой форме, и прочесть её как
-# «описание → код» значит перевернуть — «SCH STD» стал описанием кода «STD».
-_RESULT_LABEL_RE = re.compile(r"\b(?:written form|canonical|normali[sz]ed)\b")
-
-
-def _extract_table_pairs(groups: list[dict],
-                         deterministic: dict[str, str] | None = None,
-                         skip_titles: list[str] | None = None,
-                         skip_columns: list[set[str]] | None = None
-                         ) -> tuple[dict[str, str], dict[str, str]]:
-    """Достаёт из тела local-групп строки таблиц «описание → код» вместе с их атрибутом.
-
-    Документ может не выносить такую таблицу в отдельный файл на этапе извлечения, оставив
-    её строками правил. Без этого закрытый реестр для атрибута не строится вовсе, и код
-    подбирает LLM по тексту — то есть может выдумать отсутствующий в таблице код.
-    Пары keyword→root (таблица корней обозначений) сюда не попадают: это не список значений,
-    и в закрытом реестре им не место.
-    """
-    roots = {k.strip().lower() for k in (deterministic or {})}
-    pairs: dict[str, str] = {}
-    origins: dict[str, str] = {}
-    for group in groups:
-        if group.get("type") == "global":
+    roles = TableRoles()
+    path = doc_dir / "table_roles.json"
+    if not path.exists():
+        return roles
+    try:
+        lists = json.loads(path.read_text(encoding="utf-8")).get("lists") or []
+    except (json.JSONDecodeError, OSError, AttributeError):
+        return roles
+    for item in lists:
+        role, pairs = item.get("role"), item.get("pairs") or []
+        if role not in ("register", "synonyms") or not pairs:
             continue
-        attribute = (group.get("attribute") or "").strip()
-        for rule in group.get("rules", []):
-            for line in str(rule).splitlines():
-                if any(t and t in line for t in skip_titles or ()):
-                    continue
-                labels = {l.strip().lower() for l in _CELL_LABEL_RE.findall(line)}
-                if any(labels == c for c in skip_columns or ()) or any(
-                        _RESULT_LABEL_RE.search(l) for l in labels):
-                    continue
-                cells = _split_table_row(line)
-                if len(cells) < 2:
-                    continue
-                oriented = _orient_table_row(cells)
-                if not oriented:
-                    continue
-                phrase, code = oriented
-                if phrase.strip().lower() in roots:
-                    continue  # это корень обозначения, а не пункт списка значений
-                if phrase and code and _is_register_pair(phrase, code):
-                    pairs[phrase] = code
-                    origins[phrase] = attribute
-    return pairs, origins
+        # владелец — атрибут, чьи значения перечислены (его называет модель); группа, в тексте
+        # которой перечень оказался, — не всегда он: «Detection principle» лежал в группе «Gas»
+        group = str(item.get("attribute") or item.get("group") or "").strip()
+        is_global = bool(item.get("global"))
+        if is_global and (role == "register" or not item.get("any_attribute")):
+            continue
+        # имя перечня — его заголовок; оно же идёт в колонку «применено»
+        title = str(item.get("title") or "").strip()
+        base = f"{title} ({group})" if title and group and group.lower() not in title.lower() else (title or group)
+        list_id, n = base, 1
+        while list_id in roles.synonyms or list_id in roles.registers:
+            n += 1
+            list_id = f"{base} #{n}"
+        if role == "register":
+            # пара, чья фраза называет сам атрибут («Class» → корень в группе «class»), — корень
+            # обозначения, к которому приписывается номер, а не пункт реестра
+            entries = {p["form"]: p["value"] for p in pairs
+                       if not _names_its_attribute(p["form"], group)}
+            # записанный код — тоже пункт реестра: «Class 150» при паре «150 → Class 150»
+            for code in list(entries.values()):
+                entries.setdefault(code, code)
+            if not entries:
+                continue
+            roles.registers[list_id] = entries
+            roles.register_owners.setdefault(group.lower(), []).append(list_id)
+            continue
+        mapping: dict[str, str] = {}
+        clashing: set[str] = set()
+        for pair in pairs:
+            form, value = pair["form"], pair["value"]
+            if len(form) > MAX_FORM_CHARS or len(value) > MAX_FORM_CHARS:
+                continue  # описание, а не форма значения
+            for key in (form_key(form), form_key(value)):
+                if mapping.setdefault(key, value) != value:
+                    clashing.add(key)
+        mapping = {k: v for k, v in mapping.items() if k not in clashing}
+        if not mapping:
+            continue
+        roles.synonyms[list_id] = mapping
+        if item.get("any_attribute"):
+            roles.universal.append(list_id)
+        else:
+            roles.synonym_owners.setdefault(group.lower(), []).append(list_id)
+    return roles
+
+
+def _link_cited_lists(roles: TableRoles, groups: list[dict], tables: dict[str, DocTable]) -> None:
+    """Перечень с номером таблицы в заголовке действует и для атрибутов, которые на неё ссылаются.
+
+    Таблица синонимов часто стоит в своём разделе, а атрибут лишь ссылается на неё: правилом
+    своей группы («see Table 12.41») или строкой таблицы-указателя атрибутов («Attribute: 'Roof
+    type'; Written form: 'Canonical value of Table 12.41'»). Модель видит перечень в группе, где
+    он стоит; кто ещё на него ссылается, видно по номеру таблицы.
+    """
+    by_number: dict[str, list[str]] = {}
+    for list_id in roles.synonyms:
+        for number in table_references(list_id):
+            by_number.setdefault(number, []).append(list_id)
+    if not by_number:
+        return
+
+    def add(attribute: str, numbers: list[str]) -> None:
+        key = str(attribute).strip().lower()
+        for list_id in (l for n in numbers for l in by_number.get(n, [])):
+            if key and list_id not in roles.universal \
+                    and list_id not in roles.synonym_owners.setdefault(key, []):
+                roles.synonym_owners[key].append(list_id)
+
+    for group in groups:
+        if group.get("type") != "global":
+            add(group.get("attribute", ""), table_references("\n".join(map(str, group.get("rules", [])))))
+    for table in tables.values():
+        attribute_column = next((c for c in table.columns if c.strip().lower() == "attribute"), None)
+        for row in table.rows if attribute_column else []:
+            if attribute_column in row:
+                add(row[attribute_column], [n for v in row.values() for n in table_references(v)])
+            else:
+                # имя атрибута распознано ключом строки: {'Sensor type': 'Canonical value of Table 12.46'}
+                for key, cell in row.items():
+                    if key not in table.columns:
+                        add(key, table_references(cell))
 
 
 def _names_its_attribute(phrase: str, owner: str) -> bool:

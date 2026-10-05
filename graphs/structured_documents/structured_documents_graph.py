@@ -30,6 +30,8 @@ import fitz
 from langchain_openai import ChatOpenAI
 
 from graphs.structured_documents.subject_tagging import tag_subjects
+from graphs.structured_documents.rule_cards import compile_cards
+from graphs.structured_documents.table_roles import classify_lists
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph, MessagesState
 from PIL import Image as PILImage
@@ -43,10 +45,10 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 
 vlm = ChatOpenAI(
-    model="cyankiwi/Qwen3-VL-8B-Instruct-AWQ-4bit",
-    base_url="https://skillet-appealing-broken.ngrok-free.dev/v1",
-    api_key="not-needed",
-    max_tokens=4900,
+    model=settings.VL_model,
+    base_url=settings.VL_url,
+    api_key=settings.VL_api_key,
+    max_tokens=settings.VL_max_tokens,
 )
 
 class MessagesState(MessagesState):
@@ -573,18 +575,56 @@ def subject_tagging_node(state: MessagesState) -> MessagesState:
     return {"rule_groups": rule_groups}
 
 
+def rule_cards_node(state: MessagesState) -> MessagesState:
+    """Составляет карточки правил (rule_cards.json): документ толкуется один раз при загрузке.
+
+    Рантайм берёт из них принятые формы («SMLS» → «Seamless») и заменяет их без модели. Шаг
+    необязательный — при ошибке файл не пишется. Отдельно, без перегонки PDF:
+        venv2/Scripts/python -m graphs.structured_documents.rule_cards --doc <папка документа>
+    """
+    rule_groups = state.get("rule_groups") or []
+    try:
+        cards_llm = ChatOpenAI(model=settings.llmodel, max_tokens=16000, temperature=0,
+                               model_kwargs={"response_format": {"type": "json_object"}})
+        save_json(compile_cards(rule_groups, cards_llm), _doc_dir / "rule_cards.json")
+    except Exception as e:
+        print("RULE CARDS ERROR (пропускаем):", type(e).__name__, str(e)[:200])
+    return {"rule_groups": rule_groups}
+
+
+def table_roles_node(state: MessagesState) -> MessagesState:
+    """Роли перечней в тексте групп (table_roles.json): реестр кодов, синонимы, пересчёт, примеры.
+
+    Рантайм строит из них закрытые реестры и таблицы синонимов, вместо того чтобы разбирать
+    строки правил регулярками. Шаг необязательный — при ошибке файл не пишется. Отдельно:
+        venv2/Scripts/python -m graphs.structured_documents.table_roles --doc <папка документа>
+    """
+    rule_groups = state.get("rule_groups") or []
+    try:
+        roles_llm = ChatOpenAI(model=settings.llmodel, max_tokens=16000, temperature=0, timeout=300,
+                               model_kwargs={"response_format": {"type": "json_object"}})
+        save_json(classify_lists(rule_groups, roles_llm), _doc_dir / "table_roles.json")
+    except Exception as e:
+        print("TABLE ROLES ERROR (пропускаем):", type(e).__name__, str(e)[:200])
+    return {"rule_groups": rule_groups}
+
+
 builder = StateGraph(MessagesState)
 builder.add_node(first_node)
 builder.add_node(formatting_text_node)
 builder.add_node(grouping_rules_node)
 builder.add_node(cluster_groups_node)
 builder.add_node(subject_tagging_node)
+builder.add_node(rule_cards_node)
+builder.add_node(table_roles_node)
 builder.add_edge(START, "first_node")
 builder.add_edge("first_node", "formatting_text_node")
 builder.add_edge("formatting_text_node", "grouping_rules_node")
 builder.add_edge("grouping_rules_node", "cluster_groups_node")
 builder.add_edge("cluster_groups_node", "subject_tagging_node")
-builder.add_edge("subject_tagging_node", END)
+builder.add_edge("subject_tagging_node", "rule_cards_node")
+builder.add_edge("rule_cards_node", "table_roles_node")
+builder.add_edge("table_roles_node", END)
 graph = builder.compile()
 
 inv = graph.invoke({"messages": []})

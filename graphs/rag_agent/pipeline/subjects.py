@@ -98,6 +98,26 @@ def _row_class(rule_set, context: str, model=None) -> str:
     return _subject_by_model(model, context, tuple(sorted(classes)))
 
 
+def _item_named_in_groups(rule_set, context: str) -> list[str]:
+    """Группы правил, в имени или алиасах которых названо изделие строки.
+
+    Слова изделия берутся из значений контекста («Item: Flange FLG-5104» → «flange»), без
+    подписей колонок и без кодов с цифрами. Смотрятся только имена и алиасы групп, а не весь
+    текст правил: слово «flanged» в стандарте на клапаны не делает его стандартом на фланцы.
+    """
+    values = " ".join(part.split(":", 1)[-1] for part in str(context).split(";"))
+    words = [w.lower() for w in re.findall(r"(?<![\w-])[A-Za-z]{4,}(?![\w-])", values)]
+    if not words:
+        return []
+    found = []
+    for group in rule_set.groups:
+        names = " ".join([group.attribute] + list(group.aliases)).lower()
+        name_words = re.findall(r"[a-z]{4,}", names)
+        if any(_words_match(w, n) for w in words for n in name_words):
+            found.append(group.attribute)
+    return found
+
+
 def _document_covers_row(rule_set, context: str, model=None) -> bool:
     """Относится ли этот документ к изделию строки вообще.
 
@@ -115,6 +135,13 @@ def _document_covers_row(rule_set, context: str, model=None) -> bool:
     # у изделия есть свой раздел в документе — документ его описывает, спрашивать не о чем;
     # по одному началу документа модель «громкоговоритель» из области действия исключала
     if _row_class(rule_set, context, model):
+        return True
+    # изделие названо в именах групп правил («Flange type» для «Flange FLG-5104») — документ его
+    # описывает, даже если разметка предметов посчитала эти группы общими. Без этого проверка
+    # спрашивала модель по началу документа, где фланцев нет, и строки фланца оставались пустыми
+    named = _item_named_in_groups(rule_set, context)
+    if named:
+        logger.info("  [SCOPE] %r: изделие названо в группах правил %s", context, named[:3])
         return True
 
     key = (rule_set.name, context.strip().lower())

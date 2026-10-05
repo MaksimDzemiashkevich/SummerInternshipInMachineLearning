@@ -4,7 +4,8 @@ from concurrent.futures import ThreadPoolExecutor
 import pandas as pd
 
 from ..modules.chat import AdHocRule, format_adhoc_rules
-from ..modules.tools import same_quantity
+from ..modules.tools import same_dimension
+from .parsing import parse, recorded_unit
 from .common import _attribute_matches, logger
 from .answers import _is_ambiguous_answer
 from .guards import _partial_separator_edit, _records_quantity
@@ -27,7 +28,8 @@ def _adhoc_rules_for_attribute(rules: list[AdHocRule], attribute: str, value: st
     """
     def applies(rule: AdHocRule) -> bool:
         if rule.quantity:
-            return (same_quantity(value, rule.quantity, attribute)
+            unit = recorded_unit(parse(value, attribute, model))
+            return (bool(unit) and same_dimension(unit, rule.quantity)
                     and (model is None
                          or _records_quantity(model, attribute, value, rule.quantity, context)))
         return not rule.attribute or _attribute_matches(attribute, rule.attribute)

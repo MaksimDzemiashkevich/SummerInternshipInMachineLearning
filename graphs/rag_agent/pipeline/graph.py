@@ -10,16 +10,19 @@ from langgraph.graph import START, StateGraph, MessagesState, END
 from .common import _alnum, logger
 from .answers import _describe_change, _is_ambiguous_answer, _is_pending_result
 from .subjects import _document_covers_row
-from .deterministic import apply_deterministic
+from .deterministic import RULE_CARDS, apply_deterministic
 from .retrieval import _own_rules_text, _unresolved_references, build_rules_text
 from .guards import (_align_root_spacing, _apply_render_template, _document_mandates_spacing,
+
+
                      _document_word_tokens, _match_render_template, _partial_separator_edit,
                      _rejection_reason, _restore_unit_spacing,
-                     _conversion_of_designation)
+                     _conversion_arithmetic, _conversion_of_designation, _drop_trailing_zeros, _examples_in)
 from .postprocess import (_canonicalize_formatting, _canonicalize_units, _reconcile_equivalent_rows,
                           _strip_redundant_parenthetical)
 from .frames import _row_context
 from .normalizer import SELF_CONSISTENCY, _vote_normalize
+from .parsing import set_parser_model
 
 
 class GraphState(MessagesState):
@@ -87,8 +90,9 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                     applied.append("написание корня выровнено по документу")
                 rules_value = aligned
                 # если документ прописал пробел, формат записи ему не указ: правило главнее
-                if not _document_mandates_spacing(state.get("rules_text", "")):
-                    spaced = _restore_unit_spacing(state["original_value"], rules_value)
+                if not _document_mandates_spacing(rule_set, state.get("rule_group_names")):
+                    spaced = _restore_unit_spacing(state["original_value"], rules_value,
+                                                    state["attribute"])
                     if spaced != rules_value:
                         applied.append("пробел у единицы взят из записи")
                     rules_value = spaced
@@ -106,6 +110,22 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                     rules_value = state["original_value"]
                     needs_review = True
                     applied.append(guard)
+                else:
+                    arithmetic = _conversion_arithmetic(state["attribute"], state["original_value"],
+                                                        rules_value)
+                    if arithmetic:
+                        logger.info("  [ARITH] %r -> %r: %s", state["original_value"],
+                                    rules_value, arithmetic)
+                        needs_review = True
+                        applied.append(arithmetic)
+                # документ прямо велит убирать нули в конце дробной части (карточка общих
+                # положений) — после округления модель их оставляла: «50.0 kg», «5.50 m»
+                if (RULE_CARDS != "off"
+                        and (rule_set.global_card or {}).get("trailing_zeros") == "remove"):
+                    trimmed = _drop_trailing_zeros(rules_value)
+                    if trimmed != rules_value:
+                        applied.append("нули в конце дробной части убраны (общее правило документа)")
+                    rules_value = trimmed
                 # правка разделителей, применённая к части вхождений, — повод показать строку
                 partial = _partial_separator_edit(state["original_value"], rules_value)
                 if partial:
@@ -136,7 +156,7 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
         else:
             rules_value = state["original_value"]
         # что именно изменилось — видно из самой строки, и это честнее пересказа модели
-        change = _describe_change(state["original_value"], rules_value)
+        change = _describe_change(state["original_value"], rules_value, state["attribute"])
         if change and not any("пересчёт единиц" in n for n in applied):
             applied.insert(0, change)
 
@@ -226,7 +246,8 @@ def normalize_row(state: GraphState, config: RunnableConfig) -> GraphState:
     answer, split, applied = _vote_normalize(model, state["attribute"], state["value"],
                                              state["rules_text"], state.get("row_context", ""),
                                              samples,
-                                             _document_word_tokens(rule_set, state["attribute"]))
+                                             _document_word_tokens(rule_set, state["attribute"]),
+                                             _examples_in(rule_set, state["rules_text"]))
     logger.info("  [NORMALIZE] %r -> %r", state["value"], answer)
 
     # разошедшиеся сэмплы = строка, которую правила документа не решают однозначно:
@@ -305,6 +326,7 @@ def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set) -> pd.DataFra
         "needs_review_flag": False,
         "applied": "",
     }
+    set_parser_model(model)  # разбор значений для проверок — той же моделью, без инструментов
     final_state = graph.invoke(
         initial_state,
         config={

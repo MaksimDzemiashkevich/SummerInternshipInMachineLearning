@@ -2,8 +2,8 @@
 import json
 import re
 
-from ..modules.tools import unit_mismatch
-from .common import _NUM_UNIT_RE, _alnum, _unit_key
+from .parsing import is_measure, parse, units_differ
+from .common import _alnum
 
 
 def _is_ambiguous_answer(answer) -> bool:
@@ -38,7 +38,7 @@ def _cited_clauses(payload: dict) -> str:
     return "по пункту " + ", ".join(numbers[:4]) if numbers else ""
 
 
-def _describe_change(value: str, answer: str) -> str:
+def _describe_change(value: str, answer: str, attribute: str = "") -> str:
     """Чем результат отличается от записи — по самой строке, без слов модели."""
     before, after = str(value).strip(), str(answer).strip()
     if before == after:
@@ -56,11 +56,10 @@ def _describe_change(value: str, answer: str) -> str:
         if was != now:
             return f"разделители: «{was or 'нет'}» → «{now or 'нет'}»"
         return "изменено написание"
-    was_quantity, now_quantity = _NUM_UNIT_RE.fullmatch(before), _NUM_UNIT_RE.fullmatch(after)
-    if (was_quantity and now_quantity
-            and unit_mismatch(was_quantity.group(3), "count")
-            and unit_mismatch(now_quantity.group(3), "count")):
-        if _unit_key(was_quantity.group(3)) != _unit_key(now_quantity.group(3)):
+    was, now = parse(before, attribute), parse(after)
+    if (was and now and was.single and now.single
+            and is_measure(was.single.unit) and is_measure(now.single.unit)):
+        if units_differ(was.single, now.single):
             return f"пересчёт: {before} → {after}"
         return f"округление: {before} → {after}"
 

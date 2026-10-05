@@ -117,3 +117,23 @@ It does not when the value is a designation: a class, grade, size or code taken 
 
 Answer with exactly one word: YES or NO. No explanation.
 """
+
+
+PARSE_PROMPT = """
+You take apart one value recorded in a data sheet (or one standardized value) so that code can check it. You do not normalize, correct or judge the value: you only say what it is made of, exactly as it is written.
+
+Return ONLY a JSON object, no markdown:
+{"kind": "...", "quantities": [...], "designation": null, "label_unit": ""}
+
+- "kind": one of
+  "empty" — nothing is recorded;
+  "number" — a bare number with no unit ("150", "9.5");
+  "quantity" — one number with a unit of measure ("9.5 mm", "0.5-inch", "2 1/2\"", "80 psig", "1200°F", "300 lbs");
+  "range" — two or more bounds of one quantity ("0-60 m3/h", "-58 to 302 °F", "10...20 mm");
+  "designation" — a name or root together with a number that names a size, class, trim, series, schedule or grade rather than measuring anything ("CL 600", "Class 300", "TRIM8", "Trim 12", "600#", "DN 150", "NPS 6", "SCH 40", "PN 100");
+  "code" — an identifier or abbreviation without a measured number ("RF", "ASTM A105", "IP66", "M25 x 1.5");
+  "text" — words.
+- "quantities": for "number", "quantity" and "range", one entry per number in order: {"number": the number exactly as written ("0.500", "7,62", "2 1/2"), "value": the number as a plain decimal (7.62, 2.5), "unit": the unit as a standard name or symbol ("inch", "mm", "psi", "bar", "degF", "kg", "lb", "m**3/h", "mm**2") or "" when there is none, "reference": "gauge" or "absolute" when the written unit marks gauge or absolute pressure (a suffix or qualifier such as g, (g), a, (a), abs), otherwise "" — the unit itself is then given without that mark ("barg" → unit "bar", reference "gauge"), "unit_text": the unit exactly as written in the value, mark included ("-inch", "in.", "\"", "°F", "bar(g)") or "", "space": true when whitespace separates the number from its unit}. Empty list for other kinds.
+- "designation": for "designation" only: {"root": the name part exactly as written ("CL", "Class", "TRIM", "#", "DN"), "number": the number part exactly as written ("600", "8", "12A"), "space": true when whitespace separates root and number, "number_first": true when the number comes before the root}; otherwise null.
+- "label_unit": when an attribute label is given and it names a unit ("Weight, kg", "Rated power (kW)"), that unit as a standard name; otherwise "".
+"""

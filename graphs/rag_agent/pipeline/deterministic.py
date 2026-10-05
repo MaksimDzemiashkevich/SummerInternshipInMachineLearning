@@ -1,4 +1,5 @@
 """Детерминированный путь строки: исключения, таблицы фраз и синонимов, корни, закрытые реестры."""
+import os
 import re
 
 from rapidfuzz import fuzz
@@ -209,6 +210,35 @@ def _apply_synonyms(value: str, rule_set, attribute: str) -> tuple[str, bool, st
     return None
 
 
+# Карточки правил (rule_cards.json): forms — только принятые формы из них, детерминированно
+# (по умолчанию); on — карточки ещё и в промпт к тексту правил; compact — карточки вместо
+# сырого текста (кроме группы самого атрибута); off — не используются. В промпте карточки
+# вредили: пересказ терял нюансы («2 decimal places» вместо «не больше двух») — MNT 94 → 91,
+# EMD 95 → 89; замена форм без модели — 61 строка, ни одной ошибки, MNT 94 → 95.
+RULE_CARDS = os.getenv("RULE_CARDS", "forms").strip().lower()
+
+
+def _apply_card_forms(value: str, rule_set, attribute: str) -> tuple[str, bool, str] | None:
+    """Запись — принятая форма из карточки группы атрибута → основная запись этой группы.
+
+    То же, что таблица синонимов, но для документа, где принятые формы стоят прозой («pipe is
+    Seamless (‘SMLS’ and ‘S/L’ accepted)»): модель читала «accepted» то как «заменить», то как
+    «можно оставить». Карточка решила это один раз при загрузке документа. Владелец — группа по
+    имени атрибута (не по алиасам: они слишком широки); несколько групп дают разные записи — не
+    решаем, строка идёт к модели.
+    """
+    forms = getattr(rule_set, "card_forms", None) or {}
+    if RULE_CARDS == "off" or not forms:
+        return None
+    key = attribute.strip().lower()
+    owners = [key] if key in forms else [o for o in forms if _attribute_matches(attribute, o)]
+    hits = {forms[o][form_key(value)] for o in owners if form_key(value) in forms[o]}
+    if len(hits) != 1:
+        return None
+    written = hits.pop()
+    return written, False, f"карточка правил: «{value.strip()}» → {written}"
+
+
 def apply_deterministic(value: str, rule_set, attribute: str,
                         model=None) -> tuple[str, bool, str] | None:
     """Детерминированные преобразования.
@@ -226,6 +256,11 @@ def apply_deterministic(value: str, rule_set, attribute: str,
     synonym = _apply_synonyms(result, rule_set, attribute)
     if synonym:
         return synonym
+
+    # 0.6) запись — принятая форма из карточки правил атрибута
+    carded = _apply_card_forms(result, rule_set, attribute)
+    if carded:
+        return carded
 
     # 1) точное фразовое совпадение (phrase_rules + бесчисловые deterministic).
     phrase_keys = {}
