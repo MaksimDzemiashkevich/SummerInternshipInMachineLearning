@@ -3,6 +3,7 @@ import { AntDesignOutlined, UserOutlined } from "@ant-design/icons";
 import { Actions, Bubble, FileCard } from "@ant-design/x";
 import { Avatar } from "antd";
 import "../../../css/ChatHistory.css"
+import Markdown from "./Markdown";
 
 const actionItems = (content) => [
     {
@@ -44,7 +45,7 @@ const roleConfig = {
                         ))}
                 </div>
                 )}
-                {content && <div style={{ whiteSpace: "pre-wrap" }}>{content}</div>}
+                {content && <Markdown text={content} />}
             </div>
         ),
         footer: (content) => (

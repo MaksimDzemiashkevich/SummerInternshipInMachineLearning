@@ -62,7 +62,12 @@ Return JSON: {"value": the value as the rules require it to be written, "flag": 
 class SpecRunner:
     def __init__(self, doc: str, model: ChatOpenAI):
         folder = OUTPUT_DIR / doc
+        self.doc = doc
         self.specs = json.loads((folder / "attribute_spec.json").read_text(encoding="utf-8"))["specs"]
+        # паспорта, перекомпилированные с правилами пользователей (user_rules.json): заменяют
+        # паспорт документа с тем же атрибутом, паспорт нового атрибута добавляется
+        from .modules.rule_store import apply_overrides
+        self.specs = apply_overrides(doc, self.specs)
         groups = json.loads((folder / "rule_groups.json").read_text(encoding="utf-8"))
         self.global_rules = "\n".join(r for g in groups if g.get("type") == "global"
                                       for r in g.get("rules", []))[:GLOBAL_CHARS]
@@ -83,6 +88,21 @@ class SpecRunner:
         self.model = model
         self._spec_cache: dict[str, dict | None] = {}
         self._lock = threading.Lock()
+
+    def clone_with(self, spec: dict) -> "SpecRunner":
+        """Тот же исполнитель с одним заменённым (или добавленным) паспортом и пустым кэшем —
+        для предпросмотра правила: как бы легли строки, не трогая рабочий исполнитель."""
+        clone = object.__new__(SpecRunner)
+        clone.__dict__.update(self.__dict__)
+        clone.specs = [s for s in self.specs if s["attribute"] != spec["attribute"]] + [spec]
+        clone._spec_cache = {}
+        clone._lock = threading.Lock()
+        return clone
+
+    def spec_named(self, name: str) -> dict | None:
+        """Паспорт по точному имени атрибута (без учёта регистра и пробелов)."""
+        key = _norm_attr(name)
+        return next((s for s in self.specs if _norm_attr(s["attribute"]) == key), None)
 
     # ------------------------------------------------------------------ поиск спецификации
     def spec_for(self, attribute: str, context: str = "", value: str = "") -> dict | None:
@@ -196,6 +216,15 @@ class SpecRunner:
         if spec is None:
             return self._text(None, attribute, value, context)
         spec = self._variant(spec, context, value)
+        written, flag, note = self._run(spec, attribute, value, context)
+        # регистр букв записанного значения (поле правил пользователя): значение списка пишется
+        # дословно, и «писать заглавными» иначе не исполнилось бы ни в одном пути
+        case = spec.get("letter_case")
+        if written and case in ("upper", "lower"):
+            written = written.upper() if case == "upper" else written.lower()
+        return written, flag, note
+
+    def _run(self, spec: dict, attribute: str, value: str, context: str) -> tuple[str, bool, str]:
         if not value:
             return self._text(spec, attribute, value, context)
         if spec["kind"] == "list" and spec["values"]:
@@ -498,6 +527,21 @@ def has_spec(rule_set) -> bool:
     return (OUTPUT_DIR / rule_set.name / "attribute_spec.json").exists()
 
 
+def get_runner(doc: str, model) -> SpecRunner:
+    """Исполнитель документа (один на документ: в нём кэш сопоставлений подписи с паспортом)."""
+    with _RUNNERS_LOCK:
+        runner = _RUNNERS.get(doc)
+        if runner is None:
+            runner = _RUNNERS[doc] = SpecRunner(doc, model)
+    return runner
+
+
+def invalidate_runner(doc: str) -> None:
+    """Забыть исполнитель документа: паспорта поменялись (добавлено или снято правило)."""
+    with _RUNNERS_LOCK:
+        _RUNNERS.pop(doc, None)
+
+
 def run_spec_rule_set(data_frame, model, rule_set):
     """Колонка одного документа по спецификации — тот же контракт, что у graph.run_single_rule_set.
 
@@ -514,10 +558,7 @@ def run_spec_rule_set(data_frame, model, rule_set):
     from .pipeline.subjects import _document_covers_row
 
     set_parser_model(model)
-    with _RUNNERS_LOCK:
-        runner = _RUNNERS.get(rule_set.name)
-        if runner is None:
-            runner = _RUNNERS[rule_set.name] = SpecRunner(rule_set.name, model)
+    runner = get_runner(rule_set.name, model)
 
     def one(i: int) -> dict:
         attribute = str(data_frame.loc[i, "Attribute"])

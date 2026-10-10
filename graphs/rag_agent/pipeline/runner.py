@@ -56,6 +56,11 @@ def _free_column_name(frame: pd.DataFrame, name: str) -> str:
 NORMALIZER = os.getenv("NORMALIZER", "spec").strip().lower()
 
 
+def run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set) -> pd.DataFrame:
+    """Колонка одного документа (ROW_COLUMNS) — по спецификации или прежним графом."""
+    return _run_rule_set(data_frame, app_config, rule_set)
+
+
 def _run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set) -> pd.DataFrame:
     from ..spec_runner import has_spec, run_spec_rule_set
     if NORMALIZER == "spec" and has_spec(rule_set):
@@ -79,6 +84,11 @@ def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
     # в выдаче сохраняем все исходные колонки: уточняющие колонки нужны ревьюеру
     result_df = data_frame.copy()
     ambiguous_cols: dict[str, list[bool]] = {}
+    # разметка колонок результата — для вопросов по файлу и пересчёта отдельных строк
+    source_columns = [str(c) for c in data_frame.columns]
+    layout = {"source_columns": source_columns,
+              "context_columns": [c for c in source_columns if c not in ("Attribute", "Value")],
+              "standards": [], "user_rules": None}
     # документы независимы друг от друга — считаем их колонки параллельно
     if rule_sets:
         with ThreadPoolExecutor(max_workers=len(rule_sets)) as pool:
@@ -88,9 +98,11 @@ def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
             column = _free_column_name(result_df, rule_set.name)
             column_names.append(column)
             result_df[column] = col_df["Rules_Value"].to_list()
-            if "Applied" in col_df:
-                result_df[_free_column_name(result_df, column + APPLIED_SUFFIX)] = (
-                    col_df["Applied"].to_list())
+            applied = _free_column_name(result_df, column + APPLIED_SUFFIX)
+            result_df[applied] = (col_df["Applied"].to_list() if "Applied" in col_df
+                                  else [""] * len(result_df))
+            layout["standards"].append({"column": column, "applied": applied,
+                                        "standard": rule_set.name})
             if "Ambiguous" in col_df:
                 ambiguous_cols[column] = col_df["Ambiguous"].to_list()
 
@@ -102,9 +114,10 @@ def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
         col_df = run_user_rules_column(data_frame, app_config.model, user_rules)
         column = _free_column_name(result_df, USER_RULES_COLUMN)
         result_df[column] = col_df["Rules_Value"].to_list()
-        if "Applied" in col_df:
-            result_df[_free_column_name(result_df, column + APPLIED_SUFFIX)] = (
-                col_df["Applied"].to_list())
+        applied = _free_column_name(result_df, column + APPLIED_SUFFIX)
+        result_df[applied] = col_df["Applied"].to_list()
         ambiguous_cols[column] = col_df["Ambiguous"].to_list()
+        layout["user_rules"] = {"column": column, "applied": applied}
 
+    result_df.attrs["layout"] = layout
     return result_df, ambiguous_cols

@@ -3,6 +3,7 @@ import base64
 import io
 import json
 import re
+from contextlib import asynccontextmanager
 from functools import lru_cache
 from uuid import uuid4
 
@@ -14,11 +15,12 @@ from fastapi.responses import Response
 from .modules.agent import build_tools, run_agent
 from .modules.chat import history_messages
 from .modules.config import AppConfig, Settings, build_app_config
-from .modules.workspace import get_workspace
+from .modules.results import layout_of
+from .modules.toolbox import Toolbox
+from .modules.workspace import focus_note, get_workspace, save_workspace
 from .pipeline.common import logger
-from .pipeline.excel import XLSX_MEDIA_TYPE, _write_excel_with_highlight
+from .pipeline.excel import XLSX_MEDIA_TYPE, _write_excel_with_highlight, read_flagged_cells
 from .pipeline.runner import normalize_table
-from .pipeline.user_rules import user_rule_hits
 
 # Имена, которые берут из api снаружи (eval-скрипты, show_context, run_eval), остаются
 # доступными и отсюда, хотя живут в pipeline/.
@@ -32,7 +34,14 @@ from .pipeline.retrieval import build_rules_text, expand_references  # noqa: F40
 from .pipeline.subjects import _document_covers_row, _row_class  # noqa: F401
 from .pipeline.user_rules import APPLIED_SUFFIX, USER_RULES_COLUMN, run_user_rules_column  # noqa: F401
 
-app = FastAPI()
+@asynccontextmanager
+async def _lifespan(_app):
+    # сессии MCP-эндпоинта: у смонтированного приложения своя lifespan не запускается
+    async with mcp.session_manager.run():
+        yield
+
+
+app = FastAPI(lifespan=_lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -55,7 +64,7 @@ def process_excel(
     contents = file.file.read()
     data_frame = pd.read_excel(io.BytesIO(contents))
     result_df, ambiguous_cols = normalize_table(data_frame, app_config)
-    output_buffer = _write_excel_with_highlight(result_df, ambiguous_cols)
+    output_buffer = _write_excel_with_highlight(result_df, ambiguous_cols, result_df.attrs.get("layout"))
 
     return Response(
         content=output_buffer.read(),
@@ -76,8 +85,7 @@ def _display_name(name: str) -> str:
 @app.get("/standards")
 def list_standards(app_config: AppConfig = Depends(get_app_config)):
     """Какие стандарты загружены — фронт даёт из них выбрать."""
-    return {"standards": [{"name": rs.name, "label": _display_name(rs.name)}
-                          for rs in app_config.rule_sets]}
+    return {"standards": catalogue(app_config)}
 
 
 def _parse_json_list(raw: str) -> list:
@@ -95,11 +103,24 @@ def _selected_standard_names(app_config: AppConfig, raw: str) -> list[str]:
     return [n for n in (str(x).strip() for x in _parse_json_list(raw)) if n in known]
 
 
-def _rule_sets_by_name(app_config: AppConfig, names: list[str]) -> list:
-    """Имена → наборы правил. Пустой список (и список из одних неизвестных) — значит все."""
-    by_name = {rs.name: rs for rs in app_config.rule_sets}
-    chosen = [by_name[n] for n in names if n in by_name]
-    return chosen or list(app_config.rule_sets)
+def catalogue(app_config: AppConfig) -> list[dict]:
+    """Загруженные стандарты: имя для инструментов и ярлык для людей."""
+    return [{"name": rs.name, "label": _display_name(rs.name)} for rs in app_config.rule_sets]
+
+
+def store_upload(workspace, name: str, content: bytes):
+    """Присланная таблица → файл диалога. Прошлый результат, присланный обратно, узнаётся по
+    колонкам «— применено» и жёлтой заливке: по нему можно задавать вопросы и править его."""
+    frame = pd.read_excel(io.BytesIO(content))
+    layout = layout_of(frame)
+    if not layout["standards"]:
+        return workspace.add(name=name, frame=frame)
+    columns = [e["column"] for e in layout["standards"]]
+    if layout["user_rules"]:
+        columns.append(layout["user_rules"]["column"])
+    return workspace.add(name=name, frame=frame, kind="result", layout=layout,
+                         ambiguous=read_flagged_cells(content, columns),
+                         origin="результат, присланный пользователем")
 
 
 def _uploaded(file: UploadFile | None) -> UploadFile | None:
@@ -130,6 +151,8 @@ def chat(
     """
     session = (session_id or "").strip() or uuid4().hex
     workspace = get_workspace(session)
+    # новое сообщение пользователя: подготовленное в прошлом ходе теперь можно подтвердить
+    workspace.turn += 1
     text = (message or "").strip()
     uploaded = _uploaded(file)
 
@@ -140,40 +163,42 @@ def chat(
     notes: list[str] = []
     if uploaded is not None:
         try:
-            frame = pd.read_excel(io.BytesIO(uploaded.file.read()))
+            stored = store_upload(workspace, uploaded.filename, uploaded.file.read())
         except Exception as e:
             logger.warning("[CHAT] файл %r не прочитан: %s", uploaded.filename, e)
             return {"reply": f"Не удалось прочитать «{uploaded.filename}». Нужен .xlsx с "
                              f"колонками Attribute и Value.",
                     "session_id": session, "files": []}
-        stored = workspace.add(name=uploaded.filename, frame=frame)
-        columns = ", ".join(str(c) for c in frame.columns)
+        columns = ", ".join(str(c) for c in stored.frame.columns)
+        kind = (" It is a normalization result made earlier (standards: "
+                + ", ".join(e["standard"] for e in stored.layout["standards"]) + ")."
+                if stored.kind == "result" else "")
         notes.append(f"The user has just attached the file {stored.name} "
-                     f"(file_id={stored.file_id}), {frame.shape[0]} rows, columns: {columns}.")
+                     f"(file_id={stored.file_id}), {stored.frame.shape[0]} rows, columns: {columns}.{kind}")
 
     selected = _selected_standard_names(app_config, standards)
     notes.append("Standards picked in the interface: "
                  + (", ".join(selected) if selected else "none, so all of them") + ".")
 
     produced: list[str] = []
-    catalogue = [{"name": rs.name, "label": _display_name(rs.name)} for rs in app_config.rule_sets]
-    tools = build_tools(
-        workspace, catalogue, selected,
-        lambda frame, names, rules: normalize_table(
-            frame, app_config, _rule_sets_by_name(app_config, names), rules),
-        produced,
-        lambda frame, rules: user_rule_hits(frame, rules, app_config.model),
-    )
+    toolbox = Toolbox(workspace, app_config, catalogue(app_config), selected, produced)
+    for note in (focus_note(workspace), toolbox.pending_note()):
+        if note:
+            notes.append(note)
+    tools = build_tools(toolbox)
     prompt = f"[Context: {' '.join(notes)}]\n\n{text or 'Обработай приложенный файл.'}"
-    reply = run_agent(app_config.assistant or app_config.model, tools,
-                      history_messages(_parse_json_list(history)), prompt)
+    try:
+        reply = run_agent(app_config.assistant or app_config.model, tools,
+                          history_messages(_parse_json_list(history)), prompt)
+    finally:
+        save_workspace(session)
 
     files = []
     for file_id in produced:
         stored = workspace.get(file_id)
         if stored is None:
             continue
-        buffer = _write_excel_with_highlight(stored.frame, stored.ambiguous)
+        buffer = _write_excel_with_highlight(stored.frame, stored.ambiguous, stored.layout)
         files.append({
             "name": _download_name(stored),
             "media_type": XLSX_MEDIA_TYPE,
@@ -181,3 +206,9 @@ def chat(
         })
 
     return {"reply": reply, "session_id": session, "files": files}
+
+
+# MCP: те же инструменты, что у агента чата, для внешних клиентов (см. mcp_server.py)
+from .mcp_server import mcp  # noqa: E402
+
+app.mount("/mcp", mcp.streamable_http_app())
