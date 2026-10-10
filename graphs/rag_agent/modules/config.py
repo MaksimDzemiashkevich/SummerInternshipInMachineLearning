@@ -13,6 +13,8 @@ from langchain_core.documents import Document
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
+from graphs.structured_documents.block_grouping import parse_page_content
+
 from .tables import MAX_FORM_CHARS, DocTable, form_key, load_tables, table_references
 from .tools import array_of_tools
 
@@ -96,6 +98,9 @@ class RuleSet:
     card_forms: dict[str, dict[str, str]] = field(default_factory=dict)
     # примеры «было → стало» из карточек: [{"from", "to", "group"}]
     examples: list[dict] = field(default_factory=list)
+    # начало документа как распознано (заголовок, тема, вводная часть): по нему решается,
+    # про какое оборудование документ; группировка часть этого в правила не берёт
+    opening_text: str = ""
 
 
 @dataclass
@@ -392,10 +397,45 @@ def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
         if len(distinct_subjects) > 1:
             logger.info("Документ %r описывает несколько предметов: %s",
                         name, sorted(distinct_subjects))
-        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects, tables=tables, synonyms=synonyms, synonym_owners=owners, universal_synonyms=universal, class_blocks=_class_blocks(groups), global_card=global_card, cards=cards, card_forms=card_forms, examples=examples))
+        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects, tables=tables, synonyms=synonyms, synonym_owners=owners, universal_synonyms=universal, class_blocks=_class_blocks(groups), global_card=global_card, cards=cards, card_forms=card_forms, examples=examples,
+                                 opening_text=_opening_text(path.parent)))
         RULE_SET_LIBRARY[document_id(name)] = rule_sets[-1]
 
     return rule_sets
+
+
+OPENING_CHARS = 2500
+
+
+def _opening_text(doc_dir: Path) -> str:
+    """Начало документа — текст блоков первых страниц по порядку, без таблиц.
+
+    Область действия документа стоит в его начале, но не всегда правилом: у служебной записки
+    это строка темы («Subject: how we want wellhead, tree and BOP data entered»), у стандарта —
+    заголовок и пункт «Scope». Группировка шапку письма в правила не берёт, и вопрос «про это ли
+    изделие документ» видел одно «wellhead equipment» — устьевое оборудование, ПВО и фонтанная
+    арматура получали пустые ячейки.
+    """
+    path = doc_dir / "data_after_check.json"
+    if not path.exists():
+        return ""
+    try:
+        pages = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return ""
+    parts: list[str] = []
+    size = 0
+    for page in pages:
+        content = parse_page_content(page.get("content")) if isinstance(page, dict) else None
+        for block in (content or {}).get("blocks", []):
+            text = str(block.get("text") or "").strip()
+            if block.get("type") == "table" or not text:
+                continue
+            parts.append(text)
+            size += len(text)
+            if size >= OPENING_CHARS:
+                return "\n".join(parts)[:OPENING_CHARS]
+    return "\n".join(parts)
 
 
 def _load_deterministic(doc_dir: Path) -> dict[str, str]:

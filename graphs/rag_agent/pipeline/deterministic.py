@@ -6,7 +6,8 @@ from rapidfuzz import fuzz
 
 from ..modules.system_prompts import REGISTER_PROMPT
 from ..modules.tables import form_key
-from .common import _attribute_is_excluded, _attribute_matches, _normalize_phrase, logger
+from .common import (_attribute_is_excluded, _attribute_matches, _norm_attr, _normalize_phrase,
+                     logger)
 from .answers import AMBIGUOUS_WORDING, PENDING_WORDING, _is_pending_result
 
 
@@ -134,6 +135,19 @@ def _names_token(attribute: str, token: str) -> bool:
     return token in re.findall(r"[a-z0-9<>]+", str(attribute).lower())
 
 
+def _has_own_group(rule_set, attribute: str) -> bool:
+    """Есть ли в документе группа правил, названная (именем или алиасом) ровно этим атрибутом.
+
+    Тогда реестр или перечень синонимов другого владельца, чьё имя лишь пересекается с подписью
+    по словам, не про эту строку: «Insulation» (изоляция кабеля) — не «Insulation class»
+    (класс нагревостойкости), «Type» (тип фланца) — не «TEMA type». Без своей группы атрибут,
+    наоборот, ищет владельца по словам: имя в документе и подпись в таблице — разные тексты.
+    """
+    key = _norm_attr(attribute)
+    return any(key == _norm_attr(name) for group in getattr(rule_set, "groups", [])
+               for name in [group.attribute] + list(group.aliases or []) if name)
+
+
 def _registers_for_attribute(rule_set, attribute: str) -> list[str]:
     """Префиксы реестров, относящихся к атрибуту строки.
 
@@ -144,6 +158,8 @@ def _registers_for_attribute(rule_set, attribute: str) -> list[str]:
     exact = rule_set.attribute_to_register.get(attribute.strip().lower())
     if exact:
         return exact
+    if _has_own_group(rule_set, attribute):
+        return []  # у атрибута свои правила, а реестр «Insulation» — про другой атрибут
     for owner, prefixes in rule_set.attribute_to_register.items():
         if _attribute_matches(attribute, owner):
             return prefixes
@@ -161,6 +177,8 @@ def _synonym_tables_for_attribute(rule_set, attribute: str) -> list[str]:
     exact = owners.get(attribute.strip().lower())
     if exact:
         return list(exact)
+    if _has_own_group(rule_set, attribute):
+        return []
     found: list[str] = []
     for owner, table_ids in owners.items():
         if _attribute_matches(attribute, owner):

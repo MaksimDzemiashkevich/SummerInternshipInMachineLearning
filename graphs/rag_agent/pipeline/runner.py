@@ -1,4 +1,5 @@
 """Нормализация таблицы по нескольким документам сразу и сборка итоговой таблицы."""
+import os
 from concurrent.futures import ThreadPoolExecutor
 
 import pandas as pd
@@ -49,6 +50,21 @@ def _free_column_name(frame: pd.DataFrame, name: str) -> str:
     return f"{name} ({suffix})"
 
 
+# Чем считать колонку документа: «spec» — по спецификации атрибутов (spec_runner: паспорт
+# атрибута, точные операции делает код, у каждого ответа уровень уверенности), «legacy» — прежним
+# графом. Документ без attribute_spec.json всегда считается прежним графом.
+NORMALIZER = os.getenv("NORMALIZER", "spec").strip().lower()
+
+
+def _run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set) -> pd.DataFrame:
+    from ..spec_runner import has_spec, run_spec_rule_set
+    if NORMALIZER == "spec" and has_spec(rule_set):
+        logger.info("Документ %r: нормализация по спецификации атрибутов", rule_set.name)
+        # спецификации нужна модель без привязанных инструментов (структурированный ответ)
+        return run_spec_rule_set(data_frame, app_config.assistant or app_config.model, rule_set)
+    return run_single_rule_set(data_frame, app_config.model, rule_set)
+
+
 def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
                     rule_sets: list | None = None,
                     user_rules: list[AdHocRule] | None = None
@@ -66,10 +82,7 @@ def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
     # документы независимы друг от друга — считаем их колонки параллельно
     if rule_sets:
         with ThreadPoolExecutor(max_workers=len(rule_sets)) as pool:
-            col_dfs = list(pool.map(
-                lambda rs: run_single_rule_set(data_frame, app_config.model, rs),
-                rule_sets,
-            ))
+            col_dfs = list(pool.map(lambda rs: _run_rule_set(data_frame, app_config, rs), rule_sets))
         column_names = []
         for rule_set, col_df in zip(rule_sets, col_dfs):
             column = _free_column_name(result_df, rule_set.name)

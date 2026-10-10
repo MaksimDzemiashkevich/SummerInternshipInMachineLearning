@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -42,6 +43,8 @@ WORKERS = 5
 ATTEMPTS = 3
 # зависший запрос иначе держит шаг бесконечно, и повтор не наступает
 REQUEST_TIMEOUT = 300
+# Сколько раз классифицировать документ: роль пары решает большинство (classify_lists_voted).
+VOTES = 3
 
 
 def _chunks(rule_groups: list[dict]) -> list[dict]:
@@ -119,6 +122,11 @@ def classify_lists(rule_groups: list[dict], llm) -> dict:
                 if not isinstance(item, dict) or item.get("role") not in ROLES:
                     continue
                 role = item["role"]
+                # таблица кодов лишь для части значений («standard → SCH STD», а «SCH 10S» —
+                # по формату правила) реестром быть не может: всё, чего в ней нет, стало бы
+                # «pending registration». Её пары — подстановки, как у синонимов.
+                if role == "register" and item.get("whole_attribute") is not True:
+                    role = "synonyms"
                 pairs = (_grounded(item.get("pairs"), part["text"])
                          if role in ("register", "synonyms") else [])
                 group_name = part["group"].get("attribute", "")
@@ -136,6 +144,46 @@ def classify_lists(rule_groups: list[dict], llm) -> dict:
     return {"lists": [item for part in results for item in part]}
 
 
+def classify_lists_voted(rule_groups: list[dict], llm, runs: int = VOTES) -> dict:
+    """classify_lists несколько раз; роль каждой пары — по большинству прогонов.
+
+    Граница «реестр кодов или синонимы» у модели неустойчива: от прогона к прогону одна и та же
+    таблица кодов то становилась реестром, то нет (CWX, QRS, OGX теряли реестры, которые раньше
+    находились всегда). Пара, которую нашло меньшинство прогонов, отбрасывается: найденное один
+    раз из трёх — скорее случайность, чем таблица документа. Перечни без пар (пересчёт, примеры,
+    прочее) берутся из первого прогона: рантайм их не использует.
+    """
+    rounds = [classify_lists(rule_groups, llm) for _ in range(runs)]
+    need = runs // 2 + 1
+    votes: dict[tuple, Counter] = {}
+    first_seen: dict[tuple, dict] = {}
+    for round_ in rounds:
+        seen_here: set[tuple] = set()
+        for item in round_["lists"]:
+            for pair in item["pairs"]:
+                key = (item["attribute"].strip().lower(), _norm(pair["form"]), _norm(pair["value"]))
+                if key in seen_here:
+                    continue  # один прогон голосует за пару один раз
+                seen_here.add(key)
+                votes.setdefault(key, Counter())[(item["role"], item["any_attribute"])] += 1
+                first_seen.setdefault(key, {**item, "pair": pair})
+    merged: dict[tuple, dict] = {}
+    for key, counter in votes.items():
+        if sum(counter.values()) < need:
+            continue
+        # при ничьей — синонимы: ошибочный реестр делает «pending registration» из всего, чего
+        # в нём нет, а ошибочные синонимы лишь отдают такую строку модели
+        role, any_attribute = max(counter, key=lambda k: (counter[k], k[0] == "synonyms"))
+        item = first_seen[key]
+        list_key = (item["attribute"], item["title"], role, any_attribute)
+        merged.setdefault(list_key, {"group": item["group"], "attribute": item["attribute"],
+                                     "global": item["global"], "title": item["title"],
+                                     "any_attribute": any_attribute, "role": role, "pairs": []})
+        merged[list_key]["pairs"].append(item["pair"])
+    without_pairs = [i for i in rounds[0]["lists"] if not i["pairs"]]
+    return {"lists": list(merged.values()) + without_pairs}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--doc", default="", help="имя папки документа (по умолчанию — все)")
@@ -146,7 +194,7 @@ def main() -> None:
         if args.doc and path.parent.name != args.doc:
             continue
         try:
-            roles = classify_lists(json.loads(path.read_text(encoding="utf-8")), llm)
+            roles = classify_lists_voted(json.loads(path.read_text(encoding="utf-8")), llm)
         except Exception as e:
             print(f"{path.parent.name}: НЕ ОБНОВЛЁН ({type(e).__name__}) — прежний файл оставлен")
             continue

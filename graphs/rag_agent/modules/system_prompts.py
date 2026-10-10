@@ -96,7 +96,9 @@ How to work:
 """
 
 SCOPE_PROMPT = """
-You are given the opening rules of a normalization standard and one item recorded on a data sheet. Say whether that standard governs that item.
+You are given the opening of a normalization document (its title, subject line, scope and first rules, in whatever form it is written — a standard, a memo, a guide) and one item recorded on a data sheet. Say whether that document governs that item.
+
+If the opening does not say which kinds of equipment the document covers, answer YES: only a document that states its coverage can exclude an item.
 
 The standard governs the item when the item is one of the kinds of equipment the standard names, or plainly belongs to one of them. It does not govern the item when the item is a different kind of equipment, even if some attribute names look familiar.
 

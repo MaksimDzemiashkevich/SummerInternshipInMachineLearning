@@ -15,6 +15,7 @@ _doc_stem = settings.input_path_document.stem
 _out_dir = settings.RULES_STORAGE_PATH.parent
 _doc_dir = _out_dir / _doc_stem
 _pages_cache = _doc_dir / "pages_data.json"
+_pages_partial = _doc_dir / "pages_data.partial.json"
 _check_cache = _doc_dir / "data_after_check.json"
 _rules_per_doc_path = _doc_dir / "rule_groups.json"
 _deterministic_path = _doc_dir / "deterministic_rules.json"
@@ -31,11 +32,14 @@ from langchain_openai import ChatOpenAI
 
 from graphs.structured_documents.subject_tagging import tag_subjects
 from graphs.structured_documents.rule_cards import compile_cards
-from graphs.structured_documents.table_roles import classify_lists
+from graphs.structured_documents.table_roles import classify_lists_voted
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph, MessagesState
 from PIL import Image as PILImage
 import io
+import threading
+from concurrent.futures import ThreadPoolExecutor
+import time
 import pytesseract
 from pydantic import BaseModel, Field
 from pathlib import Path
@@ -92,6 +96,71 @@ def save_json(obj, path: Path) -> None:
     print(f"Сохранено в {path}")
 
 
+VLM_ATTEMPTS = 8
+VLM_WAIT_SECONDS = 60
+
+
+def _invoke_vlm(messages, page_number: int):
+    """Вызов VLM с повторами: короткий обрыв туннеля не должен останавливать документ."""
+    for attempt in range(1, VLM_ATTEMPTS + 1):
+        try:
+            return vlm.invoke(messages)
+        except Exception as e:
+            if attempt == VLM_ATTEMPTS:
+                raise
+            print(f"VLM недоступна (стр. {page_number + 1}, попытка {attempt}/{VLM_ATTEMPTS}): "
+                  f"{type(e).__name__}; жду {VLM_WAIT_SECONDS * attempt} с")
+            time.sleep(VLM_WAIT_SECONDS * attempt)
+
+
+# Сколько страниц распознаётся одновременно. Страницы независимы, а vLLM обслуживает несколько
+# запросов сразу (непрерывный батчинг): при --max-num-seqs 1 на сервере две карты простаивали
+# на декодировании одной страницы. Число не должно быть больше --max-num-seqs сервера.
+VLM_WORKERS = int(os.getenv("VLM_WORKERS", "4"))
+
+
+def _read_page(document, page_number: int) -> dict:
+    """Одна страница: картинка, поворот по OSD, ответ VLM — запись для pages_data.json."""
+    pix = document[page_number].get_pixmap(dpi=160)
+    img = PILImage.open(io.BytesIO(pix.tobytes("png")))
+
+    detected_angle = 0
+    confidence = 0.0
+    try:
+        osd = pytesseract.image_to_osd(img)
+        detected_angle = int(
+            [line for line in osd.split("\n") if "Rotate" in line][0].split(":")[1].strip()
+        )
+        confidence = float(
+            [line for line in osd.split("\n") if "Orientation confidence" in line][0].split(":")[1].strip()
+        )
+    except pytesseract.TesseractError as e:
+        print(f"OSD не смог определить ориентацию (стр. {page_number + 1}): {e}")
+
+    if detected_angle != 0 and confidence >= 1.0:
+        img = img.rotate(-detected_angle, expand=True)
+        print(f"Стр. {page_number + 1}: изображение повёрнуто на {-detected_angle}°")
+
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    image_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    message = HumanMessage(content=[
+        {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_base64}"}},
+        {"type": "text", "text": "Extract text from this page."}
+    ])
+    response = _invoke_vlm([SystemMessage(content=settings.VL_prompt), message], page_number)
+    token_usage = response.response_metadata.get("token_usage")
+    return {
+        "page_number": page_number,
+        "source_page_index": page_number,
+        "detected_angle": detected_angle,
+        "confidence": confidence,
+        "content": response.content,
+        "token_usage": token_usage,
+    }
+
+
 def first_node(state: MessagesState) -> MessagesState:
     cached = load_json(_pages_cache)
     if cached is not None:
@@ -99,71 +168,37 @@ def first_node(state: MessagesState) -> MessagesState:
         return {"messages": [], "pages_data": cached}
 
     _document = fitz.open(settings.input_path_document)
+    total = len(_document)
 
-    received_text = []
-    pages_data = []  # <-- сюда будем собирать данные для JSON
+    # Распознанные страницы сохраняются по одной: туннель к VLM рвётся посреди длинного документа,
+    # и обрыв на 80-й странице не должен выбрасывать 79 готовых — повторный запуск продолжит с места.
+    # Страницы идут параллельно и заканчиваются в любом порядке, поэтому продолжение пропускает
+    # готовые номера, а не первые N записей.
+    pages_data = load_json(_pages_partial) or []
+    done = {page["page_number"] for page in pages_data}
+    todo = [n for n in range(total) if n not in done]
+    if pages_data:
+        print(f"Продолжаю распознавание: готово {len(done)} из {total} страниц")
 
-    for page_number in range(len(_document)):
+    lock = threading.Lock()
 
-        first_page = _document[page_number]
+    def work(page_number: int) -> None:
+        # PyMuPDF не потокобезопасен на одном документе: у каждого потока свой
+        page = _read_page(fitz.open(settings.input_path_document), page_number)
+        with lock:
+            pages_data.append(page)
+            save_json(pages_data, _pages_partial)
+            print(f"Стр. {page_number + 1} готова ({len(pages_data)}/{total}), токены: {page['token_usage']}")
 
-        pix = first_page.get_pixmap(dpi=160)
+    with ThreadPoolExecutor(max_workers=VLM_WORKERS) as pool:
+        for future in [pool.submit(work, n) for n in todo]:
+            future.result()  # ошибка страницы (туннель лёг насовсем) останавливает прогон; готовое сохранено
 
-        img = PILImage.open(io.BytesIO(pix.tobytes("png")))
-
-        detected_angle = 0
-        confidence = 0.0
-        try:
-            osd = pytesseract.image_to_osd(img)
-            detected_angle = int(
-                [line for line in osd.split("\n") if "Rotate" in line][0].split(":")[1].strip()
-            )
-            confidence = float(
-                [line for line in osd.split("\n") if "Orientation confidence" in line][0].split(":")[1].strip()
-            )
-            print(f"OSD detected rotation: {detected_angle}°, confidence: {confidence}")
-        except pytesseract.TesseractError as e:
-            print(f"OSD не смог определить ориентацию: {e}")
-
-        if detected_angle != 0 and confidence >= 1.0:
-            img_rotated = img.rotate(-detected_angle, expand=True)
-            print(f"Изображение повёрнуто на {-detected_angle}°")
-        else:
-            img_rotated = img
-            print("Поворот не применялся (угол 0 или низкая уверенность)")
-
-        # img_rotated.save(f"rotated_page_{page_number}_1.png")
-
-        buf = io.BytesIO()
-        img_rotated.save(buf, format="PNG")
-
-        image_bytes = pix.tobytes()
-        image_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
-
-        message = HumanMessage(content=[
-            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_base64}"}},
-            {"type": "text", "text": "Extract text from this page."}
-        ])
-
-        response = vlm.invoke([SystemMessage(content=settings.VL_prompt), message])
-        token_usage = response.response_metadata.get("token_usage")
-        print(token_usage)
-
-        received_text.append(response)
-
-        # собираем запись для JSON
-        pages_data.append({
-            "page_number": page_number,
-            "source_page_index": page_number,
-            "detected_angle": detected_angle,
-            "confidence": confidence,
-            "content": response.content,
-            "token_usage": token_usage,
-        })
-
+    pages_data.sort(key=lambda page: page["page_number"])
     save_json(pages_data, _pages_cache)
+    _pages_partial.unlink(missing_ok=True)
 
-    return {"messages": received_text, "pages_data": pages_data}
+    return {"messages": [], "pages_data": pages_data}
 
 def formatting_text_node(state: MessagesState) -> MessagesState:
     cached = load_json(_check_cache)
@@ -603,7 +638,7 @@ def table_roles_node(state: MessagesState) -> MessagesState:
     try:
         roles_llm = ChatOpenAI(model=settings.llmodel, max_tokens=16000, temperature=0, timeout=300,
                                model_kwargs={"response_format": {"type": "json_object"}})
-        save_json(classify_lists(rule_groups, roles_llm), _doc_dir / "table_roles.json")
+        save_json(classify_lists_voted(rule_groups, roles_llm), _doc_dir / "table_roles.json")
     except Exception as e:
         print("TABLE ROLES ERROR (пропускаем):", type(e).__name__, str(e)[:200])
     return {"rule_groups": rule_groups}

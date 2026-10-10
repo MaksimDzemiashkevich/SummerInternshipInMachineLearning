@@ -73,7 +73,7 @@ _SCOPE_CACHE: dict[tuple[str, str], bool] = {}
 
 
 # Сколько текста глобальных правил показываем модели: область действия стоит в начале документа.
-SCOPE_CHARS = 1500
+SCOPE_CHARS = 2500  # начало документа: заголовок, тема, ревизии и Scope
 
 
 # Сколько раз спросить модель об области действия; изделие чужое, только если все сказали «нет».
@@ -156,8 +156,10 @@ def _document_covers_row(rule_set, context: str, model=None) -> bool:
     # компрессор из области действия получал пустые ячейки. Решает текст области действия.
     messages = [
         {"role": "system", "content": SCOPE_PROMPT},
-        {"role": "user", "content": (f"Recorded item: {context}\n\nOpening rules of the standard:\n"
-                                     f"{rule_set.global_rules[:SCOPE_CHARS]}")},
+        # начало самого документа (заголовок, тема записки, Scope), а не только то, что
+        # группировка сочла общими правилами: шапку письма она в правила не берёт
+        {"role": "user", "content": (f"Recorded item: {context}\n\nOpening of the document:\n"
+                                     f"{(getattr(rule_set, 'opening_text', '') or rule_set.global_rules)[:SCOPE_CHARS]}")},
     ]
 
     def ask(_):

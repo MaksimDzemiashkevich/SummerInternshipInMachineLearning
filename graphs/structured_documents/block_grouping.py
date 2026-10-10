@@ -33,7 +33,7 @@ _BAD_ESCAPE_RE = re.compile(r'\\(?=[^"\\/bfnrtu])')
 def parse_page_content(content) -> dict | None:
     """Содержимое страницы как dict {"blocks": …}, либо None, если его не разобрать."""
     if isinstance(content, dict):
-        return content
+        return _attach_captions(content)
     if not isinstance(content, str):
         return None
     text = content.strip()
@@ -45,8 +45,30 @@ def parse_page_content(content) -> dict | None:
         except json.JSONDecodeError:
             continue
         if isinstance(parsed, dict):
-            return parsed
+            return _attach_captions(parsed)
     return None
+
+
+def _attach_captions(content: dict) -> dict:
+    """Заголовок, за которым сразу идёт таблица без названия, — подпись этой таблицы.
+
+    VLM пишет подпись то в "title" таблицы, то отдельным блоком heading над ней. Во втором
+    случае все таблицы страницы оставались без названий, и указатель таблиц склеивал их в
+    одну — продолжение таблицы с прошлой страницы. Продолжение вверху страницы не задевается:
+    над ним колонтитул (абзац) или ничего, а не заголовок."""
+    blocks = content.get("blocks")
+    if not isinstance(blocks, list):
+        return content
+    merged: list = []
+    for block in blocks:
+        previous = merged[-1] if merged else None
+        if (isinstance(block, dict) and block.get("type") == "table" and not str(block.get("title") or "").strip()
+                and isinstance(previous, dict) and previous.get("type") == "heading"
+                and str(previous.get("text") or "").strip()):
+            merged[-1] = {**block, "title": str(previous["text"]).strip()}
+            continue
+        merged.append(block)
+    return {**content, "blocks": merged}
 
 
 def _blocks(page: dict) -> list[dict]:
@@ -129,6 +151,7 @@ def build_units(pages: list[dict]) -> list[dict]:
 # на окна: 82-страничная спецификация (≈310 тыс. символов, 2300 блоков) одним вызовом
 # уходила целиком в одну группу Global — модель просто перечисляла id подряд.
 WINDOW_CHARS = 25000
+GROUPING_ATTEMPTS = 3
 
 _WINDOW_HINT = """
 
@@ -210,8 +233,18 @@ def _group_window(units: list[dict], llm, prompt: str, groups: list[dict]) -> li
     """Раскладывает блоки одного окна, дописывая группы в groups; возвращает потерянные блоки."""
     payload = json.dumps([{"id": u["id"], "section": u["section"], "text": u["text"]} for u in units],
                          ensure_ascii=False)
-    response = llm.invoke([SystemMessage(content=prompt), HumanMessage(content=payload)])
-    parsed = json.loads(str(response.content))
+    # Модель изредка возвращает обрезанный или битый JSON (на 82-страничном документе — одно окно
+    # из десятка); ответ на тот же вопрос просто спрашивается заново, а не роняет всю экстракцию
+    parsed = None
+    for attempt in range(1, GROUPING_ATTEMPTS + 1):
+        response = llm.invoke([SystemMessage(content=prompt), HumanMessage(content=payload)])
+        try:
+            parsed = json.loads(str(response.content))
+            break
+        except json.JSONDecodeError as e:
+            print(f"группировка: ответ модели не JSON ({e}); попытка {attempt}/{GROUPING_ATTEMPTS}")
+            if attempt == GROUPING_ATTEMPTS:
+                raise
 
     by_id = {u["id"]: u for u in units}
     used: set[int] = set()
