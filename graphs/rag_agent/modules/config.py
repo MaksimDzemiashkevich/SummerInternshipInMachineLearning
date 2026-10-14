@@ -36,6 +36,9 @@ class Settings:
     temperature: float = 0.0
     # Для reasoning-моделей (gpt-5.6-luna) тулзы работают только при reasoning_effort="none".
     reasoning_effort: str | None = "none"
+    # Паспортам и сборке правил инструменты не нужны, и рассуждать им можно: на AVS / HB-15
+    # (2026-10-13) none — 88 и 89 из 102, low — 96 и 97, при +10–20% времени и ~1.7× выходных токенов.
+    spec_reasoning_effort: str | None = "low"
 
 
 @dataclass
@@ -110,6 +113,8 @@ class AppConfig:
     rule_sets: list[RuleSet]
     # Та же модель без bind_tools: разговорной части тулзы конверсии единиц не нужны.
     assistant: ChatOpenAI | None = None
+    # Модель паспортов (нормализация по спецификации, сборка правил пользователя): с рассуждением.
+    spec_model: ChatOpenAI | None = None
 
 
 # Attribute names that mark document front/back matter rather than technical rules.
@@ -323,12 +328,17 @@ def document_id(text: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", "".join(parts or [str(text)]).upper())
 
 
-def load_all_rule_sets(settings: Settings) -> list[RuleSet]:
-    """Находит все <doc_dir>/rule_groups.json и собирает RuleSet на каждый документ."""
+def load_all_rule_sets(settings: Settings, names: set[str] | None = None) -> list[RuleSet]:
+    """Находит все <doc_dir>/rule_groups.json и собирает RuleSet на каждый документ.
+
+    names — загрузить только эти документы (подгрузка только что извлечённого документа).
+    """
     rule_sets: list[RuleSet] = []
 
     for path in sorted(settings.rule_groups_dir.glob("*/rule_groups.json")):
         name = path.parent.name
+        if names is not None and name not in names:
+            continue
         groups: list[dict] = json.loads(path.read_text(encoding="utf-8"))
         global_rules, entries = _split_groups(groups)
         if not entries:
@@ -849,6 +859,15 @@ def hybrid_search(rule_set: RuleSet, query: str, top_k: int = 4,
     return [rule_set.groups[i].body for i, _ in top]
 
 
+def add_rule_set(app_config: AppConfig, name: str) -> RuleSet | None:
+    """Подгружает документ в работающий сервис (после фонового извлечения); заменяет прежний с тем же именем."""
+    loaded = load_all_rule_sets(app_config.settings, {name})
+    if not loaded:
+        return None
+    app_config.rule_sets[:] = [rs for rs in app_config.rule_sets if rs.name != name] + loaded
+    return loaded[0]
+
+
 def build_app_config(settings: Settings | None = None) -> AppConfig:
     settings = settings or Settings()
 
@@ -861,6 +880,14 @@ def build_app_config(settings: Settings | None = None) -> AppConfig:
         max_retries=2,
     )
     model = assistant.bind_tools(array_of_tools)
+    spec_model = ChatOpenAI(
+        model=settings.chat_model,
+        temperature=settings.temperature,
+        reasoning_effort=settings.spec_reasoning_effort,
+        # с рассуждением ответ дольше: запас к таймауту разговорной модели
+        timeout=180,
+        max_retries=2,
+    )
 
     rule_sets = load_all_rule_sets(settings)
 
@@ -869,4 +896,5 @@ def build_app_config(settings: Settings | None = None) -> AppConfig:
         model=model,
         rule_sets=rule_sets,
         assistant=assistant,
+        spec_model=spec_model,
     )

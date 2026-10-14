@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import ChatHistory from "./Components/ChatHistory";
 import MessageInput from "./Components/MessageInput";
 import Header from "./Components/Header";
@@ -8,18 +8,19 @@ const GREETING = {
     key: "greeting",
     role: "ai",
     content: "Привет! Приложите .xlsx с колонками Attribute и Value — нормализую значения по "
-        + "выбранным стандартам. Можно просто поговорить, а можно написать свои правила: они "
-        + "лягут отдельной колонкой и будут действовать только в этом запросе. Забыли правило "
-        + "— скажите, и я пересчитаю последний файл заново.",
+        + "выбранным стандартам и отвечу на вопросы о результате. Приложите PDF нормативного "
+        + "документа — извлеку из него новый стандарт; это идёт в фоне, а чат тем временем "
+        + "свободен. Правила можно дать на один прогон или добавить в стандарт насовсем.",
 };
 
 const ChatPage = () => {
 
     const [messages, setMessages] = useState([GREETING]);
 
-    const addMessage = (newMsg) => {
+    // Ссылка на функцию постоянна: опрос фоновых задач держит её в зависимостях эффекта.
+    const addMessage = useCallback((newMsg) => {
         setMessages(prev => [...prev, newMsg]);
-    };
+    }, []);
 
     return(
         <div className="chatPage">

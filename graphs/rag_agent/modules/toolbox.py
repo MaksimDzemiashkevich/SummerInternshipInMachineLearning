@@ -13,14 +13,15 @@
 import logging
 import uuid
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 import pandas as pd
 
 from ..pipeline.common import _attribute_matches, _norm_attr
 from ..pipeline.frames import _row_context, prepare_frame
-from . import results, rule_store
+from . import jobs, results, rule_store
 from .chat import AdHocRule
-from .workspace import StoredFile, Workspace
+from .workspace import StoredFile, Workspace, save_workspace
 
 logger = logging.getLogger("normalization_pipeline")
 
@@ -30,6 +31,11 @@ INSPECT_LIMIT = 20
 PREVIEW_ROWS = 12
 # Сколько строк за раз можно пересчитать отдельно (дальше — normalize_file целиком).
 MAX_RENORMALIZE_ROWS = 50
+# Сколько ждать нормализацию в ходе чата: успела — файл в ответе, нет — придёт отдельным сообщением.
+NORMALIZE_WAIT_SECONDS = 60
+# Где лежат PDF документов для извлечения.
+INPUT_DIR = Path(__file__).resolve().parents[2] / "structured_documents" / "data" / "input"
+OUTPUT_DIR = Path(__file__).resolve().parents[2] / "structured_documents" / "data" / "output"
 
 
 def _parse_rules(raw) -> list[AdHocRule]:
@@ -75,6 +81,7 @@ class Toolbox:
     """
 
     TOOL_NAMES = ("list_files", "list_standards", "inspect_file", "normalize_file",
+                  "extract_document", "list_jobs",
                   "file_overview", "top_problems", "list_issues", "explain_row",
                   "renormalize_rows", "edit_result", "accept_proposals",
                   "list_rules", "propose_rule", "propose_rule_removal",
@@ -82,8 +89,9 @@ class Toolbox:
 
     def __init__(self, workspace: Workspace, app_config, catalogue: list[dict],
                  selected: list[str] | None = None, produced: list[str] | None = None,
-                 require_new_turn: bool = True):
+                 require_new_turn: bool = True, session_id: str = ""):
         self.workspace = workspace
+        self.session_id = session_id
         self.app_config = app_config
         self.catalogue = catalogue
         self.selected = list(selected or [])
@@ -94,7 +102,7 @@ class Toolbox:
     @property
     def _model(self):
         # спецификации и правке паспорта нужна модель без привязанных инструментов
-        return self.app_config.assistant or self.app_config.model
+        return self.app_config.spec_model or self.app_config.assistant or self.app_config.model
 
     def _file(self, file_id: str) -> tuple[StoredFile | None, dict | None]:
         if not str(file_id or "").strip():
@@ -135,6 +143,23 @@ class Toolbox:
         partial = [e["name"] for e in self.catalogue
                    if wanted in e["name"].lower() or wanted in e["label"].lower()]
         return by_name.get(partial[0]) if len(partial) == 1 else None
+
+    def _column_standard(self, stored: StoredFile, standard: str) -> tuple[str | None, dict | None]:
+        """Стандарт среди колонок результата: точно, без учёта регистра, по ярлыку или по
+        однозначной части имени. Агент пишет «RTE»; фильтр по точному имени находил 0 строк, и
+        агент отвечал «жёлтых нет» при трёх жёлтых."""
+        wanted = str(standard or "").strip().lower()
+        if not wanted:
+            return None, None
+        names = [e["standard"] for e in self._layout(stored)["standards"]]
+        labels = {s["name"]: s["label"].lower() for s in self.catalogue}
+        exact = [n for n in names if wanted in (n.lower(), labels.get(n, ""))]
+        partial = [n for n in names if wanted in n.lower() or wanted in labels.get(n, "")]
+        found = exact or partial
+        if len(found) == 1:
+            return found[0], None
+        return None, {"error": f"standard {standard!r} is {'ambiguous' if found else 'not a column of this result'}",
+                      "standards": names}
 
     def _source_frame(self, stored: StoredFile) -> pd.DataFrame:
         """Исходные колонки файла (без колонок стандартов) — то, из чего считаются значения."""
@@ -187,10 +212,11 @@ class Toolbox:
 
         `has_attribute_spec` says whether rules can be added to that standard's knowledge base.
         """
-        from ..spec_runner import OUTPUT_DIR
+        loaded = {s["name"] for s in self.catalogue}
         return {"standards": [{**s, "has_attribute_spec": (OUTPUT_DIR / s["name"] / "attribute_spec.json").exists()}
                               for s in self.catalogue],
-                "selected_in_ui": self.selected}
+                "selected_in_ui": self.selected,
+                "pdfs_not_extracted": sorted(p.name for p in INPUT_DIR.glob("*.pdf") if p.stem not in loaded)}
 
     def inspect_file(self, file_id: str, limit: int = INSPECT_LIMIT, contains: str = "") -> dict:
         """Show rows of a file as they are, so you can answer questions about what is in it.
@@ -232,31 +258,109 @@ class Toolbox:
             return {"error": f"file {stored.file_id} has no columns {missing}",
                     "columns": [str(c) for c in stored.frame.columns]}
 
-        wanted = [str(s).strip() for s in (standards or []) if str(s).strip()] or self.selected
-        known = {s["name"] for s in self.catalogue}
-        unknown = [w for w in wanted if w not in known]
-        wanted = [w for w in wanted if w in known]
+        asked = [str(s).strip() for s in (standards or []) if str(s).strip()]
+        # «RTE» вместо полного имени: однозначная часть имени — тот стандарт; неизвестное имя —
+        # ошибка, а не молчаливый прогон по всем стандартам (33 колонки вместо одной)
+        resolved = {name: self._rule_set(name) for name in asked}
+        unknown = [name for name, rs in resolved.items() if rs is None]
+        if unknown:
+            return {"error": f"unknown or ambiguous standards {unknown}: nothing was run. Pass names "
+                             f"from list_standards, or ask the user which standard they mean.",
+                    "standards": [s["name"] for s in self.catalogue]}
+        wanted = list(dict.fromkeys(rs.name for rs in resolved.values())) or self.selected
         parsed = _parse_rules(rules)
         logger.info("[AGENT] normalize_file %s | стандарты %s | правил %d",
                     stored.file_id, wanted or "все", len(parsed))
 
         by_name = {rs.name: rs for rs in self.app_config.rule_sets}
         rule_sets = [by_name[n] for n in wanted] or list(self.app_config.rule_sets)
-        result_df, ambiguous = normalize_table(frame, self.app_config, rule_sets, parsed)
-        layout = result_df.attrs.get("layout") or {}
-        origin = (f"из {stored.name} по стандартам: {', '.join(wanted) if wanted else 'все'}"
-                  + (f"; разовых правил: {len(parsed)}" if parsed else ""))
-        result = self.workspace.add(name=f"result_{stored.name}", frame=result_df, kind="result",
-                                    ambiguous=ambiguous, origin=origin, layout=layout)
-        self._touch(result)
-        self._focus(result, [])
-        report = {"result": result.summary(), "unknown_standards": unknown,
-                  "overview": results.overview(result.frame, self._layout(result), result.ambiguous)}
-        if parsed:
-            report["user_rules"] = [
-                {"rule": r.text, "attribute": r.attribute, "quantity": r.quantity, "rows_matched": n}
-                for r, n in zip(parsed, user_rule_hits(frame, parsed, self.app_config.model))]
-        return report
+        holder: dict = {}
+
+        def work() -> dict:
+            result_df, ambiguous = normalize_table(frame, self.app_config, rule_sets, parsed)
+            layout = result_df.attrs.get("layout") or {}
+            origin = (f"из {stored.name} по стандартам: {', '.join(wanted) if wanted else 'все'}"
+                      + (f"; разовых правил: {len(parsed)}" if parsed else ""))
+            result = self.workspace.add(name=f"result_{stored.name}", frame=result_df, kind="result",
+                                        ambiguous=ambiguous, origin=origin, layout=layout)
+            self.workspace.focus = {"file_id": result.file_id, "rows": []}
+            report = {"result": result.summary(), "standards": wanted or "all",
+                      "overview": results.overview(result.frame, self._layout(result), result.ambiguous)}
+            if parsed:
+                report["user_rules"] = [
+                    {"rule": r.text, "attribute": r.attribute, "quantity": r.quantity, "rows_matched": n}
+                    for r, n in zip(parsed, user_rule_hits(frame, parsed, self.app_config.model))]
+            holder["report"] = report
+            if self.session_id:
+                save_workspace(self.session_id)
+            return {"file_id": result.file_id, "name": result.name, "rows": int(result.frame.shape[0]),
+                    "flagged": result.summary()["flagged_cells"]}
+
+        # стандарты в названии: по нему агент потом рассказывает о задаче, и без них додумывал «по всем»
+        title = f"нормализация {stored.name} по стандартам: {', '.join(wanted) if wanted else 'все загруженные'}"
+        job = jobs.run_in_background(self.session_id, title, work)
+        if jobs.wait(job, NORMALIZE_WAIT_SECONDS):
+            jobs.mark_delivered(job)  # файл уходит в этом же ответе
+            if job.state != "done":
+                return {"error": f"normalization failed: {job.error}"}
+            result = self.workspace.get(job.result["file_id"])
+            if result is not None:
+                self._touch(result)
+            return holder["report"]
+        return {"status": "running", "job": jobs.describe(job),
+                "message": "The normalization is still running in the background. Tell the user it is "
+                           "running and that the result file will appear in the chat by itself when it is "
+                           "ready; the chat stays free meanwhile. Do not wait or poll for it."}
+
+    # ------------------------------------------------------------------ документы и фоновые задачи
+    def extract_document(self, file_id: str = "", document: str = "") -> dict:
+        """Extract a normalization standard from a PDF so it can be used to normalize files.
+
+        `file_id`: a PDF the user attached in this conversation (list_files shows it as kind
+        "document"); or `document`: the name of a PDF already in the service's input folder
+        (list_standards shows them as pdfs_not_extracted). Extraction runs in the background and
+        takes from minutes to an hour (a vision model reads every page, then rules are grouped and
+        attribute specifications are compiled). Only one extraction runs at a time, others wait in a
+        queue. The chat stays free meanwhile; when it is done the new standard is loaded and the user
+        is told in the chat automatically. Tell the user that, and do not wait or poll.
+        """
+        pdf = None
+        if str(file_id or "").strip():
+            stored = self.workspace.get(file_id)
+            if stored is None or stored.kind != "document":
+                return {"error": f"{file_id} is not an attached PDF document", "files": self.workspace.listing()}
+            pdf = Path(stored.path)
+        elif str(document or "").strip():
+            wanted = Path(str(document).strip()).stem.lower()
+            pdfs = list(INPUT_DIR.glob("*.pdf"))
+            exact = [p for p in pdfs if p.stem.lower() == wanted]
+            partial = [p for p in pdfs if wanted in p.stem.lower()]
+            pdf = exact[0] if exact else (partial[0] if len(partial) == 1 else None)
+            if pdf is None:
+                return {"error": f"no single PDF matches '{document}'",
+                        "candidates": [p.name for p in partial] or sorted(p.name for p in pdfs)}
+        else:
+            return {"error": "give file_id of an attached PDF or the name of a PDF document"}
+        if not pdf.exists():
+            return {"error": f"file {pdf.name} is not on the server any more; ask the user to attach it again"}
+        if (OUTPUT_DIR / pdf.stem / "rule_groups.json").exists():
+            return {"error": f"document {pdf.stem} is already extracted and loaded as a standard", "standard": pdf.stem}
+        same = [j for j in jobs._JOBS.values() if j.kind == "extract" and j.document == pdf.stem
+                and j.state in ("queued", "running")]
+        if same:
+            return {"status": "already_running", "job": jobs.describe(same[0])}
+        job = jobs.queue_extraction(self.session_id, pdf)
+        logger.info("[AGENT] extract_document %s -> задача %s (%s)", pdf.name, job.job_id, job.state)
+        waiting = [j for j in jobs._JOBS.values() if j.kind == "extract" and j.state in ("queued", "running")
+                   and j.job_id != job.job_id]
+        return {"status": job.state, "job": jobs.describe(job), "ahead_in_queue": len(waiting),
+                "message": "Extraction runs in the background; the user will be told in the chat when it is "
+                           "done, and the chat stays free meanwhile. Do not wait or poll."}
+
+    def list_jobs(self) -> dict:
+        """List the background jobs of this conversation (document extractions, long normalizations):
+        state (queued, running, done, failed, lost), current step, pages read so far, errors."""
+        return {"jobs": [jobs.describe(j) for j in jobs.for_session(self.session_id)]}
 
     # ------------------------------------------------------------------ вопросы по результату
     def file_overview(self, file_id: str) -> dict:
@@ -289,8 +393,11 @@ class Toolbox:
         stored, error = self._result(file_id)
         if error:
             return error
+        standard, error = self._column_standard(stored, standard)
+        if error:
+            return error
         return results.aggregate(stored.frame, self._layout(stored), stored.ambiguous,
-                                 list(group_by or ["Attribute"]), metric, standard or None, top, filters)
+                                 list(group_by or ["Attribute"]), metric, standard, top, filters)
 
     def list_issues(self, file_id: str, metric: str = "flagged", standard: str = "",
                     filters: dict | None = None, limit: int = 30) -> dict:
@@ -313,8 +420,11 @@ class Toolbox:
         stored, error = self._result(file_id)
         if error:
             return error
+        standard, error = self._column_standard(stored, standard)
+        if error:
+            return error
         found = results.issues(stored.frame, self._layout(stored), stored.ambiguous,
-                               metric, standard or None, filters, limit)
+                               metric, standard, filters, limit)
         if "rows" in found:
             self._focus(stored, [r["row"] for r in found["rows"]])
         return found
@@ -330,13 +440,16 @@ class Toolbox:
         stored, error = self._result(file_id)
         if error:
             return error
+        standard, error = self._column_standard(stored, standard)
+        if error:
+            return error
         positions, bad = self._positions(stored, [row])
         if not positions:
             return {"error": f"row {row} is outside 1..{stored.frame.shape[0]}"}
         position = positions[0]
         self._focus(stored, [position + 1])
         layout = self._layout(stored)
-        found = [r for r in results.result_rows(stored.frame, layout, stored.ambiguous, standard or None)
+        found = [r for r in results.result_rows(stored.frame, layout, stored.ambiguous, standard)
                  if r["row"] == position + 1]
         source = self._source_frame(stored)
         attribute, value = str(source.iloc[position]["Attribute"]), str(source.iloc[position]["Value"])
@@ -387,9 +500,15 @@ class Toolbox:
             return {"error": f"{len(positions)} rows asked; at most {MAX_RENORMALIZE_ROWS} at once — "
                              f"run normalize_file for the whole file instead"}
         layout = self._layout(stored)
-        wanted = {str(s).strip().lower() for s in standards or [] if str(s).strip()}
-        entries = [e for e in layout["standards"]
-                   if not wanted or e["standard"].lower() in wanted or e["column"].lower() in wanted]
+        wanted = set()
+        for name in standards or []:
+            if not str(name).strip():
+                continue
+            resolved, error = self._column_standard(stored, name)
+            if error:
+                return error
+            wanted.add(resolved)
+        entries = [e for e in layout["standards"] if not wanted or e["standard"] in wanted]
         if not entries:
             return {"error": f"no such standard columns: {sorted(wanted)}",
                     "standards": [e["standard"] for e in layout["standards"]]}
@@ -484,10 +603,13 @@ class Toolbox:
         stored, error = self._result(file_id)
         if error:
             return error
+        standard, error = self._column_standard(stored, standard)
+        if error:
+            return error
         layout = self._layout(stored)
         wanted_rows = set(rows or [])
         accepted, skipped = [], []
-        for r in results.result_rows(stored.frame, layout, stored.ambiguous, standard or None):
+        for r in results.result_rows(stored.frame, layout, stored.ambiguous, standard):
             if not r["flagged"] or (wanted_rows and r["row"] not in wanted_rows):
                 continue
             if not results._matches(r, filters):
@@ -584,7 +706,8 @@ class Toolbox:
         return token
 
     def propose_rule(self, standard: str, attribute: str, rule: str, create_new: bool = False,
-                     file_id: str = "", rows: list[int] | None = None) -> dict:
+                     file_id: str = "", rows: list[int] | None = None, item: str = "",
+                     examples: list[dict] | None = None) -> dict:
         """Prepare a rule to be stored permanently in a standard's knowledge base (it then holds
         for every later run of that standard, together with the document's own rules, and wins
         where they conflict). Nothing is stored yet: the answer is a preview and a token.
@@ -594,6 +717,14 @@ class Toolbox:
         that states the general rule (e.g. "Write the value with two decimals", "Write 'SS316' as
         '316 SS'"), not a one-cell fix. `file_id` and `rows`: the result the user is looking at —
         the preview then shows how those rows and the other rows of this attribute would come out.
+        `item`: the kind of item the rule is only for (e.g. "gloves"), empty when it is for every
+        item. `examples`: the user's own examples [{"value": "<recorded>", "expected": "<written>"}]
+        — they are run through the new specification and the answer says which ones fail.
+
+        The attribute's specification is compiled anew from the document's rules together with all
+        user rules of the attribute (the same compiler as for documents), so whether the rule adds
+        to or replaces a document rule, and what kind the attribute becomes, follows from its
+        meaning; document sentences the rule contradicts are listed and hidden from the models.
 
         If the standard has no such attribute the answer is status "unknown_attribute" with similar
         attributes: tell the user, ask whether they meant one of those or want a NEW attribute, and
@@ -622,8 +753,15 @@ class Toolbox:
                                f"whether they mean one of the similar attributes or want to create a "
                                f"new attribute with this rule."}
         name = spec["attribute"] if spec else str(attribute).strip()
+        item = str(item or "").strip()
+        new_text = f"For {item}: {text}" if item else text
+        texts = [rule_store._rule_text(r) for r in rule_store.rules(rule_set.name, name)] + [new_text]
+        new_examples = [{"value": str(e.get("value", "")).strip(), "expected": str(e.get("expected", "")).strip(), "item": item}
+                        for e in examples or [] if isinstance(e, dict) and str(e.get("value", "")).strip()]
+        all_examples = rule_store._examples(rule_store.rules(rule_set.name), name) + new_examples
         try:
-            new_spec, notes, explanation = rule_store.spec_with_rules(rule_set.name, name, [text], spec, self._model)
+            new_spec, notes, explanation = rule_store.spec_with_rules(rule_set.name, name, texts, spec, self._model,
+                                                                      all_examples)
         except Exception as e:
             logger.warning("[RULES] паспорт %r не собран: %s", name, e)
             return {"error": f"could not build the specification with this rule: {e}"}
@@ -634,19 +772,26 @@ class Toolbox:
             new_spec.setdefault("aliases", [])
         changes = rule_store.spec_changes(spec, new_spec)
         preview = self._preview(runner, new_spec, attribute, file_id, rows, rule_set.name)
+        checks = rule_store.check_examples(rule_set.name, new_spec, all_examples, self._model)
         stored, _ = self._file(file_id)
         token = self._pending({"action": "add", "standard": rule_set.name, "attribute": name,
-                               "rule": text, "spec": new_spec, "new_attribute": spec is None,
+                               "rule": text, "item": item, "examples": new_examples,
+                               "spec": new_spec, "new_attribute": spec is None,
                                "file_id": stored.file_id if stored is not None and stored.kind == "result" else "",
                                "rows": list(dict.fromkeys([int(r) for r in rows or []] + [p["row"] for p in preview]))})
         return {"status": "needs_confirmation", "token": token, "standard": rule_set.name,
                 "attribute": name, "new_attribute": spec is None, "rule": text,
                 "spec_changes": changes, "notes": notes, "explanation": explanation,
-                "preview": preview,
+                "preview": preview, "examples": checks, "regressions": new_spec.get("regressions") or [],
                 "message": ("Nothing is stored yet. Show the user what changes and ask for a yes/no. "
                             + ("WARNING: this creates a NEW attribute the standard does not define. "
                                if spec is None else "")
                             + ("The rule changes nothing in the specification: say so. " if not changes else "")
+                            + ("Some of the user's examples FAIL with this specification: show them and say "
+                               "the rule did not come out as stated. " if any(not c["ok"] for c in checks) else "")
+                            + ("WARNING: values the rule does not mention would come out differently "
+                               "(regressions: the document's own forms and examples, before → after). Show "
+                               "them and ask whether that is intended. " if new_spec.get("regressions") else "")
                             + ("No preview row changes with this rule: tell the user so before asking, "
                                "and why if the notes say. " if preview and all(
                                    p["with_rule"] == p["now"] for p in preview) else ""))}
@@ -704,7 +849,8 @@ class Toolbox:
         self.workspace.pending.pop(str(token).strip())
         if action["action"] == "add":
             rule = rule_store.add_rule(action["standard"], action["attribute"], action["rule"],
-                                       action["spec"], action["new_attribute"])
+                                       action["spec"], action["new_attribute"], item=action.get("item", ""),
+                                       examples=action.get("examples"))
             invalidate_runner(action["standard"])
             logger.info("[RULES] %s: правило %s для %r записано", action["standard"], rule["id"], action["attribute"])
             return {"stored": {"standard": action["standard"], **rule},

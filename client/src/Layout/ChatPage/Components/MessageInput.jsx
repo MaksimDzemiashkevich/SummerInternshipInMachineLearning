@@ -9,6 +9,9 @@ const IconStyle = { fontSize: 16 };
 const API_BASE = 'http://localhost:8000';
 const CHAT_URL = `${API_BASE}/chat`;
 const STANDARDS_URL = `${API_BASE}/standards`;
+const JOBS_URL = `${API_BASE}/jobs`;
+// Как часто спрашивать о фоновых задачах (извлечение документа, долгая нормализация), пока они идут.
+const JOBS_POLL_MS = 5000;
 // Сколько последних реплик уходит на бэкенд как контекст разговора.
 const HISTORY_LIMIT = 12;
 
@@ -21,6 +24,20 @@ const base64ToBlob = (base64, type) => {
     }
     return new Blob([bytes], { type });
 };
+
+/** Файлы из ответа бэкенда → вложения сообщения в ленте. */
+const toAttachments = (files, prefix) => (files ?? [])
+    .filter((f) => f?.content_base64)
+    .map((f, index) => {
+        const blob = base64ToBlob(f.content_base64, f.media_type);
+        return {
+            uid: `${prefix}_${Date.now()}_${index}`,
+            name: f.name || 'result.xlsx',
+            byte: blob.size,
+            type: blob.type,
+            url: URL.createObjectURL(blob),
+        };
+    });
 
 const MessageInput = ({ onSend, history = [] }) => {
     const [value, setValue] = useState('');
@@ -40,6 +57,8 @@ const MessageInput = ({ onSend, history = [] }) => {
             : `s_${Date.now()}_${Math.random().toString(16).slice(2)}`,
     );
     const [lastFileName, setLastFileName] = useState('');
+    // Есть ли на сервере идущие задачи этого диалога: пока есть — опрашиваем /jobs.
+    const [pollJobs, setPollJobs] = useState(false);
 
     // Список опций держим стабильным: новый массив на каждый рендер заставляет Select
     // пересчитывать себя всякий раз, когда в чат приходит сообщение.
@@ -48,12 +67,40 @@ const MessageInput = ({ onSend, history = [] }) => {
         [standards],
     );
 
+    const loadStandards = () => axios
+        .get(STANDARDS_URL)
+        .then(({ data }) => setStandards(data?.standards ?? []))
+        .catch((error) => console.error('Не удалось получить список стандартов:', error));
+
     useEffect(() => {
-        axios
-            .get(STANDARDS_URL)
-            .then(({ data }) => setStandards(data?.standards ?? []))
-            .catch((error) => console.error('Не удалось получить список стандартов:', error));
+        loadStandards();
     }, []);
+
+    // Фоновые задачи заканчиваются, когда ввод уже свободен: их результат приходит отдельным
+    // сообщением. Опрос идёт, только пока на сервере что-то выполняется.
+    useEffect(() => {
+        if (!pollJobs) return undefined;
+        const timer = setInterval(() => {
+            axios
+                .get(JOBS_URL, { params: { session_id: sessionRef.current } })
+                .then(({ data }) => {
+                    (data?.finished ?? []).forEach((job) => {
+                        const message = {
+                            key: `job_${job.job_id}`,
+                            role: 'ai',
+                            content: job.message ?? '',
+                        };
+                        const attachments = toAttachments(job.files, `job_${job.job_id}`);
+                        if (attachments.length > 0) message.attachments = attachments;
+                        onSend(message);
+                        if (job.standards_changed) loadStandards();
+                    });
+                    if ((data?.active ?? []).length === 0) setPollJobs(false);
+                })
+                .catch((error) => console.error('Не удалось узнать о фоновых задачах:', error));
+        }, JOBS_POLL_MS);
+        return () => clearInterval(timer);
+    }, [pollJobs, onSend]);
 
     const handleAttachClick = () => {
         fileInputRef.current?.click();
@@ -154,20 +201,10 @@ const MessageInput = ({ onSend, history = [] }) => {
                     content: data?.reply ?? '',
                 };
                 // Агент мог создать несколько файлов за один ход — прикладываем все.
-                const produced = (data?.files ?? []).filter((f) => f?.content_base64);
-                if (produced.length > 0) {
-                    reply.attachments = produced.map((f, index) => {
-                        const blob = base64ToBlob(f.content_base64, f.media_type);
-                        return {
-                            uid: `result_${Date.now()}_${index}`,
-                            name: f.name || 'result.xlsx',
-                            byte: blob.size,
-                            type: blob.type,
-                            url: URL.createObjectURL(blob),
-                        };
-                    });
-                }
+                const attachments = toAttachments(data?.files, 'result');
+                if (attachments.length > 0) reply.attachments = attachments;
                 onSend(reply);
+                if ((data?.jobs_active ?? 0) > 0) setPollJobs(true);
             })
             .catch((error) => {
                 if (axios.isCancel(error) || !isCurrent()) return;  // отмену уже показали
@@ -191,6 +228,7 @@ const MessageInput = ({ onSend, history = [] }) => {
         <div className="composer">
             <input
                 type="file"
+                accept=".xlsx,.pdf"
                 ref={fileInputRef}
                 onChange={handleFileChange}
                 style={{ display: 'none' }}
@@ -223,7 +261,7 @@ const MessageInput = ({ onSend, history = [] }) => {
                 value={value}
                 onChange={setValue}
                 suffix={false}
-                placeholder="Спросите что-нибудь или приложите файл..."
+                placeholder="Спросите что-нибудь или приложите .xlsx / PDF стандарта..."
                 onSubmit={handleSubmit}
                 onCancel={handleCancel}
                 loading={isSending}

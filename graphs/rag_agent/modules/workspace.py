@@ -24,6 +24,8 @@ logger = logging.getLogger("normalization_pipeline")
 
 # Границы, чтобы память не росла бесконечно: диалогов, файлов в диалоге и время жизни.
 MAX_SESSIONS = 20
+# Общий замок на выдачу номеров файлов (в объекте рабочей области он не сохранился бы в pickle).
+_ADD_LOCK = threading.Lock()
 MAX_FILES_PER_SESSION = 20
 SESSION_TTL_SECONDS = 6 * 3600
 DB_PATH = Path(os.getenv("WORKSPACE_DB", str(Path(__file__).resolve().parents[1] / "data" / "workspaces.sqlite")))
@@ -34,12 +36,14 @@ class StoredFile:
     """Таблица диалога. Байты не храним: xlsx рисуется из frame, когда его просят."""
     file_id: str
     name: str
-    kind: str                     # "upload" — прислал пользователь, "result" — посчитали мы
+    kind: str                     # "upload" — таблица пользователя, "result" — посчитали мы,
+                                  # "document" — PDF нормативного документа (для извлечения)
     frame: pd.DataFrame
     ambiguous: dict[str, list[bool]] = field(default_factory=dict)
     origin: str = ""              # для результата: из чего и по каким стандартам посчитан
     # для результата: какие колонки исходные, какие — стандартов и их объяснений (results.layout_of)
     layout: dict = field(default_factory=dict)
+    path: str = ""                # для документа: где лежит PDF
     created_at: float = field(default_factory=time.time)
 
     def summary(self) -> dict:
@@ -53,6 +57,7 @@ class StoredFile:
             "origin": self.origin,
             **({"standards": [e["standard"] for e in self.layout.get("standards", [])]}
                if self.layout.get("standards") else {}),
+            **({"path": getattr(self, "path", "")} if self.kind == "document" else {}),
         }
 
 
@@ -74,10 +79,12 @@ class Workspace:
 
     def add(self, name: str, frame: pd.DataFrame, kind: str = "upload",
             ambiguous: dict[str, list[bool]] | None = None, origin: str = "",
-            layout: dict | None = None) -> StoredFile:
-        self._counter += 1
-        stored = StoredFile(file_id=f"f{self._counter}", name=name, kind=kind, frame=frame,
-                            ambiguous=ambiguous or {}, origin=origin, layout=layout or {})
+            layout: dict | None = None, path: str = "") -> StoredFile:
+        with _ADD_LOCK:  # фоновая нормализация добавляет результат, пока идёт ход чата
+            self._counter += 1
+            file_id = f"f{self._counter}"
+        stored = StoredFile(file_id=file_id, name=name, kind=kind, frame=frame,
+                            ambiguous=ambiguous or {}, origin=origin, layout=layout or {}, path=path)
         self.files[stored.file_id] = stored
         while len(self.files) > MAX_FILES_PER_SESSION:
             dropped, _ = self.files.popitem(last=False)

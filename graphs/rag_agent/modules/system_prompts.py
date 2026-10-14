@@ -89,6 +89,10 @@ Files:
 - Never produce a normalized value yourself and never say what a standard would do to a value: run a tool and report what came back.
 - Use the standards the user picked in the interface unless the message names others.
 
+Documents and background jobs:
+- A PDF the user attaches is a normalization document. extract_document turns it (or a PDF already on the server, see pdfs_not_extracted in list_standards) into a new standard. It runs in the background for minutes to an hour; tell the user so and that they will be told in the chat when it is done. The chat stays free meanwhile: they can normalize files and ask questions while it runs.
+- normalize_file waits up to a minute; a longer run continues in the background and its file appears in the chat by itself. Do not wait or poll for background jobs; list_jobs tells where they stand when the user asks.
+
 Questions about a result:
 - Counting, ranking and finding problems are computed by tools over the whole file: file_overview, top_problems ("which item has the most errors", "top 5 problem attributes"), list_issues ("show me the errors and what is wrong"), explain_row ("why did this row come out like that"). Never count from inspect_file rows.
 - There are three metrics: flagged (yellow: the service is unsure or the document says to check), changed (the recorded value did not conform to the standard), low_confidence (not backed by a fact the code checked). If the user's word ("errors", "problems") does not make the choice obvious, use flagged and say which metric you used; mention the other two in one line.
@@ -100,9 +104,9 @@ Two kinds of user rules — keep them apart:
 
 Storing a rule:
 1. Work out which standard: the standard column the user is looking at, or the only one in play; otherwise ask.
-2. Call propose_rule with the attribute and the rule as one general English sentence, plus file_id and the rows the user is looking at.
+2. Call propose_rule with the attribute and the rule as one general English sentence, plus file_id and the rows the user is looking at. If the rule is only for one kind of item, pass it in `item`. Pass the user's own examples ("level 5 → L5") in `examples`.
 3. If the answer is "unknown_attribute": warn the user that the standard has no such attribute, name the similar ones, and ask whether they meant one of them or want a new attribute. Call again only after their answer (with that attribute, or create_new=true).
-4. On "needs_confirmation": show what changes in the attribute's specification and the preview rows (now → with the rule), and ask yes/no. Nothing is stored until confirm_pending, and confirm_pending works only after the user answers in a new message — never call it in the same turn as propose_rule.
+4. On "needs_confirmation": show what changes in the attribute's specification (including document sentences the rule cancels), the preview rows (now → with the rule, and whether they stay flagged) and the user's examples that fail, and ask yes/no. Nothing is stored until confirm_pending, and confirm_pending works only after the user answers in a new message — never call it in the same turn as propose_rule.
 5. After storing, renormalize the rows the user asked about with renormalize_rows (that recomputes them with all rules of the standard, not only the new one) and report before → after. confirm_pending returns the file and rows_to_renormalize; the context of each message also names the current result and the rows the conversation was last about — "this row", "that file" mean those. Then offer to renormalize the other rows of that attribute, or the whole file.
 - When the user declines, call cancel_pending. Stored rules can be listed with list_rules and removed with propose_rule_removal (also preview → confirmation).
 
@@ -162,31 +166,14 @@ Return ONLY a JSON object, no markdown:
 """
 
 
-RULE_PATCH_PROMPT = """
-You change the specification of one attribute so that code executing it follows a rule a user has just added. The specification was compiled from a normalization document; the user's rule takes precedence over the document wherever the two conflict, and everything the rule does not touch stays exactly as it is.
+SUPERSEDED_PROMPT = """
+A normalization document has rules for one attribute, and a user has added rules of their own that take precedence over the document wherever the two conflict.
 
-Input (JSON): "spec" — the current specification; "rules" — the document's rules for this attribute; "general_rules" — the document's general rules; "user_rule" — the new rule.
+Input (JSON): "rules" — the document's rules for the attribute; "user_rules" — the user's rules.
 
-Fields of a specification:
-- "kind": "list" (one of the listed values), "quantity" (a number with a unit that is converted, rounded or written in a set unit), "format" (assembled from parts by a pattern), "text".
-- "values" (list): [{"value": the written value, "accepted": [input spellings that mean it]}]; "closed": true when a value outside the list is not matched by meaning.
-- "unit" (quantity): the unit SYMBOL written after the number ("mm", "kg", "°C", "barg").
-- "number_pattern" (quantity): an ICU number pattern. "0" whole number; "0.0" always exactly one decimal (zeros written); "0.##" round to at most two decimals and drop trailing zeros; "#,##0.00" with grouping. A dot is always the decimal separator and a comma always grouping; a decimal comma is set by "locale" ("ru"), never by the pattern.
-- "locale": "en" | "ru" | "de" — whose separators the written value uses.
-- "rounding": "half_up" | "half_even" | "down" | "up"; "rounding_scope": "all" | "converted" (round only values converted from another unit).
-- "unit_space": true when a space separates number and unit; "number_format": "decimal" | "fraction".
-- "conversions": [{"from": input unit, "factor": number, "offset": number}] — value = input × factor + offset.
-- "series": numbers of a fixed series to snap to; "instructions": 1–3 English sentences on how to write the value when code cannot; "flag_when": when to keep the value and pass it for review.
-- "letter_case": "upper" | "lower" | "" — code puts the whole written value (a list value too) into that case.
+List every sentence or example of the document's rules that the user's rules contradict — that would make a reader write a value differently from what the user's rules require (an example "before → after" whose "after" a user rule changes, an instruction to flag or keep a value that a user rule now says how to write). Copy each one EXACTLY as it stands in "rules", character for character, the whole sentence or example. Do not list sentences the user's rules merely add to, or that do not conflict. A user rule that only changes how a value is spelled (letter case, separators, spacing) does not contradict a sentence that maps inputs to a value or says which value applies — that mapping still holds; do not list such a sentence.
 
-Return ONLY a JSON object:
-{"changes": [{"field": a field name above (not "values"), "value": the new value of the whole field, "variant": "" or the applies_to of the variant this change is only for}],
- "add_forms": [{"value": a written value of the list, "form": an input spelling that the user's rule says is written as that value}],
- "explanation": one sentence: what the rule changes in the specification}
+For each one say whether the user's rules contradict ALL of it ("whole": true — e.g. an example about exactly the value the user's rule now writes differently) or only PART of it ("whole": false — the sentence also covers other values or cases the user's rules do not touch, which still hold); for a partial one, say in "overridden" which part no longer holds.
 
-- Change only what the user's rule requires. Never restate unchanged fields.
-- A rule about how values are written (number of decimals, trailing zeros, unit, separator, word order) is a change of the corresponding field; a rule that the whole value is written in upper or lower case is "letter_case"; for "format" and "text" attributes, and for anything no field expresses, rewrite "instructions" to include the rule, keeping what they already say.
-- A rule that a spelling is written as some value goes to "add_forms"; copy both sides exactly as the user wrote them.
-- If the specification has variants and the rule is for every kind of item, use "variant": "" — the change then applies to all variants. Name a variant only when the rule is explicitly for that kind of item.
-- If the rule changes nothing that a specification can express, return empty lists and say why in "explanation".
+Return ONLY a JSON object: {"superseded": [{"quote": "...", "whole": true, "overridden": ""}]} — an empty list if nothing conflicts.
 """

@@ -188,7 +188,9 @@ def aggregate(frame: pd.DataFrame, layout: dict, ambiguous: dict[str, list[bool]
         keys.append(key)
     groups: dict[tuple, dict] = {}
     for r in rows:
-        group = groups.setdefault(tuple(r[k] for k in keys), {"total": 0, "count": 0, "examples": []})
+        # пустая ячейка контекста в запись строки не попадает (result_rows): такие строки — своя
+        # группа «», а не KeyError, ронявший /chat на файле с незаполненным Item
+        group = groups.setdefault(tuple(r.get(k, "") for k in keys), {"total": 0, "count": 0, "examples": []})
         group["total"] += 1
         if r[metric]:
             group["count"] += 1

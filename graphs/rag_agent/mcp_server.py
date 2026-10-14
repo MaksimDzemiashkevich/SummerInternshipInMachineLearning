@@ -35,7 +35,7 @@ def _toolbox(session_id: str) -> Toolbox:
     from .api import catalogue, get_app_config
     app_config = get_app_config()
     return Toolbox(get_workspace(session_id), app_config, catalogue(app_config),
-                   require_new_turn=False)
+                   require_new_turn=False, session_id=session_id)
 
 
 def _register(name: str) -> None:

@@ -53,21 +53,24 @@ READING_PROMPT = """You read one recorded value the way a normalization document
 Return JSON: {"single": false if the record states a range, several quantities or no quantity, else true; "number": the number as a plain decimal, or null; "unit": the unit of that number as written in the record, the label or the document, or ""; "keep": what the written value must carry besides the number and its unit, or ""; "assumptions": [{"what": what you took from the document, "quote": the exact sentence of the document, copied verbatim}]}"""
 
 TEXT_PROMPT = """You write one recorded value the way a normalization document requires. Apply ONLY the attribute's instructions and rules and the document's general rules; change nothing they do not ask for, add nothing the record does not contain. General rules (letter case, empty or placeholder values, how to write a value that cannot be mapped) apply unless the attribute's rules say otherwise.
-Return JSON: {"value": the written value, "flag": true only when the rules say to keep the value as received and pass it for review, or to report it}."""
+Return JSON: {"value": the written value, "flag": true only when the rules say to keep the value as received and pass it for review, or to report it}, "applied": [every rule sentence you applied to this value, copied verbatim from the rules or general rules; [] if none applied]}."""
 
 BLIND_TEXT_PROMPT = """You are an independent checker. From the document's rules alone, work out how this recorded value must be written: apply every rule that applies to it, and only those; keep what no rule changes; add nothing the record does not contain.
 Return JSON: {"value": the value as the rules require it to be written, "flag": true only when the rules say to keep the value as received and pass it for review, or to report it}."""
 
 
 class SpecRunner:
-    def __init__(self, doc: str, model: ChatOpenAI):
+    def __init__(self, doc: str, model: ChatOpenAI, user_rules: bool = True):
         folder = OUTPUT_DIR / doc
         self.doc = doc
         self.specs = json.loads((folder / "attribute_spec.json").read_text(encoding="utf-8"))["specs"]
         # паспорта, перекомпилированные с правилами пользователей (user_rules.json): заменяют
         # паспорт документа с тем же атрибутом, паспорт нового атрибута добавляется
-        from .modules.rule_store import apply_overrides
-        self.specs = apply_overrides(doc, self.specs)
+        # user_rules=False — паспорта документа как есть: так проверяется только что собранный
+        # паспорт, не запуская при этом пересборку остальных
+        if user_rules:
+            from .modules.rule_store import apply_overrides
+            self.specs = apply_overrides(doc, self.specs, model)
         groups = json.loads((folder / "rule_groups.json").read_text(encoding="utf-8"))
         self.global_rules = "\n".join(r for g in groups if g.get("type") == "global"
                                       for r in g.get("rules", []))[:GLOBAL_CHARS]
@@ -217,12 +220,20 @@ class SpecRunner:
             return self._text(None, attribute, value, context)
         spec = self._variant(spec, context, value)
         written, flag, note = self._run(spec, attribute, value, context)
-        # регистр букв записанного значения (поле правил пользователя): значение списка пишется
-        # дословно, и «писать заглавными» иначе не исполнилось бы ни в одном пути
+        # регистр букв записанного значения: значение списка пишется дословно, и «писать
+        # заглавными» иначе не исполнилось бы ни в одном пути. Поле ставит и документ («Capitals,
+        # no spaces»), не только правило пользователя — подпись по тому, есть ли его строки
         case = spec.get("letter_case")
         if written and case in ("upper", "lower"):
+            from .modules.rule_store import USER_RULE_MARK
             written = written.upper() if case == "upper" else written.lower()
-        return written, flag, note
+            by_user = USER_RULE_MARK in str(spec.get("rules", ""))
+            note += (f"; регистр: {'заглавные' if case == 'upper' else 'строчные'}"
+                     + (" (паспорт с правилами пользователя)" if by_user else " (по паспорту документа)"))
+        # какой паспорт атрибута сработал на строке — первым после уровня уверенности
+        level, _, rest = note.partition("; ")
+        where = f"паспорт «{spec['attribute']}»" + (f", вариант «{spec['applies_to']}»" if spec.get("applies_to") else "")
+        return written, flag, f"{level}; {where}" + (f"; {rest}" if rest else "")
 
     def _run(self, spec: dict, attribute: str, value: str, context: str) -> tuple[str, bool, str]:
         if not value:
@@ -247,10 +258,10 @@ class SpecRunner:
         key = form_key(value)
         for entry in spec["values"]:
             if key in {form_key(entry["value"])} | {form_key(a) for a in entry["accepted"]}:
-                return entry["value"], False, "высокая: форма из таблицы документа"
+                return entry["value"], False, f"высокая: форма из таблицы документа; «{value}» → «{entry['value']}»"
         found = self._document_form(spec, attribute, key)
         if found:
-            return found, False, "высокая: форма из перечня документа"
+            return found, False, f"высокая: форма из перечня документа; «{value}» → «{found}»"
         choices = list(dict.fromkeys(e["value"] for e in spec["values"])) + ["UNMATCHED"]
         schema = {"title": "choice", "type": "object", "additionalProperties": False,
                   "properties": {"choice": {"type": "string", "enum": choices},
@@ -273,16 +284,17 @@ class SpecRunner:
             return result[0], result[1] or bool(spec.get("closed")), "нет в списке; " + result[2]
         # основание, которое код может проверить как факт
         if basis == "same wording" and any(_wording_matches(value, f) for f in [entry["value"]] + entry["accepted"]):
-            return choice, False, "высокая: та же формулировка (сверено)"
+            return choice, False, f"высокая: та же формулировка (сверено); «{value}» → «{choice}»"
         quote = _norm_text(answer.get("rule_quote") or "")
         if basis == "rule" and len(quote) >= 12 and quote in _norm_text(spec["rules"]):
-            return choice, False, "высокая: правило документа (цитата сверена)"
+            return choice, False, (f"высокая: правило (цитата сверена); «{value}» → «{choice}»; "
+                                   f"правило: {_cite(answer.get('rule_quote') or '', spec)}")
         if basis == "unsure":
             return value, True, f"низкая: предложено «{choice}»"
         # суждение модели без проверяемого факта — повторить вслепую
         blind = self._blind_choice(choices, listing, question)
         if blind == choice:
-            return choice, False, "средняя: суждение модели, сверено вслепую"
+            return choice, False, f"средняя: суждение модели, сверено вслепую; «{value}» → «{choice}» как {basis or 'equivalent'}"
         return value, True, f"разошлись: «{choice}» / «{blind}» — на проверку"
 
     def _document_form(self, spec, attribute: str, key: str) -> str | None:
@@ -329,6 +341,8 @@ class SpecRunner:
             return None  # в поле единицы не единица («VAC/VDC or kV») — спецификацию код не исполняет
         number = reading["number"]
         converted = False
+        # что сделал код — для пояснения строки
+        ops = [f"прочитано {_num(number)}{(' ' + unit_text) if unit_text else ''}"]
         source = _pint(unit_text, self.model) if unit_text else ""
         if unit_text and not source:
             return None  # единица записи не распознана — по инструкции
@@ -345,20 +359,27 @@ class SpecRunner:
             if factor:
                 number = number * float(factor["factor"]) + float(factor.get("offset") or 0)
                 converted = float(factor["factor"]) != 1 or bool(factor.get("offset"))
+                if converted:
+                    ops.append(f"пересчёт {unit_text} → {target} по коэффициенту документа "
+                               f"(×{_num(float(factor['factor']))}"
+                               + (f" {float(factor['offset']):+g}" if factor.get("offset") else "") + ")")
             elif target_pint and unit_mismatch(source, target_pint):
                 result = convert_value(number, source, target_pint)
                 if result is None:
                     return None
                 number, converted = result, True
+                ops.append(f"пересчёт {unit_text} → {target} (pint, коэффициента в документе нет)")
         # голое число (ни в записи, ни в подписи единицы нет) не пересчитывается; единица документа
         # ставится только как предложение на проверку — её неоткуда взять; число пишется по формату
         bare = not source
         series = [float(s) for s in spec.get("series") or []]
         if series:
             number = min(series, key=lambda s: abs(s - number))
+            ops.append(f"ближайшее из ряда документа: {_num(number)}")
         pattern, locale = _number_pattern(spec)
         if spec.get("number_format") == "fraction":
             text = _fraction(number)  # дюймовые размеры: «1-1/8», «3/4»
+            ops.append("дробью (по документу)")
         elif not pattern and number != int(number):
             return None  # запись числа документ не задал — по инструкции документа
         elif not valid_number_pattern(pattern) or not valid_locale(locale):
@@ -367,17 +388,22 @@ class SpecRunner:
             # шаблон ICU исполняет Babel: «0.0» — ровно один знак, «0.#» — до одного без нулей в конце
             if spec.get("rounding_scope") == "converted" and not converted:
                 pattern = keep_digits(pattern or "0", number)  # документ округляет только пересчитанное
+                ops.append("уже в единице документа — знаки как в записи")
+            else:
+                ops.append(f"запись числа «{pattern or '0'}»" + (f", локаль {locale}" if locale != "en" else ""))
             text = format_number(number, pattern or "0", locale, spec.get("rounding") or "half_up")
         unit = target or unit_text
         written = f"{text}{' ' if spec.get('unit_space', True) and unit else ''}{unit}"
+        done = "; ".join(ops)
         if bare and target:
             # единицы нет ни в записи, ни в подписи, и документ не говорит, какая она: что число
             # именно в единице записи, код не знает — предложение уходит на проверку
-            return written, True, f"низкая: в записи нет единицы, предложено в единице документа ({target})"
+            return written, True, f"низкая: в записи нет единицы, предложено в единице документа ({target}); {done}"
         if reading["unverified"]:
-            return written, True, "низкая: допущение чтения без цитаты в документе — " + "; ".join(reading["unverified"])[:200]
+            return written, True, ("низкая: допущение чтения без цитаты в документе — "
+                                   + "; ".join(reading["unverified"])[:200] + f"; {done}")
         basis = "; прочитано по документу: " + " | ".join(reading["assumptions"])[:200] if reading["assumptions"] else ""
-        return written, False, "высокая: величина, пересчёт и формат кодом" + basis
+        return written, False, f"высокая: величина, пересчёт и формат кодом; {done}" + basis
 
     def _read(self, spec, attribute, value) -> dict | None:
         """Что записано: число и его единица — прочитанные моделью так, как велит документ.
@@ -434,26 +460,36 @@ class SpecRunner:
                      "spell a root differently, this table wins):\n" + roots)
         question = (f"{_ctx(context)}Attribute: {attribute}\nRecorded value: {value!r}\n{note}\n\n{body}\n\n"
                     f"General rules of the document:\n{self.global_rules}")
-        first = self._ask_text(TEXT_PROMPT, question)
+        first = self._ask_text_full(TEXT_PROMPT, question)
         if first is None:
             return value, True, "низкая: ответ модели не разобран"
-        written, flag = first
+        written, flag, applied = first
+        # какие правила модель применила — только цитаты, которые код нашёл в тексте правил
+        source = (spec.get("rules", "") if spec else "") + "\n" + self.global_rules
+        cited = [_cite(q, spec) for q in applied if len(_norm_text(q)) >= 8 and _norm_text(q) in _norm_text(source)][:3]
+        rules_note = ("; правила: " + "; ".join(cited)) if cited else "; применённое правило не процитировано"
         if flag:
-            return written, True, "документ велит оставить и передать на проверку"
+            return written, True, "документ велит оставить и передать на проверку" + rules_note
         # ответ по инструкции — суждение модели, проверить его фактом нечем: повторить вслепую
         second = self._ask_text(BLIND_TEXT_PROMPT, question)
         if second is not None and _same_text(second[0], written):
-            return written, False, "средняя: по инструкции, сверено вслепую"
+            return written, False, "средняя: по инструкции, сверено вслепую" + rules_note
         other = second[0] if second else "—"
-        return written, True, f"разошлись: «{written}» / «{other}» — на проверку"
+        return written, True, f"разошлись: «{written}» / «{other}» — на проверку" + rules_note
 
     def _ask_text(self, prompt: str, question: str) -> tuple[str, bool] | None:
+        full = self._ask_text_full(prompt, question)
+        return full[:2] if full else None
+
+    def _ask_text_full(self, prompt: str, question: str) -> tuple[str, bool, list[str]] | None:
+        """(значение, пометка, применённые правила дословно — как их назвала модель)."""
         answer = self.model.invoke([{"role": "system", "content": prompt},
                                     {"role": "user", "content": question}],
                                    response_format={"type": "json_object"})
         try:
             data = json.loads(str(answer.content))
-            return str(data.get("value", "")).strip(), bool(data.get("flag"))
+            applied = [str(q) for q in data.get("applied") or [] if isinstance(q, str)]
+            return str(data.get("value", "")).strip(), bool(data.get("flag")), applied
         except Exception:
             return None
 
@@ -473,6 +509,21 @@ def _same_text(left: str, right: str) -> bool:
 
 def _norm_text(text: str) -> str:
     return " ".join(str(text).lower().replace("’", "'").replace('"', "").replace("'", "").split())
+
+
+def _num(number: float) -> str:
+    """Число для пояснения: без хвоста «.0» и без двадцати знаков после точки."""
+    return f"{number:.6g}"
+
+
+def _cite(quote: str, spec: dict | None) -> str:
+    """Цитата правила для пояснения, с источником, если это правило пользователя."""
+    from .modules.rule_store import USER_RULE_MARK
+    text = " ".join(str(quote).replace(USER_RULE_MARK, "").split())
+    short = text if len(text) <= 160 else text[:157] + "…"
+    user_lines = [line for line in str((spec or {}).get("rules", "")).splitlines() if line.startswith(USER_RULE_MARK)]
+    mine = any(_norm_text(text) in _norm_text(line) for line in user_lines)
+    return f"«{short}»" + (" (правило пользователя)" if mine else "")
 
 
 def _ctx(context: str) -> str:

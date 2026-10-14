@@ -66,7 +66,8 @@ def _run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set) -> 
     if NORMALIZER == "spec" and has_spec(rule_set):
         logger.info("Документ %r: нормализация по спецификации атрибутов", rule_set.name)
         # спецификации нужна модель без привязанных инструментов (структурированный ответ)
-        return run_spec_rule_set(data_frame, app_config.assistant or app_config.model, rule_set)
+        return run_spec_rule_set(data_frame, app_config.spec_model or app_config.assistant or app_config.model,
+                                 rule_set)
     return run_single_rule_set(data_frame, app_config.model, rule_set)
 
 

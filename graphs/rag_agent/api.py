@@ -7,16 +7,19 @@ from contextlib import asynccontextmanager
 from functools import lru_cache
 from uuid import uuid4
 
+from pathlib import Path
+
 import pandas as pd
 from fastapi import FastAPI, Depends, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
+from .modules import jobs
 from .modules.agent import build_tools, run_agent
 from .modules.chat import history_messages
-from .modules.config import AppConfig, Settings, build_app_config
+from .modules.config import AppConfig, Settings, add_rule_set, build_app_config
 from .modules.results import layout_of
-from .modules.toolbox import Toolbox
+from .modules.toolbox import INPUT_DIR, Toolbox
 from .modules.workspace import focus_note, get_workspace, save_workspace
 from .pipeline.common import logger
 from .pipeline.excel import XLSX_MEDIA_TYPE, _write_excel_with_highlight, read_flagged_cells
@@ -36,6 +39,8 @@ from .pipeline.user_rules import APPLIED_SUFFIX, USER_RULES_COLUMN, run_user_rul
 
 @asynccontextmanager
 async def _lifespan(_app):
+    # наблюдатель за фоновыми извлечениями: очередь, состояние, подгрузка готового документа
+    jobs.start_watcher()
     # сессии MCP-эндпоинта: у смонтированного приложения своя lifespan не запускается
     async with mcp.session_manager.run():
         yield
@@ -54,6 +59,22 @@ app.add_middleware(
 @lru_cache
 def get_app_config() -> AppConfig:
     return build_app_config(Settings())
+
+
+def _load_extracted(job) -> dict:
+    """Извлечённый документ — в работающий сервис, без перезапуска; сведения для сообщения в чат."""
+    import json as _json
+    folder = Settings().rule_groups_dir / job.document
+    groups = _json.loads((folder / "rule_groups.json").read_text(encoding="utf-8"))
+    specs = (_json.loads((folder / "attribute_spec.json").read_text(encoding="utf-8")).get("specs", [])
+             if (folder / "attribute_spec.json").exists() else [])
+    loaded = add_rule_set(get_app_config(), job.document)
+    logger.info("[JOBS] документ %s подгружен: групп %d, паспортов %d", job.document, len(groups), len(specs))
+    return {"standard": job.document, "rule_groups": len(groups), "attribute_specs": len(specs),
+            "loaded": loaded is not None}
+
+
+jobs.on_extracted(_load_extracted)
 
 
 @app.post("/process")
@@ -123,6 +144,26 @@ def store_upload(workspace, name: str, content: bytes):
                          origin="результат, присланный пользователем")
 
 
+_UNSAFE_NAME_RE = re.compile(r"[^\w.\- ]+", re.U)
+
+
+def store_document(workspace, name: str, content: bytes):
+    """Присланный PDF документа → папка входных документов извлечения и файл диалога.
+
+    Имя файла — это имя будущего стандарта (папка в data/output). Файл с тем же именем и другим
+    содержимым не затирается: новый получает суффикс.
+    """
+    stem = _UNSAFE_NAME_RE.sub("_", Path(name).stem).strip(" ._") or "document"
+    INPUT_DIR.mkdir(parents=True, exist_ok=True)
+    target, suffix = INPUT_DIR / f"{stem}.pdf", 2
+    while target.exists() and target.read_bytes() != content:
+        target, suffix = INPUT_DIR / f"{stem}_{suffix}.pdf", suffix + 1
+    if not target.exists():
+        target.write_bytes(content)
+    return workspace.add(name=target.name, frame=pd.DataFrame(), kind="document", path=str(target),
+                         origin="PDF нормативного документа")
+
+
 def _uploaded(file: UploadFile | None) -> UploadFile | None:
     """Пустое поле формы приходит как файл без имени — это не вложение."""
     return file if file is not None and (file.filename or "").strip() else None
@@ -161,14 +202,18 @@ def chat(
                 "session_id": session, "files": []}
 
     notes: list[str] = []
-    if uploaded is not None:
+    if uploaded is not None and uploaded.filename.lower().endswith(".pdf"):
+        stored = store_document(workspace, uploaded.filename, uploaded.file.read())
+        notes.append(f"The user has just attached the PDF document {stored.name} (file_id={stored.file_id}). "
+                     f"It can be extracted into a new standard with extract_document.")
+    elif uploaded is not None:
         try:
             stored = store_upload(workspace, uploaded.filename, uploaded.file.read())
         except Exception as e:
             logger.warning("[CHAT] файл %r не прочитан: %s", uploaded.filename, e)
             return {"reply": f"Не удалось прочитать «{uploaded.filename}». Нужен .xlsx с "
-                             f"колонками Attribute и Value.",
-                    "session_id": session, "files": []}
+                             f"колонками Attribute и Value или PDF документа для извлечения.",
+                    "session_id": session, "files": [], "jobs_active": len(jobs.active(session))}
         columns = ", ".join(str(c) for c in stored.frame.columns)
         kind = (" It is a normalization result made earlier (standards: "
                 + ", ".join(e["standard"] for e in stored.layout["standards"]) + ")."
@@ -181,8 +226,12 @@ def chat(
                  + (", ".join(selected) if selected else "none, so all of them") + ".")
 
     produced: list[str] = []
-    toolbox = Toolbox(workspace, app_config, catalogue(app_config), selected, produced)
-    for note in (focus_note(workspace), toolbox.pending_note()):
+    toolbox = Toolbox(workspace, app_config, catalogue(app_config), selected, produced, session_id=session)
+    running = jobs.active(session)
+    jobs_note = ("Background jobs of this conversation still running: "
+                 + "; ".join(f"{j['title']} ({j['state']}, {j['step']})" for j in running) + "."
+                 if running else "")
+    for note in (focus_note(workspace), toolbox.pending_note(), jobs_note):
         if note:
             notes.append(note)
     tools = build_tools(toolbox)
@@ -193,19 +242,61 @@ def chat(
     finally:
         save_workspace(session)
 
-    files = []
-    for file_id in produced:
-        stored = workspace.get(file_id)
-        if stored is None:
-            continue
-        buffer = _write_excel_with_highlight(stored.frame, stored.ambiguous, stored.layout)
-        files.append({
-            "name": _download_name(stored),
-            "media_type": XLSX_MEDIA_TYPE,
-            "content_base64": base64.b64encode(buffer.read()).decode("ascii"),
-        })
+    files = [_file_payload(workspace.get(file_id)) for file_id in produced if workspace.get(file_id)]
+    return {"reply": reply, "session_id": session, "files": files, "jobs_active": len(jobs.active(session))}
 
-    return {"reply": reply, "session_id": session, "files": files}
+
+def _file_payload(stored) -> dict:
+    buffer = _write_excel_with_highlight(stored.frame, stored.ambiguous, stored.layout)
+    return {"name": _download_name(stored), "media_type": XLSX_MEDIA_TYPE,
+            "content_base64": base64.b64encode(buffer.read()).decode("ascii")}
+
+
+def _job_message(job, workspace) -> dict:
+    """Сообщение в чат о закончившейся фоновой задаче — из фактов задачи, без модели."""
+    files, standards_changed = [], False
+    took = job.finished - job.created if job.finished else 0
+    minutes = (f" за {round(took / 60)} мин" if took >= 60 else f" за {round(took)} с") if took else ""
+    if job.kind == "extract" and job.state == "done":
+        r = job.result
+        standards_changed = bool(r.get("loaded"))
+        if r.get("rule_groups") == 0:
+            # рассказ вместо стандарта: извлечение прошло, но правил в тексте нет
+            text = (f"Документ «{job.document}» прочитан{minutes}, но правил нормализации в нём не найдено "
+                    f"— стандарт из него не создан. Это точно нормативный документ?")
+            return {"job_id": job.job_id, "message": text, "files": files, "standards_changed": False}
+        text = (f"Документ «{job.document}» извлечён{minutes}: групп правил — {r.get('rule_groups', '?')}, "
+                f"паспортов атрибутов — {r.get('attribute_specs', '?')}. "
+                + ("Стандарт загружен — его можно выбрать в списке стандартов и нормализовать по нему файлы."
+                   if standards_changed else f"Загрузить его в сервис не удалось: {r.get('load_error', '')}"))
+    elif job.kind == "extract":
+        tail = job.result.get("log_tail", "")
+        text = (f"Извлечение «{job.document}» не удалось: {job.error}."
+                + (f"\n\nПоследние строки журнала:\n```\n{tail}\n```" if tail else ""))
+    elif job.state == "done":
+        stored = workspace.get(job.result.get("file_id", ""))
+        if stored is not None:
+            files.append(_file_payload(stored))
+        text = (f"Нормализация готова{minutes}: «{job.result.get('name', '')}», строк — {job.result.get('rows', '?')}, "
+                f"жёлтых ячеек — {job.result.get('flagged', '?')}.")
+    else:
+        text = f"Задача «{job.title}» не выполнена: {job.error}."
+    return {"job_id": job.job_id, "message": text, "files": files, "standards_changed": standards_changed}
+
+
+@app.get("/jobs")
+def list_jobs(session_id: str = ""):
+    """Фоновые задачи диалога: идущие и закончившиеся, о которых пользователь ещё не знает.
+
+    Фронтенд опрашивает, пока что-то идёт; закончившиеся отдаются один раз — сообщением с файлом.
+    """
+    session = (session_id or "").strip()
+    if not session:
+        return {"active": [], "finished": []}
+    jobs.tick()
+    workspace = get_workspace(session)
+    return {"active": jobs.active(session),
+            "finished": [_job_message(job, workspace) for job in jobs.take_finished(session)]}
 
 
 # MCP: те же инструменты, что у агента чата, для внешних клиентов (см. mcp_server.py)

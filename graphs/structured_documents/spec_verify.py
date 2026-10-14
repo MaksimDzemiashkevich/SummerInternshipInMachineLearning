@@ -33,7 +33,7 @@ settings = Settings()
 OUTPUT_DIR = Path(__file__).resolve().parent / "data" / "output"
 VERIFY_MODEL = os.getenv("SPEC_VERIFY_MODEL", settings.llmodel)  # та же модель, отдельный вызов в роли проверяющего
 FIELDS = {"kind", "values", "closed", "unit", "number_pattern", "locale", "rounding", "rounding_scope", "unit_space",
-          "number_format", "conversions", "series", "instructions", "flag_when", "variants"}
+          "number_format", "conversions", "series", "instructions", "flag_when", "letter_case", "variants"}
 SKIP = {"rules", "attribute", "aliases", "verified_fixes"}
 
 
@@ -63,6 +63,8 @@ def _fits_schema(field: str, value) -> bool:
         return isinstance(value, bool)
     if field == "number_format":
         return value in ("decimal", "fraction")
+    if field == "letter_case":
+        return value in ("", "upper", "lower")
     return isinstance(value, str)
 
 
