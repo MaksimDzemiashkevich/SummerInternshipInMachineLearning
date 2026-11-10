@@ -1,0 +1,99 @@
+[
+ {
+  "expected": "8.40 m3/min",
+  "review": null
+ },
+ {
+  "expected": "31.13 m3/min",
+  "review": null
+ },
+ {
+  "expected": "8.5 bar(g)",
+  "review": null
+ },
+ {
+  "expected": "13.0 bar(g)",
+  "review": null
+ },
+ {
+  "expected": "Oil-cooled",
+  "review": null
+ },
+ {
+  "expected": "Trailer-mounted",
+  "review": null
+ },
+ {
+  "expected": "CMP-OFS",
+  "review": null
+ },
+ {
+  "expected": "CMP-R1",
+  "review": null
+ },
+ {
+  "expected": "4.00 m3/min",
+  "review": null
+ },
+ {
+  "expected": "Liquid-cooled",
+  "review": null
+ },
+ {
+  "expected": "9.3 bar(g)",
+  "review": null
+ },
+ {
+  "expected": "Floor-mounted",
+  "review": null
+ },
+ {
+  "expected": [
+   {
+    "re": "^pending registration: "
+   },
+   "Oil-flooded rotary screw"
+  ],
+  "review": true
+ },
+ {
+  "expected": "450 mbar(g)",
+  "review": null
+ },
+ {
+  "expected": "1200 mbar(g)",
+  "review": null
+ },
+ {
+  "expected": "Ceiling-mounted",
+  "review": null
+ },
+ {
+  "expected": "500 L",
+  "review": null
+ },
+ {
+  "expected": "1500 L",
+  "review": null
+ },
+ {
+  "expected": "16.0 bar(g)",
+  "review": null
+ },
+ {
+  "expected": "+7 °C",
+  "review": null
+ },
+ {
+  "expected": "-20 °C",
+  "review": null
+ },
+ {
+  "expected": "+4 °C",
+  "review": null
+ },
+ {
+  "expected": "+10 °C",
+  "review": null
+ }
+]

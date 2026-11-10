@@ -1,0 +1,100 @@
+[
+ {
+  "expected": "134 kW",
+  "review": false
+ },
+ {
+  "expected": "1200 kW",
+  "review": false
+ },
+ {
+  "expected": "75 kW",
+  "review": false
+ },
+ {
+  "expected": "approx. 300 kW",
+  "review": true
+ },
+ {
+  "expected": "6.6 kV",
+  "review": false
+ },
+ {
+  "expected": "415 V",
+  "review": false
+ },
+ {
+  "expected": "13.8 kV",
+  "review": false
+ },
+ {
+  "expected": "3.3 kV",
+  "review": false
+ },
+ {
+  "expected": "690 V",
+  "review": false
+ },
+ {
+  "expected": "2980 rpm",
+  "review": false
+ },
+ {
+  "expected": "1500 rpm",
+  "review": false
+ },
+ {
+  "expected": "3600 rpm",
+  "review": false
+ },
+ {
+  "expected": "Ex db IIC T3 Gb",
+  "review": false
+ },
+ {
+  "expected": "Ex e II T3",
+  "review": false
+ },
+ {
+  "expected": "Ex db IIB T4 Gb",
+  "review": false
+ },
+ {
+  "expected": "IP56",
+  "review": false
+ },
+ {
+  "expected": "IP65",
+  "review": false
+ },
+ {
+  "expected": "ROT-GT",
+  "review": false
+ },
+ {
+  "expected": "ROT-IM",
+  "review": false
+ },
+ {
+  "expected": "ROT-ST",
+  "review": false
+ },
+ {
+  "expected": {
+   "re": "^(?:(?:pending registration|ambiguous match): )?Electric motor$"
+  },
+  "review": true
+ },
+ {
+  "expected": "29425 Nm3/h",
+  "review": false
+ },
+ {
+  "expected": "12500 Nm3/h",
+  "review": false
+ },
+ {
+  "expected": "8000 Nm3/h",
+  "review": false
+ }
+]

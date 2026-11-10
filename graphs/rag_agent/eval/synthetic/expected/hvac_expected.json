@@ -1,0 +1,402 @@
+[
+ {
+  "expected": "8000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "8000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "250 Pa",
+  "review": false
+ },
+ {
+  "expected": "250 Pa",
+  "review": false
+ },
+ {
+  "expected": "5.5 kW",
+  "review": false
+ },
+ {
+  "expected": "5.5 kW",
+  "review": false
+ },
+ {
+  "expected": "F7",
+  "review": false
+ },
+ {
+  "expected": "F7",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "12000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "12000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "350 Pa",
+  "review": false
+ },
+ {
+  "expected": "350 Pa",
+  "review": false
+ },
+ {
+  "expected": "7.5 kW",
+  "review": false
+ },
+ {
+  "expected": "7.5 kW",
+  "review": false
+ },
+ {
+  "expected": "F7",
+  "review": false
+ },
+ {
+  "expected": "F7",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "5000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "5000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "400 Pa",
+  "review": false
+ },
+ {
+  "expected": "400 Pa",
+  "review": false
+ },
+ {
+  "expected": "1450 rpm",
+  "review": false
+ },
+ {
+  "expected": "1450 rpm",
+  "review": false
+ },
+ {
+  "expected": "Aluminium",
+  "review": false
+ },
+ {
+  "expected": "Aluminium",
+  "review": false
+ },
+ {
+  "expected": "9000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "9000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "600 Pa",
+  "review": false
+ },
+ {
+  "expected": "600 Pa",
+  "review": false
+ },
+ {
+  "expected": "2900 rpm",
+  "review": false
+ },
+ {
+  "expected": "2900 rpm",
+  "review": false
+ },
+ {
+  "expected": "Aluminium",
+  "review": false
+ },
+ {
+  "expected": "Aluminium",
+  "review": false
+ },
+ {
+  "expected": "600x600 mm",
+  "review": false
+ },
+ {
+  "expected": "600x600 mm",
+  "review": false
+ },
+ {
+  "expected": "120 min",
+  "review": false
+ },
+ {
+  "expected": "120 min",
+  "review": false
+ },
+ {
+  "expected": "Electric actuator",
+  "review": false
+ },
+ {
+  "expected": "Electric actuator",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "300x300 mm",
+  "review": false
+ },
+ {
+  "expected": "300x300 mm",
+  "review": false
+ },
+ {
+  "expected": "60 min",
+  "review": false
+ },
+ {
+  "expected": "60 min",
+  "review": false
+ },
+ {
+  "expected": "Electric actuator",
+  "review": false
+ },
+ {
+  "expected": "Electric actuator",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "9.0 kW",
+  "review": false
+ },
+ {
+  "expected": "9.0 kW",
+  "review": false
+ },
+ {
+  "expected": "3000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "3000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "400 V",
+  "review": false
+ },
+ {
+  "expected": "400 V",
+  "review": false
+ },
+ {
+  "expected": "Stainless steel",
+  "review": false
+ },
+ {
+  "expected": "Stainless steel",
+  "review": false
+ },
+ {
+  "expected": "15.0 kW",
+  "review": false
+ },
+ {
+  "expected": "15.0 kW",
+  "review": false
+ },
+ {
+  "expected": "5000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "5000.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "400 V",
+  "review": false
+ },
+ {
+  "expected": "400 V",
+  "review": false
+ },
+ {
+  "expected": "Stainless steel",
+  "review": false
+ },
+ {
+  "expected": "Stainless steel",
+  "review": false
+ },
+ {
+  "expected": "F7",
+  "review": false
+ },
+ {
+  "expected": "F7",
+  "review": false
+ },
+ {
+  "expected": "610x610 mm",
+  "review": false
+ },
+ {
+  "expected": "610x610 mm",
+  "review": false
+ },
+ {
+  "expected": "3400.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "3400.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "H13",
+  "review": false
+ },
+ {
+  "expected": "H13",
+  "review": false
+ },
+ {
+  "expected": "305x305 mm",
+  "review": false
+ },
+ {
+  "expected": "305x305 mm",
+  "review": false
+ },
+ {
+  "expected": "850.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "850.0 m3/h",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "DN 200",
+  "review": false
+ },
+ {
+  "expected": "DN 200",
+  "review": false
+ },
+ {
+  "expected": "500-1500 m3/h",
+  "review": false
+ },
+ {
+  "expected": "500-1500 m3/h",
+  "review": false
+ },
+ {
+  "expected": "Pressure independent",
+  "review": false
+ },
+ {
+  "expected": "Pressure independent",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "DN 315",
+  "review": false
+ },
+ {
+  "expected": "DN 315",
+  "review": false
+ },
+ {
+  "expected": "1000-3000 m3/h",
+  "review": false
+ },
+ {
+  "expected": "1000-3000 m3/h",
+  "review": false
+ },
+ {
+  "expected": "Pressure independent",
+  "review": false
+ },
+ {
+  "expected": "Pressure independent",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ },
+ {
+  "expected": "Galvanized steel",
+  "review": false
+ }
+]

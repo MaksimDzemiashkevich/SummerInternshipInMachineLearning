@@ -1,0 +1,100 @@
+[
+ {
+  "expected": "DN 150",
+  "review": false
+ },
+ {
+  "expected": "DN 150",
+  "review": false
+ },
+ {
+  "expected": "DN 80",
+  "review": false
+ },
+ {
+  "expected": "DN 50",
+  "review": false
+ },
+ {
+  "expected": "PN 16",
+  "review": false
+ },
+ {
+  "expected": "PN 40",
+  "review": false
+ },
+ {
+  "expected": "2,50 МПа",
+  "review": false
+ },
+ {
+  "expected": "1,60 МПа",
+  "review": false
+ },
+ {
+  "expected": "0,25 МПа",
+  "review": false
+ },
+ {
+  "expected": "09Г2С",
+  "review": false
+ },
+ {
+  "expected": "12Х18Н10Т",
+  "review": false
+ },
+ {
+  "expected": "Сталь 20",
+  "review": false
+ },
+ {
+  "expected": "УХЛ1",
+  "review": false
+ },
+ {
+  "expected": "ХЛ1",
+  "review": false
+ },
+ {
+  "expected": "-45 °C",
+  "review": false
+ },
+ {
+  "expected": "120 °C",
+  "review": false
+ },
+ {
+  "expected": "300 °C",
+  "review": false
+ },
+ {
+  "expected": "Ф",
+  "review": false
+ },
+ {
+  "expected": "П",
+  "review": false
+ },
+ {
+  "expected": {
+   "re": "^(?:(?:pending registration|ambiguous match): )?[Рр]аструбное$"
+  },
+  "review": true
+ },
+ {
+  "expected": "1250,0 кг",
+  "review": false
+ },
+ {
+  "expected": "830,0 кг",
+  "review": false
+ },
+ {
+  "expected": "997,9 кг",
+  "review": false
+ },
+ {
+  "expected": "4,0 м³",
+  "review": false
+ }
+]

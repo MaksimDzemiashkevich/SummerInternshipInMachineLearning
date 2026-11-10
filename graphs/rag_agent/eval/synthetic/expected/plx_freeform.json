@@ -1,0 +1,114 @@
+[
+ {
+  "expected": "406,4 mm",
+  "review": false
+ },
+ {
+  "expected": "219,1 mm",
+  "review": false
+ },
+ {
+  "expected": "508,0 mm",
+  "review": false
+ },
+ {
+  "expected": "12,70 mm",
+  "review": false
+ },
+ {
+  "expected": "6,40 mm",
+  "review": false
+ },
+ {
+  "expected": "11,13 mm",
+  "review": false
+ },
+ {
+  "expected": "99,3 barg",
+  "review": false
+ },
+ {
+  "expected": "85,0 barg",
+  "review": false
+ },
+ {
+  "expected": "45,0 barg",
+  "review": false
+ },
+ {
+  "expected": "66 °C",
+  "review": false
+ },
+ {
+  "expected": "-29 °C",
+  "review": false
+ },
+ {
+  "expected": "93 °C",
+  "review": false
+ },
+ {
+  "expected": "7949 m³",
+  "review": false
+ },
+ {
+  "expected": "12000 m³",
+  "review": false
+ },
+ {
+  "expected": "RF-EF",
+  "review": false
+ },
+ {
+  "expected": "RF-IF",
+  "review": false
+ },
+ {
+  "expected": "RF-CN",
+  "review": false
+ },
+ {
+  "expected": {
+   "re": "^(?:(?:pending registration|ambiguous match): )?(?:Geodesic dome|geodesic dome)$"
+  },
+  "review": true
+ },
+ {
+  "expected": "CS-FBE",
+  "review": false
+ },
+ {
+  "expected": "CS-3LPP",
+  "review": false
+ },
+ {
+  "expected": "CS-3LPE",
+  "review": false
+ },
+ {
+  "expected": {
+   "re": "^(?:(?:pending registration|ambiguous match): )?(?:Coal tar enamel|coal tar enamel)$"
+  },
+  "review": true
+ },
+ {
+  "expected": "API 5L X65 PSL2",
+  "review": false
+ },
+ {
+  "expected": "API 5L X52 PSL1",
+  "review": false
+ },
+ {
+  "expected": "API 5L B PSL2",
+  "review": false
+ },
+ {
+  "expected": "sour gas",
+  "review": false
+ },
+ {
+  "expected": "crude oil",
+  "review": false
+ }
+]

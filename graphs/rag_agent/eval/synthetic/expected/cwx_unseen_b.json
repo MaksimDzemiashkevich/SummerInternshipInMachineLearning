@@ -1,0 +1,127 @@
+[
+ {
+  "expected": "130.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "9.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "175 kPa",
+  "review": null
+ },
+ {
+  "expected": "260 kPa",
+  "review": null
+ },
+ {
+  "expected": "75.0 kW",
+  "review": null
+ },
+ {
+  "expected": "IE1",
+  "review": null
+ },
+ {
+  "expected": "DN 65",
+  "review": null
+ },
+ {
+  "expected": "Cast steel",
+  "review": null
+ },
+ {
+  "expected": [
+   {
+    "re": "^pending registration: "
+   },
+   "Gear drive"
+  ],
+  "review": true
+ },
+ {
+  "expected": "4°C",
+  "review": null
+ },
+ {
+  "expected": "15°C",
+  "review": null
+ },
+ {
+  "expected": "58 m3/h",
+  "review": null
+ },
+ {
+  "expected": "264 kW",
+  "review": null
+ },
+ {
+  "expected": "212.0 kW",
+  "review": null
+ },
+ {
+  "expected": "R-32",
+  "review": null
+ },
+ {
+  "expected": "R-454b",
+  "review": null
+ },
+ {
+  "expected": "5°C",
+  "review": null
+ },
+ {
+  "expected": "5600x2300x2500 mm",
+  "review": null
+ },
+ {
+  "expected": "89 m3/h",
+  "review": null
+ },
+ {
+  "expected": "7 K",
+  "review": null
+ },
+ {
+  "expected": "4.0 kW",
+  "review": null
+ },
+ {
+  "expected": "Galvanised steel",
+  "review": null
+ },
+ {
+  "expected": "12.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "55 kPa",
+  "review": null
+ },
+ {
+  "expected": "250x600 mm",
+  "review": null
+ },
+ {
+  "expected": "PN 40",
+  "review": null
+ },
+ {
+  "expected": "Duplex steel",
+  "review": null
+ },
+ {
+  "expected": "300 kPa",
+  "review": null
+ },
+ {
+  "expected": "750x750x1100 mm",
+  "review": null
+ },
+ {
+  "expected": "DN 32",
+  "review": null
+ }
+]

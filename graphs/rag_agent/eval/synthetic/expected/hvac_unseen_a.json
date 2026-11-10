@@ -1,0 +1,142 @@
+[
+ {
+  "expected": "4250.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "4250.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "475 Pa",
+  "review": null
+ },
+ {
+  "expected": "475 Pa",
+  "review": null
+ },
+ {
+  "expected": "18.5 kW",
+  "review": null
+ },
+ {
+  "expected": "22.0 kW",
+  "review": null
+ },
+ {
+  "expected": "G4",
+  "review": null
+ },
+ {
+  "expected": "M5",
+  "review": null
+ },
+ {
+  "expected": "Painted steel",
+  "review": null
+ },
+ {
+  "expected": "Anodized aluminium",
+  "review": null
+ },
+ {
+  "expected": "960 rpm",
+  "review": null
+ },
+ {
+  "expected": "1475 rpm",
+  "review": null
+ },
+ {
+  "expected": "820 Pa",
+  "review": null
+ },
+ {
+  "expected": "Copper",
+  "review": null
+ },
+ {
+  "expected": "Titanium",
+  "review": null
+ },
+ {
+  "expected": "2200.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "1000x500 mm",
+  "review": null
+ },
+ {
+  "expected": "400x250 mm",
+  "review": null
+ },
+ {
+  "expected": "90 min",
+  "review": null
+ },
+ {
+  "expected": "90 min",
+  "review": null
+ },
+ {
+  "expected": "Pneumatic actuator",
+  "review": null
+ },
+ {
+  "expected": "Spring-return actuator",
+  "review": null
+ },
+ {
+  "expected": "Zinc-coated steel",
+  "review": null
+ },
+ {
+  "expected": "4.5 kW",
+  "review": null
+ },
+ {
+  "expected": "12.0 kW",
+  "review": null
+ },
+ {
+  "expected": "230 V",
+  "review": null
+ },
+ {
+  "expected": "Nickel alloy",
+  "review": null
+ },
+ {
+  "expected": "592x287 mm",
+  "review": null
+ },
+ {
+  "expected": "1700.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "F9",
+  "review": null
+ },
+ {
+  "expected": "DN 250",
+  "review": null
+ },
+ {
+  "expected": "DN 160",
+  "review": null
+ },
+ {
+  "expected": "300-900 m3/h",
+  "review": null
+ },
+ {
+  "expected": "150-450 m3/h",
+  "review": null
+ },
+ {
+  "expected": "Pressure dependent",
+  "review": null
+ }
+]

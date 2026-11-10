@@ -1,0 +1,110 @@
+[
+ {
+  "expected": "6300.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "915.6 m3/h",
+  "review": null
+ },
+ {
+  "expected": "1250 Pa",
+  "review": null
+ },
+ {
+  "expected": "3.0 kW",
+  "review": null
+ },
+ {
+  "expected": "11.0 kW",
+  "review": null
+ },
+ {
+  "expected": "U15",
+  "review": null
+ },
+ {
+  "expected": "F8",
+  "review": null
+ },
+ {
+  "expected": "Cast aluminium",
+  "review": null
+ },
+ {
+  "expected": "Coated steel",
+  "review": null
+ },
+ {
+  "expected": "725 rpm",
+  "review": null
+ },
+ {
+  "expected": "310 Pa",
+  "review": null
+ },
+ {
+  "expected": "Nickel",
+  "review": null
+ },
+ {
+  "expected": "Zinc",
+  "review": null
+ },
+ {
+  "expected": "800x400 mm",
+  "review": null
+ },
+ {
+  "expected": "200x200 mm",
+  "review": null
+ },
+ {
+  "expected": "30 min",
+  "review": null
+ },
+ {
+  "expected": "Manual actuator",
+  "review": null
+ },
+ {
+  "expected": "Thermal actuator",
+  "review": null
+ },
+ {
+  "expected": "6.0 kW",
+  "review": null
+ },
+ {
+  "expected": "115 V",
+  "review": null
+ },
+ {
+  "expected": "Alloy steel",
+  "review": null
+ },
+ {
+  "expected": "287x592 mm",
+  "review": null
+ },
+ {
+  "expected": "2550.0 m3/h",
+  "review": null
+ },
+ {
+  "expected": "DN 400",
+  "review": null
+ },
+ {
+  "expected": "80-240 m3/h",
+  "review": null
+ },
+ {
+  "expected": "Flow independent",
+  "review": null
+ },
+ {
+  "expected": "Flow dependent",
+  "review": null
+ }
+]

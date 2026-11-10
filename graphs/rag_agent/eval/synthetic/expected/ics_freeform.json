@@ -1,0 +1,98 @@
+[
+ {
+  "expected": "0 to 1000 kPa(g)",
+  "review": false
+ },
+ {
+  "expected": "0 to 172.4 kPa(g)",
+  "review": false
+ },
+ {
+  "expected": "0 to 200 °C",
+  "review": false
+ },
+ {
+  "expected": "-50 to 150 °C",
+  "review": false
+ },
+ {
+  "expected": "0 to 2500 mm",
+  "review": false
+ },
+ {
+  "expected": "AI-H",
+  "review": false
+ },
+ {
+  "expected": "AI",
+  "review": false
+ },
+ {
+  "expected": "FF",
+  "review": false
+ },
+ {
+  "expected": "WirelessHART",
+  "review": true
+ },
+ {
+  "expected": "±0.075 % of span",
+  "review": false
+ },
+ {
+  "expected": "±0.1 % of span",
+  "review": false
+ },
+ {
+  "expected": "±3 mm",
+  "review": true
+ },
+ {
+  "expected": "0.04%",
+  "review": true
+ },
+ {
+  "expected": "1/2 in NPT (F)",
+  "review": false
+ },
+ {
+  "expected": "3/4 in NPT (M)",
+  "review": false
+ },
+ {
+  "expected": "IP67",
+  "review": false
+ },
+ {
+  "expected": "NEMA 4X",
+  "review": false
+ },
+ {
+  "expected": "Ex d IIC T4 Gb",
+  "review": false
+ },
+ {
+  "expected": "Ex ia IIC T6 Ga",
+  "review": false
+ },
+ {
+  "expected": "115.6",
+  "review": false
+ },
+ {
+  "expected": "240",
+  "review": false
+ },
+ {
+  "expected": "A216 WCB",
+  "review": false
+ },
+ {
+  "expected": "SS316L",
+  "review": false
+ },
+ {
+  "expected": "C-276",
+  "review": false
+ }
+]
