@@ -40,3 +40,6 @@ __pycache__/
 *.pptx
 *.png
 /graphs/rag_agent/test/
+
+# local assistant settings
+.claude/
