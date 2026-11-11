@@ -27,3 +27,13 @@ rapidfuzz
 pint
 babel
 psutil
+
+# сервис: Excel, загрузка файлов, MCP
+openpyxl
+python-multipart
+mcp
+
+# извлечение правил из PDF (нужен ещё сервер VLM и Tesseract)
+PyMuPDF
+pytesseract
+pillow

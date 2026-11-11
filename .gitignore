@@ -33,13 +33,16 @@
 /graphs/rag_agent/data/
 /graphs/structured_documents/data/
 
-# кэш Python
+# кэш Python и виртуальные окружения
 __pycache__/
+.venv/
+/venv*/
 
 *.md
+!/README.md
 *.pptx
 *.png
-/graphs/rag_agent/test/
+/graphs/rag_agent/Test/
 
 # local assistant settings
 .claude/
