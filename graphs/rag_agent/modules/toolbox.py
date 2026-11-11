@@ -29,6 +29,10 @@ logger = logging.getLogger("normalization_pipeline")
 INSPECT_LIMIT = 20
 # Сколько строк файла пересчитывает предпросмотр правила.
 PREVIEW_ROWS = 12
+# Сколько сообщений пользователя ждёт подготовленная запись в базу: потом она снимается сама. Иначе
+# забытое предложение (пользователь ответил «только на этот прогон», агент не отменил) висело в
+# контексте каждого хода, и любое следующее «да» могло его записать
+PENDING_TURNS = 3
 # Сколько строк за раз можно пересчитать отдельно (дальше — normalize_file целиком).
 MAX_RENORMALIZE_ROWS = 50
 # Сколько ждать нормализацию в ходе чата: успела — файл в ответе, нет — придёт отдельным сообщением.
@@ -80,7 +84,7 @@ class Toolbox:
     пользователя сам).
     """
 
-    TOOL_NAMES = ("list_files", "list_standards", "inspect_file", "normalize_file",
+    TOOL_NAMES = ("list_files", "list_standards", "inspect_file", "list_values", "normalize_file",
                   "extract_document", "list_jobs",
                   "file_overview", "top_problems", "list_issues", "explain_row",
                   "renormalize_rows", "edit_result", "accept_proposals",
@@ -218,6 +222,31 @@ class Toolbox:
                 "selected_in_ui": self.selected,
                 "pdfs_not_extracted": sorted(p.name for p in INPUT_DIR.glob("*.pdf") if p.stem not in loaded)}
 
+    def list_values(self, file_id: str, column: str = "Attribute", contains: str = "") -> dict:
+        """Every distinct value of one column of a file with how many rows have it, most frequent
+        first — the attribute labels (column "Attribute", the default), the items (a context
+        column such as "Item"), or the values of a standard column.
+
+        Use it to find rows by meaning: "how many rows are about power" — list the labels and pick
+        yourself the ones that mean it ("Rated power", "Compressor input power"), in any language
+        the user asks in. The file's labels are usually English, so a search for the user's own
+        word misses them. `contains` keeps values containing that text (case-insensitive).
+        """
+        stored, error = self._file(file_id)
+        if error:
+            return error
+        names = {str(c).strip().lower(): c for c in stored.frame.columns}
+        key = names.get(str(column or "Attribute").strip().lower())
+        if key is None:
+            return {"error": f"no column {column!r}", "columns": [str(c) for c in stored.frame.columns]}
+        values = stored.frame[key].fillna("").astype(str).str.strip()
+        counts = values.value_counts()
+        wanted = str(contains or "").strip().lower()
+        listed = [{"value": v, "rows": int(n)} for v, n in counts.items() if not wanted or wanted in v.lower()]
+        return {"file": stored.summary(), "column": str(key), "distinct": len(listed),
+                "rows_total": int(stored.frame.shape[0]), "values": listed[:300],
+                "truncated": len(listed) > 300}
+
     def inspect_file(self, file_id: str, limit: int = INSPECT_LIMIT, contains: str = "") -> dict:
         """Show rows of a file as they are, so you can answer questions about what is in it.
 
@@ -275,9 +304,10 @@ class Toolbox:
         by_name = {rs.name: rs for rs in self.app_config.rule_sets}
         rule_sets = [by_name[n] for n in wanted] or list(self.app_config.rule_sets)
         holder: dict = {}
+        progress = jobs.Progress()  # «сколько осталось?» — list_jobs читает его по ходу
 
         def work() -> dict:
-            result_df, ambiguous = normalize_table(frame, self.app_config, rule_sets, parsed)
+            result_df, ambiguous = normalize_table(frame, self.app_config, rule_sets, parsed, progress)
             layout = result_df.attrs.get("layout") or {}
             origin = (f"из {stored.name} по стандартам: {', '.join(wanted) if wanted else 'все'}"
                       + (f"; разовых правил: {len(parsed)}" if parsed else ""))
@@ -298,7 +328,7 @@ class Toolbox:
 
         # стандарты в названии: по нему агент потом рассказывает о задаче, и без них додумывал «по всем»
         title = f"нормализация {stored.name} по стандартам: {', '.join(wanted) if wanted else 'все загруженные'}"
-        job = jobs.run_in_background(self.session_id, title, work)
+        job = jobs.run_in_background(self.session_id, title, work, progress)
         if jobs.wait(job, NORMALIZE_WAIT_SECONDS):
             jobs.mark_delivered(job)  # файл уходит в этом же ответе
             if job.state != "done":
@@ -359,7 +389,10 @@ class Toolbox:
 
     def list_jobs(self) -> dict:
         """List the background jobs of this conversation (document extractions, long normalizations):
-        state (queued, running, done, failed, lost), current step, pages read so far, errors."""
+        state (queued, running, done, failed, lost), current step, errors; for an extraction the
+        pages read so far, for a running normalization how many cells are done (cells_done of
+        cells_total, percent; cells = rows × standards). Use it for "how much is left?" — answer
+        in rows or percent from these numbers."""
         return {"jobs": [jobs.describe(j) for j in jobs.for_session(self.session_id)]}
 
     # ------------------------------------------------------------------ вопросы по результату
@@ -388,7 +421,8 @@ class Toolbox:
         "Item"), "Attribute", "standard" or "level"; several columns group by their combination.
         `metric`: "flagged" | "changed" | "low_confidence" (see file_overview). `standard`: one
         standard, or empty for all. `filters`: {column: text} keeps rows whose column contains the
-        text. Each group comes with count, share of its rows and example rows.
+        text; {column: [text, text]} — any of them ({"Attribute": ["Rated power", "Compressor input
+        power"]}). Each group comes with count, share of its rows and example rows.
         """
         stored, error = self._result(file_id)
         if error:
@@ -406,7 +440,8 @@ class Toolbox:
         rule or check), and for a flagged row the value(s) the service proposed.
 
         `metric`: "flagged" | "changed" | "low_confidence". `filters`: {column: text}, e.g.
-        {"Item": "pump"} or {"Attribute": "Temperature"} or {"level": "disagreed"}.
+        {"Item": "pump"} or {"Attribute": "Temperature"} or {"level": "disagreed"}; a list of texts
+        matches any of them ({"Attribute": ["Rated power", "Compressor input power"]}).
 
         Levels: high — backed by a fact code checked (a form in the document's table, a quoted
         rule, a conversion done by code); medium — a model judgment confirmed by a second, blind
@@ -480,11 +515,14 @@ class Toolbox:
                 "standards": explained}
 
     # ------------------------------------------------------------------ правка результата
-    def renormalize_rows(self, file_id: str, rows: list[int], standards: list[str] | None = None) -> dict:
+    def renormalize_rows(self, file_id: str, rows: list[int] | None = None, standards: list[str] | None = None,
+                         attribute: str = "") -> dict:
         """Normalize again only these rows of a result file, with every rule of each standard —
         the document's rules together with the rules users stored in it — and write the new
         values into the same result. Use it after a rule was added, or when the user asks to redo
-        particular rows. `rows` are row numbers as the other tools print them; `standards` limits
+        particular rows. `rows` are row numbers as the other tools print them; `attribute` adds
+        every row whose attribute label is this one (or an alias of it) — use it for "all rows of
+        attribute X" instead of guessing row numbers; `standards` limits
         which standard columns are recomputed (empty = every standard of the file). Returns
         before → after for each row. The one-off rules column is not recomputed.
         """
@@ -493,9 +531,15 @@ class Toolbox:
         stored, error = self._result(file_id)
         if error:
             return error
+        rows = list(rows or [])
+        if str(attribute or "").strip():
+            source = self._source_frame(stored)
+            rows += [i + 1 for i in range(source.shape[0])
+                     if _attribute_matches(str(source.iloc[i]["Attribute"]), attribute)]
         positions, bad = self._positions(stored, rows)
         if not positions:
-            return {"error": "no valid rows", "rows_outside": bad, "file_rows": stored.frame.shape[0]}
+            return {"error": "no valid rows" + (f" and no rows of attribute {attribute!r}" if attribute else ""),
+                    "rows_outside": bad, "file_rows": stored.frame.shape[0]}
         if len(positions) > MAX_RENORMALIZE_ROWS:
             return {"error": f"{len(positions)} rows asked; at most {MAX_RENORMALIZE_ROWS} at once — "
                              f"run normalize_file for the whole file instead"}
@@ -673,14 +717,20 @@ class Toolbox:
             rows = self.workspace.focus.get("rows") or []
         source = self._source_frame(stored)
         names = [attribute] + ([spec["attribute"]] + list(spec.get("aliases") or []) if spec else [])
-        explicit, _ = self._positions(stored, rows)
+        entry = next((e for e in self._layout(stored).get("standards", []) if e["standard"] == standard), None)
         matching = [p for p in range(source.shape[0])
                     if any(_attribute_matches(str(source.iloc[p]["Attribute"]), n) for n in names if n)]
+        # строки разговора (фокус или переданные агентом) — только те, что этого атрибута: по имени или
+        # потому, что их нормализовали по этому паспорту. Строки другого атрибута показывали в
+        # предпросмотре не правило, а разброс модели (Ex marking «изменился» от правила про скорость)
+        marker = f"паспорт «{spec['attribute']}»" if spec else ""
+        explicit = [p for p in self._positions(stored, rows)[0]
+                    if p in matching or (marker and entry is not None
+                                         and marker in str(stored.frame.iloc[p].get(entry["applied"], "")))]
         positions = list(dict.fromkeys(explicit + matching))[:PREVIEW_ROWS]
         if not positions:
             return []
         trial = runner.clone_with(spec) if spec else runner
-        entry = next((e for e in self._layout(stored).get("standards", []) if e["standard"] == standard), None)
 
         def one(position: int) -> dict:
             label, value = str(source.iloc[position]["Attribute"]), str(source.iloc[position]["Value"])
@@ -688,15 +738,34 @@ class Toolbox:
                 written, flag, note = trial.run(label, value, _row_context(source, position))
             except Exception as e:
                 written, flag, note = value, True, f"ошибка: {e}"
-            now = ""
+            now, now_flagged = "", False
             if entry is not None:
                 cell = stored.frame.iloc[position][entry["column"]]
                 now = "" if pd.isna(cell) else str(cell)
-            return {"row": position + 1, "Attribute": label, "Value": value, "now": now,
+                flags = stored.ambiguous.get(entry["column"]) or []
+                now_flagged = bool(flags[position]) if position < len(flags) else False
+            return {"row": position + 1, "Attribute": label, "Value": value, "now": now, "now_flagged": now_flagged,
                     "with_rule": written, "flagged": bool(flag), "note": note}
 
         with ThreadPoolExecutor(max_workers=6) as pool:
             return list(pool.map(one, positions))
+
+    def _rows_to_redo(self, file_id: str, preview: list[dict], names: list[str]) -> list[int]:
+        """Строки, которые после записи правила надо перепрогнать: те, что в предпросмотре меняются
+        (значение или пометка), и строки атрибута, до которых предпросмотр не дошёл (PREVIEW_ROWS).
+
+        Агент передавал в предпросмотр строки из фокуса разговора — строки прошлого правила, другого
+        атрибута, — а после «да» перепрогонял их же, не тронув строки нового правила."""
+        stored, error = self._file(file_id)
+        if error or stored.kind != "result":
+            return []
+        changed = [p["row"] for p in preview
+                   if " ".join(p["with_rule"].split()) != " ".join(p["now"].split()) or p["flagged"] != p.get("now_flagged")]
+        seen = {p["row"] for p in preview}
+        source = self._source_frame(stored)
+        rest = [i + 1 for i in range(source.shape[0]) if i + 1 not in seen
+                and any(_attribute_matches(str(source.iloc[i]["Attribute"]), n) for n in names if n)]
+        return list(dict.fromkeys(changed + rest))
 
     def _pending(self, action: dict) -> str:
         token = uuid.uuid4().hex[:8]
@@ -774,16 +843,19 @@ class Toolbox:
         preview = self._preview(runner, new_spec, attribute, file_id, rows, rule_set.name)
         checks = rule_store.check_examples(rule_set.name, new_spec, all_examples, self._model)
         stored, _ = self._file(file_id)
+        redo = self._rows_to_redo(file_id, preview, [attribute, name, *(new_spec.get("aliases") or [])])
         token = self._pending({"action": "add", "standard": rule_set.name, "attribute": name,
                                "rule": text, "item": item, "examples": new_examples,
                                "spec": new_spec, "new_attribute": spec is None,
                                "file_id": stored.file_id if stored is not None and stored.kind == "result" else "",
-                               "rows": list(dict.fromkeys([int(r) for r in rows or []] + [p["row"] for p in preview]))})
+                               "rows": redo})
         return {"status": "needs_confirmation", "token": token, "standard": rule_set.name,
                 "attribute": name, "new_attribute": spec is None, "rule": text,
                 "spec_changes": changes, "notes": notes, "explanation": explanation,
-                "preview": preview, "examples": checks, "regressions": new_spec.get("regressions") or [],
-                "message": ("Nothing is stored yet. Show the user what changes and ask for a yes/no. "
+                "preview": preview, "rows_changing": redo, "examples": checks, "regressions": new_spec.get("regressions") or [],
+                "message": ("Nothing is stored yet. Show the user what changes and ask: store it in the "
+                            "standard, or apply it only to this run? (Only this run: cancel_pending and pass "
+                            "the rule to normalize_file as a one-off rule.) "
                             + ("WARNING: this creates a NEW attribute the standard does not define. "
                                if spec is None else "")
                             + ("The rule changes nothing in the specification: say so. " if not changes else "")
@@ -826,10 +898,13 @@ class Toolbox:
         except Exception as e:
             return {"error": f"could not rebuild the specification without this rule: {e}"}
         preview = [] if vanishes else self._preview(runner, after, rule["attribute"], file_id, None, rule_set.name)
+        redo = self._rows_to_redo(file_id, preview, [rule["attribute"], *((current or {}).get("aliases") or [])])
+        stored, _ = self._file(file_id)
         token = self._pending({"action": "remove", "standard": rule_set.name, "rule_id": rule_id,
-                               "attribute": rule["attribute"], "spec": after})
+                               "attribute": rule["attribute"], "spec": after, "rows": redo,
+                               "file_id": stored.file_id if stored is not None and stored.kind == "result" else ""})
         return {"status": "needs_confirmation", "token": token, "rule": rule,
-                "attribute_disappears": vanishes,
+                "attribute_disappears": vanishes, "rows_changing": redo,
                 "spec_changes": rule_store.spec_changes(current, after), "preview": preview,
                 "message": "Nothing is removed yet. Show the user what changes and ask for a yes/no."}
 
@@ -838,6 +913,7 @@ class Toolbox:
         propose_rule_removal) — ONLY after the user agreed to it in their latest message.
         """
         from ..spec_runner import invalidate_runner
+        self._expire_pending()
         action = self.workspace.pending.get(str(token).strip())
         if action is None:
             return {"error": f"no pending change {token}",
@@ -848,6 +924,15 @@ class Toolbox:
                              "their next message before confirming"}
         self.workspace.pending.pop(str(token).strip())
         if action["action"] == "add":
+            # пользователь видел, что пример не сошёлся, и согласился сохранить правило как есть:
+            # пример записывается с тем результатом, который он одобрил. Иначе неверный пример
+            # проваливал бы каждую следующую сборку паспорта, и пересборка после переизвлечения
+            # документа отвергалась бы навсегда
+            failed = {str(c["value"]).strip(): c["got"] for c in action["spec"].get("examples_failed") or []}
+            if failed:
+                action["examples"] = [{**e, "expected": failed.get(str(e["value"]).strip(), e["expected"])}
+                                      for e in action.get("examples") or []]
+                action["spec"]["examples_failed"] = []
             rule = rule_store.add_rule(action["standard"], action["attribute"], action["rule"],
                                        action["spec"], action["new_attribute"], item=action.get("item", ""),
                                        examples=action.get("examples"))
@@ -855,11 +940,13 @@ class Toolbox:
             logger.info("[RULES] %s: правило %s для %r записано", action["standard"], rule["id"], action["attribute"])
             return {"stored": {"standard": action["standard"], **rule},
                     "rows_to_renormalize": action.get("rows") or [], "file_id": action.get("file_id", ""),
-                    "message": "Stored. Offer to renormalize the affected rows with renormalize_rows."}
+                    "message": "Stored. Offer to renormalize exactly rows_to_renormalize (the rows this rule "
+                               "changes) with renormalize_rows — not other rows the conversation was about."}
         rule = rule_store.remove_rule(action["standard"], action["rule_id"], action["spec"])
         invalidate_runner(action["standard"])
         logger.info("[RULES] %s: правило %s снято", action["standard"], action["rule_id"])
-        return {"removed": rule, "message": "Removed. Offer to renormalize the affected rows."}
+        return {"removed": rule, "rows_to_renormalize": action.get("rows") or [], "file_id": action.get("file_id", ""),
+                "message": "Removed. Offer to renormalize exactly rows_to_renormalize with renormalize_rows."}
 
     def cancel_pending(self, token: str) -> dict:
         """Drop a prepared change the user declined."""
@@ -867,8 +954,14 @@ class Toolbox:
         return {"cancelled": bool(action)}
 
     # ------------------------------------------------------------------ для чата
+    def _expire_pending(self) -> None:
+        for token in [t for t, a in self.workspace.pending.items()
+                      if self.workspace.turn - a.get("turn", 0) > PENDING_TURNS]:
+            self.workspace.pending.pop(token, None)
+
     def pending_note(self) -> str:
         """Отложенные записи в базу — строкой для контекста модели (токены живут в рабочей области)."""
+        self._expire_pending()
         if not self.workspace.pending:
             return ""
         parts = []

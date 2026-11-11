@@ -142,7 +142,9 @@ def _matches(row: dict, filters: dict | None) -> bool:
     """Фильтр «колонка → подстрока» без учёта регистра; ключ — любое поле записи."""
     for key, wanted in (filters or {}).items():
         field = next((k for k in row if k.lower() == str(key).strip().lower()), None)
-        if field is None or str(wanted).strip().lower() not in str(row[field]).lower():
+        # список — «любое из»: строки про мощность — это и «Rated power», и «Compressor input power»
+        options = wanted if isinstance(wanted, (list, tuple)) else [wanted]
+        if field is None or not any(str(o).strip().lower() in str(row[field]).lower() for o in options):
             return False
     return True
 

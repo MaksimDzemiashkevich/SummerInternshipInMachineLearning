@@ -56,7 +56,6 @@ const MessageInput = ({ onSend, history = [] }) => {
             ? crypto.randomUUID()
             : `s_${Date.now()}_${Math.random().toString(16).slice(2)}`,
     );
-    const [lastFileName, setLastFileName] = useState('');
     // Есть ли на сервере идущие задачи этого диалога: пока есть — опрашиваем /jobs.
     const [pollJobs, setPollJobs] = useState(false);
 
@@ -161,7 +160,6 @@ const MessageInput = ({ onSend, history = [] }) => {
         const attached = items[0]?.originFileObj;
         if (attached) {
             formData.append('file', attached);
-            setLastFileName(attached.name);
         }
 
         onSend({
@@ -248,11 +246,6 @@ const MessageInput = ({ onSend, history = [] }) => {
                     onChange={setSelected}
                     options={standardOptions}
                 />
-                {/* Место под подсказку есть всегда: иначе её появление в момент отправки
-                    сдвигает строку и Select пересчитывает теги. */}
-                <span className="composerHint" title={lastFileName || undefined}>
-                    {lastFileName ? `в работе: ${lastFileName}` : ''}
-                </span>
             </div>
 
             <Sender

@@ -43,3 +43,4 @@ __pycache__/
 
 # local assistant settings
 .claude/
+graphs/rag_agent/data/input/vector_store_*.json

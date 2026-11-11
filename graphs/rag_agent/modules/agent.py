@@ -45,6 +45,17 @@ def _tool(method, name: str) -> StructuredTool:
                           args_schema=schema_source.args_schema, func=call)
 
 
+def _text_of(response) -> str:
+    """Текст ответа модели: строка (Chat Completions) или блоки (Responses API — рассуждение,
+    вызовы инструментов и текст идут списком; пользователю нужен только текст)."""
+    content = response.content
+    if isinstance(content, str):
+        return content.strip()
+    parts = [b.get("text", "") if isinstance(b, dict) else str(b) for b in content or []
+             if not isinstance(b, dict) or b.get("type") in ("text", "output_text")]
+    return "".join(parts).strip()
+
+
 def run_agent(model, tools: list, history: list[dict], message: str,
               max_steps: int = MAX_AGENT_STEPS) -> str:
     """Цикл «модель ↔ инструменты»; возвращает финальный текст для пользователя."""
@@ -62,7 +73,7 @@ def run_agent(model, tools: list, history: list[dict], message: str,
             logger.warning("[AGENT] шаг %d не удался: %s", step + 1, e)
             return last_text or "Не удалось получить ответ модели. Попробуйте ещё раз."
 
-        last_text = str(response.content or "").strip() or last_text
+        last_text = _text_of(response) or last_text
         calls = getattr(response, "tool_calls", None)
         if not calls:
             return last_text or "…"

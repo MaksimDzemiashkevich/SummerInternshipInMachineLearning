@@ -18,6 +18,21 @@ if not logger.handlers:
     handler = logging.StreamHandler()
     handler.setFormatter(logging.Formatter("%(asctime)s | %(message)s"))
     logger.addHandler(handler)
+# MCP (FastMCP) вешает на корневой логгер свой обработчик уровня INFO: без этого каждая строка
+# конвейера печаталась дважды, а httpx писал строку на каждый вызов OpenAI
+logger.propagate = False
+for _noisy in ("httpx", "httpcore", "openai"):
+    logging.getLogger(_noisy).setLevel(logging.WARNING)
+
+
+class _SkipJobsPolling(logging.Filter):
+    """Фронтенд опрашивает GET /jobs каждые 5 с, пока идёт фоновая задача, — в журнал не пишем."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        return "/jobs" not in record.getMessage()
+
+
+logging.getLogger("uvicorn.access").addFilter(_SkipJobsPolling())
 
 
 def _context_line(context: str) -> str:

@@ -229,7 +229,11 @@ def chat(
     toolbox = Toolbox(workspace, app_config, catalogue(app_config), selected, produced, session_id=session)
     running = jobs.active(session)
     jobs_note = ("Background jobs of this conversation still running: "
-                 + "; ".join(f"{j['title']} ({j['state']}, {j['step']})" for j in running) + "."
+                 + "; ".join(f"{j['title']} ({j['state']}, {j['step']}"
+                             + (f", {j['cells_done']} of {j['cells_total']} cells done, {j['percent']}%"
+                                if j.get("cells_total") else "")
+                             + (f", pages read {j['pages_read']} of {j['pages_total']}" if j.get("pages_total") else "")
+                             + ")" for j in running) + "."
                  if running else "")
     for note in (focus_note(workspace), toolbox.pending_note(), jobs_note):
         if note:
@@ -237,7 +241,7 @@ def chat(
     tools = build_tools(toolbox)
     prompt = f"[Context: {' '.join(notes)}]\n\n{text or 'Обработай приложенный файл.'}"
     try:
-        reply = run_agent(app_config.assistant or app_config.model, tools,
+        reply = run_agent(app_config.agent_model or app_config.assistant or app_config.model, tools,
                           history_messages(_parse_json_list(history)), prompt)
     finally:
         save_workspace(session)

@@ -53,6 +53,25 @@ class Job:
     step: str = ""
 
 
+class Progress:
+    """Сколько строк нормализации готово — для «сколько осталось?». Живёт в памяти: после
+    перезапуска сервера нормализация всё равно потеряна."""
+
+    def __init__(self) -> None:
+        self.total = 0
+        self.done = 0
+        self._lock = threading.Lock()
+
+    def add_total(self, rows: int) -> None:
+        with self._lock:
+            self.total += rows
+
+    def step(self, rows: int = 1) -> None:
+        with self._lock:
+            self.done = min(self.total, self.done + rows) if self.total else self.done + rows
+
+
+_PROGRESS: dict[str, Progress] = {}
 _JOBS: dict[str, Job] = {}
 _EVENTS: dict[str, threading.Event] = {}
 _LOCK = threading.RLock()
@@ -230,14 +249,18 @@ def start_watcher() -> None:
 
 
 # ---------------------------------------------------------------------- нормализация
-def run_in_background(session_id: str, title: str, work: Callable[[], dict]) -> Job:
-    """Запускает работу в потоке; work() возвращает сведения о результате (file_id, сводку)."""
+def run_in_background(session_id: str, title: str, work: Callable[[], dict],
+                      progress: Progress | None = None) -> Job:
+    """Запускает работу в потоке; work() возвращает сведения о результате (file_id, сводку).
+    progress — счётчик готовых строк, который work() заполняет по ходу."""
     job = Job(job_id=uuid.uuid4().hex[:8], session_id=session_id, kind="normalize", title=title,
               state="running", step="идёт")
     event = threading.Event()
     with _LOCK:
         _JOBS[job.job_id] = job
         _EVENTS[job.job_id] = event
+        if progress is not None:
+            _PROGRESS[job.job_id] = progress
         _persist()
 
     def run() -> None:
@@ -274,6 +297,11 @@ def describe(job: Job) -> dict:
             "step": job.step, "error": job.error}
     if job.kind == "extract":
         info.update(document=job.document, pages_total=job.total_pages, pages_read=pages_done(job))
+    progress = _PROGRESS.get(job.job_id)
+    if job.kind == "normalize" and progress is not None and progress.total:
+        # строки × стандарты (и колонка разовых правил): столько ячеек считается всего
+        info.update(cells_done=progress.done, cells_total=progress.total,
+                    percent=round(100 * progress.done / progress.total))
     if job.state in ("done", "failed"):
         info["result"] = {k: v for k, v in job.result.items() if k != "log_tail"}
         info["minutes"] = round((job.finished - job.created) / 60, 1) if job.finished else None

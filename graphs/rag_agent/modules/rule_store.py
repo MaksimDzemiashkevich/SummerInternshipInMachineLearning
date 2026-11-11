@@ -149,6 +149,10 @@ def _remove_superseded(spec: dict, texts: list[str], llm) -> list[str]:
     except Exception as e:
         logger.warning("[RULES] отменённые строки не определены: %s", e)
         return []
+    # правила только для своих изделий («For Pump: …») строку документа целиком не отменяют: для
+    # остальных изделий она в силе. Модель убирала целиком и примеры других случаев («~250 kW»)
+    scoped = [re.match(r"For ([^:]{1,80}): ", t) for t in texts]
+    items = ", ".join(dict.fromkeys(m.group(1) for m in scoped if m)) if all(scoped) else ""
     removed = []
     for item in answer.get("superseded") or []:
         if isinstance(item, str):
@@ -156,6 +160,9 @@ def _remove_superseded(spec: dict, texts: list[str], llm) -> list[str]:
         quote = str(item.get("quote") or "").strip()
         if len(quote) < 8 or quote not in document_part:
             continue  # без дословного совпадения ничего не трогаем
+        if items:
+            item = {"quote": quote, "whole": False,
+                    "overridden": f"for {items}: " + str(item.get("overridden") or "what the user rule covers")}
         if item.get("whole", True):
             rules_text = rules_text.replace(quote, "")
             removed.append(quote)
@@ -323,7 +330,11 @@ def compile_spec(doc: str, attribute: str, texts: list[str], llm,
             notes.append("возвращены формы, которых правило не касается: " + "; ".join(restored[:10]))
         checks = check_examples(doc, spec, examples, llm)
         failed = [c for c in checks if not c["ok"]]
-        regressions = check_regressions(doc, spec, probes, llm)
+        # пример из строки, которую правило отменило («Wrong: '1485 RPM'; Right: '1485 rpm'» при
+        # «пиши r/min»), меняться и должен — это не задетое, а отменённое
+        cancelled = _norm(" ".join(spec.get("superseded") or []))
+        regressions = [r for r in check_regressions(doc, spec, probes, llm)
+                       if not (cancelled and _norm(r["value"]) in cancelled)]
         spec["examples_failed"], spec["regressions"] = failed, regressions
         score = (len(failed), len(regressions))
         if best is None or score < best[2]:
@@ -495,7 +506,10 @@ def spec_changes(before: dict | None, after: dict | None) -> list[dict]:
                 if entry["value"] not in old or added:
                     changes.append({"field": "values", "before": "", "after":
                                     f"{entry['value']} ← {', '.join(sorted(added)) or '(новое значение)'}"})
-                lost = old.get(entry["value"], set()) - set(entry.get("accepted") or [])
+                # форма, равная самому значению, не теряется (значение узнаёт себя всегда); регистр
+                # и пробелы исполнитель не различает — и здесь не в счёт
+                kept = {_norm(a) for a in [entry["value"], *(entry.get("accepted") or [])]}
+                lost = {a for a in old.get(entry["value"], set()) if _norm(a) not in kept}
                 if lost:
                     changes.append({"field": "values", "before": f"{entry['value']} ← {', '.join(sorted(lost))}",
                                     "after": f"{entry['value']} (эти формы больше не принимаются)"})
@@ -517,5 +531,7 @@ def spec_changes(before: dict | None, after: dict | None) -> list[dict]:
             changes.append({"field": f"{field} [{variant.get('applies_to')}]",
                             "before": old.get(field), "after": variant.get(field, "(как у атрибута)")})
     for quote in after.get("superseded") or []:
-        changes.append({"field": "rules", "before": quote[:200], "after": "(отменено правилом пользователя)"})
+        changes.append({"field": "rules", "before": quote[:200],
+                        "after": "(частично отменено правилом пользователя)" if "(частично:" in quote
+                        else "(отменено правилом пользователя)"})
     return changes

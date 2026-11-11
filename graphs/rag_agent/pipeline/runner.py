@@ -61,27 +61,30 @@ def run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set) -> p
     return _run_rule_set(data_frame, app_config, rule_set)
 
 
-def _run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set) -> pd.DataFrame:
+def _run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set, progress=None) -> pd.DataFrame:
     from ..spec_runner import has_spec, run_spec_rule_set
     if NORMALIZER == "spec" and has_spec(rule_set):
         logger.info("Документ %r: нормализация по спецификации атрибутов", rule_set.name)
         # спецификации нужна модель без привязанных инструментов (структурированный ответ)
         return run_spec_rule_set(data_frame, app_config.spec_model or app_config.assistant or app_config.model,
-                                 rule_set)
-    return run_single_rule_set(data_frame, app_config.model, rule_set)
+                                 rule_set, progress)
+    return run_single_rule_set(data_frame, app_config.model, rule_set, progress)
 
 
 def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
                     rule_sets: list | None = None,
-                    user_rules: list[AdHocRule] | None = None
-                    ) -> tuple[pd.DataFrame, dict[str, list[bool]]]:
+                    user_rules: list[AdHocRule] | None = None,
+                    progress=None) -> tuple[pd.DataFrame, dict[str, list[bool]]]:
     """Прогоняет таблицу по выбранным документам; возвращает (таблицу, флаги спорных ячеек).
 
     Правила пользователя считаются отдельным проходом ПОСЛЕ стандартов и ложатся в свою
     колонку: колонки стандартов остаются чистыми — в них ровно то, что говорит документ.
+    progress (jobs.Progress) — счётчик готовых ячеек: строки × стандарты (+ колонка разовых правил).
     """
     rule_sets = list(app_config.rule_sets if rule_sets is None else rule_sets)
     data_frame = prepare_frame(data_frame)
+    if progress is not None:
+        progress.add_total(len(data_frame) * (len(rule_sets) + (1 if user_rules else 0)))
     # в выдаче сохраняем все исходные колонки: уточняющие колонки нужны ревьюеру
     result_df = data_frame.copy()
     ambiguous_cols: dict[str, list[bool]] = {}
@@ -93,7 +96,7 @@ def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
     # документы независимы друг от друга — считаем их колонки параллельно
     if rule_sets:
         with ThreadPoolExecutor(max_workers=len(rule_sets)) as pool:
-            col_dfs = list(pool.map(lambda rs: _run_rule_set(data_frame, app_config, rs), rule_sets))
+            col_dfs = list(pool.map(lambda rs: _run_rule_set(data_frame, app_config, rs, progress), rule_sets))
         column_names = []
         for rule_set, col_df in zip(rule_sets, col_dfs):
             column = _free_column_name(result_df, rule_set.name)
@@ -113,6 +116,8 @@ def normalize_table(data_frame: pd.DataFrame, app_config: AppConfig,
     if user_rules:
         logger.info("Колонка %r: правил пользователя — %d", USER_RULES_COLUMN, len(user_rules))
         col_df = run_user_rules_column(data_frame, app_config.model, user_rules)
+        if progress is not None:
+            progress.step(len(data_frame))
         column = _free_column_name(result_df, USER_RULES_COLUMN)
         result_df[column] = col_df["Rules_Value"].to_list()
         applied = _free_column_name(result_df, column + APPLIED_SUFFIX)

@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -39,6 +41,11 @@ class Settings:
     # Паспортам и сборке правил инструменты не нужны, и рассуждать им можно: на AVS / HB-15
     # (2026-10-13) none — 88 и 89 из 102, low — 96 и 97, при +10–20% времени и ~1.7× выходных токенов.
     spec_reasoning_effort: str | None = "low"
+    # Агент вызывает инструменты, а с рассуждением это работает только через Responses API
+    # (/v1/chat/completions отвечает 400). "none" — прежняя модель без рассуждения. На «сколько
+    # строк про мощность» (2026-10-14) без рассуждения агент насчитал 8 при сумме 7 и взял Power
+    # factor; с low — 6, верно, и объяснил, почему без коэффициента мощности; +1–2 с на ответ.
+    agent_reasoning_effort: str | None = os.getenv("AGENT_REASONING_EFFORT", "low")
 
 
 @dataclass
@@ -115,6 +122,8 @@ class AppConfig:
     assistant: ChatOpenAI | None = None
     # Модель паспортов (нормализация по спецификации, сборка правил пользователя): с рассуждением.
     spec_model: ChatOpenAI | None = None
+    # Модель агента в чате (инструменты); None — assistant.
+    agent_model: ChatOpenAI | None = None
 
 
 # Attribute names that mark document front/back matter rather than technical rules.
@@ -897,4 +906,8 @@ def build_app_config(settings: Settings | None = None) -> AppConfig:
         rule_sets=rule_sets,
         assistant=assistant,
         spec_model=spec_model,
+        agent_model=(ChatOpenAI(model=settings.chat_model, use_responses_api=True,
+                                reasoning={"effort": settings.agent_reasoning_effort},
+                                timeout=180, max_retries=2)
+                     if settings.agent_reasoning_effort not in (None, "", "none") else None),
     )

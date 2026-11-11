@@ -57,8 +57,8 @@ def _write_excel_with_highlight(df: pd.DataFrame, ambiguous_cols: dict[str, list
 
 
 def _write_summary(ws, df: pd.DataFrame, layout: dict, ambiguous_cols: dict[str, list[bool]]) -> None:
-    """Лист «Сводка»: метрики по стандартам и где больше всего жёлтых строк — то же, что
-    отвечает агент на «какой item больше всего с ошибками» (modules.results)."""
+    """Лист «Сводка»: сколько строк и метрики по стандартам. Рейтинги («где больше всего жёлтых»)
+    сюда не пишутся: какой срез нужен, решает вопрос — его считает агент (top_problems, list_issues)."""
     from openpyxl.styles import Font
     from ..modules import results
 
@@ -77,17 +77,6 @@ def _write_summary(ws, df: pd.DataFrame, layout: dict, ambiguous_cols: dict[str,
     for entry in overview["standards"]:
         ws.append([entry["standard"], entry["flagged"], entry["changed"], entry["low_confidence"],
                    entry["not_covered"]])
-    groupings = [["Attribute"]] + [[c] for c in layout["context_columns"][:1]]
-    if layout["context_columns"]:
-        groupings.append([layout["context_columns"][0], "Attribute"])
-    for keys in groupings:
-        top = results.aggregate(df, layout, ambiguous_cols, keys, "flagged", top=15)
-        if not top.get("top"):
-            continue
-        title("Больше всего жёлтых строк: " + " × ".join(top["group_by"]))
-        ws.append(top["group_by"] + ["Жёлтых", "Из строк", "Доля"])
-        for group in top["top"]:
-            ws.append([group[k] for k in top["group_by"]] + [group["count"], group["of_rows"], group["share"]])
     for column in ws.columns:
         width = max(len(str(c.value or "")) for c in column)
         ws.column_dimensions[column[0].column_letter].width = min(60, max(10, width + 2))

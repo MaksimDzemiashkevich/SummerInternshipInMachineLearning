@@ -176,6 +176,9 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                         or "правила этого документа к строке не применялись"),
         }
         update["new_rows"] = [new_row]
+        progress = config["configurable"].get("progress")
+        if progress is not None:
+            progress.step()
 
     # --- настраиваем ТЕКУЩУЮ строку ---
     if state["index_row_table"] < data_frame.shape[0]:
@@ -310,7 +313,7 @@ ROW_COLUMNS = ["Attribute", "Value", "Rules_Value", "Ambiguous", "Context", "Det
                "Applied"]
 
 
-def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set) -> pd.DataFrame:
+def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set, progress=None) -> pd.DataFrame:
     initial_state = {
         "messages": [],
         "index_row_table": 0,
@@ -330,7 +333,7 @@ def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set) -> pd.DataFra
     final_state = graph.invoke(
         initial_state,
         config={
-            "configurable": {"model": model, "rule_set": rule_set},
+            "configurable": {"model": model, "rule_set": rule_set, "progress": progress},
             # на строку приходится до 3 шагов графа (start_row/normalize_row/next_row)
             "recursion_limit": 3 * data_frame.shape[0] + 25,
         },

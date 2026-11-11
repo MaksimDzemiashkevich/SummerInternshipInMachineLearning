@@ -593,7 +593,7 @@ def invalidate_runner(doc: str) -> None:
         _RUNNERS.pop(doc, None)
 
 
-def run_spec_rule_set(data_frame, model, rule_set):
+def run_spec_rule_set(data_frame, model, rule_set, progress=None):
     """Колонка одного документа по спецификации — тот же контракт, что у graph.run_single_rule_set.
 
     Возвращает таблицу с колонками ROW_COLUMNS: значение, пометка на проверку («Ambiguous»), что
@@ -624,6 +624,9 @@ def run_spec_rule_set(data_frame, model, rule_set):
         except Exception as e:  # строка не должна ронять всю колонку
             logger.warning("  [SPEC] %r / %r: %s", attribute, value, e)
             written, flag, note = value, True, "ответ не получен — оставлено как записано"
+        finally:
+            if progress is not None:
+                progress.step()
         return {**row, "Rules_Value": written, "Ambiguous": bool(flag), "Applied": note}
 
     from concurrent.futures import ThreadPoolExecutor
