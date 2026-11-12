@@ -185,9 +185,7 @@ def check_examples(doc: str, spec: dict, examples: list[dict], llm) -> list[dict
     """Примеры через собранный паспорт (исполнитель без паспортов пользователей, с этим одним)."""
     if not examples:
         return []
-    from ..pipeline.parsing import set_parser_model
     from ..spec_runner import SpecRunner
-    set_parser_model(llm)
     trial = SpecRunner(doc, llm, user_rules=False).clone_with(spec)
     checks = []
     for example in examples:
@@ -254,7 +252,6 @@ def restore_forms(current: dict | None, new: dict, texts: list[str], examples: l
 def regression_probes(doc: str, current: dict | None, texts: list[str], examples: list[dict], llm) -> list[dict]:
     """Записи, на которых прежний паспорт работает и которых правило не касается, с его ответом:
     формы из списка и примеры документа (rule_cards), где прежний паспорт даёт ответ документа."""
-    from ..pipeline.parsing import set_parser_model
     from ..spec_runner import SpecRunner
     if not current:
         return []
@@ -271,7 +268,6 @@ def regression_probes(doc: str, current: dict | None, texts: list[str], examples
     probes = list({_norm(p["value"]): p for p in reversed(probes)}.values())[::-1]
     if not probes:
         return []
-    set_parser_model(llm)
     reference = SpecRunner(doc, llm, user_rules=False).clone_with(current)
     kept = []
     for probe in probes:

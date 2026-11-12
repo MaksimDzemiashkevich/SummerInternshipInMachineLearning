@@ -3,6 +3,7 @@ import re
 
 from ..modules.system_prompts import QUANTITY_KIND_PROMPT
 from ..modules.tools import convert_value, is_unit, same_dimension, unit_mismatch
+from .common import Memo
 from .common import (_WORD_RE, _alnum, _attribute_matches, _char_bag, _context_line,
                      _names_clash, _norm_attr, _unit_key, logger)
 from .deterministic import _synonym_tables_for_attribute
@@ -384,7 +385,7 @@ def _partial_separator_edit(original: str, answer: str) -> str | None:
     return None
 
 
-_QUANTITY_KIND_CACHE: dict[tuple[str, str, str], bool] = {}
+_QUANTITY_KIND = Memo("род величины атрибута")
 
 
 def _records_quantity(model, attribute: str, value: str, unit: str, context: str = "") -> bool:
@@ -395,8 +396,11 @@ def _records_quantity(model, attribute: str, value: str, unit: str, context: str
     тонны), отдельным вопросом — уверенно. Один вопрос на пару (атрибут, единица).
     """
     key = (str(attribute).strip().lower(), str(unit).strip().lower(), str(context).strip().lower())
-    if key in _QUANTITY_KIND_CACHE:
-        return _QUANTITY_KIND_CACHE[key]
+    return _QUANTITY_KIND.remember(key, lambda: _ask_quantity_kind(model, attribute, value, unit, context))
+
+
+def _ask_quantity_kind(model, attribute: str, value: str, unit: str, context: str) -> bool:
+    """Один вопрос модели (QUANTITY_KIND_PROMPT): величина ли это рода `unit`; без ответа — да."""
     messages = [
         {"role": "system", "content": QUANTITY_KIND_PROMPT},
         {"role": "user", "content": (f"{_context_line(context)}Attribute: {attribute}\n"
@@ -409,7 +413,6 @@ def _records_quantity(model, attribute: str, value: str, unit: str, context: str
         answer = "YES"  # по единице величина та же — без ответа модели этого и держимся
     verdict = not answer.startswith("NO")
     logger.info("  [QUANTITY] %r (%r) — величина рода %r: %s", attribute, value, unit, verdict)
-    _QUANTITY_KIND_CACHE[key] = verdict
     return verdict
 
 

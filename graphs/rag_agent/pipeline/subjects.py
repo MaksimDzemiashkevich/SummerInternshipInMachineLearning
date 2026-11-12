@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from rapidfuzz import fuzz
 
 from ..modules.system_prompts import SUBJECT_CHOICE_PROMPT, SCOPE_PROMPT
-from .common import logger
+from .common import Memo, logger
 
 
 SUBJECT_WORD_THRESHOLD = 85
@@ -39,7 +39,7 @@ def _subject_matches(context: str, subject: str) -> bool:
     return False
 
 
-_SUBJECT_CHOICE_CACHE: dict[tuple[str, tuple[str, ...]], str] = {}
+_SUBJECT_CHOICE = Memo("предмет записи")
 
 
 def _subject_by_model(model, context: str, subjects: tuple[str, ...]) -> str:
@@ -49,10 +49,12 @@ def _subject_by_model(model, context: str, subjects: tuple[str, ...]) -> str:
     «butt-welding fitting». Ответ кэшируется по паре (запись, набор предметов) — в таблице
     десятки строк на одно и то же изделие, и переспрашивать про каждую не нужно.
     """
-    key = (context.strip().lower(), subjects)
-    if key in _SUBJECT_CHOICE_CACHE:
-        return _SUBJECT_CHOICE_CACHE[key]
+    return _SUBJECT_CHOICE.remember((context.strip().lower(), subjects),
+                                    lambda: _ask_subject(model, context, subjects))
 
+
+def _ask_subject(model, context: str, subjects: tuple[str, ...]) -> str:
+    """Один вопрос модели (SUBJECT_CHOICE_PROMPT): какой из предметов — запись; не ответила — «»."""
     listing = "\n".join(f"- {s}" for s in subjects)
     messages = [
         {"role": "system", "content": SUBJECT_CHOICE_PROMPT},
@@ -65,11 +67,10 @@ def _subject_by_model(model, context: str, subjects: tuple[str, ...]) -> str:
         raw = ""
     choice = next((s for s in subjects if s.lower() == raw.lower()), "")
     logger.info("  [SUBJECT] %r -> предмет %r", context, choice or "не определён")
-    _SUBJECT_CHOICE_CACHE[key] = choice
     return choice
 
 
-_SCOPE_CACHE: dict[tuple[str, str], bool] = {}
+_SCOPE = Memo("область действия документа")
 
 
 # Сколько текста глобальных правил показываем модели: область действия стоит в начале документа.
@@ -144,11 +145,14 @@ def _document_covers_row(rule_set, context: str, model=None) -> bool:
         logger.info("  [SCOPE] %r: изделие названо в группах правил %s", context, named[:3])
         return True
 
-    key = (rule_set.name, context.strip().lower())
-    if key in _SCOPE_CACHE:
-        return _SCOPE_CACHE[key]
+    return _SCOPE.remember((rule_set.name, context.strip().lower()),
+                           lambda: _ask_scope(rule_set, context, model, subjects))
+
+
+def _ask_scope(rule_set, context: str, model, subjects: tuple[str, ...]) -> bool:
+    """Охватывает ли документ изделие: предмет из разметки документа, иначе вопросы модели по
+    началу документа (SCOPE_PROMPT); чужим изделие считается, только если так ответили все опросы."""
     if subjects and _subject_by_model(model, context, subjects):
-        _SCOPE_CACHE[key] = True
         return True
 
     # Теги групп в вопрос не идут: помечены обычно лишь несколько групп, и список из одного
@@ -176,7 +180,6 @@ def _document_covers_row(rule_set, context: str, model=None) -> bool:
         answers = list(pool.map(ask, range(SCOPE_VOTES)))
     covered = not all(a.startswith("NO") for a in answers)
     logger.info("  [SCOPE] %r в области действия %r: %s", context, rule_set.name, covered)
-    _SCOPE_CACHE[key] = covered
     return covered
 
 

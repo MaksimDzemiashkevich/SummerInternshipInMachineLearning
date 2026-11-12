@@ -1,6 +1,8 @@
-"""Общее для всего конвейера: логгер и сравнение имён атрибутов и фраз."""
+"""Общее для всего конвейера: логгер, запоминание ответов модели и сравнение имён атрибутов и фраз."""
 import logging
 import re
+import threading
+from typing import Callable, Hashable
 
 from dotenv import load_dotenv
 
@@ -33,6 +35,47 @@ class _SkipJobsPolling(logging.Filter):
 
 
 logging.getLogger("uvicorn.access").addFilter(_SkipJobsPolling())
+
+
+class Memo:
+    """Запомненные ответы модели на один и тот же вопрос: ключ → ответ, потокобезопасно.
+
+    Вызов модели идёт без блокировки: две строки с одним вопросом могут спросить дважды, но не
+    ждут друг друга. Все экземпляры известны классу, Memo.clear_all() очищает их разом (тесты,
+    подгрузка новых документов).
+    """
+
+    _all: list["Memo"] = []
+
+    def __init__(self, name: str):
+        self.name = name
+        self._data: dict = {}
+        self._lock = threading.Lock()
+        Memo._all.append(self)
+
+    def remember(self, key: Hashable, compute: Callable[[], object]):
+        """Ответ по ключу: запомненный или вычисленный compute() и запомненный."""
+        with self._lock:
+            if key in self._data:
+                return self._data[key]
+        value = compute()
+        with self._lock:
+            return self._data.setdefault(key, value)
+
+    def __contains__(self, key: Hashable) -> bool:
+        with self._lock:
+            return key in self._data
+
+    def clear(self) -> None:
+        """Забыть все ответы этого кэша."""
+        with self._lock:
+            self._data.clear()
+
+    @classmethod
+    def clear_all(cls) -> None:
+        """Забыть ответы всех кэшей конвейера."""
+        for memo in cls._all:
+            memo.clear()
 
 
 def _context_line(context: str) -> str:

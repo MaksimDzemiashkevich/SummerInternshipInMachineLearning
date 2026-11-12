@@ -5,7 +5,7 @@ import pandas as pd
 
 from ..modules.chat import AdHocRule, format_adhoc_rules
 from ..modules.tools import same_dimension
-from .parsing import parse, recorded_unit
+from .parsing import parse, recorded_unit, set_parser_model
 from .common import _attribute_matches, logger
 from .answers import _is_ambiguous_answer
 from .guards import _partial_separator_edit, _records_quantity
@@ -73,6 +73,8 @@ def run_user_rules_column(data_frame: pd.DataFrame, model,
     записана: колонка показывает ровно то, что делают правила пользователя, и ничего сверх.
     """
     samples = max(1, int(samples))
+    # колонка работает на механике запасного пути: его проверкам нужен разборщик с моделью
+    set_parser_model(model)
 
     def one_row(index: int) -> dict:
         attribute = data_frame.iloc[index]["Attribute"]

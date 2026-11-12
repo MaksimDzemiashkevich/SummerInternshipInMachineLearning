@@ -1,23 +1,25 @@
-"""Разбор значения отдельным вызовом модели: из чего запись (или ответ) состоит.
+"""Разбор значения отдельным вызовом модели: из чего запись (или ответ) состоит — вид значения,
+числа с единицами, корень и номер обозначения.
 
-Проверки ответа раньше сами разбирали строки регулярками — «число + единица», «корень +
-номер» — и ломались на каждом новом написании: «0.5-inch», «2 1/2"», «600#», «10...20 mm».
-Теперь строку читает модель, а проверки работают с её разбором. Вызов отдельный от
-нормализации: проверка существует, чтобы ловить ошибки нормализующей модели, и разбор,
-выданный тем же ответом, мог бы ошибиться с ним согласованно. Разбор кэшируется по строке.
-Нет модели или ответ не разобран — возвращается None, и проверки ведут себя осторожно:
-ничего не отклоняют и не переписывают.
+Строку читает модель, а не регулярные выражения: написаний одного и того же («0.5-inch»,
+«2 1/2"», «600#», «10...20 mm») слишком много. Вызов отдельный от нормализации: проверка ловит
+ошибки нормализующей модели, и разбор, выданный тем же ответом, мог бы ошибиться с ним
+согласованно. Нет модели или ответ не разобран — None, и проверки ничего не отклоняют.
+
+Parser — разборщик с моделью и своим кэшем; его создаёт тот, кто разбирает (исполнитель
+паспортов). Функции parse / parse_many / set_parser_model — разборщик по умолчанию, которым
+пользуются проверки запасного пути (guards, postprocess, answers): модель ему задаёт
+run_single_rule_set.
 """
 from __future__ import annotations
 
 import json
-import threading
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 
 from ..modules.system_prompts import PARSE_PROMPT
 from ..modules.tools import unit_mismatch
-from .common import logger
+from .common import Memo, logger
 
 
 @dataclass
@@ -51,18 +53,8 @@ class Parsed:
         return self.quantities[0] if self.kind == "quantity" and len(self.quantities) == 1 else None
 
 
-_CACHE: dict[tuple[str, str], Parsed | None] = {}
-_LOCK = threading.Lock()
-_MODEL = None
-
-
-def set_parser_model(model) -> None:
-    """Модель для разбора: та же, что нормализует, но без привязанных инструментов."""
-    global _MODEL
-    _MODEL = getattr(model, "bound", model)
-
-
 def _as_parsed(data: dict) -> Parsed:
+    """Ответ модели (JSON) → Parsed; неизвестные поля и нечисловые значения отбрасываются."""
     quantities = []
     for q in data.get("quantities") or []:
         if not isinstance(q, dict):
@@ -83,39 +75,60 @@ def _as_parsed(data: dict) -> Parsed:
                   str(data.get("label_unit") or ""))
 
 
-def parse(text: str, label: str = "", model=None) -> Parsed | None:
-    """Разбор строки (с подписью атрибута — для записи) или None, если разобрать нечем."""
-    text = str(text).strip()
-    key = (text, str(label).strip())
-    with _LOCK:
-        if key in _CACHE:
-            return _CACHE[key]
-    model = getattr(model, "bound", model) if model is not None else _MODEL
-    if model is None:
-        return None
-    if not text:
-        result: Parsed | None = Parsed("empty")
-    else:
+class Parser:
+    """Разбор значений моделью; одна и та же строка с той же подписью разбирается один раз."""
+
+    def __init__(self, model=None, memo: Memo | None = None):
+        self.model = getattr(model, "bound", model)  # модель без привязанных инструментов
+        self._memo = memo or Memo("разбор значений")
+
+    def parse(self, text: str, label: str = "", model=None) -> Parsed | None:
+        """Разбор строки (с подписью атрибута — для записи) или None, если разобрать нечем."""
+        text = str(text).strip()
+        model = getattr(model, "bound", model) if model is not None else self.model
+        if model is None:
+            return None
+        return self._memo.remember((text, str(label).strip()), lambda: self._ask(model, text, label))
+
+    def parse_many(self, items: list[tuple[str, str]], model=None, workers: int = 8) -> None:
+        """Заранее разобрать много строк параллельно: дальше они берутся из кэша."""
+        todo = list(dict.fromkeys(i for i in items if (str(i[0]).strip(), str(i[1]).strip()) not in self._memo))
+        if todo:
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                list(pool.map(lambda item: self.parse(item[0], item[1], model), todo))
+
+    @staticmethod
+    def _ask(model, text: str, label: str) -> Parsed | None:
+        """Один вызов модели с PARSE_PROMPT; ошибка сети или неразборчивый ответ — None."""
+        if not text:
+            return Parsed("empty")
         user = (f"Attribute label: {label}\n" if label else "") + f"Value: {text}"
         try:
             raw = str(model.invoke([{"role": "system", "content": PARSE_PROMPT},
                                     {"role": "user", "content": user}]).content).strip()
-            raw = raw.strip("`").removeprefix("json").strip()
-            result = _as_parsed(json.loads(raw))
-        except Exception as e:  # сеть или неразборчивый ответ — проверки не должны падать
+            return _as_parsed(json.loads(raw.strip("`").removeprefix("json").strip()))
+        except Exception as e:
             logger.warning("  [PARSE] %r не разобран: %s", text, e)
-            result = None
-    with _LOCK:
-        _CACHE[key] = result
-    return result
+            return None
+
+
+# разборщик по умолчанию — для проверок запасного пути
+_DEFAULT = Parser()
+
+
+def set_parser_model(model) -> None:
+    """Модель разборщика по умолчанию (запасной путь задаёт её перед прогоном документа)."""
+    _DEFAULT.model = getattr(model, "bound", model)
+
+
+def parse(text: str, label: str = "", model=None) -> Parsed | None:
+    """Разбор строки разборщиком по умолчанию (см. Parser.parse)."""
+    return _DEFAULT.parse(text, label, model)
 
 
 def parse_many(items: list[tuple[str, str]], model=None, workers: int = 8) -> None:
-    """Заранее разобрать много строк параллельно (результат ляжет в кэш)."""
-    todo = list(dict.fromkeys(i for i in items if (str(i[0]).strip(), str(i[1]).strip()) not in _CACHE))
-    if todo:
-        with ThreadPoolExecutor(max_workers=workers) as pool:
-            list(pool.map(lambda item: parse(item[0], item[1], model), todo))
+    """Заранее разобрать много строк разборщиком по умолчанию (см. Parser.parse_many)."""
+    _DEFAULT.parse_many(items, model, workers)
 
 
 def is_measure(unit: str) -> bool:

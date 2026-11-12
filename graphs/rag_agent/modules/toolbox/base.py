@@ -124,7 +124,6 @@ class ToolboxBase:
             self.workspace.focus["rows"] = list(dict.fromkeys(int(r) for r in rows))[:20]
 
     def _spec_runner(self, doc: str):
-        from ...pipeline.parsing import set_parser_model
+        """Исполнитель паспортов документа (один на документ, с моделью паспортов)."""
         from ...spec_runner import get_runner
-        set_parser_model(self._model)
         return get_runner(doc, self._model)

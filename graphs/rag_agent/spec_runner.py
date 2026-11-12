@@ -28,7 +28,7 @@ from .modules.tables import form_key
 from .modules.tools import _unit, convert_value, unit_mismatch
 from .pipeline.common import _attribute_matches, _norm_attr, logger
 from .pipeline.deterministic import _wording_matches
-from .pipeline.parsing import parse
+from .pipeline.parsing import Parser
 from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
 GLOBAL_CHARS = 60000  # общие положения целиком: обрезка теряла правила из их середины
@@ -89,6 +89,7 @@ class SpecRunner:
         self.table_lists = [item for item in (load("table_roles.json") or {}).get("lists", [])
                             if item.get("role") in ("synonyms", "register") and item.get("pairs")]
         self.model = model
+        self.parser = Parser(model)  # разбор записей единиц документа («m³», «barg») для pint
         self._spec_cache: dict[str, dict | None] = {}
         self._lock = threading.Lock()
 
@@ -101,6 +102,11 @@ class SpecRunner:
         clone._spec_cache = {}
         clone._lock = threading.Lock()
         return clone
+
+    def _pint(self, unit_text: str) -> str:
+        """Имя единицы для pint по её записи в документе («m³», «barg», «°C») — через разбор модели."""
+        parsed = self.parser.parse(f"1 {unit_text}")
+        return parsed.quantities[0].unit if parsed and parsed.quantities else ""
 
     def spec_named(self, name: str) -> dict | None:
         """Паспорт по точному имени атрибута (без учёта регистра и пробелов)."""
@@ -337,13 +343,13 @@ class SpecRunner:
         target = spec.get("unit") or ""
         if not target and unit_text:
             return None  # единицу записи документ не задал, а у записи она есть — по инструкции
-        if target and not _pint(target, self.model):
+        if target and not self._pint(target):
             return None  # в поле единицы не единица («VAC/VDC or kV») — спецификацию код не исполняет
         number = reading["number"]
         converted = False
         # что сделал код — для пояснения строки
         ops = [f"прочитано {_num(number)}{(' ' + unit_text) if unit_text else ''}"]
-        source = _pint(unit_text, self.model) if unit_text else ""
+        source = self._pint(unit_text) if unit_text else ""
         if unit_text and not source:
             return None  # единица записи не распознана — по инструкции
         if source and target:
@@ -354,8 +360,8 @@ class SpecRunner:
                            if isinstance(c, dict) and c.get("from") and isinstance(c.get("factor"), (int, float))]
             factor = next((c for c in conversions
                            if form_key(c["from"]) == form_key(unit_text or "")
-                           or (_pint(c["from"], self.model) and same_unit(_pint(c["from"], self.model), source))), None)
-            target_pint = _pint(target, self.model)
+                           or (self._pint(c["from"]) and same_unit(self._pint(c["from"]), source))), None)
+            target_pint = self._pint(target)
             if factor:
                 number = number * float(factor["factor"]) + float(factor.get("offset") or 0)
                 converted = float(factor["factor"]) != 1 or bool(factor.get("offset"))
@@ -530,17 +536,6 @@ def _ctx(context: str) -> str:
     return f"Row context: {context}\n" if context else ""
 
 
-_PINT_CACHE: dict[str, str] = {}
-
-
-def _pint(unit_text: str, model) -> str:
-    """Имя единицы для pint по её записи в документе («m³», «barg», «°C») — через разбор модели."""
-    if unit_text not in _PINT_CACHE:
-        parsed = parse(f"1 {unit_text}", "", model)
-        _PINT_CACHE[unit_text] = parsed.quantities[0].unit if parsed and parsed.quantities else ""
-    return _PINT_CACHE[unit_text]
-
-
 def _fraction(number: float) -> str:
     """Число дробью со знаменателем-степенью двойки до 64: 1.125 → «1-1/8», 0.75 → «3/4»."""
     from fractions import Fraction
@@ -605,10 +600,8 @@ def run_spec_rule_set(data_frame, model, rule_set, progress=None):
 
     from .pipeline.frames import _row_context
     from .pipeline.graph import ROW_COLUMNS
-    from .pipeline.parsing import set_parser_model
     from .pipeline.subjects import _document_covers_row
 
-    set_parser_model(model)
     runner = get_runner(rule_set.name, model)
 
     def one(i: int) -> dict:
