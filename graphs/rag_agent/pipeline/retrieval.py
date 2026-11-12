@@ -3,7 +3,8 @@ import re
 
 from rapidfuzz import fuzz
 
-from ..modules.config import hybrid_search, RULE_SET_LIBRARY, document_id, value_shape
+from ..modules.rule_set import RULE_SET_LIBRARY, document_id, value_shape
+from ..modules.search import hybrid_search
 from ..modules.tables import table_references
 from .common import _attribute_matches, _normalize_phrase, logger
 from .subjects import _equipment_kind, _row_class, _select_by_subject

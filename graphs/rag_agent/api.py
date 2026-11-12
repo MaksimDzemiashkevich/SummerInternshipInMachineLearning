@@ -58,17 +58,19 @@ app.add_middleware(
 
 @lru_cache
 def get_app_config() -> AppConfig:
+    """Сервис собирается один раз на процесс: модели и все стандарты."""
     return build_app_config(Settings())
 
 
 def _load_extracted(job) -> dict:
     """Извлечённый документ — в работающий сервис, без перезапуска; сведения для сообщения в чат."""
     import json as _json
-    folder = Settings().rule_groups_dir / job.document
+    app_config = get_app_config()
+    folder = app_config.settings.rule_groups_dir / job.document
     groups = _json.loads((folder / "rule_groups.json").read_text(encoding="utf-8"))
     specs = (_json.loads((folder / "attribute_spec.json").read_text(encoding="utf-8")).get("specs", [])
              if (folder / "attribute_spec.json").exists() else [])
-    loaded = add_rule_set(get_app_config(), job.document)
+    loaded = add_rule_set(app_config, job.document)
     logger.info("[JOBS] документ %s подгружен: групп %d, паспортов %d", job.document, len(groups), len(specs))
     return {"standard": job.document, "rule_groups": len(groups), "attribute_specs": len(specs),
             "loaded": loaded is not None}

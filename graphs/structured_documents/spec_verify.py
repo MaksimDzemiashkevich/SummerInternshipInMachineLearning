@@ -27,10 +27,10 @@ from .attribute_spec import KINDS, _ground
 from .number_format import ROUNDING, valid_locale, valid_number_pattern
 from .modules.config_structured_documents_graph import Settings
 from .rule_cards import GLOBAL_CHARS, _global_text, _invoke_json, _norm
+from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
 load_dotenv()
 settings = Settings()
-OUTPUT_DIR = Path(__file__).resolve().parent / "data" / "output"
 VERIFY_MODEL = os.getenv("SPEC_VERIFY_MODEL", settings.llmodel)  # та же модель, отдельный вызов в роли проверяющего
 FIELDS = {"kind", "values", "closed", "unit", "number_pattern", "locale", "rounding", "rounding_scope", "unit_space",
           "number_format", "conversions", "series", "instructions", "flag_when", "letter_case", "variants"}

@@ -22,6 +22,7 @@ from ..pipeline.frames import _row_context, prepare_frame
 from . import jobs, results, rule_store
 from .chat import AdHocRule
 from .workspace import StoredFile, Workspace, save_workspace
+from graphs.paths import DOCUMENTS_INPUT as INPUT_DIR, DOCUMENTS_OUTPUT as OUTPUT_DIR
 
 logger = logging.getLogger("normalization_pipeline")
 
@@ -38,8 +39,6 @@ MAX_RENORMALIZE_ROWS = 50
 # Сколько ждать нормализацию в ходе чата: успела — файл в ответе, нет — придёт отдельным сообщением.
 NORMALIZE_WAIT_SECONDS = 60
 # Где лежат PDF документов для извлечения.
-INPUT_DIR = Path(__file__).resolve().parents[2] / "structured_documents" / "data" / "input"
-OUTPUT_DIR = Path(__file__).resolve().parents[2] / "structured_documents" / "data" / "output"
 
 
 def _parse_rules(raw) -> list[AdHocRule]:

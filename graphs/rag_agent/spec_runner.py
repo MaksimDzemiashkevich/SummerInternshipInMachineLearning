@@ -29,8 +29,8 @@ from .modules.tools import _unit, convert_value, unit_mismatch
 from .pipeline.common import _attribute_matches, _norm_attr, logger
 from .pipeline.deterministic import _wording_matches
 from .pipeline.parsing import parse
+from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
-OUTPUT_DIR = Path(__file__).resolve().parents[1] / "structured_documents" / "data" / "output"
 GLOBAL_CHARS = 60000  # общие положения целиком: обрезка теряла правила из их середины
 
 CHOICE_PROMPT = """You map one recorded value to the list of values a normalization document allows for this attribute. The rules of the document for this attribute are given.

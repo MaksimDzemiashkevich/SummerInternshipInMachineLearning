@@ -3,21 +3,23 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-# Какой PDF экстрактить, можно задать не правкой файла, а переменной окружения:
+from graphs.paths import DOCUMENTS_INPUT, DOCUMENTS_OUTPUT
+
+# Какой PDF извлекать — переменная окружения STRUCTURED_DOC_PATH (её задаёт фоновая задача извлечения):
 #   STRUCTURED_DOC_PATH=graphs/structured_documents/data/input/<файл>.pdf
-_DEFAULT_DOCUMENT = "graphs/structured_documents/data/input/OGS-STD-001_Standardization_Rules.pdf"
+_DEFAULT_DOCUMENT = str(DOCUMENTS_INPUT / "FG-07_Spares_Cataloguers_Field_Guide.pdf")
 
 
 @dataclass
 class Settings:
     input_path_document: Path = field(
         default_factory=lambda: Path(os.getenv("STRUCTURED_DOC_PATH", _DEFAULT_DOCUMENT)))
-    RULES_STORAGE_PATH = Path("graphs/structured_documents/data/output/rule_groups.json")
-    PAGES_DATA_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/pages_data.json")
-    DATA_AFTER_CHECK_CACHE_PATH: Path = Path("graphs/structured_documents/data/output/data_after_check.json")
-    PROCESSED_DOCS_PATH: Path = Path("graphs/structured_documents/data/output/processed_documents.json")
+    RULES_STORAGE_PATH = DOCUMENTS_OUTPUT / "rule_groups.json"
+    PAGES_DATA_CACHE_PATH: Path = DOCUMENTS_OUTPUT / "pages_data.json"
+    DATA_AFTER_CHECK_CACHE_PATH: Path = DOCUMENTS_OUTPUT / "data_after_check.json"
+    PROCESSED_DOCS_PATH: Path = DOCUMENTS_OUTPUT / "processed_documents.json"
     VL_model : str = "Qwen/Qwen3-VL-8B-Instruct"
-    VL_url : str = "https://skillet-appealing-broken.ngrok-free.dev/v1"
+    VL_url : str = os.getenv("VLM_URL", "https://skillet-appealing-broken.ngrok-free.dev/v1")
     VL_api_key : str = "not-needed"
     VL_max_tokens : int = 4900
     llmodel : str = "gpt-5.6-luna"

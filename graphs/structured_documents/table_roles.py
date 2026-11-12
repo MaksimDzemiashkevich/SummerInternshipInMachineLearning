@@ -31,11 +31,11 @@ from langchain_openai import ChatOpenAI
 
 from .modules.config_structured_documents_graph import Settings
 from .rule_cards import GLOBAL_CHARS, _global_text, _invoke_json, _norm
+from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
 load_dotenv()
 
 settings = Settings()
-OUTPUT_DIR = Path(__file__).resolve().parent / "data" / "output"
 ROLES = ("register", "synonyms", "conversion", "examples", "other")
 # Текста групп в одном вызове: больше — модель начинает пропускать перечни в конце.
 BATCH_CHARS = 10000

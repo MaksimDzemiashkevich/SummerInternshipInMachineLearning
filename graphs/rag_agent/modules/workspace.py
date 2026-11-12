@@ -19,6 +19,7 @@ from pathlib import Path
 from dataclasses import dataclass, field
 
 import pandas as pd
+from graphs.paths import SERVICE_DATA
 
 logger = logging.getLogger("normalization_pipeline")
 
@@ -28,7 +29,7 @@ MAX_SESSIONS = 20
 _ADD_LOCK = threading.Lock()
 MAX_FILES_PER_SESSION = 20
 SESSION_TTL_SECONDS = 6 * 3600
-DB_PATH = Path(os.getenv("WORKSPACE_DB", str(Path(__file__).resolve().parents[1] / "data" / "workspaces.sqlite")))
+DB_PATH = Path(os.getenv("WORKSPACE_DB", str(SERVICE_DATA / "workspaces.sqlite")))
 
 
 @dataclass

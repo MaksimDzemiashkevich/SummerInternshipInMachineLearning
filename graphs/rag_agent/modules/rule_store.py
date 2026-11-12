@@ -30,10 +30,10 @@ from pathlib import Path
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from .system_prompts import SUPERSEDED_PROMPT
+from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
 logger = logging.getLogger("normalization_pipeline")
 
-OUTPUT_DIR = Path(__file__).resolve().parents[2] / "structured_documents" / "data" / "output"
 USER_RULES_FILE = "user_rules.json"
 # Пометка правила пользователя в тексте правил паспорта: ему отдан приоритет над документом.
 USER_RULE_MARK = "[User rule — takes precedence over the document where they conflict]"

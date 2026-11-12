@@ -28,11 +28,11 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
 from .modules.config_structured_documents_graph import Settings
+from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
 load_dotenv()
 
 settings = Settings()
-OUTPUT_DIR = Path(__file__).resolve().parent / "data" / "output"
 # Сколько групп пересказывается за один вызов: общие положения идут в каждый вызов
 # контекстом, поэтому группы собираются пачками, а не по одной.
 BATCH = 8

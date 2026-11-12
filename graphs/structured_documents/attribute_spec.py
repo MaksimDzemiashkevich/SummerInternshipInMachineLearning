@@ -21,10 +21,10 @@ from langchain_openai import ChatOpenAI
 
 from .modules.config_structured_documents_graph import Settings
 from .rule_cards import GLOBAL_CHARS, _global_text, _invoke_json, _norm
+from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
 load_dotenv()
 settings = Settings()
-OUTPUT_DIR = Path(__file__).resolve().parent / "data" / "output"
 BATCH = 6
 KINDS = ("list", "quantity", "format", "text")
 

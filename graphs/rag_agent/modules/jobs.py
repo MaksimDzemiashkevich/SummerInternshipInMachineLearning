@@ -25,11 +25,11 @@ import uuid
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Callable
+from graphs.paths import JOBS_DIR
 
 logger = logging.getLogger("normalization_pipeline")
 
 ROOT = Path(__file__).resolve().parents[3]
-JOBS_DIR = Path(__file__).resolve().parents[1] / "data" / "jobs"
 JOBS_FILE = JOBS_DIR / "jobs.json"
 # Как часто наблюдатель проверяет извлечения и запускает следующее из очереди.
 TICK_SECONDS = 5

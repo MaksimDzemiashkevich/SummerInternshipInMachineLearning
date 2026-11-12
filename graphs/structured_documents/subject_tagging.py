@@ -22,11 +22,11 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
 from .modules.config_structured_documents_graph import Settings
+from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
 load_dotenv()
 
 settings = Settings()
-OUTPUT_DIR = Path(__file__).resolve().parent / "data" / "output"
 # Сколько символов тела группы показывать модели. По 220 символам модель видела лишь начало
 # правила и первый пример, и пример про фильтр делал «Airflow rate» правилом фильтров.
 SNIPPET = 1200

@@ -636,9 +636,12 @@ builder.add_edge("rule_cards_node", "table_roles_node")
 builder.add_edge("table_roles_node", END)
 graph = builder.compile()
 
-inv = graph.invoke({"messages": []})
 
-# for message in inv["messages"]:
-#     message.pretty_print()
+def main() -> None:
+    """Извлечение документа из STRUCTURED_DOC_PATH: страницы → правила → группы → файлы в папке документа."""
+    result = graph.invoke({"messages": []})
+    print(f"Документ {_doc_stem!r}: групп правил — {len(result.get('rule_groups') or [])}")
 
-print(inv.get("rule_groups"))
+
+if __name__ == "__main__":
+    main()
