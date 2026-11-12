@@ -16,18 +16,18 @@ import argparse
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
 
 import pandas as pd
+
+from graphs.paths import SERVICE_DATA, SERVICE_INPUT
 
 from ..api import run_single_rule_set
 from ..modules.config import build_app_config, Settings
 from .expected import (EXPECTED, CONSISTENT_PAIRS, REVIEW_REQUIRED, REVIEW_FORBIDDEN,
                        S100, S205)
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-INPUT = BASE_DIR / "data" / "input" / "test_attributes_api600_new_new.xlsx"
-OUTPUT_DIR = BASE_DIR / "data" / "output"
+INPUT = SERVICE_INPUT / "test_attributes_api600_new_new.xlsx"
+OUTPUT_DIR = SERVICE_DATA / "output"
 
 
 def matches(expected, actual: str) -> bool:

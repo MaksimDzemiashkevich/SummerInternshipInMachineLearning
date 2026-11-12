@@ -25,7 +25,7 @@ import uuid
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Callable
-from graphs.paths import JOBS_DIR
+from graphs.paths import DOCUMENTS_OUTPUT, JOBS_DIR
 
 logger = logging.getLogger("normalization_pipeline")
 
@@ -208,7 +208,7 @@ def _refresh(job: Job) -> None:
 
 def pages_done(job: Job) -> int:
     """Сколько страниц уже прочитала VLM (по промежуточному файлу графа извлечения)."""
-    folder = ROOT / "graphs" / "structured_documents" / "data" / "output" / job.document
+    folder = DOCUMENTS_OUTPUT / job.document
     for name in ("pages_data.partial.json", "pages_data.json"):
         try:
             return len(json.loads((folder / name).read_text(encoding="utf-8")))

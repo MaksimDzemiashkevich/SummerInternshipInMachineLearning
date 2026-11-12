@@ -55,6 +55,8 @@ pip install -r requirements.txt
 
 Ключ: скопируйте `.env.example` в `.env` и впишите свой `OPENAI_API_KEY`. Файл `.env` в git не попадает.
 
+Данные по умолчанию лежат в репозитории. Перенести их можно переменными `DOCUMENTS_DATA_DIR` (PDF документов и всё извлечённое) и `SERVICE_DATA_DIR` (рабочие файлы сервиса) — в `.env` или в окружении; при переносе скопируйте туда содержимое `graphs/structured_documents/data` и `graphs/rag_agent/data`.
+
 Фронтенд:
 
 ```bash
