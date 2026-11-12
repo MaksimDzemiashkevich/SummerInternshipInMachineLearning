@@ -95,6 +95,20 @@ npm start
 
 То же с PQS-STD 330: `pqs_std_330_test_corpus.xlsx` и `pqs_std_330_answer_key.xlsx`.
 
+## Замер качества
+
+Сверка с правильными ответами без чата — все строки таблицы через исполнитель паспортов, итог: сколько верно, сколько ошибок помечено жёлтым и сколько пропущено молча. Из корня репозитория:
+
+```bash
+python graphs/rag_agent/eval/spec/score_key.py FG-07_Spares_Cataloguers_Field_Guide graphs/rag_agent/data/input/FG-07_input.xlsx graphs/rag_agent/data/input/FG-07_expected_output.xlsx "Value"
+```
+
+```bash
+python graphs/rag_agent/eval/spec/score_key.py PQS-STD-330_attribute_value_presentation graphs/rag_agent/data/input/pqs_std_330_test_corpus.xlsx graphs/rag_agent/data/input/pqs_std_330_answer_key.xlsx "Expected (PQS-STD 330)"
+```
+
+Ответы модели от прогона к прогону немного разные, поэтому результат может отличаться на несколько строк.
+
 ## Ограничения
 
 - **Извлечение новых документов из PDF у вас не заработает без своей vision-модели.** Страницы читает Qwen3-VL-8B-Instruct на отдельном сервере (адрес в `graphs/structured_documents/modules/config_structured_documents_graph.py`, `VL_url`), плюс нужен Tesseract OCR. В репозитории лежат уже извлечённые результаты, поэтому нормализация работает и без этого.
@@ -104,6 +118,6 @@ npm start
 ## Устройство (коротко)
 
 - `graphs/structured_documents/` — извлечение: PDF → страницы (VLM) → группы правил по атрибутам → паспорт атрибута (вид значения, единица, формат числа, список допустимых значений, инструкции) → проверка паспорта отдельным вызовом модели.
-- `graphs/rag_agent/` — сервис: FastAPI (`api.py`), исполнитель паспортов (`spec_runner.py`: модель выбирает, код пишет — пересчёт единиц, формат числа, список), чат-агент с инструментами (`modules/agent.py`, `modules/toolbox.py`), фоновые задачи, MCP-сервер (`/mcp/`).
+- `graphs/rag_agent/` — сервис: FastAPI (`api.py`), исполнитель паспортов (`spec_runner.py`: модель выбирает, код пишет — пересчёт единиц, формат числа, список), чат-агент с инструментами (`modules/agent.py`, `modules/toolbox/`), фоновые задачи, MCP-сервер (`/mcp/`).
 - `client/` — чат на React.
-- `graphs/rag_agent/eval/` — скрипты замера качества на наборах с правильными ответами.
+- `graphs/rag_agent/eval/spec/` — замер качества по таблице правильных ответов (см. «Замер качества»).

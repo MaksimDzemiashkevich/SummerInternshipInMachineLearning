@@ -47,3 +47,11 @@ __pycache__/
 # local assistant settings
 .claude/
 graphs/rag_agent/data/input/vector_store_*.json
+# скрипты замера: в репозитории только сверка с ключом ответов (работает на двух документах репозитория)
+graphs/rag_agent/eval/*
+!graphs/rag_agent/eval/__init__.py
+!graphs/rag_agent/eval/spec/
+graphs/rag_agent/eval/spec/*
+!graphs/rag_agent/eval/spec/__init__.py
+!graphs/rag_agent/eval/spec/score_key.py
+!graphs/rag_agent/eval/spec/report.py
