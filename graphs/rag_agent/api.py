@@ -19,7 +19,9 @@ from .modules.agent import build_tools, run_agent
 from .modules.chat import history_messages
 from .modules.config import AppConfig, Settings, add_rule_set, build_app_config
 from .modules.results import layout_of
-from .modules.toolbox import INPUT_DIR, Toolbox
+from graphs.paths import DOCUMENTS_INPUT as INPUT_DIR
+
+from .modules.toolbox import Toolbox
 from .modules.workspace import focus_note, get_workspace, save_workspace
 from .pipeline.common import logger
 from .pipeline.excel import XLSX_MEDIA_TYPE, _write_excel_with_highlight, read_flagged_cells
