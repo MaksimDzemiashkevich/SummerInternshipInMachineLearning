@@ -30,6 +30,7 @@ from .parsing import set_parser_model
 
 
 class GraphState(MessagesState):
+    """Состояние графа: текущая строка, её правила и ответы, накопленные строки результата."""
     index_row_table: int
     attribute: str
     value: str
@@ -47,6 +48,7 @@ class GraphState(MessagesState):
 
 
 def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
+    """Записывает итог предыдущей строки и начинает следующую: детерминированный путь или подготовка правил для модели."""
 
     update: dict = {}
     data_frame = state["data_frame"]
@@ -100,9 +102,8 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                     if spaced != rules_value:
                         applied.append("пробел у единицы взят из записи")
                     rules_value = spaced
-                # слова, которых нет ни в записи, ни в таблицах документа, больше не срезаются: срезались
-                # и те, что документ требует дописать («NPS 4», «CL 600», «Trim 12»). Без этого MNT-DN-014
-                # поднялся с 80 до 92 из 100, EMD — с 89 до 94, остальные наборы не изменились.
+                # слова, которых нет ни в записи, ни в таблицах документа, не срезаются: среди них
+                # и те, что документ требует дописать («NPS 4», «CL 600», «Trim 12»)
                 guard = _rejection_reason(state["attribute"], state["original_value"],
                                           rules_value, rule_set, state.get("rules_text", ""))
                 guard = guard or _conversion_of_designation(
@@ -263,10 +264,12 @@ def normalize_row(state: GraphState, config: RunnableConfig) -> GraphState:
 
 
 def next_row(state: GraphState) -> GraphState:
+    """Переход к следующей строке."""
     return {"index_row_table": state["index_row_table"] + 1}
 
 
 def condition_after_start_row(state: GraphState) -> Literal["normalize_row", "next_row", "end_node"]:
+    """Куда дальше: конец таблицы, следующая строка (решено без модели) или модель."""
     if state["index_row_table"] >= state["data_frame"].shape[0]:
         return "end_node"
     if state.get("deterministic_result") is not None:
@@ -275,6 +278,7 @@ def condition_after_start_row(state: GraphState) -> Literal["normalize_row", "ne
 
 
 def end_node(state: GraphState) -> GraphState:
+    """Конец графа."""
     return {}
 
 
@@ -318,6 +322,7 @@ ROW_COLUMNS = ["Attribute", "Value", "Rules_Value", "Ambiguous", "Context", "Det
 
 
 def run_single_rule_set(data_frame: pd.DataFrame, model, rule_set, progress=None) -> pd.DataFrame:
+    """Колонка одного документа запасным путём (ROW_COLUMNS: Rules_Value, Ambiguous, Applied)."""
     initial_state = {
         "messages": [],
         "index_row_table": 0,

@@ -50,14 +50,14 @@ def _free_column_name(frame: pd.DataFrame, name: str) -> str:
     return f"{name} ({suffix})"
 
 
-# Чем считать колонку документа: «spec» — по спецификации атрибутов (spec_runner: паспорт
-# атрибута, точные операции делает код, у каждого ответа уровень уверенности), «legacy» — прежним
-# графом. Документ без attribute_spec.json всегда считается прежним графом.
+# Чем считать колонку документа: «spec» — основным путём (spec_runner: паспорт атрибута, точные
+# операции делает код, у каждого ответа уровень уверенности), «legacy» — запасным (граф по
+# строкам). Документ без attribute_spec.json всегда считается запасным путём.
 NORMALIZER = os.getenv("NORMALIZER", "spec").strip().lower()
 
 
 def run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set) -> pd.DataFrame:
-    """Колонка одного документа (ROW_COLUMNS) — по спецификации или прежним графом."""
+    """Колонка одного документа (ROW_COLUMNS) — основным путём или запасным."""
     return _run_rule_set(data_frame, app_config, rule_set)
 
 

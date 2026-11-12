@@ -138,6 +138,7 @@ def _check_zeros(spec: dict, target: dict, global_text: str, source: str, llm) -
 
 
 def verify_doc(doc: str) -> None:
+    """Проверяет все паспорта документа по его правилам и записывает принятые исправления."""
     folder = OUTPUT_DIR / doc
     data = json.loads((folder / "attribute_spec.json").read_text(encoding="utf-8"))
     global_text = _global_text(json.loads((folder / "rule_groups.json").read_text(encoding="utf-8")))
@@ -154,6 +155,7 @@ def verify_doc(doc: str) -> None:
 
 
 def main() -> None:
+    """CLI: проверка паспортов документа --doc."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--doc", required=True)
     verify_doc(parser.parse_args().doc)

@@ -32,6 +32,7 @@ mcp = FastMCP(
 
 
 def _toolbox(session_id: str) -> Toolbox:
+    """Инструменты агента для сессии MCP; подтверждение без ожидания следующей реплики."""
     from .api import catalogue, get_app_config
     app_config = get_app_config()
     return Toolbox(get_workspace(session_id), app_config, catalogue(app_config),

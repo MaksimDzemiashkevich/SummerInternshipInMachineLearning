@@ -56,24 +56,29 @@ vlm = ChatOpenAI(
 )
 
 class MessagesState(MessagesState):
+    """Состояние графа извлечения: страницы, страницы после проверки, группы правил."""
     pages_data : list[dict]
     data_after_check: list[dict]
     rule_groups: list[dict]
 
 class RuleGroup(BaseModel):
+    """Группа правил одного атрибута (или общих) в ответе модели."""
     attribute: str = Field(description="Concrete attribute the rules apply to (e.g. 'trim', 'gate', 'end connection'); use 'Global' for rules that apply to all attributes")
     type: str = Field(default="local", description="'global' if the rule applies to all attributes, 'local' if it applies to one specific attribute")
     aliases: list[str] = Field(default_factory=list, description="Aliases/synonyms/terms this group typically covers (oil&gas terminology)")
     rules: list[str] = Field(description="List of rules/requirements in this group")
 
 class GroupingResult(BaseModel):
+    """Ответ модели при постраничной группировке."""
     groups: list[RuleGroup] = Field(description="List of all found rule groups by attribute")
 
 class ParentGroup(BaseModel):
+    """Родительская тема и атрибуты, которые в неё входят."""
     name: str = Field(description="Short parent theme name (main noun)")
     attributes: list[str] = Field(description="Attribute names that belong to this parent")
 
 class ClusteringResult(BaseModel):
+    """Ответ модели при объединении атрибутов в темы."""
     parents: list[ParentGroup] = Field(description="List of parent groups, each with its attributes")
 
 def load_json(path: Path):
@@ -162,6 +167,7 @@ def _read_page(document, page_number: int) -> dict:
 
 
 def first_node(state: MessagesState) -> MessagesState:
+    """Читает страницы PDF через VLM в блоки (параллельно, с повторами и сохранением каждой страницы)."""
     cached = load_json(_pages_cache)
     if cached is not None:
         print(f"Загружено {len(cached)} страниц из кэша {_pages_cache}")
@@ -201,6 +207,7 @@ def first_node(state: MessagesState) -> MessagesState:
     return {"messages": [], "pages_data": pages_data}
 
 def formatting_text_node(state: MessagesState) -> MessagesState:
+    """Проверяет таблицы страниц и склеивает абзацы, разорванные границей страницы."""
     cached = load_json(_check_cache)
     if cached is not None:
         print(f"Загружено {len(cached)} страниц после форматирования из кэша {_check_cache}")
@@ -264,7 +271,7 @@ grouping_llm = ChatOpenAI(
 )
 
 # «blocks» — весь документ разом, модель назначает блоки группам (block_grouping.py);
-# «pages» — прежний режим: модель переписывает правила каждой страницы в группы.
+# «pages» — постраничный режим: модель переписывает правила каждой страницы в группы.
 GROUPING_MODE = os.getenv("GROUPING_MODE", "blocks")
 
 clustering_llm = ChatOpenAI(
@@ -274,6 +281,7 @@ clustering_llm = ChatOpenAI(
 )
 
 def grouping_rules_node(state: MessagesState) -> MessagesState:
+    """Группирует блоки документа в группы правил по атрибутам и сохраняет rule_groups.json."""
     source_data = state.get("data_after_check") or state.get("pages_data")
 
     # Манифест: какие документы уже обработаны (каждый хранит свои правила отдельно).
@@ -537,6 +545,7 @@ def drop_empty_groups(rule_groups: list[dict]) -> list[dict]:
 
 
 def cluster_groups_node(state: MessagesState) -> MessagesState:
+    """Объединяет локальные группы в родительские темы."""
     rule_groups = state.get("rule_groups") or []
 
     local_groups = [g for g in rule_groups if g.get("type") != "global"]
@@ -573,7 +582,7 @@ def subject_tagging_node(state: MessagesState) -> MessagesState:
 
     Нужно, когда документ описывает несколько разных предметов: тогда одинаково названные
     атрибуты означают разное, и применяющий граф не должен смешивать их правила. Шаг
-    необязательный — при ошибке файл просто не пишется, и применение работает как раньше.
+    необязательный — при ошибке файл просто не пишется, и применение обходится без разметки.
     Этот же шаг можно запустить отдельно, не перегоняя PDF:
         venv2/Scripts/python -m graphs.structured_documents.subject_tagging
     """

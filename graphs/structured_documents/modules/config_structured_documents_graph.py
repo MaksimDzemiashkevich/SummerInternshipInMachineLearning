@@ -12,6 +12,7 @@ _DEFAULT_DOCUMENT = str(DOCUMENTS_INPUT / "FG-07_Spares_Cataloguers_Field_Guide.
 
 @dataclass
 class Settings:
+    """Настройки извлечения: документ, пути кэшей, модель VLM и модель текста."""
     input_path_document: Path = field(
         default_factory=lambda: Path(os.getenv("STRUCTURED_DOC_PATH", _DEFAULT_DOCUMENT)))
     RULES_STORAGE_PATH = DOCUMENTS_OUTPUT / "rule_groups.json"

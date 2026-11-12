@@ -38,6 +38,7 @@ class RuleTools(ToolboxBase):
         return {"rules": found}
 
     def _standard_for_rules(self, standard: str):
+        """(документ, ошибка): стандарт, в который можно записать правило (нужен attribute_spec.json)."""
         from ...spec_runner import has_spec
         rule_set = self._rule_set(standard)
         if rule_set is None:
@@ -111,6 +112,7 @@ class RuleTools(ToolboxBase):
         return list(dict.fromkeys(changed + rest))
 
     def _pending(self, action: dict) -> str:
+        """Откладывает изменение до подтверждения пользователя; возвращает его токен."""
         token = uuid.uuid4().hex[:8]
         self.workspace.pending[token] = {**action, "turn": self.workspace.turn}
         while len(self.workspace.pending) > 10:
@@ -297,6 +299,7 @@ class RuleTools(ToolboxBase):
         return {"cancelled": bool(action)}
 
     def _expire_pending(self) -> None:
+        """Снимает отложенные изменения старше PENDING_TURNS реплик пользователя."""
         for token in [t for t, a in self.workspace.pending.items()
                       if self.workspace.turn - a.get("turn", 0) > PENDING_TURNS]:
             self.workspace.pending.pop(token, None)

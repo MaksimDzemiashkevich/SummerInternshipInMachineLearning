@@ -33,10 +33,12 @@ class ToolboxBase:
 
     @property
     def _model(self):
+        """Модель без инструментов — для исполнения и сборки паспортов."""
         # спецификации и правке паспорта нужна модель без привязанных инструментов
         return self.app_config.spec_model or self.app_config.assistant or self.app_config.model
 
     def _file(self, file_id: str) -> tuple[StoredFile | None, dict | None]:
+        """(файл, ошибка) по file_id; без id — файл в фокусе разговора или последний."""
         if not str(file_id or "").strip():
             # файл не назван — тот, о котором сейчас разговор, иначе последний результат
             file_id = (self.workspace.focus.get("file_id")
@@ -48,11 +50,13 @@ class ToolboxBase:
         return stored, None
 
     def _layout(self, stored: StoredFile) -> dict:
+        """Разметка колонок результата; для загруженного прошлого результата — восстановленная."""
         if not stored.layout:
             stored.layout = results.layout_of(stored.frame, {s["name"] for s in self.catalogue})
         return stored.layout
 
     def _result(self, file_id: str) -> tuple[StoredFile | None, dict | None]:
+        """(файл, ошибка): как _file, но файл обязан быть результатом нормализации."""
         stored, error = self._file(file_id)
         if error:
             return None, error
@@ -99,6 +103,7 @@ class ToolboxBase:
         return prepare_frame(stored.frame[columns].reset_index(drop=True))
 
     def _positions(self, stored: StoredFile, rows) -> tuple[list[int], list]:
+        """Номера строк пользователя (с 1) → (позиции в таблице, неверные номера)."""
         valid, bad = [], []
         for row in rows or []:
             try:
@@ -111,6 +116,7 @@ class ToolboxBase:
         return list(dict.fromkeys(valid)), bad
 
     def _touch(self, stored: StoredFile) -> None:
+        """Отмечает файл как созданный в этом ходе: он уйдёт пользователю с ответом."""
         if stored.file_id not in self.produced:
             self.produced.append(stored.file_id)
 

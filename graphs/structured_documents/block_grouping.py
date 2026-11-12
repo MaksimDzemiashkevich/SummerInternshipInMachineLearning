@@ -72,6 +72,7 @@ def _attach_captions(content: dict) -> dict:
 
 
 def _blocks(page: dict) -> list[dict]:
+    """Блоки страницы; страница, которую не разобрать как JSON, даёт пустой список с предупреждением."""
     content = parse_page_content(page.get("content"))
     if content is None:
         print(f"WARNING: страница {page.get('page_number')} не разобрана как JSON — её блоки потеряны")
@@ -224,6 +225,7 @@ _LEFTOVER_HINT = """
 
 
 def _known_groups(groups: list[dict]) -> str:
+    """Уже созданные группы списком для промпта следующего окна."""
     return "\n".join(f"- {g['attribute']} [{g['type']}/{g['kind']}]"
                      + (f" — {', '.join(g['aliases'][:6])}" if g["aliases"] else "")
                      for g in groups) or "(пока нет)"

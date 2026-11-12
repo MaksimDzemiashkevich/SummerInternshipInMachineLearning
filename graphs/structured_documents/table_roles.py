@@ -66,6 +66,7 @@ def _chunks(rule_groups: list[dict]) -> list[dict]:
 
 
 def _batches(parts: list[dict]) -> list[list[dict]]:
+    """Части текста групп пачками не длиннее BATCH_CHARS."""
     batches: list[list[dict]] = [[]]
     size = 0
     for part in parts:
@@ -148,8 +149,8 @@ def classify_lists_voted(rule_groups: list[dict], llm, runs: int = VOTES) -> dic
     """classify_lists несколько раз; роль каждой пары — по большинству прогонов.
 
     Граница «реестр кодов или синонимы» у модели неустойчива: от прогона к прогону одна и та же
-    таблица кодов то становилась реестром, то нет (CWX, QRS, OGX теряли реестры, которые раньше
-    находились всегда). Пара, которую нашло меньшинство прогонов, отбрасывается: найденное один
+    таблица кодов то становится реестром, то нет. Пара, которую нашло меньшинство прогонов,
+    отбрасывается: найденное один
     раз из трёх — скорее случайность, чем таблица документа. Перечни без пар (пересчёт, примеры,
     прочее) берутся из первого прогона: рантайм их не использует.
     """
@@ -185,6 +186,7 @@ def classify_lists_voted(rule_groups: list[dict], llm, runs: int = VOTES) -> dic
 
 
 def main() -> None:
+    """CLI: собирает table_roles.json для документа --doc или для всех."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--doc", default="", help="имя папки документа (по умолчанию — все)")
     args = parser.parse_args()

@@ -24,6 +24,7 @@ from .common import Memo, logger
 
 @dataclass
 class Quantity:
+    """Одна величина записи: число и единица как записаны и в форме для pint."""
     number: str          # как записано: «0.500», «7,62»
     value: float | None  # то же число десятичной дробью
     unit: str            # стандартное имя для pint: «inch», «psig»; «» — единицы нет
@@ -34,6 +35,7 @@ class Quantity:
 
 @dataclass
 class Designation:
+    """Обозначение: корень и номер («CL 600», «TRIM12»)."""
     root: str            # как записано: «CL», «TRIM», «#»
     number: str          # как записано: «600», «12A»
     space: bool
@@ -42,6 +44,7 @@ class Designation:
 
 @dataclass
 class Parsed:
+    """Из чего состоит запись: вид, величины, обозначение и единица, названная в подписи."""
     kind: str
     quantities: list[Quantity] = field(default_factory=list)
     designation: Designation | None = None

@@ -49,10 +49,12 @@ _lock = threading.Lock()
 
 # ---------------------------------------------------------------------- файл
 def _path(doc: str) -> Path:
+    """Файл правил пользователей документа."""
     return OUTPUT_DIR / doc / USER_RULES_FILE
 
 
 def load(doc: str) -> dict:
+    """Содержимое user_rules.json документа: {rules, specs}; нет файла или он испорчен — пусто."""
     path = _path(doc)
     if not path.exists():
         return {"rules": [], "specs": {}}
@@ -66,6 +68,7 @@ def load(doc: str) -> dict:
 
 
 def _save(doc: str, data: dict) -> None:
+    """Записывает user_rules.json документа целиком."""
     path = _path(doc)
     tmp = path.with_suffix(".tmp")
     tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -73,6 +76,7 @@ def _save(doc: str, data: dict) -> None:
 
 
 def rules(doc: str, attribute: str = "") -> list[dict]:
+    """Правила пользователей документа, все или одного атрибута."""
     from ..pipeline.common import _norm_attr
     found = load(doc)["rules"]
     if attribute:
@@ -81,6 +85,7 @@ def rules(doc: str, attribute: str = "") -> list[dict]:
 
 
 def _texts(rule_list: list[dict], attribute: str) -> list[str]:
+    """Тексты правил атрибута для компилятора."""
     return [_rule_text(r) for r in rule_list if r["attribute"] == attribute]
 
 
@@ -105,6 +110,7 @@ def _document(doc: str) -> tuple[list[dict], dict[str, dict]]:
 
 
 def _global_text(groups: list[dict]) -> str:
+    """Общие положения документа одним текстом."""
     return "\n".join(r for g in groups if g.get("type") == "global" for r in g.get("rules", []))
 
 
@@ -124,6 +130,7 @@ def _basis(groups: list[dict], attribute: str, texts: list[str]) -> str:
 
 # ---------------------------------------------------------------------- сборка паспорта
 def _invoke_json(llm, prompt: str, payload: dict) -> dict:
+    """Вызов модели с ответом-объектом JSON."""
     response = llm.invoke([SystemMessage(content=prompt),
                            HumanMessage(content=json.dumps(payload, ensure_ascii=False))],
                           response_format={"type": "json_object"})
@@ -131,6 +138,7 @@ def _invoke_json(llm, prompt: str, payload: dict) -> dict:
 
 
 def _norm(text: str) -> str:
+    """Текст для сравнения: нижний регистр, пробелы схлопнуты."""
     return " ".join(str(text).lower().split())
 
 
@@ -478,6 +486,7 @@ def apply_overrides(doc: str, specs: list[dict], model=None) -> list[dict]:
 
 
 def _is_default(value) -> bool:
+    """Значение поля паспорта по умолчанию — о нём в предпросмотре говорить нечего."""
     return value in (None, "", [], False, "en", "half_up", "all", "decimal")
 
 

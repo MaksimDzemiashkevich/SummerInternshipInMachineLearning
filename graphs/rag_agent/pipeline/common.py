@@ -31,6 +31,7 @@ class _SkipJobsPolling(logging.Filter):
     """Фронтенд опрашивает GET /jobs каждые 5 с, пока идёт фоновая задача, — в журнал не пишем."""
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Пропускает в журнал всё, кроме опроса GET /jobs."""
         return "/jobs" not in record.getMessage()
 
 
@@ -147,6 +148,7 @@ _WORD_RE = re.compile(r"\w+")
 
 
 def _digit_groups(text: str) -> set[str]:
+    """Группы цифр текста."""
     return set(re.findall(r"\d+", str(text)))
 
 

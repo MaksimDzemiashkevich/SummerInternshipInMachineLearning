@@ -79,6 +79,7 @@ def tag_subjects(rule_groups: list[dict], llm: ChatOpenAI) -> dict[str, str]:
 
 
 def main() -> None:
+    """CLI: размечает subjects.json для документа --doc или для всех."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--doc", default="", help="имя папки документа (по умолчанию — все)")
     args = parser.parse_args()

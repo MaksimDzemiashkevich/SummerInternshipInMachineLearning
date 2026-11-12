@@ -19,12 +19,14 @@ from pathlib import Path
 
 
 def _write(path: Path, payload: dict) -> None:
+    """Записывает состояние задачи целиком (через временный файл)."""
     tmp = path.with_suffix(".tmp")
     tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
     tmp.replace(path)
 
 
 def _tail(path: Path, lines: int = 12) -> str:
+    """Последние строки журнала — для сообщения об ошибке."""
     try:
         return "\n".join(path.read_text(encoding="utf-8", errors="replace").splitlines()[-lines:])
     except OSError:
@@ -32,6 +34,7 @@ def _tail(path: Path, lines: int = 12) -> str:
 
 
 def main() -> None:
+    """Фоновое извлечение PDF: граф извлечения, затем паспорта и их проверка; состояние — в --status."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--pdf", required=True)
     parser.add_argument("--status", required=True)

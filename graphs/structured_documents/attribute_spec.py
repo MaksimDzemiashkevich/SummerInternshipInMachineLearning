@@ -74,6 +74,7 @@ def _cited_tables(group: dict, rule_groups: list[dict], tables: dict) -> str:
 
 
 def compile_specs(rule_groups: list[dict], llm, doc_dir: Path | None = None) -> dict:
+    """Паспорта атрибутов документа из его групп правил (с цитируемыми таблицами): {specs: [...]}."""
     global_text = _global_text(rule_groups)
     local = [g for g in rule_groups if g.get("type") != "global"
              and g.get("kind", "presentation") == "presentation"]
@@ -114,6 +115,7 @@ def compile_specs(rule_groups: list[dict], llm, doc_dir: Path | None = None) -> 
 
 
 def main() -> None:
+    """CLI: собирает attribute_spec.json документа --doc."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--doc", required=True)
     args = parser.parse_args()

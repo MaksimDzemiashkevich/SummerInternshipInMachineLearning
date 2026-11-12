@@ -40,11 +40,12 @@ _QUOTED_RE = re.compile(r"«([^«»]*)»")
 
 
 def level_of(note: str) -> str:
+    """Уровень уверенности строки по первым словам пояснения исполнителя паспортов."""
     text = str(note or "").strip().lower()
     for prefix, level in _LEVEL_PREFIXES:
         if text.startswith(prefix):
             return level
-    return "other"  # пояснение прежнего графа: уровней у него нет
+    return "other"  # пояснение запасного пути: уровней у него нет
 
 
 def proposals_of(note: str, cell: str, level: str) -> list[str]:
@@ -66,6 +67,7 @@ def proposals_of(note: str, cell: str, level: str) -> list[str]:
 
 
 def _same(left, right) -> bool:
+    """Равны ли значения с точностью до пробелов."""
     return " ".join(str(left).split()) == " ".join(str(right).split())
 
 

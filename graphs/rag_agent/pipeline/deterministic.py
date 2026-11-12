@@ -61,6 +61,7 @@ def _content_words(text: str) -> tuple[str, ...]:
 
 
 def _without_parentheses(text: str) -> str:
+    """Текст без скобочных уточнений."""
     return re.sub(r"\([^()]*\)", " ", str(text))
 
 
@@ -83,8 +84,8 @@ def match_closed_register(value: str, table: dict[str, str], threshold: int = FU
     Возвращает (результат, совпадение точное по составу слов). Точное/почти точное совпадение
     → код; серая зона отдаётся модели-арбитру (выбор только из реестра); «не похоже ни на что»
     → pending registration; «похоже сразу на два пункта» → ambiguous match. К исходу не
-    приписывается код: раньше это был префикс ближайшего пункта, и ячейка «THRD pending
-    registration: Wafer-type, lugged» читалась как присуждённый код совсем другого соединения.
+    приписывается код ближайшего пункта: ячейка «THRD pending registration: Wafer-type, lugged»
+    читалась бы как присуждённый код совсем другого соединения.
     """
     if not table:
         return None

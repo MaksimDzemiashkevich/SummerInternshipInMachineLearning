@@ -37,6 +37,7 @@ TICK_SECONDS = 5
 
 @dataclass
 class Job:
+    """Фоновая задача диалога: извлечение документа или нормализация файла; сохраняется в jobs.json."""
     job_id: str
     session_id: str
     kind: str                       # "extract" | "normalize"
@@ -63,10 +64,12 @@ class Progress:
         self._lock = threading.Lock()
 
     def add_total(self, rows: int) -> None:
+        """Увеличивает общее число ячеек, которые предстоит посчитать."""
         with self._lock:
             self.total += rows
 
     def step(self, rows: int = 1) -> None:
+        """Отмечает готовые ячейки (не больше общего числа)."""
         with self._lock:
             self.done = min(self.total, self.done + rows) if self.total else self.done + rows
 
@@ -81,6 +84,7 @@ _WATCHER: threading.Thread | None = None
 
 # ---------------------------------------------------------------------- реестр
 def _persist() -> None:
+    """Записывает список задач на диск целиком (через временный файл)."""
     with _LOCK:
         JOBS_DIR.mkdir(parents=True, exist_ok=True)
         tmp = JOBS_FILE.with_suffix(".tmp")
@@ -111,19 +115,23 @@ _load()
 
 
 def get(job_id: str) -> Job | None:
+    """Задача по её id (None — такой нет)."""
     return _JOBS.get(str(job_id).strip())
 
 
 def for_session(session_id: str) -> list[Job]:
+    """Задачи одного диалога."""
     return [j for j in _JOBS.values() if j.session_id == session_id]
 
 
 # ---------------------------------------------------------------------- извлечение
 def _status_path(job: Job) -> Path:
+    """Файл состояния процесса извлечения."""
     return JOBS_DIR / f"{job.job_id}.status.json"
 
 
 def _log_path(job: Job) -> Path:
+    """Журнал процесса извлечения."""
     return JOBS_DIR / f"{job.job_id}.log"
 
 
@@ -144,6 +152,7 @@ def queue_extraction(session_id: str, pdf: Path) -> Job:
 
 
 def _spawn(job: Job) -> None:
+    """Запускает извлечение отдельным процессом, который переживает перезапуск сервера."""
     JOBS_DIR.mkdir(parents=True, exist_ok=True)
     command = [sys.executable, "-m", "graphs.structured_documents.extract_job", "--pdf", job.pdf,
                "--status", str(_status_path(job)), "--log", str(_log_path(job))]
@@ -160,6 +169,7 @@ def _spawn(job: Job) -> None:
 
 
 def _alive(pid: int) -> bool:
+    """Жив ли процесс; если проверить нечем, считается живым."""
     # os.kill(pid, 0) на Windows не проверяет процесс, а завершает его
     try:
         import psutil
@@ -286,6 +296,7 @@ def wait(job: Job, seconds: float) -> bool:
 
 
 def mark_delivered(job: Job) -> None:
+    """Отмечает, что сообщение о завершении задачи уже отдано в чат."""
     with _LOCK:
         job.delivered = True
         _persist()
@@ -293,6 +304,7 @@ def mark_delivered(job: Job) -> None:
 
 # ---------------------------------------------------------------------- для агента и фронтенда
 def describe(job: Job) -> dict:
+    """Факты задачи для агента и интерфейса: состояние, шаг, прогресс страниц или ячеек."""
     info = {"job_id": job.job_id, "kind": job.kind, "title": job.title, "state": job.state,
             "step": job.step, "error": job.error}
     if job.kind == "extract":
@@ -309,6 +321,7 @@ def describe(job: Job) -> dict:
 
 
 def active(session_id: str) -> list[dict]:
+    """Незавершённые задачи диалога (в очереди или идут)."""
     return [describe(j) for j in for_session(session_id) if j.state in ("queued", "running")]
 
 

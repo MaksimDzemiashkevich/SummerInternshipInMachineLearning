@@ -25,6 +25,7 @@ MAX_AGENT_STEPS = 16
 
 
 def _dump(payload) -> str:
+    """Результат инструмента — в JSON для модели (кириллица как есть, прочее через str)."""
     return json.dumps(payload, ensure_ascii=False, default=str)
 
 

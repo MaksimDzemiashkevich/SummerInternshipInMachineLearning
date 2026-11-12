@@ -41,6 +41,7 @@ from .pipeline.user_rules import APPLIED_SUFFIX, USER_RULES_COLUMN, run_user_rul
 
 @asynccontextmanager
 async def _lifespan(_app):
+    """Жизненный цикл приложения: наблюдатель фоновых задач и сессии MCP-эндпоинта."""
     # наблюдатель за фоновыми извлечениями: очередь, состояние, подгрузка готового документа
     jobs.start_watcher()
     # сессии MCP-эндпоинта: у смонтированного приложения своя lifespan не запускается
@@ -86,6 +87,7 @@ def process_excel(
         file: UploadFile = File(...),
         app_config: AppConfig = Depends(get_app_config),
 ):
+    """POST /process: таблица Attribute/Value → результат .xlsx с колонкой каждого документа."""
     contents = file.file.read()
     data_frame = pd.read_excel(io.BytesIO(contents))
     result_df, ambiguous_cols = normalize_table(data_frame, app_config)
@@ -255,6 +257,7 @@ def chat(
 
 
 def _file_payload(stored) -> dict:
+    """Файл рабочей области для ответа /chat: имя, тип и .xlsx в base64."""
     buffer = _write_excel_with_highlight(stored.frame, stored.ambiguous, stored.layout)
     return {"name": _download_name(stored), "media_type": XLSX_MEDIA_TYPE,
             "content_base64": base64.b64encode(buffer.read()).decode("ascii")}

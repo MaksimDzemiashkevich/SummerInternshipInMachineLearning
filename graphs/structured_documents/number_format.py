@@ -3,9 +3,9 @@
 
 Модель пишет в спецификацию стандартный шаблон числа ("0.0" — ровно один знак, "0.#" — до одного
 знака без нулей в конце, "#,##0.00", "@@@") и локаль, чьи знаки разделителей велит документ; число
-пишет Babel. Прежде были свои поля decimals / max_decimals / decimal_separator, и модель путала
-«показывать N знаков» с «округлять до N знаков» («156 kg» → «156.0 kg»): в шаблоне это два разных
-написания, а не толкование одного поля.
+пишет Babel. «Показывать N знаков» и «округлять до N знаков» в шаблоне — два разных написания,
+а не два толкования одного поля вроде decimals, которые модель путает («156 kg» → «156.0 kg»).
+Старые поля decimals / max_decimals / decimal_separator ещё читаются из ранее собранных паспортов.
 """
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ ROUNDING = {"half_up": ROUND_HALF_UP, "half_even": ROUND_HALF_EVEN, "down": ROUN
 
 
 def valid_number_pattern(pattern) -> bool:
+    """Исполнимый ли шаблон числа ICU: только 0 # @ . , и запятая — разделитель тысяч."""
     if not isinstance(pattern, str):
         return False
     if not pattern:
@@ -37,6 +38,7 @@ def valid_number_pattern(pattern) -> bool:
 
 
 def valid_locale(locale) -> bool:
+    """Знает ли Babel такую локаль."""
     try:
         Locale.parse(str(locale).replace("-", "_"))
         return True

@@ -78,16 +78,19 @@ def _grounded_examples(pairs, source: str) -> list[dict]:
 
 
 def _spacing(value) -> str:
+    """Пробел между числом и единицей по карточке: «space», «none» или «» (документ молчит)."""
     return value if value in ("space", "none") else ""
 
 
 def _invoke_json(llm, prompt: str, payload: dict) -> dict:
+    """Вызов модели с ответом JSON."""
     response = llm.invoke([SystemMessage(content=prompt),
                            HumanMessage(content=json.dumps(payload, ensure_ascii=False))])
     return json.loads(str(response.content))
 
 
 def _global_text(rule_groups: list[dict]) -> str:
+    """Общие положения документа одним текстом."""
     return "\n".join(r for g in rule_groups if g.get("type") == "global" for r in g.get("rules", []))
 
 
@@ -153,6 +156,7 @@ def compile_cards(rule_groups: list[dict], llm) -> dict:
 
 
 def main() -> None:
+    """CLI: собирает rule_cards.json для документа --doc или для всех."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--doc", default="", help="имя папки документа (по умолчанию — все)")
     parser.add_argument("--global-only", action="store_true",

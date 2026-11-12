@@ -35,7 +35,7 @@ def _strip_redundant_parenthetical(answer: str, original: str) -> str:
     if _normalize_phrase(answer) == _normalize_phrase(original):
         return answer  # значение воспроизведено как есть — удалять нечего
     # скобка, прижатая к слову («bar(g)», «dB(A)»), — часть обозначения единицы, а не
-    # приписанное значение: раньше «13.0 bar(g)» так обрезалось до «13.0 bar»
+    # приписанное значение: «13.0 bar(g)» не должно обрезаться до «13.0 bar»
     m = re.fullmatch(r"([^()]+?)\s+\(([^()]+)\)", str(answer).strip())
     if not m:
         return answer

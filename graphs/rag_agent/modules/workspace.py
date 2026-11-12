@@ -2,7 +2,7 @@
 
 Рабочие области живут в памяти процесса и после каждого хода сохраняются в sqlite
 (WORKSPACE_DB, по умолчанию graphs/rag_agent/data/workspaces.sqlite): перезапуск бэкенда — в том
-числе автоперезапуск по --reload на каждой правке кода — файлы диалога больше не теряет.
+числе автоперезапуск по --reload на каждой правке кода — файлы диалога не теряет.
 Сохранённое старше SESSION_TTL_SECONDS удаляется.
 """
 
@@ -48,6 +48,7 @@ class StoredFile:
     created_at: float = field(default_factory=time.time)
 
     def summary(self) -> dict:
+        """Краткое описание файла для агента: размеры, колонки, жёлтые ячейки, стандарты."""
         return {
             "file_id": self.file_id,
             "name": self.name,
@@ -81,6 +82,7 @@ class Workspace:
     def add(self, name: str, frame: pd.DataFrame, kind: str = "upload",
             ambiguous: dict[str, list[bool]] | None = None, origin: str = "",
             layout: dict | None = None, path: str = "") -> StoredFile:
+        """Кладёт таблицу в рабочую область под новым id; самые старые файлы сверх лимита вытесняются."""
         with _ADD_LOCK:  # фоновая нормализация добавляет результат, пока идёт ход чата
             self._counter += 1
             file_id = f"f{self._counter}"
@@ -105,10 +107,12 @@ class Workspace:
         return None
 
     def listing(self) -> list[dict]:
+        """Описания всех файлов диалога."""
         self.touched_at = time.time()
         return [f.summary() for f in self.files.values()]
 
     def latest(self, kind: str = "upload") -> StoredFile | None:
+        """Последний файл данного вида (upload / result)."""
         return next((f for f in reversed(self.files.values()) if f.kind == kind), None)
 
 
@@ -117,6 +121,7 @@ _DB_LOCK = threading.Lock()
 
 
 def _db() -> sqlite3.Connection:
+    """Соединение с sqlite рабочих областей (таблица создаётся при первом обращении)."""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     connection = sqlite3.connect(DB_PATH, timeout=30)
     connection.execute("CREATE TABLE IF NOT EXISTS workspaces "
@@ -139,6 +144,7 @@ def save_workspace(session_id: str) -> None:
 
 
 def _load(session_id: str) -> Workspace | None:
+    """Рабочая область из sqlite; нет, устарела или не читается — None."""
     try:
         with _DB_LOCK, _db() as connection:
             row = connection.execute("SELECT touched_at, data FROM workspaces WHERE session_id = ?",

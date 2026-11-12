@@ -51,6 +51,7 @@ def _render_card(name: str, card: dict) -> str:
 
 
 def _render_global_card(card: dict) -> str:
+    """Общая карточка правил документа текстом для промпта."""
     lines = ["General rules of this document for every attribute, restated unambiguously:"]
     lines += [f"- {step}" for step in card.get("steps") or []]
     if card.get("accepted"):
@@ -92,12 +93,12 @@ def build_rules_text(rule_set, attribute: str, value: str, context: str = "",
                 logger.info("  [SEARCH] группа по имени атрибута: %r", group.attribute)
             else:
                 # уже найдена по похожести, но не первой: вперёд её, иначе шаблон рендера
-                # соседней группы с той же единицей («cooling capacity», 0 зн. kW) побеждал
+                # соседней группы с той же единицей («cooling capacity», 0 зн. kW) побеждает
                 # собственный шаблон атрибута («Fan power» → «electrical power», 1 зн.)
                 pairs.remove(pair)
             pairs.insert(0, pair)
             # правило именно этого атрибута найдено: спор о том, к какому изделию относятся
-            # соседние группы, строку больше не решает
+            # соседние группы, строку не решает
             subject_conflict = False
 
     # Имя атрибута ни к одной группе не привело («Precharge», «Plate size»): тогда правило
@@ -420,7 +421,7 @@ def _own_rules_text(rule_set, attribute: str, group_names: list[str] | None,
 
     Неразрешимая ссылка важна строке, только если её делает правило этого атрибута. Соседняя
     группа, попавшая в выдачу по похожести («Sound pressure level … per 4.2 of ZZX-STD 000»),
-    не повод метить «Motor power». Если своей группы нет, судим по всему тексту, как раньше.
+    не повод метить «Motor power». Если своей группы нет, судим по всему тексту правил.
     """
     names = set(group_names or [])
     own = [g.body for g in rule_set.groups if g.attribute in names
