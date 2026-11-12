@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Прототип: исполнение спецификации атрибута (graphs/structured_documents/attribute_spec.py).
+"""Нормализация по паспортам атрибутов (основной путь): исполнение паспорта, собранного
+graphs/structured_documents/attribute_spec.py.
 
 Модель выбирает, код пишет. Список: точное совпадение формы, иначе выбор модели, ограниченный
 схемой — одно из значений списка или UNMATCHED (код вне списка выдумать нельзя). Величина:
@@ -11,8 +12,8 @@ pint), ряд, округление и запись по формату дела
 У каждого ответа — уровень уверенности по доказательствам (первое слово пояснения): «высокая» —
 основание проверено кодом как факт (форма есть в таблице, цитата правила есть в тексте, пересчёт
 сделал код); «средняя» — суждение модели, которое независимо повторил второй, слепой вызов;
-«низкая» и «разошлись» — жёлтым, с предложенным значением. Смысл код не судит: прежний фильтр по
-составу слов отклонял верные эквиваленты («300#» = «Class 300») и снят.
+«низкая» и «разошлись» — жёлтым, с предложенным значением. Смысл код не судит: эквивалентную
+запись («300#» = «Class 300») подтверждает слепой повторный вызов, а не сравнение слов.
 """
 from __future__ import annotations
 
@@ -31,7 +32,7 @@ from .pipeline.deterministic import _wording_matches
 from .pipeline.parsing import Parser
 from graphs.paths import DOCUMENTS_OUTPUT as OUTPUT_DIR
 
-GLOBAL_CHARS = 60000  # общие положения целиком: обрезка теряла правила из их середины
+GLOBAL_CHARS = 60000  # общие положения передаются целиком: нужное правило может стоять в любом месте их текста
 
 CHOICE_PROMPT = """You map one recorded value to the list of values a normalization document allows for this attribute. The rules of the document for this attribute are given.
 Pick the list value the recorded value means under these rules: the same wording (word order, case, punctuation may differ), a form the rules accept, a value a rule maps it to, or an established equivalent notation of the very same value (an abbreviation, a class written with a unit name, the same designation written differently). A different, narrower, broader or branded product, or anything the list does not name, is "UNMATCHED": never pick the closest entry.
@@ -60,7 +61,12 @@ Return JSON: {"value": the value as the rules require it to be written, "flag": 
 
 
 class SpecRunner:
+    """Исполнитель паспортов одного документа: подпись строки → паспорт → записанное значение
+    с уровнем уверенности и пояснением, что применено."""
+
     def __init__(self, doc: str, model: ChatOpenAI, user_rules: bool = True):
+        """Паспорта, общие положения, разделы классов, корни и перечни документа doc; model — модель
+        без инструментов. user_rules=False — паспорта документа без правил пользователя."""
         folder = OUTPUT_DIR / doc
         self.doc = doc
         self.specs = json.loads((folder / "attribute_spec.json").read_text(encoding="utf-8"))["specs"]
@@ -83,9 +89,8 @@ class SpecRunner:
         self.root_order = load("deterministic_order.json")
         self.root_owner = load("deterministic_attributes.json")
         # перечни соответствий документа (table_roles.json: синонимы и реестры кодов, каждая пара
-        # сверена с текстом при экстракции). Длинный перечень модель переписывает в спецификацию
-        # неполно — у EMD из трёх таблиц материалов в список попала одна, — поэтому точная форма
-        # ищется и здесь, по владельцу перечня
+        # сверена с текстом при извлечении). Длинный перечень модель переписывает в паспорт
+        # неполно, поэтому точная форма ищется и здесь, по владельцу перечня
         self.table_lists = [item for item in (load("table_roles.json") or {}).get("lists", [])
                             if item.get("role") in ("synonyms", "register") and item.get("pairs")]
         self.model = model
@@ -115,17 +120,21 @@ class SpecRunner:
 
     # ------------------------------------------------------------------ поиск спецификации
     def spec_for(self, attribute: str, context: str = "", value: str = "") -> dict | None:
+        """Паспорт для подписи строки (None — у документа нет правил для этого свойства).
+
+        Без изделия в строке решает точное имя; иначе выбирает модель среди претендующих на
+        подпись паспортов, видя изделие, раздел его класса и значение. Ответ кэшируется.
+        """
         key = _norm_attr(attribute)
         exact = [s for s in self.specs if key == _norm_attr(s["attribute"])]
         # одно имя ещё не значит одно поле: «Length» у перчаток — длина манжеты, у болта — длина
-        # болта, а по имени бралась спецификация болта (12 in → 304.8 mm вместо 305 mm); и
-        # спецификация с этим именем может быть написана для другого изделия, чем строка. Поэтому
-        # при изделии в строке выбирает модель, видя изделие; спецификация с тем же именем идёт
-        # первой. Без изделия решать нечем — точное имя решает само
+        # болта, и паспорт с этим именем может быть написан для другого изделия, чем строка.
+        # Поэтому при изделии в строке выбирает модель, видя изделие; паспорт с тем же именем идёт
+        # первым. Без изделия решать нечем — точное имя решает само
         if exact and not context.strip():
             return exact[0]
         # выбирать среди тех, кто на подпись претендует (именем или алиасом), если их несколько:
-        # из всех спецификаций сразу модель не узнала в «HHB» болт и взяла покрытие перчаток
+        # из всех паспортов документа сразу модель выбирает хуже
         claimants = [s for s in self.specs
                      if key in {_norm_attr(n) for n in [s["attribute"], *(s.get("aliases") or [])]}]
         pool = claimants if len(claimants) > 1 else self.specs
@@ -220,6 +229,11 @@ class SpecRunner:
 
     # ------------------------------------------------------------------ исполнение
     def run(self, attribute: str, value: str, context: str = "") -> tuple[str, bool, str]:
+        """(записанное значение, на проверку ли, пояснение) для одной строки таблицы.
+
+        Пояснение начинается с уровня уверенности, затем — паспорт (и вариант), что сделал код и
+        на какие правила документа опирался ответ.
+        """
         value = str(value).strip()
         spec = self.spec_for(attribute, context, value)
         if spec is None:
@@ -242,6 +256,7 @@ class SpecRunner:
         return written, flag, f"{level}; {where}" + (f"; {rest}" if rest else "")
 
     def _run(self, spec: dict, attribute: str, value: str, context: str) -> tuple[str, bool, str]:
+        """Путь по виду паспорта: список, величина (если её удалось взять коду) или текст по инструкции."""
         if not value:
             return self._text(spec, attribute, value, context)
         if spec["kind"] == "list" and spec["values"]:
@@ -331,6 +346,11 @@ class SpecRunner:
         return answer["value"]
 
     def _quantity(self, spec, attribute, value):
+        """Величина: модель читает число и единицу, код пересчитывает, округляет и пишет по шаблону.
+
+        None — код за значение не берётся (диапазон, нераспознанная единица, в значении есть что-то
+        кроме числа и единицы), и его пишет модель по инструкции паспорта.
+        """
         reading = self._read(spec, attribute, value)
         if reading is None or not reading["single"] or reading["number"] is None:
             return None  # диапазон, перечень или не прочитано — по инструкции
@@ -454,6 +474,8 @@ class SpecRunner:
         return reading
 
     def _text(self, spec, attribute, value, context="", note=""):
+        """Значение, которое пишет модель по инструкции паспорта и общим правилам документа;
+        «средняя», только если слепой повторный вызов пришёл к тому же значению."""
         if spec is None:
             body = "The document has no rules for this attribute; only its general rules apply."
         else:
@@ -484,6 +506,7 @@ class SpecRunner:
         return written, True, f"разошлись: «{written}» / «{other}» — на проверку" + rules_note
 
     def _ask_text(self, prompt: str, question: str) -> tuple[str, bool] | None:
+        """(значение, пометка) ответа модели без списка применённых правил."""
         full = self._ask_text_full(prompt, question)
         return full[:2] if full else None
 
@@ -514,6 +537,7 @@ def _same_text(left: str, right: str) -> bool:
 
 
 def _norm_text(text: str) -> str:
+    """Текст для сравнения цитат: нижний регистр, без кавычек и лишних пробелов."""
     return " ".join(str(text).lower().replace("’", "'").replace('"', "").replace("'", "").split())
 
 
@@ -533,6 +557,7 @@ def _cite(quote: str, spec: dict | None) -> str:
 
 
 def _ctx(context: str) -> str:
+    """Строка контекста для промпта модели; пустой контекст не добавляет ничего."""
     return f"Row context: {context}\n" if context else ""
 
 
@@ -593,7 +618,7 @@ def run_spec_rule_set(data_frame, model, rule_set, progress=None):
 
     Возвращает таблицу с колонками ROW_COLUMNS: значение, пометка на проверку («Ambiguous»), что
     сработало («Applied» — уровень уверенности и его основание). Строка изделия, которое документ
-    не описывает, остаётся пустой и не помечается — как в прежнем конвейере. Исполнитель на
+    не описывает, остаётся пустой и не помечается — как и в запасном пути. Исполнитель на
     документ создаётся один раз: в нём кэш сопоставлений подписи со спецификацией.
     """
     import pandas as pd
