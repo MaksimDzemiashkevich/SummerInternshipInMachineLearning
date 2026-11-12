@@ -12,13 +12,10 @@
 | Файл | Что делает |
 |---|---|
 | `eval_doc.py` | Прогон одного стандарта по одной таблице со сверкой с эталоном: точность, расхождения, лишние и пропущенные жёлтые пометки |
-| `count_calls.py` | То же без сверки, но считает вызовы LLM и токены (вход, из кэша, выход) |
-| `regroup.py` | Перегруппировывает готовый `data_after_check.json` документа в папку `<документ>__v2` (без VLM) |
-| `make_cwx.py`, `make_pkx.py`, `make_bhx.py` | Генерируют PDF синтетического стандарта в `structured_documents/data/input/`, таблицу в `rag_agent/data/input/` и эталон в `expected/` |
-| `make_unseen.py` + `unseen_b.py` | Генерируют наборы новых значений A и B для HVX/CWX/PKX (`<ключ>_unseen_a.xlsx` / `_b.xlsx`); падают, если значение встречается в тексте стандарта |
 | `expected/*.json` | Эталоны: `{"expected": строка, список вариантов или {"re": регулярка}, "review": true/false/null}` по строкам таблицы |
 
-Стандарты:
+Синтетические стандарты и наборы новых значений сгенерированы один раз скриптами, которые потом
+удалены из репозитория (2026-11-12); сами стандарты, таблицы и эталоны остались. Стандарты:
 
 - **CWX-STD 221** — ссылки на пункт другого стандарта (OGX-STD 410) и на отсутствующий (ZZX-STD 000), знаки после запятой по классам оборудования, форма `<n.n> kW` только в приложении.
 - **PKX-STD 330** — правила только в примерах в начале следующей страницы, правило только в образце датащита приложения, таблица кодов разорвана между страницами.
@@ -32,19 +29,6 @@ venv2/Scripts/python -m graphs.rag_agent.eval.synthetic.eval_doc \
     PKX-STD-330_package_compressor_normalization_rules__v2 \
     graphs/rag_agent/data/input/pkx_unseen_a.xlsx \
     graphs/rag_agent/eval/synthetic/expected/pkx_unseen_a.json
-
-# вызовы и токены
-venv2/Scripts/python -m graphs.rag_agent.eval.synthetic.count_calls \
-    PKX-STD-330_package_compressor_normalization_rules__v2 graphs/rag_agent/data/input/pkx_unseen_a.xlsx
-
-# перегруппировать документ новой группировкой в <документ>__v2
-venv2/Scripts/python -m graphs.rag_agent.eval.synthetic.regroup HVX-STD-134_hvac_ventilation_equipment_normalization_rules
-
-# пересоздать синтетический стандарт (потом извлечение через STRUCTURED_DOC_PATH=...)
-venv2/Scripts/python -m graphs.rag_agent.eval.synthetic.make_bhx
-# пересоздать наборы новых значений
-venv2/Scripts/python -m graphs.rag_agent.eval.synthetic.make_unseen a
-venv2/Scripts/python -m graphs.rag_agent.eval.synthetic.make_unseen b
 ```
 
 Пары «таблица → эталон»:

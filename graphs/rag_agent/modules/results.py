@@ -100,12 +100,6 @@ def layout_of(frame: pd.DataFrame, known_standards: set[str] | None = None) -> d
             "standards": standards, "user_rules": user_rules}
 
 
-def _column(frame: pd.DataFrame, name: str) -> str | None:
-    """Колонка по имени без учёта регистра и пробелов по краям («item» → «Item»)."""
-    wanted = str(name).strip().lower()
-    return next((str(c) for c in frame.columns if str(c).strip().lower() == wanted), None)
-
-
 # ---------------------------------------------------------------------- строки результата
 def result_rows(frame: pd.DataFrame, layout: dict, ambiguous: dict[str, list[bool]],
                 standard: str | None = None) -> list[dict]:

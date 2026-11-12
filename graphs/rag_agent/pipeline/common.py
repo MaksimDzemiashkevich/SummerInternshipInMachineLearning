@@ -100,10 +100,6 @@ def _unit_key(text: str) -> str:
     return re.sub(r"[\s.]", "", text).lower()
 
 
-# Единица не может начинаться с точки или запятой, иначе «9.5» разбирается как 9 + «.5».
-_NUM_UNIT_RE = re.compile(r"\s*(-?\d+(?:[.,]\d+)?)(\s*)([^\d\s.,].*?)\s*")
-
-
 _WORD_RE = re.compile(r"\w+")
 
 

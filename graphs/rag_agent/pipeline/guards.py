@@ -112,22 +112,6 @@ def _align_root_spacing(answer: str, rule_set, rules_text: str = "") -> str:
     return aligned
 
 
-# Обозначение вида «PN 100»: буквенный префикс из 2–5 заглавных и число (в любом порядке).
-_DESIGNATION_RE = re.compile(r"\s*([A-Z]{2,5})\s*-?\s*(\d+[A-Za-z]*)\s*")
-
-
-_DESIGNATION_REV_RE = re.compile(r"\s*(\d+[A-Za-z]*)\s*-?\s*([A-Z]{2,5})\s*")
-
-
-def _designation_parts(text: str) -> tuple[str, str] | None:
-    """(префикс, число) для записи-обозначения; иначе None."""
-    m = _DESIGNATION_RE.fullmatch(str(text))
-    if m:
-        return m.group(1).upper(), m.group(2)
-    m = _DESIGNATION_REV_RE.fullmatch(str(text))
-    return (m.group(2).upper(), m.group(1)) if m else None
-
-
 def _letters_attached_to_digits(value: str) -> bool:
     """Все буквы записи приклеены к цифрам («10K», «15K»), отдельного слова-префикса нет.
 
@@ -213,9 +197,6 @@ def _unit_invented(attribute: str, value: str, answer: str) -> bool:
     return recorded is not None and recorded.kind == "number" and not recorded.label_unit
 
 
-_LABEL_UNIT_RE = re.compile(r"[,(]\s*([A-Za-z°]{1,6}\.?)\s*\)?\s*$")
-
-
 def _unit_relabelled(attribute: str, value: str, answer: str) -> bool:
     """Единица подменена без пересчёта: число то же, а единица уже другая.
 
@@ -269,21 +250,6 @@ def _restore_unit_spacing(value: str, answer: str, attribute: str = "") -> str:
     return f"{now.number}{' ' if was.space else ''}{now.unit_text}"
 
 
-# Пример правила: «"0.075%" -> "0.075 % of span"». Слова, появившиеся справа, документ велит
-# дописать; слова, которые были и слева, он лишь переставляет.
-_EXAMPLE_RE = re.compile(r"[\"“']([^\"“”']{1,120})[\"”']\s*(?:->|→|becomes)\s*[\"“']([^\"“”']{1,120})[\"”']")
-
-
-def _mandated_additions(rules_text: str) -> set:
-    """Слова, которые примеры документа добавляют к записи: их удалять нельзя."""
-    added = set()
-    for source, target in _EXAMPLE_RE.findall(str(rules_text)):
-        source_words = {w.lower() for w in _WORD_RE.findall(source)}
-        added.update(w.lower() for w in _WORD_RE.findall(target)
-                     if w.isalpha() and w.lower() not in source_words)
-    return added
-
-
 def _document_word_tokens(rule_set, attribute: str, group_names: list[str] | None = None) -> set:
     """Слова, которые документ вправе внести в ответ: корни и коды его таблиц."""
     tokens = set()
@@ -300,31 +266,6 @@ def _document_word_tokens(rule_set, attribute: str, group_names: list[str] | Non
     if template:
         tokens.update(w.lower() for w in _WORD_RE.findall(str(template.get("suffix", ""))))
     return tokens
-
-
-def _strip_added_words(value: str, answer: str, allowed: set) -> str:
-    """Убирает слова, дописанные к записи: их нет ни в ней, ни в таблицах документа.
-
-    «A216 WCB» → «ASTM A216 WCB»: пункт про порядок написания спецификации модель читает как
-    разрешение дописать издающий орган, которого в записи нет. Убираем только если после этого
-    ответ совпадает с записью по буквам и цифрам — значит всё остальное осталось на месте.
-    Замена значения («Cu» → «Copper») и дописанная скобка с пересчётом под это не подходят.
-    """
-    value_words = {w.lower() for w in _WORD_RE.findall(str(value))}
-    candidates = [w for w in dict.fromkeys(_WORD_RE.findall(str(answer)))
-                  if w.isalpha() and w.lower() not in value_words and w.lower() not in allowed]
-    if not candidates:
-        return answer
-
-    result = str(answer)
-    for word in candidates:
-        result = re.sub(rf"\b{re.escape(word)}\b", "", result)
-    result = re.sub(r"\s{2,}", " ", result).strip()
-    if _alnum(result) != _alnum(value):
-        return answer  # убрали слова — и ответ перестал быть этой записью: значит не лишние
-    logger.info("  [ADDED] %r -> %r: убраны слова, которых нет в записи (%s)",
-                answer, result, ", ".join(candidates))
-    return result
 
 
 def _relabel_sanctioned(value: str, answer: str, rule_set, rules_text: str,
@@ -470,10 +411,6 @@ def _records_quantity(model, attribute: str, value: str, unit: str, context: str
     logger.info("  [QUANTITY] %r (%r) — величина рода %r: %s", attribute, value, unit, verdict)
     _QUANTITY_KIND_CACHE[key] = verdict
     return verdict
-
-
-# Единица записи: «800 lbs» → «lbs», «1200°F» → «°F».
-_VALUE_UNIT_RE = re.compile(r"^\s*-?[\d.,]+\s*(.+?)\s*$")
 
 
 def _conversion_of_designation(attribute: str, value: str, answer: str, model,

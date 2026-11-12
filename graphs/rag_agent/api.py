@@ -25,7 +25,7 @@ from .pipeline.common import logger
 from .pipeline.excel import XLSX_MEDIA_TYPE, _write_excel_with_highlight, read_flagged_cells
 from .pipeline.runner import normalize_table
 
-# Имена, которые берут из api снаружи (eval-скрипты, show_context, run_eval), остаются
+# Имена, которые берут из api снаружи (eval-скрипты, run_eval), остаются
 # доступными и отсюда, хотя живут в pipeline/.
 from .pipeline.deterministic import apply_deterministic, match_closed_register  # noqa: F401
 from .pipeline.frames import prepare_frame, _row_context  # noqa: F401

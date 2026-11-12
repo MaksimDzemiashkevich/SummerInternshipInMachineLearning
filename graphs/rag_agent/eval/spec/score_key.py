@@ -16,11 +16,11 @@ from langchain_openai import ChatOpenAI
 
 load_dotenv()
 from graphs.rag_agent.eval.spec.report import report
-from graphs.rag_agent.llm_runner import make_runner
+from graphs.rag_agent.spec_runner import SpecRunner
 from graphs.structured_documents.modules.config_structured_documents_graph import Settings
 
 doc, src, keyf, col = sys.argv[1:5]
-runner = make_runner(doc, ChatOpenAI(model=Settings().llmodel, temperature=0, timeout=180))
+runner = SpecRunner(doc, ChatOpenAI(model=Settings().llmodel, temperature=0, timeout=180))
 frame = pd.read_excel(src).fillna("")
 key = pd.read_excel(keyf)
 text = lambda x: '' if pd.isna(x) else str(x).strip()
@@ -41,4 +41,4 @@ for i, (actual, flag, note) in enumerate(out):
     expected = text(key[col][i])
     rows.append({"attribute": frame.Attribute[i], "value": frame.Value[i], "actual": actual, "flag": flag,
                  "note": note, "good": actual == expected, "expected": expected, "must_flag": None})
-report(f"{doc} [{os.getenv('SPEC_MODE', 'code')}]", rows, time.time() - started)
+report(f"{doc} [spec]", rows, time.time() - started)

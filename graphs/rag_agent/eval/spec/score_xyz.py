@@ -18,11 +18,11 @@ load_dotenv()
 from graphs.rag_agent.eval.expected import EXPECTED, REVIEW_FORBIDDEN, REVIEW_REQUIRED
 from graphs.rag_agent.eval.run_eval import INPUT, S100, S205, matches, show
 from graphs.rag_agent.eval.spec.report import report
-from graphs.rag_agent.llm_runner import make_runner
+from graphs.rag_agent.spec_runner import SpecRunner
 from graphs.structured_documents.modules.config_structured_documents_graph import Settings
 
 model = ChatOpenAI(model=Settings().llmodel, temperature=0, timeout=180)
-runners = {n: make_runner(n, model) for n in (S100, S205)}
+runners = {n: SpecRunner(n, model) for n in (S100, S205)}
 df = pd.read_excel(INPUT).fillna("")
 jobs = [(i, n) for i in range(len(df)) for n in (S100, S205)]
 
@@ -48,4 +48,4 @@ for i in range(len(df)):
         must = True if (i, n) in REVIEW_REQUIRED else (False if (i, n) in REVIEW_FORBIDDEN else None)
         rows.append({"attribute": f"[{n[8:11]}] {attribute}", "value": value, "actual": actual, "flag": flag,
                      "note": note, "good": matches(e, actual), "expected": show(e), "must_flag": must})
-report(f"XYZ run_eval [{os.getenv('SPEC_MODE', 'code')}]", rows, time.time() - started)
+report(f"XYZ run_eval [spec]", rows, time.time() - started)

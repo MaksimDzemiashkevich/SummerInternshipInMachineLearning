@@ -96,8 +96,8 @@ def start_row(state: GraphState, config: RunnableConfig) -> GraphState:
                     if spaced != rules_value:
                         applied.append("пробел у единицы взят из записи")
                     rules_value = spaced
-                # _strip_added_words здесь больше не вызывается: она срезала слова, которые
-                # документ требует дописать («NPS 4», «CL 600», «Trim 12»). Без неё MNT-DN-014
+                # слова, которых нет ни в записи, ни в таблицах документа, больше не срезаются: срезались
+                # и те, что документ требует дописать («NPS 4», «CL 600», «Trim 12»). Без этого MNT-DN-014
                 # поднялся с 80 до 92 из 100, EMD — с 89 до 94, остальные наборы не изменились.
                 guard = _rejection_reason(state["attribute"], state["original_value"],
                                           rules_value, rule_set, state.get("rules_text", ""))

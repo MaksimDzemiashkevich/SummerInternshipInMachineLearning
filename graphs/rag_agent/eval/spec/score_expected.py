@@ -18,11 +18,11 @@ from langchain_openai import ChatOpenAI
 
 load_dotenv()
 from graphs.rag_agent.eval.spec.report import report
-from graphs.rag_agent.llm_runner import make_runner
+from graphs.rag_agent.spec_runner import SpecRunner
 from graphs.structured_documents.modules.config_structured_documents_graph import Settings
 
 doc, xlsx, exp = sys.argv[1:4]
-runner = make_runner(doc, ChatOpenAI(model=Settings().llmodel, temperature=0, timeout=180))
+runner = SpecRunner(doc, ChatOpenAI(model=Settings().llmodel, temperature=0, timeout=180))
 frame = pd.read_excel(xlsx).fillna("")
 expected = json.load(open(exp, encoding='utf-8'))
 
@@ -43,4 +43,4 @@ for i, ((actual, flag, note), e) in enumerate(zip(out, expected)):
     good = any((re.search(o['re'], actual) if isinstance(o, dict) else actual == o) for o in options)
     rows.append({"attribute": frame.Attribute[i], "value": frame.Value[i], "actual": actual, "flag": flag,
                  "note": note, "good": good, "expected": options, "must_flag": e.get('review')})
-report(f"{doc} [{os.getenv('SPEC_MODE', 'code')}]", rows, time.time() - started)
+report(f"{doc} [spec]", rows, time.time() - started)

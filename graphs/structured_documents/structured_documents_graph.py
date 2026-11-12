@@ -257,8 +257,6 @@ def formatting_text_node(state: MessagesState) -> MessagesState:
     }
 
 
-
-
 grouping_llm = ChatOpenAI(
     model=settings.llmodel,
     max_tokens=16000,
@@ -536,30 +534,6 @@ def drop_empty_groups(rule_groups: list[dict]) -> list[dict]:
         g for g in rule_groups
         if g.get("type") == "global" or g.get("rules")
     ]
-
-
-def distill_groups(rule_groups: list[dict]) -> list[dict]:
-    """Сжимает тела групп: убирает разъяснительный текст и список исключений.
-
-    Убирает: NOTE —, кросс-референсы между стандартами, а из global — список «reproduced
-    exactly» (он уже обработан детерминированно в excluded_attributes, в контекст LLM не нужен).
-    """
-    distilled = []
-    for g in rule_groups:
-        kept = []
-        for r in g.get("rules", []):
-            rl = r.lower().strip()
-            if rl.startswith("note"):
-                continue
-            if rl.startswith("unlike xyz std"):
-                continue
-            if g.get("type") == "global" and "reproduced exactly" in rl and re.search(r"[•–\n]", r):
-                continue
-            kept.append(r)
-        ng = dict(g)
-        ng["rules"] = kept
-        distilled.append(ng)
-    return distilled
 
 
 def cluster_groups_node(state: MessagesState) -> MessagesState:

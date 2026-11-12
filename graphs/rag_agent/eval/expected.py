@@ -33,8 +33,6 @@ S205 = "XYZ_STD_205_alternate_normalization_rules"
 
 SKIP = {"skip": True}
 
-FLAG = {"re": r"(pending registration|ambiguous match|AMBIGUOUS)"}
-
 
 def kept(value: str) -> dict:
     """Запись оставлена как есть: сама по себе либо с префиксом-вердиктом реестра.

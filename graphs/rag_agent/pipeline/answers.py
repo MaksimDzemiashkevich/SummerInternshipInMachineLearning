@@ -77,14 +77,6 @@ def _describe_change(value: str, answer: str, attribute: str = "") -> str:
     return "; ".join(parts) or f"значение заменено на «{after}»"
 
 
-def _applied_text(payload: dict) -> str:
-    """Перечень правил из ответа модели: список «applied» либо старое одиночное поле."""
-    entries = payload.get("applied")
-    if isinstance(entries, list):
-        return "; ".join(str(e).strip() for e in entries if str(e).strip())
-    return str(entries or payload.get("precondition", "")).strip()
-
-
 def _parse_payload(answer) -> dict:
     """Ответ модели как объект: кроме result там лежит и объяснение, почему так."""
     text = re.sub(r"^```[a-zA-Z]*\s*|\s*```$", "", str(answer).strip()).strip()
