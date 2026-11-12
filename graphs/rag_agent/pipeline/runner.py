@@ -62,6 +62,8 @@ def run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set) -> p
 
 
 def _run_rule_set(data_frame: pd.DataFrame, app_config: AppConfig, rule_set, progress=None) -> pd.DataFrame:
+    """Колонка одного документа: основным путём (паспорта атрибутов), если у документа есть
+    attribute_spec.json, иначе — запасным (граф по строкам, или всегда при NORMALIZER=legacy)."""
     from ..spec_runner import has_spec, run_spec_rule_set
     if NORMALIZER == "spec" and has_spec(rule_set):
         logger.info("Документ %r: нормализация по спецификации атрибутов", rule_set.name)
