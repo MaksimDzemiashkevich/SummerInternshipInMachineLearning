@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -76,11 +77,9 @@ def value_shape(text: str) -> str:
 
 @dataclass
 class RuleSet:
-    """Правила одного rule-файла: semantic-индекс + BM25 + список групп."""
+    """Правила одного rule-файла: список групп, их индексы для поиска и данные извлечения."""
     name: str
     global_rules: str
-    store: InMemoryVectorStore
-    bm25: "BM25Okapi"
     groups: list[GroupEntry]
     deterministic: dict[str, str] = field(default_factory=dict)
     phrase_map: dict[str, str] = field(default_factory=dict)
@@ -111,6 +110,23 @@ class RuleSet:
     # начало документа как распознано (заголовок, тема, вводная часть): по нему решается,
     # про какое оборудование документ; группировка часть этого в правила не берёт
     opening_text: str = ""
+    # поисковые индексы (семантический и BM25) нужны только прежнему пути — поиску правил на
+    # каждую строку; путь по паспортам поиском не пользуется. Строятся при первом поиске
+    # (search_index), а не при старте: раньше старт строил их для всех документов и на чистом
+    # клоне платил за эмбеддинги стандартов, которым они не нужны
+    index_settings: "Settings | None" = field(default=None, repr=False, compare=False)
+    store: InMemoryVectorStore | None = field(default=None, repr=False, compare=False)
+    bm25: "BM25Okapi | None" = field(default=None, repr=False, compare=False)
+    _index_lock: threading.Lock = field(default_factory=threading.Lock, repr=False, compare=False)
+
+    def search_index(self) -> tuple[InMemoryVectorStore, "BM25Okapi"]:
+        """Семантический индекс и BM25 этого документа; при первом вызове строятся (или
+        семантический берётся из кэша на диске, load_vector_store)."""
+        with self._index_lock:
+            if self.store is None:
+                self.store = load_vector_store(self.index_settings or Settings(), self.groups, self.name)
+                self.bm25 = BM25Okapi([_tokenize(_search_text(e)) for e in self.groups])
+        return self.store, self.bm25
 
 
 @dataclass
@@ -355,9 +371,6 @@ def load_all_rule_sets(settings: Settings, names: set[str] | None = None) -> lis
         parent_to_indices: dict[str, list[int]] = {}
         for i, e in enumerate(entries):
             parent_to_indices.setdefault(e.parent or e.attribute, []).append(i)
-        store = load_vector_store(settings, entries, name)
-        corpus = [_tokenize(_search_text(e)) for e in entries]
-        bm25 = BM25Okapi(corpus)
         deterministic = _load_deterministic(path.parent)
         phrase_map = _load_phrase_rules(path.parent)
         phrase_attributes = _load_phrase_attributes(path.parent)
@@ -416,7 +429,7 @@ def load_all_rule_sets(settings: Settings, names: set[str] | None = None) -> lis
         if len(distinct_subjects) > 1:
             logger.info("Документ %r описывает несколько предметов: %s",
                         name, sorted(distinct_subjects))
-        rule_sets.append(RuleSet(name=name, global_rules=global_rules, store=store, bm25=bm25, groups=entries, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects, tables=tables, synonyms=synonyms, synonym_owners=owners, universal_synonyms=universal, class_blocks=_class_blocks(groups), global_card=global_card, cards=cards, card_forms=card_forms, examples=examples,
+        rule_sets.append(RuleSet(name=name, global_rules=global_rules, groups=entries, index_settings=settings, deterministic=deterministic, phrase_map=phrase_map, closed_registers=closed_registers, attribute_to_register=attribute_to_register, number_first=number_first, deterministic_order=deterministic_order, deterministic_attributes=deterministic_attributes, excluded_attributes=excluded_attributes, render_templates=render_templates, parent_to_indices=parent_to_indices, clause_index=clause_index, group_subjects=group_subjects, tables=tables, synonyms=synonyms, synonym_owners=owners, universal_synonyms=universal, class_blocks=_class_blocks(groups), global_card=global_card, cards=cards, card_forms=card_forms, examples=examples,
                                  opening_text=_opening_text(path.parent)))
         RULE_SET_LIBRARY[document_id(name)] = rule_sets[-1]
 
@@ -849,12 +862,13 @@ def hybrid_search(rule_set: RuleSet, query: str, top_k: int = 4,
     min_score — порог по RRF-score: группы со скором ниже отбрасываются, чтобы не
     тянуть нерелевантный/противоречащий контекст в промпт модели.
     """
+    store, bm25 = rule_set.search_index()
     # semantic
-    sem_docs = rule_set.store.similarity_search(query, k=k_semantic)
+    sem_docs = store.similarity_search(query, k=k_semantic)
     sem_ranks = [(d.metadata.get("index", -1), rank) for rank, d in enumerate(sem_docs, start=1)]
 
     # bm25
-    scores = rule_set.bm25.get_scores(_tokenize(query))
+    scores = bm25.get_scores(_tokenize(query))
     order = sorted(range(len(scores)), key=lambda i: -scores[i])
     bm25_ranks = [(i, rank) for rank, i in enumerate(order[:k_bm25], start=1)]
 
