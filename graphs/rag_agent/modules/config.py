@@ -1,131 +1,73 @@
+"""Настройки сервиса и его сборка: какие модели создать и какие документы загрузить.
+
+Это единственное место, где создаются модели и загружаются стандарты; остальные модули получают
+их готовыми (AppConfig), а не создают сами.
+"""
 from __future__ import annotations
+
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
-import pandas as pd
 from dotenv import load_dotenv
-from langchain_core.documents import Document
-from langchain_core.vectorstores import InMemoryVectorStore
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-import json
+from langchain_openai import ChatOpenAI
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+from graphs.paths import DOCUMENTS_OUTPUT, SERVICE_INPUT
+
+from .rule_set import RuleSet, load_all_rule_sets
+from .tools import array_of_tools
+
 load_dotenv()
 
 
 @dataclass(frozen=True)
 class Settings:
-    """Статические настройки приложения."""
-    base_dir: Path = BASE_DIR
-    rules_json_path: Path = BASE_DIR / "data" / "input" / "rules.json"
-    # rules_txt_path: Path = BASE_DIR / "data" / "input" / "rules.txt"
-    vector_store_path: Path = BASE_DIR / "data" / "input" / "vector_store.json"
-    rule_groups_path: Path = BASE_DIR.parent / "structured_documents" / "data" / "output" / "rule_groups.json"
+    """Настройки сервиса: где лежат документы и индексы, какие модели и с каким рассуждением."""
+    rule_groups_dir: Path = DOCUMENTS_OUTPUT
+    vector_store_dir: Path = SERVICE_INPUT
 
     chat_model: str = "gpt-5.6-luna"
-    router_model: str = "gpt-4o-mini"
     embedding_model: str = "text-embedding-3-large"
     temperature: float = 0.0
+    # модели с привязанными инструментами: через Chat Completions инструменты работают только без рассуждения
+    reasoning_effort: str | None = "none"
+    # паспорта атрибутов и сборка правил пользователя: инструментов нет, рассуждение повышает точность
+    spec_reasoning_effort: str | None = "low"
+    # агент в чате: инструменты с рассуждением — через Responses API; "none" — без рассуждения
+    agent_reasoning_effort: str | None = os.getenv("AGENT_REASONING_EFFORT", "low")
 
 
 @dataclass
 class AppConfig:
+    """Собранный сервис: настройки, модели и загруженные стандарты."""
     settings: Settings
-    store: InMemoryVectorStore
-    model: ChatOpenAI
-    # router_model: ChatOpenAI
-    data_frame: pd.DataFrame | None = None
-
-
-# Attribute names that mark document front/back matter rather than technical rules.
-# Deliberately generic so it applies to any standards/specification document.
-# This is a best-effort safety net; the primary defense against non-normative
-# content is the extraction prompt.
-_NON_RULE_ATTRIBUTE_MARKERS = (
-    "metadata",
-    "copyright",
-    "legal",
-    "liability",
-    "disclaimer",
-    "table of contents",
-    "bibliography",
-    "foreword",
-    "acknowledgment",
-    "contact information",
-    "distribution",
-    "publisher",
-    "provided by",
-)
-
-
-def filter_non_rule_groups(rules: dict[str, str]) -> dict[str, str]:
-    """Drop groups that describe document front/back matter, not technical rules."""
-    return {
-        header: body
-        for header, body in rules.items()
-        if not any(marker in header.lower() for marker in _NON_RULE_ATTRIBUTE_MARKERS)
-    }
-
-
-def load_rules(settings: Settings) -> dict[str, str]:
-    if settings.rules_json_path.exists():
-        with open(settings.rules_json_path, "r", encoding="utf-8") as f:
-            return filter_non_rule_groups(json.load(f))
-
-    with open(settings.rule_groups_path, "r", encoding="utf-8") as f:
-        groups: list[dict] = json.load(f)
-
-    rules: dict[str, str] = {}
-    for group in groups:
-        header = group["attribute"].strip()
-        body = "\n".join(rule.strip() for rule in group.get("rules", []))
-
-        if header in rules:
-            rules[header] = rules[header] + "\n" + body
-        else:
-            rules[header] = body
-
-    with open(settings.rules_json_path, "w", encoding="utf-8") as f:
-        json.dump(rules, f, ensure_ascii=False, indent=2)
-
-    return filter_non_rule_groups(rules)
-
-
-def load_vector_store(settings: Settings, rules: dict[str, str]) -> InMemoryVectorStore:
-    embeddings = OpenAIEmbeddings(model=settings.embedding_model)
-
-    if settings.vector_store_path.exists():
-        return InMemoryVectorStore.load(str(settings.vector_store_path), embeddings)
-
-    store = InMemoryVectorStore(embeddings)
-    docs = [
-        Document(page_content=header, metadata={"source": "rules.json", "text": body})
-        for header, body in rules.items()
-    ]
-    store.store.clear()
-    store.add_documents(docs)
-    store.dump(str(settings.vector_store_path))
-    return store
+    model: ChatOpenAI            # модель запасного пути: с инструментами пересчёта единиц
+    rule_sets: list[RuleSet]
+    assistant: ChatOpenAI | None = None   # та же модель без инструментов
+    spec_model: ChatOpenAI | None = None  # паспорта атрибутов и сборка правил пользователя
+    agent_model: ChatOpenAI | None = None  # агент в чате; None — assistant
 
 
 def build_app_config(settings: Settings | None = None) -> AppConfig:
+    """Сервис по настройкам: модели и все стандарты из папки извлечённых документов."""
     settings = settings or Settings()
+    # без таймаута SDK ждёт зависший запрос по 600 с на каждую попытку
+    assistant = ChatOpenAI(model=settings.chat_model, temperature=settings.temperature,
+                           reasoning_effort=settings.reasoning_effort, timeout=120, max_retries=2)
+    spec_model = ChatOpenAI(model=settings.chat_model, temperature=settings.temperature,
+                            reasoning_effort=settings.spec_reasoning_effort, timeout=180, max_retries=2)
+    agent_model = (ChatOpenAI(model=settings.chat_model, use_responses_api=True,
+                              reasoning={"effort": settings.agent_reasoning_effort}, timeout=180, max_retries=2)
+                   if settings.agent_reasoning_effort not in (None, "", "none") else None)
+    return AppConfig(settings=settings, model=assistant.bind_tools(array_of_tools),
+                     rule_sets=load_all_rule_sets(settings.rule_groups_dir, index_source=settings),
+                     assistant=assistant, spec_model=spec_model, agent_model=agent_model)
 
-    rules = load_rules(settings)
-    store = load_vector_store(settings, rules)
 
-    model = ChatOpenAI(
-        model=settings.chat_model,
-        temperature=settings.temperature,
-    )
-    # router_model = ChatOpenAI(
-    #     model=settings.router_model,
-    #     temperature=settings.temperature,
-    # )
-
-    return AppConfig(
-        settings=settings,
-        store=store,
-        model=model,
-        # router_model=router_model,
-    )
+def add_rule_set(app_config: AppConfig, name: str) -> RuleSet | None:
+    """Подгружает документ в работающий сервис (после фонового извлечения); заменяет прежний с тем же именем."""
+    loaded = load_all_rule_sets(app_config.settings.rule_groups_dir, {name}, index_source=app_config.settings)
+    if not loaded:
+        return None
+    app_config.rule_sets[:] = [rs for rs in app_config.rule_sets if rs.name != name] + loaded
+    return loaded[0]

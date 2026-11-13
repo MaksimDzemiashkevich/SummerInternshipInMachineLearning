@@ -1,0 +1,1784 @@
+[
+  {
+    "attribute": "Global",
+    "type": "global",
+    "kind": "presentation",
+    "aliases": [],
+    "rules": [
+      "You're the person who decides whether the warehouse holds one bin of 6205-2RS/C3 bearings or five bins of the same bearing under five different names. This guide is here to make that decision easy.",
+      "Each record you work on arrives as rows with three columns: Item, Attribute and Value. In this guide we call the item a category (what kind of thing it is) and the attribute a field (one fact about it). You'll translate each row into the guide's words and write it back in the same three columns, in the same order. If your tool has a fourth column for notes, list the rule codes you used - for example GR2; BRG-1.",
+      "How this guide is organised (columns: Part; What you'll find; Use it when)",
+      "[How this guide is organised] Part: 'Golden rules (GR1-GR8)'; What you'll find: 'Eight rules that apply everywhere'; Use it when: 'Always - they're the default'",
+      "[How this guide is organised] Part: 'Cheat sheet'; What you'll find: 'Unit conversions on one page'; Use it when: 'You see inches, psi, gallons, pounds'",
+      "[How this guide is organised] Part: 'Chapters 1-10'; What you'll find: 'One per category: fields at a glance, rule cards, before/after'; Use it when: 'You're working on that category'",
+      "[How this guide is organised] Part: 'FAQ'; What you'll find: 'The questions everyone asks in week one'; Use it when: 'You're unsure and nobody's around'",
+      "[How this guide is organised] Part: 'Lookup tables'; What you'll find: 'AS568 sizes, dash sizes, UNC threads, V-belt offsets'; Use it when: 'A rule card tells you to look something up'",
+      "Words we use (columns: Word; Meaning)",
+      "[Words we use] Word: 'Category'; Meaning: 'The kind of item, e.g. Rolling Bearing. Written in the Item column, Title Case.'",
+      "[Words we use] Word: 'Field'; Meaning: 'One fact about the item, e.g. bore_diameter. Written in the Attribute column as a lower_snake_case key.'",
+      "[Words we use] Word: 'Value'; Meaning: 'The fact itself, e.g. 25 mm. Written in the Value column.'",
+      "[Words we use] Word: 'Picklist'; Meaning: 'A closed list of allowed values. If a field has one, the value must come from it.'",
+      "[Words we use] Word: 'Rule card'; Meaning: 'A small box in each chapter telling you, in IF / THEN form, how to turn messy input into a clean value.'",
+      "[Words we use] Word: 'TBD / CHECK:'; Meaning: 'Your two safety valves: TBD when the value is missing, CHECK: when it can't be mapped.'",
+      "The order of work. 1) Tidy spaces. 2) Missing? write TBD. 3) Fix the category (GR1). 4) Fix the field key (GR2). 5) Apply the chapter's rule card. 6) Convert units (GR5) and tidy numbers (GR4). 7) Still doesn't fit? CHECK: (GR7).",
+      "Learn these and you'll get 80 % of rows right without opening a chapter.",
+      "Every row starts with a category. Write it exactly as the chapter title, in Title Case: Rolling Bearing, O-Ring, Hex Bolt. Nicknames like Brg, Oring or Hyd Hose are fine to receive - just never to write.",
+      "(columns: BEFORE; AFTER)",
+      "BEFORE: 'Brg'; AFTER: 'Rolling Bearing'",
+      "BEFORE: 'Hyd Hose'; AFTER: 'Hydraulic Hose'",
+      "The attribute column holds a field key, not a label. Keys are lower case with underscores, exactly as listed in each chapter's 'Fields at a glance' table. Labels such as 'Shaft Dia' or 'Pack Size' are translated into the key.",
+      "BEFORE: 'Shaft Dia'; AFTER: 'shaft_diameter'",
+      "BEFORE: 'Part No'; AFTER: 'designation'",
+      "If a field has a picklist, copy the value character for character: words in Title Case, acronyms in capitals, symbols kept (Deep Groove Ball, Lithium Complex, SiC/Carbon, JIC 37° Female Swivel).",
+      "BEFORE: 'deep groove'; AFTER: 'Deep Groove Ball'",
+      "BEFORE: 'li complex'; AFTER: 'Lithium Complex'",
+      "Measured values are metric: number, one space, unit (25 mm, 10.3 bar, 208 L). Use at most one decimal and drop trailing zeros (70 mm, not 70.0 mm). The only exception is O-ring dimensions, which always carry two decimals (3.53 mm, 25.00 mm).",
+      "BEFORE: '25mm'; AFTER: '25 mm'",
+      "BEFORE: '70 .0 mm'; AFTER: '70 mm'",
+      "Inches, pounds, gallons, psi and ounces are converted with the cheat sheet on page 4. Write only the metric result; never '50.8 mm (2 in)'",
+      "BEFORE: '2 in'; AFTER: '50.8 mm'",
+      "BEFORE: '150 psid'; AFTER: '10.3 bar'",
+      "Empty cells, dashes, n/a, ?, 'unknown', 'see drawing' all become TBD (capitals). Never guess - a TBD gets fixed, a guess gets bought.",
+      "BEFORE: 'n/a'; AFTER: 'TBD'",
+      "BEFORE: '?'; AFTER: 'TBD'",
+      "If a value doesn't fit the field's picklist or format even after every rule in its chapter, write CHECK: followed by a space and the original text. A reviewer will pick it up.",
+      "BEFORE: 'semi-synthetic'; AFTER: 'CHECK: semi-synthetic'",
+      "BEFORE: 'level 5'; AFTER: 'CHECK: level 5'",
+      "Never split one row into several or merge rows together. Keep the order of the file. If a value carries information for another field (like 'EP2' for a grease), use only the part that belongs to this row's field.",
+      "Multiply, then round as the field says. If the chapter has a standard-pack or lookup table, that wins over the plain conversion.",
+      "(columns: If you see; Write in; Do this)",
+      "If you see: 'inch (in, \" )'; Write in: 'mm'; Do this: 'x 25.4'",
+      "If you see: 'foot (ft, ')'; Write in: 'm'; Do this: 'x 0.3048'",
+      "If you see: 'psi / psid / psig'; Write in: 'bar'; Do this: 'x 0.0689476'",
+      "If you see: 'MPa'; Write in: 'bar'; Do this: 'x 10'",
+      "If you see: 'US gallon (gal)'; Write in: 'L'; Do this: 'x 3.785'",
+      "If you see: 'US quart (qt)'; Write in: 'L'; Do this: 'x 0.946'",
+      "If you see: 'pound (lb)'; Write in: 'kg'; Do this: 'x 0.4536'",
+      "If you see: 'ounce (oz)'; Write in: 'kg'; Do this: 'x 0.02835'",
+      "If you see: 'gram (g)'; Write in: 'kg'; Do this: '/ 1000'",
+      "If you see: 'metre (m)'; Write in: 'mm'; Do this: 'x 1000 (lengths of belts, hoses, gloves)'",
+      "If you see: '°F'; Write in: '°C'; Do this: '(F - 32) / 1.8'",
+      "Rounding. Round half up. 15.876 kg becomes 15.9 kg; 344.7 bar becomes 345 bar when the field asks for whole numbers; 24.9936 mm becomes 24.99 mm for O-rings.",
+      "Q. The supplier wrote both units: '50.8 mm (2 in)'. Which do I keep?",
+      "A. The metric number only, tidied per GR4: 50.8 mm.",
+      "Q. Why 'CHECK:' and not just leaving it?",
+      "A. Because a CHECK: row is searchable. Reviewers filter on it every morning; a silently kept value is never looked at again.",
+      "Q. A brand name is the only thing I have (Viton, Kevlar, Aflas).",
+      "A. Several brand names are listed as accepted inputs and translate to the generic material. If a brand isn't listed, write CHECK: with the brand name.",
+      "Q. Is 'TBD' the same as 'CHECK:'?",
+      "A. No. TBD means nobody told us. CHECK: means somebody told us something we can't translate.",
+      "Q. Can I write 25.0 mm to show precision?",
+      "A. Not for normal fields (GR4 drops trailing zeros). O-ring dimensions are the exception: always two decimals.",
+      "Q. Two rows describe the same field for the same item with different values.",
+      "A. Translate both as they are. Duplicate detection happens later, not here.",
+      "Check (columns: Check)",
+      "[Check] Check: '[] Every Item is a category name from a chapter title, Title Case.'",
+      "[Check] Check: '[] Every Attribute is a lower_snake_case field key from that chapter.'",
+      "[Check] Check: '[] Picklist values match the guide exactly - capitals, spaces and symbols.'",
+      "[Check] Check: '[] Numbers have one space before the unit and no trailing zeros (O-rings: two decimals).'",
+      "[Check] Check: '[] No inches, psi, gallons, pounds or ounces left anywhere.'",
+      "[Check] Check: '[] Missing values say TBD; untranslatable values start with CHECK: and keep the original text.'",
+      "[Check] Check: '[] Row count and row order are unchanged.'"
+    ]
+  },
+  {
+    "attribute": "Rolling Bearing",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "Bearing",
+      "Ball Bearing",
+      "Roller Bearing",
+      "Brg",
+      "Deep Groove Ball Bearing",
+      "Anti-friction Bearing"
+    ],
+    "rules": [
+      "Bearings are the most duplicated items in any spares catalogue, because every manufacturer adds its own suffixes to the same basic part. Your job is to strip the brand dialect and leave a designation any store-person can match on the shelf.",
+      "Write the category as: Rolling Bearing  You may receive: Bearing; Ball Bearing; Roller Bearing; Brg; Deep Groove Ball Bearing; Anti-friction Bearing",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] BRG-1: 'designation'; Labels you may see: 'Designation; Part No; Bearing No; Bearing Number; Code'; What to write: 'Base number, then -seal, then /clearance: 6205-2RS/C3'",
+      "[Fields at a glance] BRG-2: 'bearing_type'; Labels you may see: 'Type; Bearing Type'; What to write: 'Picklist value'",
+      "[Fields at a glance] BRG-3: 'bore_diameter'; Labels you may see: 'Bore; ID; Inner Diameter; d'; What to write: '{n} mm'",
+      "[Fields at a glance] BRG-4: 'outside_diameter'; Labels you may see: 'OD; Outer Diameter; D'; What to write: '{n} mm'",
+      "[Fields at a glance] BRG-5: 'width'; Labels you may see: 'Width; B; Thickness'; What to write: '{n} mm'",
+      "[Fields at a glance] BRG-6: 'seal_type'; Labels you may see: 'Seals; Seal; Shields; Closure'; What to write: 'Picklist value'",
+      "[Fields at a glance] BRG-7: 'internal_clearance'; Labels you may see: 'Clearance; Internal Clearance; Radial Clearance'; What to write: 'Picklist value'",
+      "[Fields at a glance] BRG-8: 'cage_material'; Labels you may see: 'Cage; Cage Material; Retainer'; What to write: 'Picklist value'"
+    ],
+    "parent": "bearing"
+  },
+  {
+    "attribute": "designation",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Designation",
+      "Part No",
+      "Bearing No",
+      "Bearing Number",
+      "Code"
+    ],
+    "rules": [
+      "[Fields at a glance] BRG-1: 'designation'; Labels you may see: 'Designation; Part No; Bearing No; Bearing Number; Code'; What to write: 'Base number, then -seal, then /clearance: 6205-2RS/C3'",
+      "BRG-1 designation",
+      "IF seal suffix IN (2RS1, 2RSH, 2RSR, LLU, DDU, 2RS) THEN write -2RS",
+      "IF seal suffix IN (ZZ, 2ZR, 2Z, ZZC) THEN write -2Z",
+      "IF clearance suffix present (C2, C3, C4, C5) THEN append /Cn at the end",
+      "REMOVE spaces, dots and extra hyphens between the parts; REMOVE cage codes (M, MA, J, TN9) - they go to cage_material",
+      "Watch out! Don't 'upgrade' a bearing: 6205 and 6205-2RS are different parts. Only translate what is written.",
+      "[Before → after] Part No: 6205 2RS1 C3: 'designation: 6205-2RS/C3'",
+      "[Before → after] Designation: 6205ZZ: 'designation: 6205-ZZ'",
+      "[Before → after] Bearing No: 6310-2RSR-C3: 'designation: 6310-2RS/C3'"
+    ],
+    "parent": "designation"
+  },
+  {
+    "attribute": "bearing_type",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Bearing Type",
+      "Type",
+      "DGBB",
+      "ACBB",
+      "CRB",
+      "SRB",
+      "TRB",
+      "Deep Groove Ball"
+    ],
+    "rules": [
+      "[Fields at a glance] BRG-2: 'bearing_type'; Labels you may see: 'Type; Bearing Type'; What to write: 'Picklist value'",
+      "BRG-2 bearing_type",
+      "IF value IN (DGBB; deep groove; radial ball) THEN write \"Deep Groove Ball\"",
+      "IF value IN (ACBB; angular contact) THEN write \"Angular Contact Ball\"",
+      "IF value IN (CRB; cylindrical) THEN write \"Cylindrical Roller\"",
+      "IF value IN (SRB; spherical; self-aligning roller) THEN write \"Spherical Roller\"",
+      "IF value IN (TRB; taper; tapered) THEN write \"Tapered Roller\"",
+      "IF value IN (thrust) THEN write \"Thrust Ball\"",
+      "IF value IN (self-aligning ball) THEN write \"Self-Aligning Ball\"",
+      "[Before → after] Type: DGBB: 'bearing_type: Deep Groove Ball'",
+      "[Before → after] Bearing Type: spherical: 'bearing_type: Spherical Roller'",
+      "[Before → after] Type: taper: 'bearing_type: Tapered Roller'"
+    ],
+    "parent": "bearing"
+  },
+  {
+    "attribute": "bore_diameter",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Bore",
+      "ID",
+      "Inner Diameter",
+      "d",
+      "Bore Diameter",
+      "Shaft Bore"
+    ],
+    "rules": [
+      "[Fields at a glance] BRG-3: 'bore_diameter'; Labels you may see: 'Bore; ID; Inner Diameter; d'; What to write: '{n} mm'",
+      "BRG-3 bore_diameter",
+      "IF unit is inch THEN multiply by 25.4",
+      "IF no unit THEN assume mm (bearing catalogues are metric)",
+      "[Before → after] Bore: 1 in: 'bore_diameter: 25.4 mm'",
+      "[Before → after] ID: 25mm: 'bore_diameter: 25 mm'",
+      "Pro tip. Bore code shortcut: for series 6000-6300 with bore code 04 and up, bore = code x 5 mm (6205 -> 25 mm). Use it to sanity-check, not to fill blanks."
+    ],
+    "parent": "diameter"
+  },
+  {
+    "attribute": "outside_diameter",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Outside Diameter",
+      "OD",
+      "Outer Diameter",
+      "D",
+      "Outside Dia"
+    ],
+    "rules": [
+      "[Fields at a glance] BRG-4: 'outside_diameter'; Labels you may see: 'OD; Outer Diameter; D'; What to write: '{n} mm'",
+      "BRG-4 outside_diameter",
+      "Same as bore_diameter",
+      "[Before → after] OD: 52: 'outside_diameter: 52 mm'"
+    ],
+    "parent": "diameter"
+  },
+  {
+    "attribute": "width",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Width",
+      "B",
+      "Thickness",
+      "Bearing Width",
+      "Ring Width"
+    ],
+    "rules": [
+      "[Fields at a glance] BRG-5: 'width'; Labels you may see: 'Width; B; Thickness'; What to write: '{n} mm'",
+      "Same as bore_diameter"
+    ],
+    "parent": "width"
+  },
+  {
+    "attribute": "bearing seal_type",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Seal Type",
+      "Seals",
+      "Seal",
+      "Shields",
+      "Closure",
+      "Bearing Closure"
+    ],
+    "rules": [
+      "[Fields at a glance] BRG-6: 'seal_type'; Labels you may see: 'Seals; Seal; Shields; Closure'; What to write: 'Picklist value'",
+      "IF value IN (rubber seals both sides; 2RS1; LLU; sealed both sides) THEN write \"2RS\"",
+      "IF value IN (metal shields; shielded both sides; ZZ) THEN write \"2Z\"",
+      "IF value IN (one rubber seal; RS1) THEN write \"RS\"",
+      "IF value IN (one shield) THEN write \"Z\"",
+      "IF value IN (open; no seals) THEN write \"Open\"",
+      "[Before → after] Seals: metal shields: 'seal_type: 2Z'"
+    ],
+    "parent": "seal"
+  },
+  {
+    "attribute": "internal_clearance",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Clearance",
+      "Internal Clearance",
+      "Radial Clearance",
+      "CN",
+      "C3",
+      "Bearing Clearance"
+    ],
+    "rules": [
+      "[Fields at a glance] BRG-7: 'internal_clearance'; Labels you may see: 'Clearance; Internal Clearance; Radial Clearance'; What to write: 'Picklist value'",
+      "IF value IN (C2; less than normal) THEN write \"C2\"",
+      "IF value IN (normal; CN; standard) THEN write \"CN\"",
+      "IF value IN (C3; C 3; greater than normal) THEN write \"C3\"",
+      "IF value IN (C4) THEN write \"C4\"",
+      "IF value IN (C5) THEN write \"C5\"",
+      "[Before → after] Clearance: normal: 'internal_clearance: CN'"
+    ],
+    "parent": "clearance"
+  },
+  {
+    "attribute": "cage_material",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Cage",
+      "Cage Material",
+      "Retainer",
+      "Bearing Cage",
+      "Steel Cage",
+      "Brass Cage",
+      "Polyamide Cage"
+    ],
+    "rules": [
+      "[Fields at a glance] BRG-8: 'cage_material'; Labels you may see: 'Cage; Cage Material; Retainer'; What to write: 'Picklist value'",
+      "IF value IN (J; pressed steel; steel) THEN write \"Steel\"",
+      "IF value IN (M; MA; machined brass; brass) THEN write \"Brass\"",
+      "IF value IN (TN9; TN; nylon; PA66; polyamide) THEN write \"Polyamide\"",
+      "Before → after (columns: BEFORE; AFTER)",
+      "[Before → after] Cage: TN9: 'cage_material: Polyamide'"
+    ],
+    "parent": "material"
+  },
+  {
+    "attribute": "Mechanical Seal",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "Mech Seal",
+      "Mechanical Seal",
+      "Pump Seal",
+      "Cartridge Seal",
+      "API Seal"
+    ],
+    "rules": [
+      "Mechanical seals follow API 682, so most of the vocabulary is already standard - it's just written fifteen different ways. Stick to the API words and you're done.",
+      "Write the category as: Mechanical Seal  You may receive: Mech Seal; Mechanical Seal; Pump Seal; Cartridge Seal",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] Rule: 'MSL-1'; Field key: 'arrangement'; Labels you may see: 'Arrangement; Config; Configuration'; What to write: 'Arrangement 1 | 2 | 3'",
+      "[Fields at a glance] Rule: 'MSL-2'; Field key: 'seal_category'; Labels you may see: 'Category; Cat; API Category'; What to write: 'Category 1 | 2 | 3'",
+      "[Fields at a glance] Rule: 'MSL-3'; Field key: 'seal_type'; Labels you may see: 'Seal Type; Type; Design'; What to write: 'Type A | B | C'",
+      "[Fields at a glance] Rule: 'MSL-4'; Field key: 'shaft_diameter'; Labels you may see: 'Shaft Size; Shaft Dia; Sleeve Size; Shaft'; What to write: '{n} mm'",
+      "[Fields at a glance] Rule: 'MSL-5'; Field key: 'face_combination'; Labels you may see: 'Faces; Face Materials; Face Combination'; What to write: '{rotating}/{stationary}'",
+      "[Fields at a glance] Rule: 'MSL-6'; Field key: 'secondary_seal'; Labels you may see: 'Elastomer; Secondary Seal; O-rings'; What to write: 'Picklist value (same as O-Ring material)'",
+      "[Fields at a glance] Rule: 'MSL-7'; Field key: 'flush_plan'; Labels you may see: 'Flush Plan; API Plan; Piping Plan'; What to write: 'Plan {code}'"
+    ],
+    "parent": "seal"
+  },
+  {
+    "attribute": "arrangement",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Arrangement",
+      "Config",
+      "Configuration",
+      "Seal Arrangement",
+      "Arrangement 1",
+      "Arrangement 2",
+      "Arrangement 3"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'MSL-1'; Field key: 'arrangement'; Labels you may see: 'Arrangement; Config; Configuration'; What to write: 'Arrangement 1 | 2 | 3'",
+      "MSL-1 arrangement",
+      "IF value IN (single; single seal) THEN write \"Arrangement 1\"",
+      "IF value IN (tandem; dual unpressurized; dual unpressurised) THEN write \"Arrangement 2\"",
+      "IF value IN (double; dual pressurized; double pressurized; back-to-back) THEN write \"Arrangement 3\"",
+      "[Before → after] Arrangement: tandem: 'arrangement: Arrangement 2'",
+      "[Before → after] Config: double pressurized: 'arrangement: Arrangement 3'"
+    ],
+    "parent": "arrangement"
+  },
+  {
+    "attribute": "seal_category",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Category",
+      "Cat",
+      "API Category",
+      "Seal Category",
+      "CAT2",
+      "Category 1",
+      "Category 2"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'MSL-2'; Field key: 'seal_category'; Labels you may see: 'Category; Cat; API Category'; What to write: 'Category 1 | 2 | 3'",
+      "MSL-2 seal_category",
+      "IF value matches cat 1/2/3 in any spelling (CAT2, Cat. 2) THEN write Category n",
+      "[Before → after] Category: CAT2: 'seal_category: Category 2'"
+    ],
+    "parent": "seal"
+  },
+  {
+    "attribute": "mechanical seal_type",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Seal Type",
+      "Type",
+      "Design",
+      "Pusher",
+      "Metal Bellows",
+      "Type A",
+      "Type B",
+      "Type C"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'MSL-3'; Field key: 'seal_type'; Labels you may see: 'Seal Type; Type; Design'; What to write: 'Type A | B | C'",
+      "MSL-3 seal_type",
+      "IF value IN (pusher; O-ring pusher; rotating pusher) THEN write \"Type A\"",
+      "IF value IN (metal bellows; low temperature bellows) THEN write \"Type B\"",
+      "IF value IN (high temperature metal bellows; flexible graphite bellows) THEN write \"Type C\"",
+      "[Before → after] Seal Type: metal bellows: 'seal_type: Type B'"
+    ],
+    "parent": "seal"
+  },
+  {
+    "attribute": "shaft_diameter",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Shaft Size",
+      "Shaft Dia",
+      "Sleeve Size",
+      "Shaft",
+      "Shaft Diameter",
+      "Shaft OD"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'MSL-4'; Field key: 'shaft_diameter'; Labels you may see: 'Shaft Size; Shaft Dia; Sleeve Size; Shaft'; What to write: '{n} mm'",
+      "MSL-4 shaft_diameter",
+      "REMOVE the diameter sign Ø",
+      "IF unit is inch THEN multiply by 25.4",
+      "[Before → after] Shaft Size: 2.5 in: 'shaft_diameter: 63.5 mm'",
+      "[Before → after] Shaft Dia: Ø60: 'shaft_diameter: 60 mm'"
+    ],
+    "parent": "diameter"
+  },
+  {
+    "attribute": "face_combination",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Faces",
+      "Face Materials",
+      "Face Combination",
+      "Seal Faces",
+      "Rotating Face",
+      "Stationary Face",
+      "SiC/Carbon"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'MSL-5'; Field key: 'face_combination'; Labels you may see: 'Faces; Face Materials; Face Combination'; What to write: '{rotating}/{stationary}'",
+      "MSL-5 face_combination",
+      "IF value IN (carbon; carbon graphite; antimony carbon) THEN write \"Carbon\"",
+      "IF value IN (silicon carbide; SSiC; RBSiC; SiC) THEN write \"SiC\"",
+      "IF value IN (tungsten carbide; WC; TC) THEN write \"TC\"",
+      "Translate each face with the picklist, keep the order given, join with / (no spaces)",
+      "Separators vs, v, against, - , / all mean the same",
+      "[Before → after] Faces: SiC vs carbon: 'face_combination: SiC/Carbon'",
+      "[Before → after] Face Materials: tungsten carbide / silicon carbide: 'face_combination: TC/SiC'"
+    ],
+    "parent": "face_combination"
+  },
+  {
+    "attribute": "secondary_seal",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Elastomer",
+      "Secondary Seal",
+      "O-rings",
+      "O-Ring Material",
+      "NBR",
+      "FKM",
+      "EPDM"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'MSL-6'; Field key: 'secondary_seal'; Labels you may see: 'Elastomer; Secondary Seal; O-rings'; What to write: 'Picklist value (same as O-Ring material)'",
+      "IF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\"",
+      "IF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\"",
+      "IF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\"",
+      "IF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\"",
+      "IF value IN (EPR; ethylene propylene) THEN write \"EPDM\"",
+      "IF value IN (silicone; Si) THEN write \"VMQ\"",
+      "IF value IN (Aflas; TFE/P) THEN write \"FEPM\"",
+      "[Before → after] Elastomer: Viton: 'secondary_seal: FKM'"
+    ],
+    "parent": "seal"
+  },
+  {
+    "attribute": "flush_plan",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Flush Plan",
+      "API Plan",
+      "Piping Plan",
+      "Plan",
+      "Plan 53A",
+      "Plan 11/52"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'MSL-7'; Field key: 'flush_plan'; Labels you may see: 'Flush Plan; API Plan; Piping Plan'; What to write: 'Plan {code}'",
+      "Write Plan, one space, the plan number, suffix letter in capitals: Plan 53A",
+      "Combined plans joined with /: Plan 11/52",
+      "[Before → after] Flush Plan: API plan 53a: 'flush_plan: Plan 53A'",
+      "Before → after (columns: BEFORE; AFTER)"
+    ],
+    "parent": "flush_plan"
+  },
+  {
+    "attribute": "O-Ring",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "O-ring",
+      "Oring",
+      "O Ring",
+      "Seal Ring",
+      "Toroidal Seal"
+    ],
+    "rules": [
+      "O-rings are cheap, but a wrong one stops a compressor. The two things that matter are size and compound. Note the special rule: O-ring dimensions always have two decimals.",
+      "Write the category as: O-Ring  You may receive: O-ring; Oring; O Ring; Seal Ring; Toroidal Seal",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] Rule: 'ORG-1'; Field key: 'size_reference'; Labels you may see: 'Size; Dash No; Dash Number; AS568'; What to write: 'AS568-{nnn}'",
+      "[Fields at a glance] Rule: 'ORG-2'; Field key: 'inner_diameter'; Labels you may see: 'ID; Inner Diameter; Inside Diameter'; What to write: '{n.nn} mm (two decimals!)'",
+      "[Fields at a glance] Rule: 'ORG-3'; Field key: 'cross_section'; Labels you may see: 'CS; Cross Section; Section; W'; What to write: '{n.nn} mm (two decimals!)'",
+      "[Fields at a glance] Rule: 'ORG-4'; Field key: 'material'; Labels you may see: 'Material; Compound; Elastomer'; What to write: 'Picklist value'",
+      "[Fields at a glance] Rule: 'ORG-5'; Field key: 'hardness'; Labels you may see: 'Hardness; Durometer; Shore'; What to write: '{n} Shore A'",
+      "[Fields at a glance] Rule: 'ORG-6'; Field key: 'aed_resistant'; Labels you may see: 'RGD; AED; Explosive Decompression; ED Resistant'; What to write: 'Yes | No'",
+      "Q. The category is spelled 'Oring' / 'O Ring' / 'o-ring'.",
+      "A. All the same: write O-Ring (GR1). Watch the capital R."
+    ],
+    "parent": "O-Ring"
+  },
+  {
+    "attribute": "size_reference",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Size",
+      "Dash No",
+      "Dash Number",
+      "AS568",
+      "Size Reference",
+      "AS568-214"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'ORG-1'; Field key: 'size_reference'; Labels you may see: 'Size; Dash No; Dash Number; AS568'; What to write: 'AS568-{nnn}'",
+      "ORG-1 size_reference",
+      "IF value is a 3-digit dash number with or without prefix (214, -214, 2-214, AS 568-214) THEN write AS568-214",
+      "The leading '2-' used by some suppliers is a compound prefix, not part of the size",
+      "[Before → after] Size: 2-214: 'size_reference: AS568-214'",
+      "[Before → after] Dash No: 214: 'size_reference: AS568-214'",
+      "AS568 O-ring sizes (selection) (columns: Dash no.; ID, mm; CS, mm)",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-010'; ID, mm: '6.07'; CS, mm: '1.78'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-014'; ID, mm: '12.42'; CS, mm: '1.78'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-110'; ID, mm: '9.19'; CS, mm: '2.62'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-116'; ID, mm: '18.72'; CS, mm: '2.62'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-210'; ID, mm: '18.64'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-214'; ID, mm: '24.99'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-222'; ID, mm: '37.69'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-325'; ID, mm: '37.47'; CS, mm: '5.33'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-334'; ID, mm: '59.69'; CS, mm: '5.33'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-428'; ID, mm: '113.67'; CS, mm: '6.99'"
+    ],
+    "parent": "size"
+  },
+  {
+    "attribute": "inner_diameter",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "ID",
+      "Inner Diameter",
+      "Inside Diameter",
+      "O-Ring ID",
+      "Bore",
+      "Inside Dia"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'ORG-2'; Field key: 'inner_diameter'; Labels you may see: 'ID; Inner Diameter; Inside Diameter'; What to write: '{n.nn} mm (two decimals!)'",
+      "ORG-2 inner_diameter",
+      "IF inch THEN x 25.4",
+      "ALWAYS two decimals: 25.00 mm",
+      "[Before → after] ID: 0.984 in: 'inner_diameter: 24.99 mm'",
+      "Pro tip. Two decimals for O-rings is deliberate: AS568 sizes differ by as little as 0.08 mm, and rounding to one decimal merges different rings.",
+      "Q. Can I write 25.0 mm to show precision?",
+      "A. Not for normal fields (GR4 drops trailing zeros). O-ring dimensions are the exception: always two decimals.",
+      "AS568 O-ring sizes (selection) (columns: Dash no.; ID, mm; CS, mm)",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-010'; ID, mm: '6.07'; CS, mm: '1.78'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-014'; ID, mm: '12.42'; CS, mm: '1.78'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-110'; ID, mm: '9.19'; CS, mm: '2.62'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-116'; ID, mm: '18.72'; CS, mm: '2.62'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-210'; ID, mm: '18.64'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-214'; ID, mm: '24.99'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-222'; ID, mm: '37.69'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-325'; ID, mm: '37.47'; CS, mm: '5.33'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-334'; ID, mm: '59.69'; CS, mm: '5.33'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-428'; ID, mm: '113.67'; CS, mm: '6.99'"
+    ],
+    "parent": "diameter"
+  },
+  {
+    "attribute": "cross_section",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "CS",
+      "Cross Section",
+      "Section",
+      "W",
+      "O-Ring Section",
+      "Section Diameter"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'ORG-3'; Field key: 'cross_section'; Labels you may see: 'CS; Cross Section; Section; W'; What to write: '{n.nn} mm (two decimals!)'",
+      "ORG-3 cross_section",
+      "Decimal comma becomes point: 3,53 -> 3.53 mm",
+      "[Before → after] Cross Section: 0.139\": 'cross_section: 3.53 mm'",
+      "[Before → after] CS: 3,53: 'cross_section: 3.53 mm'",
+      "Pro tip. Two decimals for O-rings is deliberate: AS568 sizes differ by as little as 0.08 mm, and rounding to one decimal merges different rings.",
+      "Q. Can I write 25.0 mm to show precision?",
+      "A. Not for normal fields (GR4 drops trailing zeros). O-ring dimensions are the exception: always two decimals.",
+      "AS568 O-ring sizes (selection) (columns: Dash no.; ID, mm; CS, mm)",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-010'; ID, mm: '6.07'; CS, mm: '1.78'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-014'; ID, mm: '12.42'; CS, mm: '1.78'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-110'; ID, mm: '9.19'; CS, mm: '2.62'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-116'; ID, mm: '18.72'; CS, mm: '2.62'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-210'; ID, mm: '18.64'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-214'; ID, mm: '24.99'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-222'; ID, mm: '37.69'; CS, mm: '3.53'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-325'; ID, mm: '37.47'; CS, mm: '5.33'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-334'; ID, mm: '59.69'; CS, mm: '5.33'",
+      "[AS568 O-ring sizes (selection)] Dash no.: '-428'; ID, mm: '113.67'; CS, mm: '6.99'"
+    ],
+    "parent": "cross_section"
+  },
+  {
+    "attribute": "material",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Material",
+      "Compound",
+      "Elastomer",
+      "O-Ring Material",
+      "NBR",
+      "HNBR",
+      "FKM",
+      "VMQ"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'ORG-4'; Field key: 'material'; Labels you may see: 'Material; Compound; Elastomer'; What to write: 'Picklist value'",
+      "ORG-4 material",
+      "IF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\"",
+      "IF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\"",
+      "IF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\"",
+      "IF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\"",
+      "IF value IN (EPR; ethylene propylene) THEN write \"EPDM\"",
+      "IF value IN (silicone; Si) THEN write \"VMQ\"",
+      "IF value IN (Aflas; TFE/P) THEN write \"FEPM\"",
+      "[Before → after] Material: Viton: 'material: FKM'",
+      "[Before → after] Compound: Buna-N: 'material: NBR'",
+      "[Before → after] Material: silicone: 'material: VMQ'"
+    ],
+    "parent": "material"
+  },
+  {
+    "attribute": "hardness",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Hardness",
+      "Durometer",
+      "Shore",
+      "Shore A",
+      "IRHD",
+      "Duro"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'ORG-5'; Field key: 'hardness'; Labels you may see: 'Hardness; Durometer; Shore'; What to write: '{n} Shore A'",
+      "ORG-5 hardness",
+      "IF value in duro, A, Sh A, Shore A or IRHD THEN write {n} Shore A (IRHD treated as equal)",
+      "[Before → after] Hardness: 70 duro: 'hardness: 70 Shore A'",
+      "[Before → after] Hardness: 90 IRHD: 'hardness: 90 Shore A'"
+    ],
+    "parent": "hardness"
+  },
+  {
+    "attribute": "aed_resistant",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "RGD",
+      "AED",
+      "Explosive Decompression",
+      "ED Resistant",
+      "AED Resistant",
+      "NORSOK M-710",
+      "ISO 23936-2"
+    ],
+    "rules": [
+      "[Fields at a glance] Rule: 'ORG-6'; Field key: 'aed_resistant'; Labels you may see: 'RGD; AED; Explosive Decompression; ED Resistant'; What to write: 'Yes | No'",
+      "ORG-6 aed_resistant",
+      "IF value mentions RGD resistant, AED, ED, NORSOK M-710 or ISO 23936-2 THEN Yes",
+      "[Before → after] RGD: NORSOK M-710: 'aed_resistant: Yes'"
+    ],
+    "parent": "aed_resistant"
+  },
+  {
+    "attribute": "V-Belt",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "V Belt",
+      "Vee Belt",
+      "Wedge Belt",
+      "Drive Belt",
+      "Fan Belt",
+      "Power Transmission Belt"
+    ],
+    "rules": [
+      "Write the category as: V-Belt  You may receive: V Belt; Vee Belt; Wedge Belt; Drive Belt; Fan Belt",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] VBT-1: 'belt_section'; Section; Profile; Belt Section: 'Picklist value'",
+      "[Fields at a glance] VBT-2: 'datum_length'; Length; Datum Length; Ld; Pitch Length: '{n} mm (whole number)'",
+      "[Fields at a glance] VBT-3: 'construction'; Type; Construction; Belt Type: 'Picklist value'",
+      "[Fields at a glance] VBT-4: 'matched_set_qty'; Set; Matched Set; Qty in Set: '{n}'"
+    ],
+    "parent": "belt"
+  },
+  {
+    "attribute": "V-Belt identity",
+    "type": "local",
+    "kind": "identity",
+    "aliases": [
+      "Belt Identity",
+      "Section",
+      "Belt Section",
+      "Datum Length",
+      "Pitch Length",
+      "Ld",
+      "Length"
+    ],
+    "rules": [
+      "V-belts come in classical (A, B, C, D), narrow wedge (SPZ, SPA, SPB, SPC) and US narrow (3V, 5V, 8V) sections. The section plus the datum length is the whole identity of the belt."
+    ],
+    "parent": "belt"
+  },
+  {
+    "attribute": "belt_section",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Section",
+      "Profile",
+      "Belt Section",
+      "13x8",
+      "17x11",
+      "SPB",
+      "XPZ",
+      "3V",
+      "Top Width"
+    ],
+    "rules": [
+      "[Fields at a glance] VBT-1: 'belt_section'; Section; Profile; Belt Section: 'Picklist value'",
+      "VBT-1 belt_section",
+      "IF value IN (13x8; 13 x 8 mm) THEN write \"A\"",
+      "IF value IN (17x11; 17 x 11 mm) THEN write \"B\"",
+      "IF value IN (22x14) THEN write \"C\"",
+      "IF value IN (32x19) THEN write \"D\"",
+      "IF value IN (spz) THEN write \"SPZ\"",
+      "IF value IN (spa) THEN write \"SPA\"",
+      "IF value IN (spb) THEN write \"SPB\"",
+      "IF value IN (spc) THEN write \"SPC\"",
+      "IF value IN (XPZ; cogged SPZ) THEN write \"XPZ\"",
+      "IF value IN (XPA) THEN write \"XPA\"",
+      "IF value IN (XPB) THEN write \"XPB\"",
+      "IF value IN (3V; 9N) THEN write \"3V\"",
+      "IF value IN (5V; 15N) THEN write \"5V\"",
+      "[Before → after] Section: spb: 'belt_section: SPB'",
+      "[Before → after] Profile: 17x11: 'belt_section: B'",
+      "[Before → after] Section: 13 x 8 mm: 'belt_section: A'",
+      "Classical V-belt sections (columns: Section; Top width x height, mm; Datum length = inside length +)",
+      "[Classical V-belt sections] Section: 'A'; Top width x height, mm: '13 x 8'; Datum length = inside length +: '+30'",
+      "[Classical V-belt sections] Section: 'B'; Top width x height, mm: '17 x 11'; Datum length = inside length +: '+40'",
+      "[Classical V-belt sections] Section: 'C'; Top width x height, mm: '22 x 14'; Datum length = inside length +: '+58'",
+      "[Classical V-belt sections] Section: 'D'; Top width x height, mm: '32 x 19'; Datum length = inside length +: '+75'"
+    ],
+    "parent": "belt"
+  },
+  {
+    "attribute": "datum_length",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Length",
+      "Datum Length",
+      "Ld",
+      "Pitch Length",
+      "Datum",
+      "Belt Length",
+      "Inside Length"
+    ],
+    "rules": [
+      "[Fields at a glance] VBT-2: 'datum_length'; Length; Datum Length; Ld; Pitch Length: '{n} mm (whole number)'",
+      "VBT-2 datum_length",
+      "REMOVE Ld, Lw, Lp prefixes",
+      "IF value looks like A42, B75 (classical, inside length in inches) THEN datum = inches x 25.4 + offset",
+      "(A +30, B +40, C +58, D +75 mm)",
+      "[Before → after] Length: 2000mm: 'datum_length: 2000 mm'",
+      "[Before → after] Datum Length: Ld 1250: 'datum_length: 1250 mm'",
+      "[Before → after] Length: B75: 'datum_length: 1945 mm'",
+      "Classical V-belt sections (columns: Section; Top width x height, mm; Datum length = inside length +)",
+      "[Classical V-belt sections] Section: 'A'; Top width x height, mm: '13 x 8'; Datum length = inside length +: '+30'",
+      "[Classical V-belt sections] Section: 'B'; Top width x height, mm: '17 x 11'; Datum length = inside length +: '+40'",
+      "[Classical V-belt sections] Section: 'C'; Top width x height, mm: '22 x 14'; Datum length = inside length +: '+58'",
+      "[Classical V-belt sections] Section: 'D'; Top width x height, mm: '32 x 19'; Datum length = inside length +: '+75'"
+    ],
+    "parent": "length"
+  },
+  {
+    "attribute": "construction",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Type",
+      "Construction",
+      "Belt Type",
+      "Wrapped",
+      "Raw Edge Cogged",
+      "Banded",
+      "Notched"
+    ],
+    "rules": [
+      "[Fields at a glance] VBT-3: 'construction'; Type; Construction; Belt Type: 'Picklist value'",
+      "VBT-3 construction",
+      "IF value IN (wrapped; classical wrapped; envelope) THEN write \"Wrapped\"",
+      "IF value IN (cogged; notched; raw edge; XP) THEN write \"Raw Edge Cogged\"",
+      "IF value IN (power band; banded; joined; multi-belt) THEN write \"Banded\"",
+      "[Before → after] Type: notched: 'construction: Raw Edge Cogged'",
+      "[Before → after] Construction: power band: 'construction: Banded'"
+    ],
+    "parent": "construction"
+  },
+  {
+    "attribute": "matched_set_qty",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Set",
+      "Matched Set",
+      "Qty in Set",
+      "Set Quantity",
+      "Matched Quantity",
+      "Number in Set"
+    ],
+    "rules": [
+      "[Fields at a glance] VBT-4: 'matched_set_qty'; Set; Matched Set; Qty in Set: '{n}'",
+      "VBT-4 matched_set_qty",
+      "Keep only the number: set of 4 -> 4",
+      "[Before → after] Set: set of 4: 'matched_set_qty: 4'"
+    ],
+    "parent": "matched_set_qty"
+  },
+  {
+    "attribute": "Lubricating Oil",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "Oil",
+      "Lube Oil",
+      "Lubricant",
+      "Turbine Oil",
+      "Hydraulic Oil",
+      "Gear Oil",
+      "Compressor Oil"
+    ],
+    "rules": [
+      "One oil, a dozen names. Grade, base stock and application are what make two oils interchangeable - brand names are not part of this guide and never go in a field.",
+      "Write the category as: Lubricating Oil  You may receive: Oil; Lube Oil; Lubricant; Turbine Oil; Hydraulic Oil; Gear Oil; Compressor Oil",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] LUB-1: 'viscosity_grade'; Viscosity; Grade; Viscosity Grade; VG: 'ISO VG {n} | SAE {grade}'",
+      "[Fields at a glance] LUB-2: 'base_oil'; Base Oil; Base Stock; Base: 'Picklist value'",
+      "[Fields at a glance] LUB-3: 'application'; Application; Use; Service: 'Picklist value'",
+      "[Fields at a glance] LUB-4: 'iso_class'; ISO Class; ISO 6743; Classification: 'ISO 6743 family letters'",
+      "[Fields at a glance] LUB-5: 'pack_size'; Pack; Pack Size; Packaging; Container: '{n} L'"
+    ],
+    "parent": "oil"
+  },
+  {
+    "attribute": "viscosity_grade",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Viscosity",
+      "Grade",
+      "Viscosity Grade",
+      "VG",
+      "ISO VG",
+      "SAE Grade",
+      "cSt"
+    ],
+    "rules": [
+      "[Fields at a glance] LUB-1: 'viscosity_grade'; Viscosity; Grade; Viscosity Grade; VG: 'ISO VG {n} | SAE {grade}'",
+      "LUB-1 viscosity_grade",
+      "IF value is VG46, ISO 46, ISO VG46 or 46 cSt THEN ISO VG 46 (valid ISO grades: 10 15 22 32 46 68 100 150 220 320 460 680)",
+      "IF value is a multigrade like 15W40 THEN SAE 15W-40 (hyphen before the hot grade)",
+      "IF value is SAE 90, SAE 140 THEN keep SAE {n}",
+      "[Before → after] Viscosity: VG46: 'viscosity_grade: ISO VG 46'",
+      "[Before → after] Grade: ISO 32: 'viscosity_grade: ISO VG 32'",
+      "[Before → after] Viscosity Grade: 15W40: 'viscosity_grade: SAE 15W-40'",
+      "[Before → after] Viscosity: 320 cSt: 'viscosity_grade: ISO VG 320'"
+    ],
+    "parent": "viscosity"
+  },
+  {
+    "attribute": "base_oil",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Base Oil",
+      "Base Stock",
+      "Base",
+      "Mineral",
+      "PAO",
+      "Synthetic Hydrocarbon",
+      "Ester",
+      "PAG"
+    ],
+    "rules": [
+      "[Fields at a glance] LUB-2: 'base_oil'; Base Oil; Base Stock; Base: 'Picklist value'",
+      "LUB-2 base_oil",
+      "IF value IN (mineral; Group I; Group II) THEN write \"Mineral\"",
+      "IF value IN (Group III; hydrocracked) THEN write \"Group III\"",
+      "IF value IN (synthetic hydrocarbon; polyalphaolefin; PAO) THEN write \"PAO\"",
+      "IF value IN (ester; synthetic ester) THEN write \"Ester\"",
+      "IF value IN (polyglycol; polyalkylene glycol; PAG) THEN write \"PAG\"",
+      "Watch out! 'Semi-synthetic' and 'synthetic blend' don't tell you the base - write CHECK: and let the lubrication engineer decide.",
+      "[Before → after] Base Oil: synthetic hydrocarbon: 'base_oil: PAO'",
+      "[Before → after] Base Stock: semi-synthetic: 'base_oil: CHECK: semi-synthetic'"
+    ],
+    "parent": "oil"
+  },
+  {
+    "attribute": "application",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Application",
+      "Use",
+      "Service",
+      "Turbine",
+      "Hydraulic",
+      "Gear",
+      "Compressor",
+      "Gas Engine"
+    ],
+    "rules": [
+      "[Fields at a glance] LUB-3: 'application'; Application; Use; Service: 'Picklist value'",
+      "IF value IN (R&O turbine; turbine; steam turbine) THEN write \"Turbine\"",
+      "IF value IN (AW hydraulic; hydraulic; HM) THEN write \"Hydraulic\"",
+      "IF value IN (EP gear; gear; industrial gear) THEN write \"Gear\"",
+      "IF value IN (compressor; screw compressor) THEN write \"Compressor\"",
+      "IF value IN (gas engine) THEN write \"Gas Engine\"",
+      "IF value IN (diesel; HDDO; engine oil) THEN write \"Diesel Engine\"",
+      "IF value IN (circulating; paper machine) THEN write \"Circulating\"",
+      "[Before → after] Application: AW hydraulic: 'application: Hydraulic'",
+      "[Before → after] Use: R&O turbine: 'application: Turbine'"
+    ],
+    "parent": "application"
+  },
+  {
+    "attribute": "iso_class",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "ISO Class",
+      "ISO 6743",
+      "Classification",
+      "ISO L-HM",
+      "HM",
+      "HL",
+      "HV"
+    ],
+    "rules": [
+      "[Fields at a glance] LUB-4: 'iso_class'; ISO Class; ISO 6743; Classification: 'ISO 6743 family letters'",
+      "REMOVE ISO, L- and the viscosity number: ISO L-HM 46 -> HM",
+      "Allowed: HH HL HM HV HG TSA TGA CKB CKC CKD DAA DAB DAH",
+      "[Before → after] ISO Class: ISO L-HM 46: 'iso_class: HM'"
+    ],
+    "parent": "iso_class"
+  },
+  {
+    "attribute": "pack_size",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Pack",
+      "Pack Size",
+      "Packaging",
+      "Container",
+      "Drum",
+      "Pail",
+      "IBC",
+      "Tote"
+    ],
+    "rules": [
+      "[Fields at a glance] LUB-5: 'pack_size'; Pack; Pack Size; Packaging; Container: '{n} L'",
+      "IF value IN (drum; 55 gal drum; 205 L drum; 45 imp gal drum) THEN write \"208 L\"",
+      "IF value IN (5 gal pail) THEN write \"18.9 L\"",
+      "IF value IN (IBC; tote) THEN write \"1000 L\"",
+      "Standard packs first (table above), otherwise convert gallons x 3.785, quarts x 0.946",
+      "Before → after (columns: BEFORE; AFTER)",
+      "[Before → after] Pack: 55 gal drum: 'pack_size: 208 L'",
+      "[Before → after] Pack Size: 5 gal pail: 'pack_size: 18.9 L'",
+      "[Before → after] Packaging: IBC: 'pack_size: 1000 L'"
+    ],
+    "parent": "size"
+  },
+  {
+    "attribute": "Grease",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "Grease",
+      "Lubricating Grease",
+      "EP Grease",
+      "Bearing Grease",
+      "Industrial Grease"
+    ],
+    "rules": [
+      "Greases are defined by consistency (NLGI), thickener and base oil viscosity. Get those three right and you can find a substitute in any warehouse.",
+      "Write the category as: Grease  You may receive: Grease; Lubricating Grease; EP Grease; Bearing Grease",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] GRS-1: 'nlgi_grade'; NLGI; NLGI Grade; Consistency; Grade: 'NLGI {n}'",
+      "[Fields at a glance] GRS-2: 'thickener'; Thickener; Soap; Soap Type: 'Picklist value'",
+      "[Fields at a glance] GRS-3: 'base_oil_viscosity'; Base Oil Viscosity; Base Viscosity; Oil Viscosity: '{n} cSt @ 40 °C'",
+      "[Fields at a glance] GRS-4: 'ep_additive'; EP; Extreme Pressure; EP Additive: 'Yes | No'",
+      "[Fields at a glance] GRS-5: 'pack_size'; Pack; Pack Size; Packaging: '{n} kg'",
+      "Before → after (columns: BEFORE; AFTER)"
+    ],
+    "parent": "Grease"
+  },
+  {
+    "attribute": "nlgi_grade",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "NLGI",
+      "NLGI Grade",
+      "Consistency",
+      "Grade",
+      "Grease Grade",
+      "NLGI Number"
+    ],
+    "rules": [
+      "BEFORE: 'EP2 (for nlgi_grade)'; AFTER: 'NLGI 2'",
+      "[Fields at a glance] GRS-1: 'nlgi_grade'; NLGI; NLGI Grade; Consistency; Grade: 'NLGI {n}'",
+      "GRS-1 nlgi_grade",
+      "Strip EP, #, grade and spaces, keep the number: EP2 -> NLGI 2; #2 -> NLGI 2",
+      "Grades 000 and 00 keep their zeros: NLGI 00",
+      "[Before → after] NLGI: EP2: 'nlgi_grade: NLGI 2'",
+      "[Before → after] Consistency: #2: 'nlgi_grade: NLGI 2'",
+      "[Before → after] NLGI Grade: 00: 'nlgi_grade: NLGI 00'",
+      "Q. The value is right but in the wrong field. Can I move it?",
+      "A. No (GR8). Translate what is in the row. If 'EP2' arrives in the nlgi_grade field, write NLGI 2 there; whoever sends ep_additive separately will get Yes on that row."
+    ],
+    "parent": "nlgi_grade"
+  },
+  {
+    "attribute": "thickener",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Thickener",
+      "Soap",
+      "Soap Type",
+      "Thickener Type",
+      "Grease Thickener"
+    ],
+    "rules": [
+      "[Fields at a glance] GRS-2: 'thickener'; Thickener; Soap; Soap Type: 'Picklist value'",
+      "GRS-2 thickener",
+      "IF value IN (lithium; Li; lithium soap) THEN write \"Lithium\"",
+      "IF value IN (Li complex; Li-X; LiX; lithium complex) THEN write \"Lithium Complex\"",
+      "IF value IN (Ca sulphonate; calcium sulfonate; CaS) THEN write \"Calcium Sulfonate\"",
+      "IF value IN (polyurea; PU thickener) THEN write \"Polyurea\"",
+      "IF value IN (Al complex; aluminum complex) THEN write \"Aluminium Complex\"",
+      "IF value IN (clay; bentonite; organoclay) THEN write \"Bentonite\"",
+      "[Before → after] Thickener: Li complex: 'thickener: Lithium Complex'",
+      "[Before → after] Soap: Ca sulphonate: 'thickener: Calcium Sulfonate'"
+    ],
+    "parent": "thickener"
+  },
+  {
+    "attribute": "base_oil_viscosity",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Base Oil Viscosity",
+      "Base Viscosity",
+      "Oil Viscosity",
+      "Viscosity at 40 °C",
+      "cSt @ 40 °C"
+    ],
+    "rules": [
+      "[Fields at a glance] GRS-3: 'base_oil_viscosity'; Base Oil Viscosity; Base Viscosity; Oil Viscosity: '{n} cSt @ 40 °C'",
+      "GRS-3 base_oil_viscosity",
+      "IF ISO VG n base THEN n cSt @ 40 °C",
+      "mm2/s and mm2/s equal cSt",
+      "[Before → after] Base Oil Viscosity: ISO VG 220 base: 'base_oil_viscosity: 220 cSt @ 40 °C'"
+    ],
+    "parent": "viscosity"
+  },
+  {
+    "attribute": "ep_additive",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "EP",
+      "Extreme Pressure",
+      "EP Additive",
+      "Extreme Pressure Additive"
+    ],
+    "rules": [
+      "BEFORE: 'EP2 (for ep_additive)'; AFTER: 'Yes'",
+      "[Fields at a glance] GRS-4: 'ep_additive'; EP; Extreme Pressure; EP Additive: 'Yes | No'",
+      "GRS-4 ep_additive",
+      "IF value is EP or contains EP THEN Yes; IF non-EP THEN No",
+      "[Before → after] EP: EP: 'ep_additive: Yes'",
+      "Q. The value is right but in the wrong field. Can I move it?",
+      "A. No (GR8). Translate what is in the row. If 'EP2' arrives in the nlgi_grade field, write NLGI 2 there; whoever sends ep_additive separately will get Yes on that row."
+    ],
+    "parent": "ep_additive"
+  },
+  {
+    "attribute": "Grease pack_size",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Pack",
+      "Pack Size",
+      "Packaging",
+      "Container",
+      "Grease Pack",
+      "Grease Container"
+    ],
+    "rules": [
+      "[Fields at a glance] GRS-5: 'pack_size'; Pack; Pack Size; Packaging: '{n} kg'",
+      "GRS-5 pack_size",
+      "Grease is sold by weight: g / 1000, lb x 0.4536, oz x 0.02835; one decimal",
+      "[Before → after] Pack: 400 g cartridge: 'pack_size: 0.4 kg'",
+      "[Before → after] Pack: 35 lb pail: 'pack_size: 15.9 kg'",
+      "[Before → after] Pack Size: 14 oz tube: 'pack_size: 0.4 kg'"
+    ],
+    "parent": "size"
+  },
+  {
+    "attribute": "filter_service",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Filter Service",
+      "Service",
+      "Application",
+      "Filter Type",
+      "Use",
+      "Fluid Service"
+    ],
+    "rules": [
+      "[Fields at a glance] FLT-1: 'filter_service'; Service; Application; Filter Type: 'Picklist value'",
+      "FLT-1 filter_service",
+      "IF value IN (hydraulic; HYD) THEN write \"Hydraulic\"",
+      "IF value IN (LO; lube; lube oil) THEN write \"Lube Oil\"",
+      "IF value IN (fuel; diesel fuel) THEN write \"Fuel\"",
+      "IF value IN (inlet air; air intake; intake) THEN write \"Air Intake\"",
+      "IF value IN (coalescing; coalescer) THEN write \"Coalescer\"",
+      "IF value IN (gas; fuel gas) THEN write \"Gas\"",
+      "[Before → after] Service: LO: 'filter_service: Lube Oil'",
+      "[Before → after] Application: inlet air: 'filter_service: Air Intake'"
+    ],
+    "parent": "filter"
+  },
+  {
+    "attribute": "micron_rating",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Micron",
+      "Microns",
+      "Micron Rating",
+      "Rating",
+      "Filtration Rating",
+      "Particle Rating"
+    ],
+    "rules": [
+      "[Fields at a glance] FLT-2: 'micron_rating'; Micron; Micron Rating; Rating; Filtration Rating: '{n} µm'",
+      "FLT-2 micron_rating",
+      "micron, microns, u, um, µ all become µm",
+      "[Before → after] Micron: 10 micron: 'micron_rating: 10 μm'",
+      "[Before → after] Rating: 25u: 'micron_rating: 25 μm'",
+      "[Before → after] Micron Rating: n/a: 'micron_rating: TBD'"
+    ],
+    "parent": "rating"
+  },
+  {
+    "attribute": "rating_basis",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Beta",
+      "Rating Basis",
+      "Efficiency",
+      "Absolute",
+      "Nominal",
+      "Filtration Basis"
+    ],
+    "rules": [
+      "[Fields at a glance] FLT-3: 'rating_basis'; Beta; Rating Basis; Efficiency: 'Absolute | Nominal'",
+      "FLT-3 rating_basis",
+      "IF value IN (abs; absolute; beta 200; beta 1000; B10>=200) THEN write \"Absolute\"",
+      "IF value IN (nom; nominal) THEN write \"Nominal\"",
+      "[Before → after] Beta: beta 200: 'rating_basis: Absolute'"
+    ],
+    "parent": "rating"
+  },
+  {
+    "attribute": "media",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Media",
+      "Filter Media",
+      "Element Material",
+      "Filter Material",
+      "Glass Fiber",
+      "Cellulose",
+      "Stainless Steel Mesh"
+    ],
+    "rules": [
+      "[Fields at a glance] FLT-4: 'media'; Media; Filter Media; Element Material: 'Picklist value'",
+      "IF value IN (microglass; glass fibre; fiberglass) THEN write \"Glass Fiber\"",
+      "IF value IN (paper; cellulose) THEN write \"Cellulose\"",
+      "IF value IN (SS wire mesh; wire mesh; SS mesh) THEN write \"Stainless Steel Mesh\"",
+      "IF value IN (synthetic; polyester) THEN write \"Synthetic\" psid x 0.0689476, one decimal",
+      "[Before → after] Media: microglass: 'media: Glass Fiber'",
+      "[Before → after] Media: paper: 'media: Cellulose'"
+    ],
+    "parent": "media"
+  },
+  {
+    "attribute": "collapse_pressure",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Collapse",
+      "Collapse Pressure",
+      "Burst",
+      "Differential Rating",
+      "Collapse Rating",
+      "Differential Pressure"
+    ],
+    "rules": [
+      "[Fields at a glance] FLT-5: 'collapse_pressure'; Collapse; Collapse Pressure; Burst; Differential Rating: '{n} bar'",
+      "[Before → after] Collapse: 150 psid: 'collapse_pressure: 10.3 bar'"
+    ],
+    "parent": "pressure"
+  },
+  {
+    "attribute": "seal_material",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Seals",
+      "Seal Material",
+      "Gasket",
+      "Seal Compound",
+      "Filter Seal",
+      "NBR",
+      "HNBR",
+      "FKM"
+    ],
+    "rules": [
+      "[Fields at a glance] FLT-6: 'seal_material'; Seals; Seal Material; Gasket: 'Picklist value (same as O-Ring material)'",
+      "IF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\"",
+      "IF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\"",
+      "IF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\"",
+      "IF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\"",
+      "IF value IN (EPR; ethylene propylene) THEN write \"EPDM\"",
+      "IF value IN (silicone; Si) THEN write \"VMQ\"",
+      "IF value IN (Aflas; TFE/P) THEN write \"FEPM\"",
+      "[Before → after] Seals: Buna-N: 'seal_material: NBR'",
+      "Before → after (columns: BEFORE; AFTER)"
+    ],
+    "parent": "material"
+  },
+  {
+    "attribute": "Filter Element",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "Filter Element",
+      "Filter",
+      "Filter Cartridge",
+      "Cartridge",
+      "Element"
+    ],
+    "rules": [
+      "A filter element is described by what it filters, how fine, on which basis, and with what media. Part numbers are useful but they live in the purchasing record, not here.",
+      "Write the category as: Filter Element  You may receive: Filter; Filter Element; Filter Cartridge; Cartridge; Element",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] FLT-1: 'filter_service'; Service; Application; Filter Type: 'Picklist value'",
+      "[Fields at a glance] FLT-2: 'micron_rating'; Micron; Micron Rating; Rating; Filtration Rating: '{n} µm'",
+      "[Fields at a glance] FLT-3: 'rating_basis'; Beta; Rating Basis; Efficiency: 'Absolute | Nominal'",
+      "[Fields at a glance] FLT-4: 'media'; Media; Filter Media; Element Material: 'Picklist value'",
+      "[Fields at a glance] FLT-5: 'collapse_pressure'; Collapse; Collapse Pressure; Burst; Differential Rating: '{n} bar'",
+      "[Fields at a glance] FLT-6: 'seal_material'; Seals; Seal Material; Gasket: 'Picklist value (same as O-Ring material)'"
+    ],
+    "parent": "filter"
+  },
+  {
+    "attribute": "thread",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Size",
+      "Thread",
+      "Thread Size",
+      "Dia",
+      "Thread Diameter",
+      "UNC",
+      "TPI"
+    ],
+    "rules": [
+      "[Fields at a glance] BLT-1: 'thread'; Size; Thread; Thread Size; Dia: 'M{d}{x{pitch}} | {frac}-{t}pi}'",
+      "IF metric with coarse pitch (M16 x 2.0, M12x1.75) THEN drop the pitch: M16",
+      "IF metric with fine pitch THEN keep it: M16x1.5",
+      "IF inch fraction without TPI THEN add the UNC TPI from the table on page 20: 5/8\" UNC -> 5/8-11 UNC",
+      "IF inch with TPI but no series THEN assume UNC: 1/2-13 -> 1/2-13 UNC inch x 25.4, one decimal",
+      "[Before → after] Size: M16 x 2.0: 'thread: M16'",
+      "[Before → after] Thread: M16x1.5: 'thread: M16x1.5'",
+      "[Before → after] Thread: 5/8\" UNC: 'thread: 5/8-11 UNC'",
+      "[Before → after] Thread Size: 1/2-13: 'thread: 1/2-13 UNC'",
+      "UNC threads per inch (columns: Diameter, in; TPI (UNC))",
+      "[UNC threads per inch] Diameter, in: '1/4'; TPI (UNC): '20'",
+      "[UNC threads per inch] Diameter, in: '5/16'; TPI (UNC): '18'",
+      "[UNC threads per inch] Diameter, in: '3/8'; TPI (UNC): '16'",
+      "[UNC threads per inch] Diameter, in: '1/2'; TPI (UNC): '13'",
+      "[UNC threads per inch] Diameter, in: '5/8'; TPI (UNC): '11'",
+      "[UNC threads per inch] Diameter, in: '3/4'; TPI (UNC): '10'",
+      "[UNC threads per inch] Diameter, in: '7/8'; TPI (UNC): '9'",
+      "[UNC threads per inch] Diameter, in: '1'; TPI (UNC): '8'"
+    ],
+    "parent": "thread"
+  },
+  {
+    "attribute": "length",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Length",
+      "L",
+      "Bolt Length",
+      "Fastener Length"
+    ],
+    "rules": [
+      "[Fields at a glance] BLT-2: 'length'; Length; L; Bolt Length: '{n} mm'",
+      "[Before → after] Length: 2 in: 'length: 50.8 mm'",
+      "[Before → after] Length: 70mm: 'length: 70 mm'"
+    ],
+    "parent": "length"
+  },
+  {
+    "attribute": "strength_grade",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Grade",
+      "Property Class",
+      "Class",
+      "Strength",
+      "Bolt Grade",
+      "SAE Grade",
+      "ASTM Grade"
+    ],
+    "rules": [
+      "[Fields at a glance] BLT-3: 'strength_grade'; Grade; Property Class; Class; Strength: 'Picklist value'",
+      "IF value IN (8.8; cl 8.8; class 8.8) THEN write \"8.8\"",
+      "IF value IN (10.9; 10.9 class) THEN write \"10.9\"",
+      "IF value IN (12.9) THEN write \"12.9\"",
+      "IF value IN (A2 70; 304 SS 70) THEN write \"A2-70\"",
+      "IF value IN (A4 80; 316 SS 80) THEN write \"A4-80\"",
+      "IF value IN (Gr5; grade 5) THEN write \"SAE Grade 5\"",
+      "IF value IN (Gr8; grade 8) THEN write \"SAE Grade 8\"",
+      "IF value IN (A325) THEN write \"ASTM A325\"",
+      "IF value IN (A490) THEN write \"ASTM A490\"",
+      "[Before → after] Grade: Gr8: 'strength_grade: SAE Grade 8'",
+      "[Before → after] Property Class: A4 80: 'strength_grade: A4-80'"
+    ],
+    "parent": "strength_grade"
+  },
+  {
+    "attribute": "standard",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Standard",
+      "Spec",
+      "Norm",
+      "Bolt Standard",
+      "Thread Standard"
+    ],
+    "rules": [
+      "[Fields at a glance] BLT-4: 'standard'; Standard; Spec; Norm: 'Picklist value'",
+      "IF value IN (DIN 931; part thread; partially threaded) THEN write \"ISO 4014\"",
+      "IF value IN (DIN 933; fully threaded; full thread) THEN write \"ISO 4017\"",
+      "IF value IN (ANSI B18.2.1; B18.2.1) THEN write \"ASME B18.2.1\"",
+      "[Before → after] Standard: DIN 933: 'standard: ISO 4017'"
+    ],
+    "parent": "standard"
+  },
+  {
+    "attribute": "finish",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Finish",
+      "Coating",
+      "Surface",
+      "Surface Finish",
+      "Bolt Finish",
+      "Plating"
+    ],
+    "rules": [
+      "[Fields at a glance] BLT-5: 'finish'; Finish; Coating; Surface: 'Picklist value'",
+      "IF value IN (self colour; plain; black) THEN write \"Plain\"",
+      "IF value IN (BZP; ZP; electro-galvanized; zinc plated) THEN write \"Zinc Plated\"",
+      "IF value IN (HDG; galvanised; hot dip) THEN write \"Hot-Dip Galvanized\"",
+      "IF value IN (zinc flake) THEN write \"Zinc Flake\"",
+      "IF value IN (black oxide) THEN write \"Black Oxide\"",
+      "IF value IN (PTFE; Xylan; fluoropolymer) THEN write \"PTFE Coated\"",
+      "Before → after (columns: BEFORE; AFTER)",
+      "[Before → after] Finish: BZP: 'finish: Zinc Plated'",
+      "[Before → after] Coating: HDG: 'finish: Hot-Dip Galvanized'"
+    ],
+    "parent": "finish"
+  },
+  {
+    "attribute": "Hex Bolt",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "Bolt",
+      "Hex Bolt",
+      "Hex Head Bolt",
+      "Hex Cap Screw",
+      "HHB"
+    ],
+    "rules": [
+      "Hex bolts look simple until you meet DIN, ISO, SAE and ASTM in the same spreadsheet. The thread and the grade are the two fields people get wrong.",
+      "Write the category as: Hex Bolt  You may receive: Bolt; Hex Bolt; Hex Head Bolt; Hex Cap Screw; HHB",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] BLT-1: 'thread'; Size; Thread; Thread Size; Dia: 'M{d}{x{pitch}} | {frac}-{t}pi}'",
+      "[Fields at a glance] BLT-2: 'length'; Length; L; Bolt Length: '{n} mm'",
+      "[Fields at a glance] BLT-3: 'strength_grade'; Grade; Property Class; Class; Strength: 'Picklist value'",
+      "[Fields at a glance] BLT-4: 'standard'; Standard; Spec; Norm: 'Picklist value'",
+      "[Fields at a glance] BLT-5: 'finish'; Finish; Coating; Surface: 'Picklist value'",
+      "Before → after (columns: BEFORE; AFTER)"
+    ],
+    "parent": "Hex Bolt"
+  },
+  {
+    "attribute": "hose_standard",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Standard",
+      "Spec",
+      "Type",
+      "Hose Type",
+      "Hose Standard",
+      "Construction Standard",
+      "R1AT",
+      "R2AT",
+      "2SN"
+    ],
+    "rules": [
+      "[Fields at a glance] HSE-1: 'hose_standard'; Standard; Spec; Type; Hose Type: 'Picklist value'",
+      "HSE-1 hose_standard",
+      "IF value IN (R1AT; R1) THEN write \"SAE 100R1AT\"",
+      "IF value IN (R2AT; R2) THEN write \"SAE 100R2AT\"",
+      "IF value IN (1SN) THEN write \"EN 853 1SN\"",
+      "IF value IN (2SN) THEN write \"EN 853 2SN\"",
+      "IF value IN (4SP) THEN write \"EN 856 4SP\"",
+      "IF value IN (4SH) THEN write \"EN 856 4SH\"",
+      "IF value IN (R13) THEN write \"SAE 100R13\"",
+      "Watch out! R2AT and 2SN are not the same standard. Translate what is written; never swap one for the other.",
+      "[Before → after] Standard: 2SN: 'hose_standard: EN 853 2SN'",
+      "[Before → after] Type: R2AT: 'hose_standard: SAE 100R2AT'",
+      "[Before → after] Spec: 4SH: 'hose_standard: EN 856 4SH'",
+      "Q. Should I correct R2AT to 2SN because they're 'the same hose'?",
+      "A. Never. They're similar, not identical (see chapter 8)."
+    ],
+    "parent": "hose"
+  },
+  {
+    "attribute": "dash_size",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Size",
+      "ID",
+      "Hose Size",
+      "Dash Size",
+      "Dash",
+      "DN",
+      "Hose Dash"
+    ],
+    "rules": [
+      "[Fields at a glance] HSE-2: 'dash_size'; Size; ID; Hose Size; Dash Size: '{n}'",
+      "HSE-2 dash_size",
+      "Look up inch, mm or DN in the dash-size table (page 20): 1/2 in, 12.7 mm, DN12, #8 -> -8",
+      "[Before → after] Size: 1/2 in: 'dash_size: -8'",
+      "[Before → after] ID: DN12: 'dash_size: -8'",
+      "Hydraulic hose dash sizes (columns: Dash; Inch; mm; DN)",
+      "[Hydraulic hose dash sizes] Dash: '-4'; Inch: '1/4'; mm: '6.4'; DN: 'DN6'",
+      "[Hydraulic hose dash sizes] Dash: '-5'; Inch: '5/16'; mm: '7.9'; DN: 'DN8'",
+      "[Hydraulic hose dash sizes] Dash: '-6'; Inch: '3/8'; mm: '9.5'; DN: 'DN10'",
+      "[Hydraulic hose dash sizes] Dash: '-8'; Inch: '1/2'; mm: '12.7'; DN: 'DN12'",
+      "[Hydraulic hose dash sizes] Dash: '-10'; Inch: '5/8'; mm: '15.9'; DN: 'DN16'",
+      "[Hydraulic hose dash sizes] Dash: '-12'; Inch: '3/4'; mm: '19.1'; DN: 'DN19'",
+      "[Hydraulic hose dash sizes] Dash: '-16'; Inch: '1'; mm: '25.4'; DN: 'DN25'",
+      "[Hydraulic hose dash sizes] Dash: '-20'; Inch: '1-1/4'; mm: '31.8'; DN: 'DN31'",
+      "[Hydraulic hose dash sizes] Dash: '-24'; Inch: '1-1/2'; mm: '38.1'; DN: 'DN38'",
+      "[Hydraulic hose dash sizes] Dash: '-32'; Inch: '2'; mm: '50.8'; DN: 'DN51'"
+    ],
+    "parent": "size"
+  },
+  {
+    "attribute": "max_working_pressure",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "WP",
+      "Pressure",
+      "Working Pressure",
+      "MAWP",
+      "Maximum Working Pressure",
+      "Burst Pressure"
+    ],
+    "rules": [
+      "[Fields at a glance] HSE-3: 'max_working_pressure'; WP; Pressure; Working Pressure; MAWP: '{n} bar (whole number)'",
+      "HSE-3 max_working_pressure",
+      "psi x 0.0689476, MPa x 10, round to whole bar",
+      "[Before → after] WP: 5000 psi: 'max_working_pressure: 345 bar'",
+      "[Before → after] Pressure: 35 MPa: 'max_working_pressure: 350 bar'"
+    ],
+    "parent": "pressure"
+  },
+  {
+    "attribute": "end_fitting",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Fitting",
+      "End Fitting",
+      "Ends",
+      "Coupling",
+      "Hose Fitting",
+      "JIC",
+      "ORFS",
+      "BSPP",
+      "NPT"
+    ],
+    "rules": [
+      "[Fields at a glance] HSE-4: 'end_fitting'; Fitting; End Fitting; Ends; Coupling: 'Picklist value'",
+      "IF value IN (JIC female; JIC swivel; 37 deg female) THEN write \"JIC 37° Female Swivel\"",
+      "IF value IN (ORFS female; O-ring face seal) THEN write \"ORFS Female Swivel\"",
+      "IF value IN (BSP female; BSPP female) THEN write \"BSPP Female Swivel\"",
+      "IF value IN (NPT male; MNPT) THEN write \"NPT Male\"",
+      "IF value IN (SAE 3000 flange; code 61) THEN write \"Flange Code 61\"",
+      "IF value IN (SAE 6000 flange; code 62) THEN write \"Flange Code 62\" m x 1000; inch x 25.4",
+      "[Before → after] Fitting: JIC female: 'end_fitting: JIC 37° Female Swivel'",
+      "[Before → after] End Fitting: SAE 6000 flange: 'end_fitting: Flange Code 62'"
+    ],
+    "parent": "end_fitting"
+  },
+  {
+    "attribute": "assembly_length",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Length",
+      "Assembly Length",
+      "OAL",
+      "Overall Length",
+      "Hose Length"
+    ],
+    "rules": [
+      "[Fields at a glance] HSE-5: 'assembly_length'; Length; Assembly Length; OAL: '{n} mm (whole number)'",
+      "Before → after (columns: BEFORE; AFTER)",
+      "[Before → after] Length: 1.5 m: 'assembly_length: 1500 mm'"
+    ],
+    "parent": "length"
+  },
+  {
+    "attribute": "Hydraulic Hose",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "Hose",
+      "Hydraulic Hose",
+      "Hose Assembly",
+      "Hyd Hose"
+    ],
+    "rules": [
+      "Hydraulic hose is identified by construction standard and dash size. Similar-looking standards (R2AT and 2SN) are close cousins, not twins - don't convert one into the other.",
+      "Write the category as: Hydraulic Hose  You may receive: Hose; Hydraulic Hose; Hose Assembly; Hyd Hose",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] HSE-1: 'hose_standard'; Standard; Spec; Type; Hose Type: 'Picklist value'",
+      "[Fields at a glance] HSE-2: 'dash_size'; Size; ID; Hose Size; Dash Size: '{n}'",
+      "[Fields at a glance] HSE-3: 'max_working_pressure'; WP; Pressure; Working Pressure; MAWP: '{n} bar (whole number)'",
+      "[Fields at a glance] HSE-4: 'end_fitting'; Fitting; End Fitting; Ends; Coupling: 'Picklist value'",
+      "[Fields at a glance] HSE-5: 'assembly_length'; Length; Assembly Length; OAL: '{n} mm (whole number)'",
+      "Before → after (columns: BEFORE; AFTER)"
+    ],
+    "parent": "hose"
+  },
+  {
+    "attribute": "glove_size",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Size",
+      "Glove Size",
+      "Letter Size",
+      "EN ISO 21420 Size",
+      "Hand Size",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "rules": [
+      "[Fields at a glance] GLV-1: 'glove_size'; Size; Glove Size: '{n} (EN ISO 21420 number)'",
+      "GLV-1 glove_size",
+      "IF value IN (S; small) THEN write \"7\"",
+      "IF value IN (M; medium) THEN write \"8\"",
+      "IF value IN (L; large) THEN write \"9\"",
+      "IF value IN (XL) THEN write \"10\"",
+      "IF value IN (XXL; 2XL) THEN write \"11\"",
+      "IF value is 'size n' THEN n",
+      "[Before → after] Size: L: 'glove_size: 9'",
+      "[Before → after] Size: size 10: 'glove_size: 10'",
+      "Glove sizes (columns: Letter; EN ISO 21420 size)",
+      "[Glove sizes] Letter: 'S'; EN ISO 21420 size: '7'",
+      "[Glove sizes] Letter: 'M'; EN ISO 21420 size: '8'",
+      "[Glove sizes] Letter: 'L'; EN ISO 21420 size: '9'",
+      "[Glove sizes] Letter: 'XL'; EN ISO 21420 size: '10'",
+      "[Glove sizes] Letter: 'XXL'; EN ISO 21420 size: '11'"
+    ],
+    "parent": "size"
+  },
+  {
+    "attribute": "cut_level",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Cut",
+      "Cut Level",
+      "Cut Resistance",
+      "Cut Protection",
+      "EN 388 Cut Level",
+      "ANSI Cut Level"
+    ],
+    "rules": [
+      "[Fields at a glance] GLV-2: 'cut_level'; Cut; Cut Level; Cut Resistance: 'Cut A ... Cut F'",
+      "GLV-2 cut_level",
+      "IF value is an EN 388 code like 4X43D THEN the 5th character is the cut level: Cut D",
+      "IF value is 'ISO cut C' or 'cut C' THEN Cut C",
+      "IF value is an old numeric level (level 5) or an ANSI level (A4) THEN CHECK: (no reliable conversion)",
+      "[Before → after] Cut Level: EN388 4X43D: 'cut_level: Cut D'",
+      "[Before → after] Cut: ISO cut C: 'cut_level: Cut C'",
+      "[Before → after] Cut Level: level 5: 'cut_level: CHECK: level 5'",
+      "Q. Old cut level '5' - isn't that roughly Cut D?",
+      "A. Roughly isn't good enough for PPE. Write CHECK: level 5."
+    ],
+    "parent": "cut_level"
+  },
+  {
+    "attribute": "glove_material",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Material",
+      "Shell",
+      "Liner",
+      "Glove Material",
+      "Glove Shell",
+      "Nitrile",
+      "HPPE",
+      "Aramid"
+    ],
+    "rules": [
+      "[Fields at a glance] GLV-3: 'glove_material'; Material; Shell; Liner; Glove Material: 'Picklist value'",
+      "GLV-3 glove_material",
+      "IF value IN (nitrile) THEN write \"Nitrile\"",
+      "IF value IN (latex; natural rubber) THEN write \"Latex\"",
+      "IF value IN (neoprene; chloroprene) THEN write \"Neoprene\"",
+      "IF value IN (leather; cowhide; goatskin) THEN write \"Leather\"",
+      "IF value IN (Dyneema; HPPE; UHMWPE) THEN write \"HPPE\"",
+      "IF value IN (Kevlar; aramid; para-aramid) THEN write \"Aramid\"",
+      "IF value IN (PVC) THEN write \"PVC\"",
+      "[Before → after] Material: Kevlar: 'glove_material: Aramid'",
+      "[Before → after] Shell: Dyneema: 'glove_material: HPPE'",
+      "Q. A brand name is the only thing I have (Viton, Kevlar, Aflas).",
+      "A. Several brand names are listed as accepted inputs and translate to the generic material. If a brand isn't listed, write CHECK: with the brand name."
+    ],
+    "parent": "material"
+  },
+  {
+    "attribute": "coating",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Coating",
+      "Palm Coating",
+      "Dip",
+      "Glove Coating",
+      "Palm Dip",
+      "Nitrile Palm",
+      "PU Palm"
+    ],
+    "rules": [
+      "[Fields at a glance] GLV-4: 'coating'; Coating; Palm Coating; Dip: 'Picklist value'",
+      "GLV-4 coating",
+      "IF value IN (sandy nitrile; nitrile palm; foam nitrile) THEN write \"Nitrile Palm\"",
+      "IF value IN (PU coated palm; polyurethane palm) THEN write \"PU Palm\"",
+      "IF value IN (crinkle latex) THEN write \"Latex Crinkle\"",
+      "IF value IN (uncoated; none) THEN write \"None\"",
+      "[Before → after] Coating: PU coated palm: 'coating: PU Palm'"
+    ],
+    "parent": "coating"
+  },
+  {
+    "attribute": "cuff_length",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Length",
+      "Cuff Length",
+      "Glove Length",
+      "Cuff Size",
+      "Cuff Height"
+    ],
+    "rules": [
+      "[Fields at a glance] GLV-5: 'cuff_length'; Length; Cuff Length; Glove Length: '{n} mm (whole number)'",
+      "GLV-5 cuff_length",
+      "inch x 25.4, round to whole mm",
+      "[Before → after] Length: 12 in: 'cuff_length: 305 mm'"
+    ],
+    "parent": "cuff_length"
+  },
+  {
+    "attribute": "impact_protection",
+    "type": "local",
+    "kind": "presentation",
+    "aliases": [
+      "Impact",
+      "Impact Protection",
+      "Back of Hand",
+      "Impact Rating",
+      "TPR Protection"
+    ],
+    "rules": [
+      "[Fields at a glance] GLV-6: 'impact_protection'; Impact; Impact Protection; Back of Hand: 'Yes | No'",
+      "GLV-6 impact_protection",
+      "IF TPR back, impact, EN 388 'P' marking THEN Yes",
+      "[Before → after] Impact: TPR back: 'impact_protection: Yes'"
+    ],
+    "parent": "impact_protection"
+  },
+  {
+    "attribute": "Safety Gloves",
+    "type": "local",
+    "kind": "class",
+    "aliases": [
+      "Gloves",
+      "Glove",
+      "Safety Gloves",
+      "Work Gloves",
+      "Cut Resistant Gloves"
+    ],
+    "rules": [
+      "Gloves are PPE, so the protection levels matter as much as the size. EN 388:2016 cut levels are letters A-F; the old numeric levels can't be translated reliably.",
+      "Write the category as: Safety Gloves  You may receive: Gloves; Glove; Safety Gloves; Work Gloves; Cut Resistant Gloves",
+      "Fields at a glance (columns: Rule; Field key; Labels you may see; What to write)",
+      "[Fields at a glance] GLV-1: 'glove_size'; Size; Glove Size: '{n} (EN ISO 21420 number)'",
+      "[Fields at a glance] GLV-2: 'cut_level'; Cut; Cut Level; Cut Resistance: 'Cut A ... Cut F'",
+      "[Fields at a glance] GLV-3: 'glove_material'; Material; Shell; Liner; Glove Material: 'Picklist value'",
+      "[Fields at a glance] GLV-4: 'coating'; Coating; Palm Coating; Dip: 'Picklist value'",
+      "[Fields at a glance] GLV-5: 'cuff_length'; Length; Cuff Length; Glove Length: '{n} mm (whole number)'",
+      "[Fields at a glance] GLV-6: 'impact_protection'; Impact; Impact Protection; Back of Hand: 'Yes | No'",
+      "Before → after (columns: BEFORE; AFTER)"
+    ],
+    "parent": "glove"
+  }
+]

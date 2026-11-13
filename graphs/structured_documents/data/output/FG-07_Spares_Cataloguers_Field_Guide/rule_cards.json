@@ -1,0 +1,3395 @@
+{
+  "global": {
+    "steps": [
+      "Tidy spaces before applying any other rule.",
+      "Write TBD for a missing value, including an empty cell, dash, n/a, ?, unknown, or see drawing.",
+      "Write the category exactly as the applicable chapter title in Title Case, and do not write nicknames (GR1).",
+      "Write the attribute as the applicable lower_snake_case field key (GR2).",
+      "Copy picklist values character for character, preserving Title Case, capitalized acronyms, spaces, and symbols.",
+      "Convert non-metric units to the specified metric units and write only the metric result (GR5).",
+      "Multiply before rounding, and let a chapter standard-pack or lookup table override plain conversion.",
+      "Round half up according to the field's required precision (GR4).",
+      "Use at most one decimal place and remove trailing zeros for normal measured values, except that O-ring dimensions always use two decimals.",
+      "Write CHECK: followed by a space and the original text when the value still cannot be mapped after applying the applicable rules (GR7).",
+      "Keep the row count and row order unchanged, and never split one row or merge rows.",
+      "Use only the portion of a value that belongs to the current field.",
+      "Never guess a missing value."
+    ],
+    "accepted": [
+      {
+        "form": "empty cells",
+        "written": "TBD"
+      },
+      {
+        "form": "dashes",
+        "written": "TBD"
+      },
+      {
+        "form": "n/a",
+        "written": "TBD"
+      },
+      {
+        "form": "?",
+        "written": "TBD"
+      },
+      {
+        "form": "unknown",
+        "written": "TBD"
+      },
+      {
+        "form": "see drawing",
+        "written": "TBD"
+      }
+    ],
+    "unclear": [
+      "The guide does not specify the chapter-specific field precision for every field.",
+      "The guide does not define which chapter picklists, standard-pack tables, or lookup tables apply when a row is ambiguous.",
+      "The guide does not define a formal term or rule for accepted source forms or canonical values."
+    ],
+    "examples": [
+      {
+        "from": "Brg",
+        "to": "Rolling Bearing"
+      },
+      {
+        "from": "Hyd Hose",
+        "to": "Hydraulic Hose"
+      },
+      {
+        "from": "Shaft Dia",
+        "to": "shaft_diameter"
+      },
+      {
+        "from": "Part No",
+        "to": "designation"
+      },
+      {
+        "from": "deep groove",
+        "to": "Deep Groove Ball"
+      },
+      {
+        "from": "li complex",
+        "to": "Lithium Complex"
+      },
+      {
+        "from": "25mm",
+        "to": "25 mm"
+      },
+      {
+        "from": "70 .0 mm",
+        "to": "70 mm"
+      },
+      {
+        "from": "2 in",
+        "to": "50.8 mm"
+      },
+      {
+        "from": "150 psid",
+        "to": "10.3 bar"
+      },
+      {
+        "from": "n/a",
+        "to": "TBD"
+      },
+      {
+        "from": "?",
+        "to": "TBD"
+      },
+      {
+        "from": "semi-synthetic",
+        "to": "CHECK: semi-synthetic"
+      },
+      {
+        "from": "level 5",
+        "to": "CHECK: level 5"
+      },
+      {
+        "from": "50.8 mm (2 in)",
+        "to": "50.8 mm"
+      },
+      {
+        "from": "15.876 kg",
+        "to": "15.9 kg"
+      },
+      {
+        "from": "344.7 bar",
+        "to": "345 bar"
+      },
+      {
+        "from": "24.9936 mm",
+        "to": "24.99 mm"
+      }
+    ],
+    "unit_spacing": "space",
+    "trailing_zeros": "remove"
+  },
+  "groups": {
+    "designation": {
+      "written_form": "Write the base number, then the normalized seal suffix, then /clearance, removing spaces, dots, extra hyphens, and cage codes.",
+      "unit": "",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "BRG-1: Write the base number first, followed by -2RS for seal suffixes 2RS1, 2RSH, 2RSR, LLU, DDU, or 2RS.",
+        "BRG-1: Write -2Z for seal suffixes ZZ, 2ZR, 2Z, or ZZC.",
+        "BRG-1: Append /Cn at the end when a clearance suffix C2, C3, C4, or C5 is present.",
+        "BRG-1: Remove spaces, dots, and extra hyphens between the parts.",
+        "BRG-1: Remove cage codes M, MA, J, and TN9 from the designation because they belong to cage_material.",
+        "BRG-1: Translate only the information written and do not upgrade a bearing designation."
+      ],
+      "exceptions": [
+        "Leave a designation without an indicated seal or clearance unchanged apart from the specified formatting and removal rules.",
+        "Do not treat 6205 and 6205-2RS as the same designation."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "6205 2RS1 C3",
+          "to": "6205-2RS/C3"
+        },
+        {
+          "from": "6205ZZ",
+          "to": "6205-ZZ"
+        },
+        {
+          "from": "6310-2RSR-C3",
+          "to": "6310-2RS/C3"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "bearing_type": {
+      "written_form": "Write the value as one of the specified bearing type picklist values in Title Case.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Deep Groove Ball",
+        "Angular Contact Ball",
+        "Cylindrical Roller",
+        "Spherical Roller",
+        "Tapered Roller",
+        "Thrust Ball",
+        "Self-Aligning Ball"
+      ],
+      "closed": true,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [
+        {
+          "form": "DGBB",
+          "written": "Deep Groove Ball"
+        },
+        {
+          "form": "deep groove",
+          "written": "Deep Groove Ball"
+        },
+        {
+          "form": "radial ball",
+          "written": "Deep Groove Ball"
+        },
+        {
+          "form": "ACBB",
+          "written": "Angular Contact Ball"
+        },
+        {
+          "form": "angular contact",
+          "written": "Angular Contact Ball"
+        },
+        {
+          "form": "CRB",
+          "written": "Cylindrical Roller"
+        },
+        {
+          "form": "cylindrical",
+          "written": "Cylindrical Roller"
+        },
+        {
+          "form": "SRB",
+          "written": "Spherical Roller"
+        },
+        {
+          "form": "spherical",
+          "written": "Spherical Roller"
+        },
+        {
+          "form": "self-aligning roller",
+          "written": "Spherical Roller"
+        },
+        {
+          "form": "TRB",
+          "written": "Tapered Roller"
+        },
+        {
+          "form": "taper",
+          "written": "Tapered Roller"
+        },
+        {
+          "form": "tapered",
+          "written": "Tapered Roller"
+        },
+        {
+          "form": "thrust",
+          "written": "Thrust Ball"
+        },
+        {
+          "form": "self-aligning ball",
+          "written": "Self-Aligning Ball"
+        }
+      ],
+      "steps": [
+        "BRG-2: Map DGBB, deep groove, and radial ball to Deep Groove Ball.",
+        "BRG-2: Map ACBB and angular contact to Angular Contact Ball.",
+        "BRG-2: Map CRB and cylindrical to Cylindrical Roller.",
+        "BRG-2: Map SRB, spherical, and self-aligning roller to Spherical Roller.",
+        "BRG-2: Map TRB, taper, and tapered to Tapered Roller.",
+        "BRG-2: Map thrust to Thrust Ball.",
+        "BRG-2: Map self-aligning ball to Self-Aligning Ball.",
+        "BRG-2: Write the mapped value exactly as the picklist value."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "DGBB",
+          "to": "Deep Groove Ball"
+        },
+        {
+          "from": "spherical",
+          "to": "Spherical Roller"
+        },
+        {
+          "from": "taper",
+          "to": "Tapered Roller"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "bore_diameter": {
+      "written_form": "Write the bore diameter as a metric number followed by one space and mm.",
+      "unit": "mm",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "BRG-3: Convert an inch value to millimetres by multiplying it by 25.4.",
+        "BRG-3: Assume millimetres when the input has no unit.",
+        "GR4: Round the metric number as required, use at most one decimal, and remove trailing zeros.",
+        "GR4: Write one space between the number and mm.",
+        "GR7: Write CHECK: followed by a space and the original text if the value still does not fit the field format after applying the rules."
+      ],
+      "exceptions": [
+        "Use the bore code shortcut only to sanity-check a value, not to fill a blank."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "1 in",
+          "to": "25.4 mm"
+        },
+        {
+          "from": "25mm",
+          "to": "25 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "outside_diameter": {
+      "written_form": "Write the outside diameter as a metric number followed by one space and mm.",
+      "unit": "mm",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "BRG-4: Apply the bore_diameter conversion rule to the outside diameter.",
+        "BRG-3: Convert an inch value to millimetres by multiplying it by 25.4.",
+        "BRG-3: Assume millimetres when the input has no unit.",
+        "GR4: Round the metric number as required, use at most one decimal, and remove trailing zeros.",
+        "GR4: Write one space between the number and mm.",
+        "GR7: Write CHECK: followed by a space and the original text if the value still does not fit the field format after applying the rules."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "52",
+          "to": "52 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "width": {
+      "written_form": "Write the width as a metric number followed by one space and mm.",
+      "unit": "mm",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "BRG-5: Apply the bore_diameter conversion rule to the width.",
+        "BRG-3: Convert an inch value to millimetres by multiplying it by 25.4.",
+        "BRG-3: Assume millimetres when the input has no unit.",
+        "GR4: Round the metric number as required, use at most one decimal, and remove trailing zeros.",
+        "GR4: Write one space between the number and mm.",
+        "GR7: Write CHECK: followed by a space and the original text if the value still does not fit the field format after applying the rules."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [],
+      "unit_spacing": "space"
+    },
+    "bearing seal_type": {
+      "written_form": "Write the seal type as one of the specified picklist values.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "2RS",
+        "2Z",
+        "RS",
+        "Z",
+        "Open"
+      ],
+      "closed": true,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [
+        {
+          "form": "rubber seals both sides",
+          "written": "2RS"
+        },
+        {
+          "form": "2RS1",
+          "written": "2RS"
+        },
+        {
+          "form": "LLU",
+          "written": "2RS"
+        },
+        {
+          "form": "sealed both sides",
+          "written": "2RS"
+        },
+        {
+          "form": "metal shields",
+          "written": "2Z"
+        },
+        {
+          "form": "shielded both sides",
+          "written": "2Z"
+        },
+        {
+          "form": "ZZ",
+          "written": "2Z"
+        },
+        {
+          "form": "one rubber seal",
+          "written": "RS"
+        },
+        {
+          "form": "RS1",
+          "written": "RS"
+        },
+        {
+          "form": "one shield",
+          "written": "Z"
+        },
+        {
+          "form": "open",
+          "written": "Open"
+        },
+        {
+          "form": "no seals",
+          "written": "Open"
+        }
+      ],
+      "steps": [
+        "BRG-6: Map rubber seals both sides, 2RS1, LLU, and sealed both sides to 2RS.",
+        "BRG-6: Map metal shields, shielded both sides, and ZZ to 2Z.",
+        "BRG-6: Map one rubber seal and RS1 to RS.",
+        "BRG-6: Map one shield to Z.",
+        "BRG-6: Map open and no seals to Open.",
+        "BRG-6: Write the mapped value exactly as the picklist value."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "metal shields",
+          "to": "2Z"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "internal_clearance": {
+      "written_form": "Write the internal clearance as one of the specified clearance picklist values.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "C2",
+        "CN",
+        "C3",
+        "C4",
+        "C5"
+      ],
+      "closed": true,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [
+        {
+          "form": "less than normal",
+          "written": "C2"
+        },
+        {
+          "form": "normal",
+          "written": "CN"
+        },
+        {
+          "form": "standard",
+          "written": "CN"
+        },
+        {
+          "form": "C 3",
+          "written": "C3"
+        },
+        {
+          "form": "greater than normal",
+          "written": "C3"
+        }
+      ],
+      "steps": [
+        "BRG-7: Map C2 and less than normal to C2.",
+        "BRG-7: Map normal, CN, and standard to CN.",
+        "BRG-7: Map C3, C 3, and greater than normal to C3.",
+        "BRG-7: Map C4 to C4.",
+        "BRG-7: Map C5 to C5.",
+        "BRG-7: Write the mapped value exactly as the picklist value."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "normal",
+          "to": "CN"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "cage_material": {
+      "written_form": "Write the cage material as one of the specified cage material picklist values.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Steel",
+        "Brass",
+        "Polyamide"
+      ],
+      "closed": true,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [
+        {
+          "form": "J",
+          "written": "Steel"
+        },
+        {
+          "form": "pressed steel",
+          "written": "Steel"
+        },
+        {
+          "form": "steel",
+          "written": "Steel"
+        },
+        {
+          "form": "M",
+          "written": "Brass"
+        },
+        {
+          "form": "MA",
+          "written": "Brass"
+        },
+        {
+          "form": "machined brass",
+          "written": "Brass"
+        },
+        {
+          "form": "brass",
+          "written": "Brass"
+        },
+        {
+          "form": "TN9",
+          "written": "Polyamide"
+        },
+        {
+          "form": "TN",
+          "written": "Polyamide"
+        },
+        {
+          "form": "nylon",
+          "written": "Polyamide"
+        },
+        {
+          "form": "PA66",
+          "written": "Polyamide"
+        },
+        {
+          "form": "polyamide",
+          "written": "Polyamide"
+        }
+      ],
+      "steps": [
+        "BRG-8: Map J, pressed steel, and steel to Steel.",
+        "BRG-8: Map M, MA, machined brass, and brass to Brass.",
+        "BRG-8: Map TN9, TN, nylon, PA66, and polyamide to Polyamide.",
+        "BRG-8: Write the mapped value exactly as the picklist value."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "TN9",
+          "to": "Polyamide"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "arrangement": {
+      "written_form": "Write the value as Arrangement 1, Arrangement 2, or Arrangement 3.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Arrangement 1",
+        "Arrangement 2",
+        "Arrangement 3"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "single",
+          "written": "Arrangement 1"
+        },
+        {
+          "form": "single seal",
+          "written": "Arrangement 1"
+        },
+        {
+          "form": "tandem",
+          "written": "Arrangement 2"
+        },
+        {
+          "form": "dual unpressurized",
+          "written": "Arrangement 2"
+        },
+        {
+          "form": "dual unpressurised",
+          "written": "Arrangement 2"
+        },
+        {
+          "form": "double",
+          "written": "Arrangement 3"
+        },
+        {
+          "form": "dual pressurized",
+          "written": "Arrangement 3"
+        },
+        {
+          "form": "double pressurized",
+          "written": "Arrangement 3"
+        },
+        {
+          "form": "back-to-back",
+          "written": "Arrangement 3"
+        }
+      ],
+      "steps": [
+        "Under MSL-1, write Arrangement 1 for single or single seal.",
+        "Under MSL-1, write Arrangement 2 for tandem, dual unpressurized, or dual unpressurised.",
+        "Under MSL-1, write Arrangement 3 for double, dual pressurized, double pressurized, or back-to-back."
+      ],
+      "exceptions": [
+        "Write TBD when the value is missing according to the global missing-value rule.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "tandem",
+          "to": "Arrangement 2"
+        },
+        {
+          "from": "double pressurized",
+          "to": "Arrangement 3"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "seal_category": {
+      "written_form": "Write the value as Category 1, Category 2, or Category 3.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Category 1",
+        "Category 2",
+        "Category 3"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "CAT2",
+          "written": "Category 2"
+        },
+        {
+          "form": "Cat. 2",
+          "written": "Category 2"
+        }
+      ],
+      "steps": [
+        "Under MSL-2, map any spelling of cat 1, cat 2, or cat 3 to Category 1, Category 2, or Category 3 respectively.",
+        "Under MSL-2, preserve the category number and write it after the word Category."
+      ],
+      "exceptions": [
+        "Write TBD when the value is missing according to the global missing-value rule.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "CAT2",
+          "to": "Category 2"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "mechanical seal_type": {
+      "written_form": "Write the value as Type A, Type B, or Type C.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Type A",
+        "Type B",
+        "Type C"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "pusher",
+          "written": "Type A"
+        },
+        {
+          "form": "O-ring pusher",
+          "written": "Type A"
+        },
+        {
+          "form": "rotating pusher",
+          "written": "Type A"
+        },
+        {
+          "form": "metal bellows",
+          "written": "Type B"
+        },
+        {
+          "form": "low temperature bellows",
+          "written": "Type B"
+        },
+        {
+          "form": "high temperature metal bellows",
+          "written": "Type C"
+        },
+        {
+          "form": "flexible graphite bellows",
+          "written": "Type C"
+        }
+      ],
+      "steps": [
+        "Under MSL-3, write Type A for pusher, O-ring pusher, or rotating pusher.",
+        "Under MSL-3, write Type B for metal bellows or low temperature bellows.",
+        "Under MSL-3, write Type C for high temperature metal bellows or flexible graphite bellows."
+      ],
+      "exceptions": [
+        "Write TBD when the value is missing according to the global missing-value rule.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "metal bellows",
+          "to": "Type B"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "shaft_diameter": {
+      "written_form": "Write the shaft diameter as a metric number followed by one space and mm.",
+      "unit": "mm",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Under MSL-4, remove the diameter sign Ø.",
+        "Under MSL-4, multiply an inch value by 25.4.",
+        "Under MSL-4, write the resulting metric number followed by one space and mm.",
+        "Under the global numeric rule, round the metric result as required and drop trailing zeros, using at most one decimal place."
+      ],
+      "exceptions": [
+        "Write TBD when the value is missing according to the global missing-value rule.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "2.5 in",
+          "to": "63.5 mm"
+        },
+        {
+          "from": "Ø60",
+          "to": "60 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "face_combination": {
+      "written_form": "Write the rotating and stationary face materials in the given order, joined by / with no spaces.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Carbon",
+        "SiC",
+        "TC"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "carbon",
+          "written": "Carbon"
+        },
+        {
+          "form": "carbon graphite",
+          "written": "Carbon"
+        },
+        {
+          "form": "antimony carbon",
+          "written": "Carbon"
+        },
+        {
+          "form": "silicon carbide",
+          "written": "SiC"
+        },
+        {
+          "form": "SSiC",
+          "written": "SiC"
+        },
+        {
+          "form": "RBSiC",
+          "written": "SiC"
+        },
+        {
+          "form": "tungsten carbide",
+          "written": "TC"
+        },
+        {
+          "form": "WC",
+          "written": "TC"
+        }
+      ],
+      "steps": [
+        "Under MSL-5, translate carbon, carbon graphite, or antimony carbon to Carbon.",
+        "Under MSL-5, translate silicon carbide, SSiC, RBSiC, or SiC to SiC.",
+        "Under MSL-5, translate tungsten carbide, WC, or TC to TC.",
+        "Under MSL-5, preserve the given face order and join the two translated faces with / and no spaces.",
+        "Under MSL-5, treat vs, v, against, -, and / as equivalent separators."
+      ],
+      "exceptions": [
+        "Write TBD when the value is missing according to the global missing-value rule.",
+        "Write CHECK: followed by a space and the original text when a face cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "SiC vs carbon",
+          "to": "SiC/Carbon"
+        },
+        {
+          "from": "tungsten carbide / silicon carbide",
+          "to": "TC/SiC"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "secondary_seal": {
+      "written_form": "Write the secondary seal as the corresponding O-Ring material picklist value.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "NBR",
+        "HNBR",
+        "FKM",
+        "FFKM",
+        "EPDM",
+        "VMQ",
+        "FEPM"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "nitrile",
+          "written": "NBR"
+        },
+        {
+          "form": "Buna-N",
+          "written": "NBR"
+        },
+        {
+          "form": "Buna",
+          "written": "NBR"
+        },
+        {
+          "form": "hydrogenated nitrile",
+          "written": "HNBR"
+        },
+        {
+          "form": "HSN",
+          "written": "HNBR"
+        },
+        {
+          "form": "Viton",
+          "written": "FKM"
+        },
+        {
+          "form": "fluorocarbon",
+          "written": "FKM"
+        },
+        {
+          "form": "FPM",
+          "written": "FKM"
+        },
+        {
+          "form": "Kalrez",
+          "written": "FFKM"
+        },
+        {
+          "form": "perfluoroelastomer",
+          "written": "FFKM"
+        },
+        {
+          "form": "perfluoro",
+          "written": "FFKM"
+        },
+        {
+          "form": "EPR",
+          "written": "EPDM"
+        },
+        {
+          "form": "ethylene propylene",
+          "written": "EPDM"
+        },
+        {
+          "form": "silicone",
+          "written": "VMQ"
+        },
+        {
+          "form": "Si",
+          "written": "VMQ"
+        },
+        {
+          "form": "Aflas",
+          "written": "FEPM"
+        },
+        {
+          "form": "TFE/P",
+          "written": "FEPM"
+        }
+      ],
+      "steps": [
+        "Under MSL-6, write NBR for nitrile, Buna-N, or Buna.",
+        "Under MSL-6, write HNBR for hydrogenated nitrile or HSN.",
+        "Under MSL-6, write FKM for Viton, fluorocarbon, or FPM.",
+        "Under MSL-6, write FFKM for Kalrez, perfluoroelastomer, or perfluoro.",
+        "Under MSL-6, write EPDM for EPR or ethylene propylene.",
+        "Under MSL-6, write VMQ for silicone or Si.",
+        "Under MSL-6, write FEPM for Aflas or TFE/P."
+      ],
+      "exceptions": [
+        "Write TBD when the value is missing according to the global missing-value rule.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "Viton",
+          "to": "FKM"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "flush_plan": {
+      "written_form": "Write the plan as Plan followed by one space and the plan number with any suffix letter in capitals, joining combined plans with /.",
+      "unit": "",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Under MSL-7, write Plan, one space, the plan number, and any suffix letter in capitals.",
+        "Under MSL-7, join combined plans with / and no spaces."
+      ],
+      "exceptions": [
+        "Write TBD when the value is missing according to the global missing-value rule.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "API plan 53a",
+          "to": "Plan 53A"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "size_reference": {
+      "written_form": "Write the size reference as AS568-{nnn}, where {nnn} is the three-digit dash number.",
+      "unit": "",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [
+        {
+          "form": "214",
+          "written": "AS568-214"
+        },
+        {
+          "form": "-214",
+          "written": "AS568-214"
+        },
+        {
+          "form": "2-214",
+          "written": "AS568-214"
+        },
+        {
+          "form": "AS 568-214",
+          "written": "AS568-214"
+        }
+      ],
+      "steps": [
+        "Under ORG-1, recognize a three-digit dash number with or without a prefix, including 214, -214, 2-214, or AS 568-214.",
+        "Under ORG-1, remove any leading 2- compound prefix and write the remaining three-digit dash number as AS568-{nnn}.",
+        "Under ORG-1, do not treat the leading 2- as part of the size."
+      ],
+      "exceptions": [
+        "Write TBD when the value is missing according to the global missing-value rule.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "2-214",
+          "to": "AS568-214"
+        },
+        {
+          "from": "214",
+          "to": "AS568-214"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "inner_diameter": {
+      "written_form": "Write the inner diameter as a millimetre value with two decimal places: {n.nn} mm.",
+      "unit": "mm",
+      "decimals": 2,
+      "values": [],
+      "closed": false,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "Apply ORG-2: convert inch values by multiplying by 25.4.",
+        "Apply ORG-2: write the result in millimetres with exactly two decimal places.",
+        "Apply the general rule: write missing values as TBD.",
+        "Apply the general rule: write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "0.984 in",
+          "to": "24.99 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "cross_section": {
+      "written_form": "Write the cross section as a millimetre value with two decimal places: {n.nn} mm.",
+      "unit": "mm",
+      "decimals": 2,
+      "values": [],
+      "closed": false,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "Apply ORG-3: replace a decimal comma with a decimal point.",
+        "Apply ORG-3: write the cross section in millimetres with exactly two decimal places.",
+        "Apply the general rule: write missing values as TBD.",
+        "Apply the general rule: write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "0.139\"",
+          "to": "3.53 mm"
+        },
+        {
+          "from": "3,53",
+          "to": "3.53 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "material": {
+      "written_form": "Write the material as the corresponding picklist value.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "NBR",
+        "HNBR",
+        "FKM",
+        "FFKM",
+        "EPDM",
+        "VMQ",
+        "FEPM"
+      ],
+      "closed": true,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [
+        {
+          "form": "nitrile",
+          "written": "NBR"
+        },
+        {
+          "form": "Buna-N",
+          "written": "NBR"
+        },
+        {
+          "form": "Buna",
+          "written": "NBR"
+        },
+        {
+          "form": "hydrogenated nitrile",
+          "written": "HNBR"
+        },
+        {
+          "form": "HSN",
+          "written": "HNBR"
+        },
+        {
+          "form": "Viton",
+          "written": "FKM"
+        },
+        {
+          "form": "fluorocarbon",
+          "written": "FKM"
+        },
+        {
+          "form": "FPM",
+          "written": "FKM"
+        },
+        {
+          "form": "Kalrez",
+          "written": "FFKM"
+        },
+        {
+          "form": "perfluoroelastomer",
+          "written": "FFKM"
+        },
+        {
+          "form": "perfluoro",
+          "written": "FFKM"
+        },
+        {
+          "form": "EPR",
+          "written": "EPDM"
+        },
+        {
+          "form": "ethylene propylene",
+          "written": "EPDM"
+        },
+        {
+          "form": "silicone",
+          "written": "VMQ"
+        },
+        {
+          "form": "Si",
+          "written": "VMQ"
+        },
+        {
+          "form": "Aflas",
+          "written": "FEPM"
+        },
+        {
+          "form": "TFE/P",
+          "written": "FEPM"
+        }
+      ],
+      "steps": [
+        "Apply ORG-4: replace each listed input form with its specified picklist value.",
+        "Apply the general rule: write missing values as TBD.",
+        "Apply the general rule: write CHECK: followed by a space and the original text when the value is not listed."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "Viton",
+          "to": "FKM"
+        },
+        {
+          "from": "Buna-N",
+          "to": "NBR"
+        },
+        {
+          "from": "silicone",
+          "to": "VMQ"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "hardness": {
+      "written_form": "Write the hardness as a number followed by one space and Shore A: {n} Shore A.",
+      "unit": "Shore A",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "Apply ORG-5: when the value uses duro, A, Sh A, Shore A, or IRHD, write the number followed by Shore A.",
+        "Apply ORG-5: treat IRHD as equal to Shore A.",
+        "Apply the general rule: write missing values as TBD.",
+        "Apply the general rule: write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "70 duro",
+          "to": "70 Shore A"
+        },
+        {
+          "from": "90 IRHD",
+          "to": "90 Shore A"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "aed_resistant": {
+      "written_form": "Write the field as Yes or No.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Yes",
+        "No"
+      ],
+      "closed": true,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "Apply ORG-6: write Yes when the value mentions RGD resistant, AED, ED, NORSOK M-710, or ISO 23936-2.",
+        "Apply the general rule: write missing values as TBD.",
+        "Apply the general rule: write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "exceptions": [],
+      "unclear": [
+        "ORG-6 specifies when to write Yes but does not specify how to determine or write No."
+      ],
+      "examples": [
+        {
+          "from": "NORSOK M-710",
+          "to": "Yes"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "belt_section": {
+      "written_form": "Write the belt section as its specified picklist value.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "SPZ",
+        "SPA",
+        "SPB",
+        "SPC",
+        "XPZ",
+        "XPA",
+        "XPB",
+        "3V",
+        "5V"
+      ],
+      "closed": true,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [
+        {
+          "form": "13x8",
+          "written": "A"
+        },
+        {
+          "form": "13 x 8 mm",
+          "written": "A"
+        },
+        {
+          "form": "17x11",
+          "written": "B"
+        },
+        {
+          "form": "17 x 11 mm",
+          "written": "B"
+        },
+        {
+          "form": "22x14",
+          "written": "C"
+        },
+        {
+          "form": "32x19",
+          "written": "D"
+        },
+        {
+          "form": "spz",
+          "written": "SPZ"
+        },
+        {
+          "form": "spa",
+          "written": "SPA"
+        },
+        {
+          "form": "spb",
+          "written": "SPB"
+        },
+        {
+          "form": "spc",
+          "written": "SPC"
+        },
+        {
+          "form": "cogged SPZ",
+          "written": "XPZ"
+        },
+        {
+          "form": "9N",
+          "written": "3V"
+        },
+        {
+          "form": "15N",
+          "written": "5V"
+        }
+      ],
+      "steps": [
+        "Apply VBT-1: replace each listed input form with its specified belt-section picklist value.",
+        "Apply the general rule: write missing values as TBD.",
+        "Apply the general rule: write CHECK: followed by a space and the original text when the value is not listed."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "spb",
+          "to": "SPB"
+        },
+        {
+          "from": "17x11",
+          "to": "B"
+        },
+        {
+          "from": "13 x 8 mm",
+          "to": "A"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "datum_length": {
+      "written_form": "Write the datum length as a whole-number millimetre value: {n} mm.",
+      "unit": "mm",
+      "decimals": 0,
+      "values": [],
+      "closed": false,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [],
+      "steps": [
+        "Apply VBT-2: remove the Ld, Lw, or Lp prefix.",
+        "Apply VBT-2: when the value has the form A42, B75, C42, or D42, convert the inside length from inches by multiplying by 25.4 and add the offset for its section.",
+        "Apply VBT-2: use offsets of +30 mm for A, +40 mm for B, +58 mm for C, and +75 mm for D.",
+        "Apply VBT-2: write the result as a whole-number millimetre value.",
+        "Apply the general rule: write missing values as TBD.",
+        "Apply the general rule: write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "2000mm",
+          "to": "2000 mm"
+        },
+        {
+          "from": "Ld 1250",
+          "to": "1250 mm"
+        },
+        {
+          "from": "B75",
+          "to": "1945 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "construction": {
+      "written_form": "Write the construction as its specified picklist value.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Wrapped",
+        "Raw Edge Cogged",
+        "Banded"
+      ],
+      "closed": true,
+      "not_listed": "write CHECK: followed by a space and the original text",
+      "accepted": [
+        {
+          "form": "wrapped",
+          "written": "Wrapped"
+        },
+        {
+          "form": "classical wrapped",
+          "written": "Wrapped"
+        },
+        {
+          "form": "envelope",
+          "written": "Wrapped"
+        },
+        {
+          "form": "cogged",
+          "written": "Raw Edge Cogged"
+        },
+        {
+          "form": "notched",
+          "written": "Raw Edge Cogged"
+        },
+        {
+          "form": "raw edge",
+          "written": "Raw Edge Cogged"
+        },
+        {
+          "form": "XP",
+          "written": "Raw Edge Cogged"
+        },
+        {
+          "form": "power band",
+          "written": "Banded"
+        },
+        {
+          "form": "banded",
+          "written": "Banded"
+        },
+        {
+          "form": "joined",
+          "written": "Banded"
+        },
+        {
+          "form": "multi-belt",
+          "written": "Banded"
+        }
+      ],
+      "steps": [
+        "Apply VBT-3: replace each listed input form with its specified construction picklist value.",
+        "Apply the general rule: write missing values as TBD.",
+        "Apply the general rule: write CHECK: followed by a space and the original text when the value is not listed."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "notched",
+          "to": "Raw Edge Cogged"
+        },
+        {
+          "from": "power band",
+          "to": "Banded"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "matched_set_qty": {
+      "written_form": "Write only the number of items in the matched set.",
+      "unit": "",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Keep only the number (VBT-4)."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "set of 4",
+          "to": "4"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "viscosity_grade": {
+      "written_form": "Write an ISO grade as ISO VG followed by a space and the grade number, or write a multigrade as SAE followed by the grades separated by a hyphen.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "10",
+        "15",
+        "22",
+        "32",
+        "46",
+        "68",
+        "100",
+        "150",
+        "220",
+        "320",
+        "460",
+        "680"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "VG46",
+          "written": "ISO VG 46"
+        },
+        {
+          "form": "ISO 46",
+          "written": "ISO VG 46"
+        },
+        {
+          "form": "ISO VG46",
+          "written": "ISO VG 46"
+        },
+        {
+          "form": "46 cSt",
+          "written": "ISO VG 46"
+        },
+        {
+          "form": "15W40",
+          "written": "SAE 15W-40"
+        }
+      ],
+      "steps": [
+        "Write VG46, ISO 46, ISO VG46, or 46 cSt as ISO VG 46 and apply the same format to the corresponding valid ISO grade (LUB-1).",
+        "Write a multigrade such as 15W40 as SAE 15W-40, placing a hyphen before the hot grade (LUB-1).",
+        "Keep SAE 90 and SAE 140 as SAE followed by the grade number (LUB-1)."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "VG46",
+          "to": "ISO VG 46"
+        },
+        {
+          "from": "ISO 32",
+          "to": "ISO VG 32"
+        },
+        {
+          "from": "15W40",
+          "to": "SAE 15W-40"
+        },
+        {
+          "from": "320 cSt",
+          "to": "ISO VG 320"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "base_oil": {
+      "written_form": "Write the base oil as one of the canonical picklist values Mineral, Group III, PAO, Ester, or PAG.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Mineral",
+        "Group III",
+        "PAO",
+        "Ester",
+        "PAG"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "mineral",
+          "written": "Mineral"
+        },
+        {
+          "form": "Group I",
+          "written": "Mineral"
+        },
+        {
+          "form": "Group II",
+          "written": "Mineral"
+        },
+        {
+          "form": "hydrocracked",
+          "written": "Group III"
+        },
+        {
+          "form": "synthetic hydrocarbon",
+          "written": "PAO"
+        },
+        {
+          "form": "polyalphaolefin",
+          "written": "PAO"
+        },
+        {
+          "form": "ester",
+          "written": "Ester"
+        },
+        {
+          "form": "synthetic ester",
+          "written": "Ester"
+        },
+        {
+          "form": "polyglycol",
+          "written": "PAG"
+        },
+        {
+          "form": "polyalkylene glycol",
+          "written": "PAG"
+        }
+      ],
+      "steps": [
+        "Write mineral, Group I, or Group II as Mineral (LUB-2).",
+        "Write Group III or hydrocracked as Group III (LUB-2).",
+        "Write synthetic hydrocarbon, polyalphaolefin, or PAO as PAO (LUB-2).",
+        "Write ester or synthetic ester as Ester (LUB-2).",
+        "Write polyglycol, polyalkylene glycol, or PAG as PAG (LUB-2).",
+        "Write CHECK: followed by a space and the original text for semi-synthetic or synthetic blend (LUB-2)."
+      ],
+      "exceptions": [
+        "Leave semi-synthetic and synthetic blend unmapped and write CHECK: followed by a space and the original text."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "synthetic hydrocarbon",
+          "to": "PAO"
+        },
+        {
+          "from": "semi-synthetic",
+          "to": "CHECK: semi-synthetic"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "application": {
+      "written_form": "Write the application as one of the canonical picklist values Turbine, Hydraulic, Gear, Compressor, Gas Engine, Diesel Engine, or Circulating.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Turbine",
+        "Hydraulic",
+        "Gear",
+        "Compressor",
+        "Gas Engine",
+        "Diesel Engine",
+        "Circulating"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "R&O turbine",
+          "written": "Turbine"
+        },
+        {
+          "form": "turbine",
+          "written": "Turbine"
+        },
+        {
+          "form": "steam turbine",
+          "written": "Turbine"
+        },
+        {
+          "form": "AW hydraulic",
+          "written": "Hydraulic"
+        },
+        {
+          "form": "hydraulic",
+          "written": "Hydraulic"
+        },
+        {
+          "form": "HM",
+          "written": "Hydraulic"
+        },
+        {
+          "form": "EP gear",
+          "written": "Gear"
+        },
+        {
+          "form": "gear",
+          "written": "Gear"
+        },
+        {
+          "form": "industrial gear",
+          "written": "Gear"
+        },
+        {
+          "form": "compressor",
+          "written": "Compressor"
+        },
+        {
+          "form": "screw compressor",
+          "written": "Compressor"
+        },
+        {
+          "form": "gas engine",
+          "written": "Gas Engine"
+        },
+        {
+          "form": "diesel",
+          "written": "Diesel Engine"
+        },
+        {
+          "form": "HDDO",
+          "written": "Diesel Engine"
+        },
+        {
+          "form": "engine oil",
+          "written": "Diesel Engine"
+        },
+        {
+          "form": "circulating",
+          "written": "Circulating"
+        },
+        {
+          "form": "paper machine",
+          "written": "Circulating"
+        }
+      ],
+      "steps": [
+        "Write R&O turbine, turbine, or steam turbine as Turbine (LUB-3).",
+        "Write AW hydraulic, hydraulic, or HM as Hydraulic (LUB-3).",
+        "Write EP gear, gear, or industrial gear as Gear (LUB-3).",
+        "Write compressor or screw compressor as Compressor (LUB-3).",
+        "Write gas engine as Gas Engine (LUB-3).",
+        "Write diesel, HDDO, or engine oil as Diesel Engine (LUB-3).",
+        "Write circulating or paper machine as Circulating (LUB-3)."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "AW hydraulic",
+          "to": "Hydraulic"
+        },
+        {
+          "from": "R&O turbine",
+          "to": "Turbine"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "iso_class": {
+      "written_form": "Write the ISO classification as its family letters without ISO, L-, or the viscosity number.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "HH",
+        "HL",
+        "HM",
+        "HV",
+        "HG",
+        "TSA",
+        "TGA",
+        "CKB",
+        "CKC",
+        "CKD",
+        "DAA",
+        "DAB",
+        "DAH"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "ISO L-HM 46",
+          "written": "HM"
+        }
+      ],
+      "steps": [
+        "Remove ISO, L-, and the viscosity number from the classification (LUB-4).",
+        "Write only the remaining family letters, such as HM (LUB-4)."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "ISO L-HM 46",
+          "to": "HM"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "pack_size": {
+      "written_form": "Write the pack size as a number followed by a space and L.",
+      "unit": "L",
+      "decimals": null,
+      "values": [
+        "208 L",
+        "18.9 L",
+        "1000 L"
+      ],
+      "closed": false,
+      "not_listed": "Apply the standard-pack rule first; otherwise convert gallons by multiplying by 3.785 or quarts by multiplying by 0.946.",
+      "accepted": [
+        {
+          "form": "drum",
+          "written": "208 L"
+        },
+        {
+          "form": "55 gal drum",
+          "written": "208 L"
+        },
+        {
+          "form": "205 L drum",
+          "written": "208 L"
+        },
+        {
+          "form": "45 imp gal drum",
+          "written": "208 L"
+        },
+        {
+          "form": "5 gal pail",
+          "written": "18.9 L"
+        },
+        {
+          "form": "IBC",
+          "written": "1000 L"
+        },
+        {
+          "form": "tote",
+          "written": "1000 L"
+        }
+      ],
+      "steps": [
+        "Write drum, 55 gal drum, 205 L drum, or 45 imp gal drum as 208 L (LUB-5).",
+        "Write 5 gal pail as 18.9 L (LUB-5).",
+        "Write IBC or tote as 1000 L (LUB-5).",
+        "Apply the standard-pack mapping before converting a non-standard gallon or quart value (LUB-5).",
+        "Convert gallons to litres by multiplying by 3.785 and quarts to litres by multiplying by 0.946 (LUB-5)."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "55 gal drum",
+          "to": "208 L"
+        },
+        {
+          "from": "5 gal pail",
+          "to": "18.9 L"
+        },
+        {
+          "from": "IBC",
+          "to": "1000 L"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "nlgi_grade": {
+      "written_form": "Write the grease consistency as NLGI followed by a space and the grade number, preserving the zeros in grades 000 and 00.",
+      "unit": "",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Strip EP, #, grade, and spaces from the input and keep the number (GRS-1).",
+        "Prefix the retained number with NLGI and a space (GRS-1).",
+        "Preserve all zeros in grades 000 and 00 (GRS-1)."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "EP2",
+          "to": "NLGI 2"
+        },
+        {
+          "from": "#2",
+          "to": "NLGI 2"
+        },
+        {
+          "from": "00",
+          "to": "NLGI 00"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "thickener": {
+      "written_form": "Write the thickener as one of the canonical picklist values Lithium, Lithium Complex, Calcium Sulfonate, Polyurea, Aluminium Complex, or Bentonite.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Lithium",
+        "Lithium Complex",
+        "Calcium Sulfonate",
+        "Polyurea",
+        "Aluminium Complex",
+        "Bentonite"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "lithium",
+          "written": "Lithium"
+        },
+        {
+          "form": "Li",
+          "written": "Lithium"
+        },
+        {
+          "form": "lithium soap",
+          "written": "Lithium"
+        },
+        {
+          "form": "Li complex",
+          "written": "Lithium Complex"
+        },
+        {
+          "form": "Li-X",
+          "written": "Lithium Complex"
+        },
+        {
+          "form": "LiX",
+          "written": "Lithium Complex"
+        },
+        {
+          "form": "lithium complex",
+          "written": "Lithium Complex"
+        },
+        {
+          "form": "Ca sulphonate",
+          "written": "Calcium Sulfonate"
+        },
+        {
+          "form": "calcium sulfonate",
+          "written": "Calcium Sulfonate"
+        },
+        {
+          "form": "CaS",
+          "written": "Calcium Sulfonate"
+        },
+        {
+          "form": "polyurea",
+          "written": "Polyurea"
+        },
+        {
+          "form": "PU thickener",
+          "written": "Polyurea"
+        },
+        {
+          "form": "Al complex",
+          "written": "Aluminium Complex"
+        },
+        {
+          "form": "aluminum complex",
+          "written": "Aluminium Complex"
+        },
+        {
+          "form": "clay",
+          "written": "Bentonite"
+        },
+        {
+          "form": "bentonite",
+          "written": "Bentonite"
+        },
+        {
+          "form": "organoclay",
+          "written": "Bentonite"
+        }
+      ],
+      "steps": [
+        "Write lithium, Li, or lithium soap as Lithium (GRS-2).",
+        "Write Li complex, Li-X, LiX, or lithium complex as Lithium Complex (GRS-2).",
+        "Write Ca sulphonate, calcium sulfonate, or CaS as Calcium Sulfonate (GRS-2).",
+        "Write polyurea or PU thickener as Polyurea (GRS-2).",
+        "Write Al complex or aluminum complex as Aluminium Complex (GRS-2).",
+        "Write clay, bentonite, or organoclay as Bentonite (GRS-2)."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "Li complex",
+          "to": "Lithium Complex"
+        },
+        {
+          "from": "Ca sulphonate",
+          "to": "Calcium Sulfonate"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "base_oil_viscosity": {
+      "written_form": "Write the value as {n} cSt @ 40 °C.",
+      "unit": "cSt",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "Write CHECK: followed by a space and the original text if the value does not fit the required format.",
+      "accepted": [],
+      "steps": [
+        "Apply GRS-3: If the input is ISO VG n base, write n cSt @ 40 °C.",
+        "Apply GRS-3: Treat mm2/s and mm2/s as equivalent to cSt.",
+        "Apply GR4: Tidy the number and remove trailing zeros.",
+        "Apply GR7: Write CHECK: followed by a space and the original text if the value cannot be mapped."
+      ],
+      "exceptions": [
+        "Write TBD for a missing value.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "ISO VG 220 base",
+          "to": "220 cSt @ 40 °C"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "ep_additive": {
+      "written_form": "Write the value as Yes or No.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Yes",
+        "No"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "EP2",
+          "written": "Yes"
+        },
+        {
+          "form": "EP",
+          "written": "Yes"
+        }
+      ],
+      "steps": [
+        "Apply GRS-4: If the value is EP or contains EP, write Yes.",
+        "Apply GRS-4: If the value is non-EP, write No.",
+        "Apply GR7: Write CHECK: followed by a space and the original text if the value cannot be mapped."
+      ],
+      "exceptions": [
+        "Write TBD for a missing value.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "EP2",
+          "to": "Yes"
+        },
+        {
+          "from": "EP",
+          "to": "Yes"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "Grease pack_size": {
+      "written_form": "Write the grease pack size as {n} kg.",
+      "unit": "kg",
+      "decimals": 1,
+      "values": [],
+      "closed": false,
+      "not_listed": "Write CHECK: followed by a space and the original text if the value does not fit the required format.",
+      "accepted": [],
+      "steps": [
+        "Apply GRS-5: Convert grams to kilograms by dividing by 1000.",
+        "Apply GRS-5: Convert pounds to kilograms by multiplying by 0.4536.",
+        "Apply GRS-5: Convert ounces to kilograms by multiplying by 0.02835.",
+        "Apply GRS-5: Round the result to one decimal place.",
+        "Apply GR4: Write the number, one space, and kg.",
+        "Apply GR7: Write CHECK: followed by a space and the original text if the value cannot be mapped."
+      ],
+      "exceptions": [
+        "Write TBD for a missing value.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "400 g cartridge",
+          "to": "0.4 kg"
+        },
+        {
+          "from": "35 lb pail",
+          "to": "15.9 kg"
+        },
+        {
+          "from": "14 oz tube",
+          "to": "0.4 kg"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "filter_service": {
+      "written_form": "Write the filter service as the matching Title Case picklist value.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Hydraulic",
+        "Lube Oil",
+        "Fuel",
+        "Air Intake",
+        "Coalescer",
+        "Gas"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "hydraulic",
+          "written": "Hydraulic"
+        },
+        {
+          "form": "HYD",
+          "written": "Hydraulic"
+        },
+        {
+          "form": "LO",
+          "written": "Lube Oil"
+        },
+        {
+          "form": "lube",
+          "written": "Lube Oil"
+        },
+        {
+          "form": "lube oil",
+          "written": "Lube Oil"
+        },
+        {
+          "form": "fuel",
+          "written": "Fuel"
+        },
+        {
+          "form": "diesel fuel",
+          "written": "Fuel"
+        },
+        {
+          "form": "inlet air",
+          "written": "Air Intake"
+        },
+        {
+          "form": "air intake",
+          "written": "Air Intake"
+        },
+        {
+          "form": "intake",
+          "written": "Air Intake"
+        },
+        {
+          "form": "coalescing",
+          "written": "Coalescer"
+        },
+        {
+          "form": "coalescer",
+          "written": "Coalescer"
+        },
+        {
+          "form": "gas",
+          "written": "Gas"
+        },
+        {
+          "form": "fuel gas",
+          "written": "Gas"
+        }
+      ],
+      "steps": [
+        "Apply FLT-1: If the value is hydraulic or HYD, write Hydraulic.",
+        "Apply FLT-1: If the value is LO, lube, or lube oil, write Lube Oil.",
+        "Apply FLT-1: If the value is fuel or diesel fuel, write Fuel.",
+        "Apply FLT-1: If the value is inlet air, air intake, or intake, write Air Intake.",
+        "Apply FLT-1: If the value is coalescing or coalescer, write Coalescer.",
+        "Apply FLT-1: If the value is gas or fuel gas, write Gas.",
+        "Apply GR7: Write CHECK: followed by a space and the original text if the value cannot be mapped."
+      ],
+      "exceptions": [
+        "Write TBD for a missing value.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "LO",
+          "to": "Lube Oil"
+        },
+        {
+          "from": "inlet air",
+          "to": "Air Intake"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "micron_rating": {
+      "written_form": "Write the micron rating as {n} µm.",
+      "unit": "µm",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "Write CHECK: followed by a space and the original text if the value does not fit the required format.",
+      "accepted": [
+        {
+          "form": "micron",
+          "written": "µm"
+        },
+        {
+          "form": "microns",
+          "written": "µm"
+        },
+        {
+          "form": "u",
+          "written": "µm"
+        },
+        {
+          "form": "um",
+          "written": "µm"
+        },
+        {
+          "form": "µ",
+          "written": "µm"
+        }
+      ],
+      "steps": [
+        "Apply FLT-2: Replace micron, microns, u, um, or µ with µm.",
+        "Apply GR4: Write the number, one space, and µm.",
+        "Apply GR7: Write CHECK: followed by a space and the original text if the value cannot be mapped."
+      ],
+      "exceptions": [
+        "Write TBD for a missing value.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "10 micron",
+          "to": "10 μm"
+        },
+        {
+          "from": "25u",
+          "to": "25 μm"
+        },
+        {
+          "from": "n/a",
+          "to": "TBD"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "rating_basis": {
+      "written_form": "Write the rating basis as Absolute or Nominal.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Absolute",
+        "Nominal"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "abs",
+          "written": "Absolute"
+        },
+        {
+          "form": "absolute",
+          "written": "Absolute"
+        },
+        {
+          "form": "beta 200",
+          "written": "Absolute"
+        },
+        {
+          "form": "beta 1000",
+          "written": "Absolute"
+        },
+        {
+          "form": "B10>=200",
+          "written": "Absolute"
+        },
+        {
+          "form": "nom",
+          "written": "Nominal"
+        },
+        {
+          "form": "nominal",
+          "written": "Nominal"
+        }
+      ],
+      "steps": [
+        "Apply FLT-3: If the value is abs, absolute, beta 200, beta 1000, or B10>=200, write Absolute.",
+        "Apply FLT-3: If the value is nom or nominal, write Nominal.",
+        "Apply GR7: Write CHECK: followed by a space and the original text if the value cannot be mapped."
+      ],
+      "exceptions": [
+        "Write TBD for a missing value.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "beta 200",
+          "to": "Absolute"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "media": {
+      "written_form": "Write the filter media as the matching Title Case picklist value.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Glass Fiber",
+        "Cellulose",
+        "Stainless Steel Mesh",
+        "Synthetic"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "microglass",
+          "written": "Glass Fiber"
+        },
+        {
+          "form": "glass fibre",
+          "written": "Glass Fiber"
+        },
+        {
+          "form": "fiberglass",
+          "written": "Glass Fiber"
+        },
+        {
+          "form": "paper",
+          "written": "Cellulose"
+        },
+        {
+          "form": "cellulose",
+          "written": "Cellulose"
+        },
+        {
+          "form": "SS wire mesh",
+          "written": "Stainless Steel Mesh"
+        },
+        {
+          "form": "wire mesh",
+          "written": "Stainless Steel Mesh"
+        },
+        {
+          "form": "SS mesh",
+          "written": "Stainless Steel Mesh"
+        },
+        {
+          "form": "synthetic",
+          "written": "Synthetic"
+        },
+        {
+          "form": "polyester",
+          "written": "Synthetic"
+        }
+      ],
+      "steps": [
+        "Apply FLT-4: If the value is microglass, glass fibre, or fiberglass, write Glass Fiber.",
+        "Apply FLT-4: If the value is paper or cellulose, write Cellulose.",
+        "Apply FLT-4: If the value is SS wire mesh, wire mesh, or SS mesh, write Stainless Steel Mesh.",
+        "Apply FLT-4: If the value is synthetic or polyester, write Synthetic.",
+        "Apply GR7: Write CHECK: followed by a space and the original text if the value cannot be mapped."
+      ],
+      "exceptions": [
+        "Write TBD for a missing value.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "microglass",
+          "to": "Glass Fiber"
+        },
+        {
+          "from": "paper",
+          "to": "Cellulose"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "collapse_pressure": {
+      "written_form": "Write the collapse pressure as {n} bar.",
+      "unit": "bar",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "Write CHECK: followed by a space and the original text if the value does not fit the required format.",
+      "accepted": [],
+      "steps": [
+        "Apply GR5: Convert psid to bar by multiplying by 0.0689476.",
+        "Apply GR4: Round the converted value and write the number, one space, and bar.",
+        "Apply GR7: Write CHECK: followed by a space and the original text if the value cannot be mapped."
+      ],
+      "exceptions": [
+        "Write TBD for a missing value.",
+        "Write CHECK: followed by a space and the original text when the value cannot be mapped."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "150 psid",
+          "to": "10.3 bar"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "seal_material": {
+      "written_form": "Write the seal material as the canonical uppercase abbreviation specified for the mapped material.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "NBR",
+        "HNBR",
+        "FKM",
+        "FFKM",
+        "EPDM",
+        "VMQ",
+        "FEPM"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "nitrile",
+          "written": "NBR"
+        },
+        {
+          "form": "Buna-N",
+          "written": "NBR"
+        },
+        {
+          "form": "Buna",
+          "written": "NBR"
+        },
+        {
+          "form": "hydrogenated nitrile",
+          "written": "HNBR"
+        },
+        {
+          "form": "HSN",
+          "written": "HNBR"
+        },
+        {
+          "form": "Viton",
+          "written": "FKM"
+        },
+        {
+          "form": "fluorocarbon",
+          "written": "FKM"
+        },
+        {
+          "form": "FPM",
+          "written": "FKM"
+        },
+        {
+          "form": "Kalrez",
+          "written": "FFKM"
+        },
+        {
+          "form": "perfluoroelastomer",
+          "written": "FFKM"
+        },
+        {
+          "form": "perfluoro",
+          "written": "FFKM"
+        },
+        {
+          "form": "EPR",
+          "written": "EPDM"
+        },
+        {
+          "form": "ethylene propylene",
+          "written": "EPDM"
+        },
+        {
+          "form": "silicone",
+          "written": "VMQ"
+        },
+        {
+          "form": "Si",
+          "written": "VMQ"
+        },
+        {
+          "form": "Aflas",
+          "written": "FEPM"
+        },
+        {
+          "form": "TFE/P",
+          "written": "FEPM"
+        }
+      ],
+      "steps": [
+        "Apply FLT-6 and map nitrile, Buna-N, or Buna to NBR.",
+        "Apply FLT-6 and map hydrogenated nitrile or HSN to HNBR.",
+        "Apply FLT-6 and map Viton, fluorocarbon, or FPM to FKM.",
+        "Apply FLT-6 and map Kalrez, perfluoroelastomer, or perfluoro to FFKM.",
+        "Apply FLT-6 and map EPR or ethylene propylene to EPDM.",
+        "Apply FLT-6 and map silicone or Si to VMQ.",
+        "Apply FLT-6 and map Aflas or TFE/P to FEPM."
+      ],
+      "exceptions": [
+        "Write CHECK: followed by a space and the original text when the seal material cannot be mapped to the picklist."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "Buna-N",
+          "to": "NBR"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "thread": {
+      "written_form": "Write a metric thread as M{d} with the coarse pitch omitted or as M{d}x{pitch} for a fine pitch, and write an inch thread as {frac}-{t} UNC.",
+      "unit": "",
+      "decimals": null,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Apply BLT-1 and omit a coarse metric pitch from a value such as M16 x 2.0, writing M16.",
+        "Apply BLT-1 and retain a fine metric pitch, writing it without spaces as M16x1.5.",
+        "Apply BLT-1 and add the UNC TPI from the lookup table to an inch fraction without TPI.",
+        "Apply BLT-1 and assume UNC for an inch thread that has TPI but no series.",
+        "Apply the global unit-conversion rule and convert inch measurements to mm using x 25.4 and one decimal when that rule applies."
+      ],
+      "exceptions": [
+        "Write CHECK: followed by a space and the original text when the thread cannot be normalized by these rules."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "M16 x 2.0",
+          "to": "M16"
+        },
+        {
+          "from": "M16x1.5",
+          "to": "M16x1.5"
+        },
+        {
+          "from": "5/8\" UNC",
+          "to": "5/8-11 UNC"
+        },
+        {
+          "from": "1/2-13",
+          "to": "1/2-13 UNC"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "length": {
+      "written_form": "Write the bolt length as a number followed by one space and mm, using the metric result with at most one decimal.",
+      "unit": "mm",
+      "decimals": 1,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Apply BLT-2 and write the length in the form {n} mm.",
+        "Convert inch lengths to mm by multiplying by 25.4 and round to one decimal.",
+        "Write one space between the number and mm.",
+        "Drop trailing zeros from the metric length."
+      ],
+      "exceptions": [
+        "Write CHECK: followed by a space and the original text when the length cannot be normalized."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "2 in",
+          "to": "50.8 mm"
+        },
+        {
+          "from": "70mm",
+          "to": "70 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "strength_grade": {
+      "written_form": "Write the strength grade as one of the specified canonical grade forms.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "8.8",
+        "10.9",
+        "12.9",
+        "A2-70",
+        "A4-80",
+        "SAE Grade 5",
+        "SAE Grade 8",
+        "ASTM A325",
+        "ASTM A490"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "cl 8.8",
+          "written": "8.8"
+        },
+        {
+          "form": "class 8.8",
+          "written": "8.8"
+        },
+        {
+          "form": "10.9 class",
+          "written": "10.9"
+        },
+        {
+          "form": "A2 70",
+          "written": "A2-70"
+        },
+        {
+          "form": "304 SS 70",
+          "written": "A2-70"
+        },
+        {
+          "form": "A4 80",
+          "written": "A4-80"
+        },
+        {
+          "form": "316 SS 80",
+          "written": "A4-80"
+        },
+        {
+          "form": "Gr5",
+          "written": "SAE Grade 5"
+        },
+        {
+          "form": "grade 5",
+          "written": "SAE Grade 5"
+        },
+        {
+          "form": "Gr8",
+          "written": "SAE Grade 8"
+        },
+        {
+          "form": "grade 8",
+          "written": "SAE Grade 8"
+        },
+        {
+          "form": "A325",
+          "written": "ASTM A325"
+        },
+        {
+          "form": "A490",
+          "written": "ASTM A490"
+        }
+      ],
+      "steps": [
+        "Apply BLT-3 and map 8.8, cl 8.8, or class 8.8 to 8.8.",
+        "Apply BLT-3 and map 10.9 or 10.9 class to 10.9.",
+        "Apply BLT-3 and write 12.9 as 12.9.",
+        "Apply BLT-3 and map A2 70 or 304 SS 70 to A2-70.",
+        "Apply BLT-3 and map A4 80 or 316 SS 80 to A4-80.",
+        "Apply BLT-3 and map Gr5 or grade 5 to SAE Grade 5.",
+        "Apply BLT-3 and map Gr8 or grade 8 to SAE Grade 8.",
+        "Apply BLT-3 and map A325 to ASTM A325.",
+        "Apply BLT-3 and map A490 to ASTM A490."
+      ],
+      "exceptions": [
+        "Write CHECK: followed by a space and the original text when the strength grade is not in the picklist."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "Gr8",
+          "to": "SAE Grade 8"
+        },
+        {
+          "from": "A4 80",
+          "to": "A4-80"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "standard": {
+      "written_form": "Write the bolt standard as the specified canonical standard designation.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "ISO 4014",
+        "ISO 4017",
+        "ASME B18.2.1"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "DIN 931",
+          "written": "ISO 4014"
+        },
+        {
+          "form": "part thread",
+          "written": "ISO 4014"
+        },
+        {
+          "form": "partially threaded",
+          "written": "ISO 4014"
+        },
+        {
+          "form": "DIN 933",
+          "written": "ISO 4017"
+        },
+        {
+          "form": "fully threaded",
+          "written": "ISO 4017"
+        },
+        {
+          "form": "full thread",
+          "written": "ISO 4017"
+        },
+        {
+          "form": "ANSI B18.2.1",
+          "written": "ASME B18.2.1"
+        },
+        {
+          "form": "B18.2.1",
+          "written": "ASME B18.2.1"
+        }
+      ],
+      "steps": [
+        "Apply BLT-4 and map DIN 931, part thread, or partially threaded to ISO 4014.",
+        "Apply BLT-4 and map DIN 933, fully threaded, or full thread to ISO 4017.",
+        "Apply BLT-4 and map ANSI B18.2.1 or B18.2.1 to ASME B18.2.1."
+      ],
+      "exceptions": [
+        "Write CHECK: followed by a space and the original text when the standard is not in the picklist."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "DIN 933",
+          "to": "ISO 4017"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "finish": {
+      "written_form": "Write the finish as the specified canonical title-case finish name.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Plain",
+        "Zinc Plated",
+        "Hot-Dip Galvanized",
+        "Zinc Flake",
+        "Black Oxide",
+        "PTFE Coated"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "self colour",
+          "written": "Plain"
+        },
+        {
+          "form": "plain",
+          "written": "Plain"
+        },
+        {
+          "form": "black",
+          "written": "Plain"
+        },
+        {
+          "form": "BZP",
+          "written": "Zinc Plated"
+        },
+        {
+          "form": "ZP",
+          "written": "Zinc Plated"
+        },
+        {
+          "form": "electro-galvanized",
+          "written": "Zinc Plated"
+        },
+        {
+          "form": "zinc plated",
+          "written": "Zinc Plated"
+        },
+        {
+          "form": "HDG",
+          "written": "Hot-Dip Galvanized"
+        },
+        {
+          "form": "galvanised",
+          "written": "Hot-Dip Galvanized"
+        },
+        {
+          "form": "hot dip",
+          "written": "Hot-Dip Galvanized"
+        },
+        {
+          "form": "zinc flake",
+          "written": "Zinc Flake"
+        },
+        {
+          "form": "black oxide",
+          "written": "Black Oxide"
+        },
+        {
+          "form": "PTFE",
+          "written": "PTFE Coated"
+        },
+        {
+          "form": "Xylan",
+          "written": "PTFE Coated"
+        },
+        {
+          "form": "fluoropolymer",
+          "written": "PTFE Coated"
+        }
+      ],
+      "steps": [
+        "Apply BLT-5 and map self colour, plain, or black to Plain.",
+        "Apply BLT-5 and map BZP, ZP, electro-galvanized, or zinc plated to Zinc Plated.",
+        "Apply BLT-5 and map HDG, galvanised, or hot dip to Hot-Dip Galvanized.",
+        "Apply BLT-5 and write zinc flake as Zinc Flake.",
+        "Apply BLT-5 and write black oxide as Black Oxide.",
+        "Apply BLT-5 and map PTFE, Xylan, or fluoropolymer to PTFE Coated."
+      ],
+      "exceptions": [
+        "Write CHECK: followed by a space and the original text when the finish is not in the picklist."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "BZP",
+          "to": "Zinc Plated"
+        },
+        {
+          "from": "HDG",
+          "to": "Hot-Dip Galvanized"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "hose_standard": {
+      "written_form": "Write the hose standard as the specified canonical standard designation.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "SAE 100R1AT",
+        "SAE 100R2AT",
+        "EN 853 1SN",
+        "EN 853 2SN",
+        "EN 856 4SP",
+        "EN 856 4SH",
+        "SAE 100R13"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "R1AT",
+          "written": "SAE 100R1AT"
+        },
+        {
+          "form": "R1",
+          "written": "SAE 100R1AT"
+        },
+        {
+          "form": "R2AT",
+          "written": "SAE 100R2AT"
+        },
+        {
+          "form": "R2",
+          "written": "SAE 100R2AT"
+        },
+        {
+          "form": "1SN",
+          "written": "EN 853 1SN"
+        },
+        {
+          "form": "2SN",
+          "written": "EN 853 2SN"
+        },
+        {
+          "form": "4SP",
+          "written": "EN 856 4SP"
+        },
+        {
+          "form": "4SH",
+          "written": "EN 856 4SH"
+        },
+        {
+          "form": "R13",
+          "written": "SAE 100R13"
+        }
+      ],
+      "steps": [
+        "Apply HSE-1 and map R1AT or R1 to SAE 100R1AT.",
+        "Apply HSE-1 and map R2AT or R2 to SAE 100R2AT.",
+        "Apply HSE-1 and map 1SN to EN 853 1SN.",
+        "Apply HSE-1 and map 2SN to EN 853 2SN.",
+        "Apply HSE-1 and map 4SP to EN 856 4SP.",
+        "Apply HSE-1 and map 4SH to EN 856 4SH.",
+        "Apply HSE-1 and map R13 to SAE 100R13.",
+        "Translate R2AT and 2SN separately, and never swap one for the other."
+      ],
+      "exceptions": [
+        "Write CHECK: followed by a space and the original text when the hose standard is not in the picklist."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "2SN",
+          "to": "EN 853 2SN"
+        },
+        {
+          "from": "R2AT",
+          "to": "SAE 100R2AT"
+        },
+        {
+          "from": "4SH",
+          "to": "EN 856 4SH"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "dash_size": {
+      "written_form": "Write the hose dash size as the dash designation from the hydraulic hose dash-size lookup table.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "-4",
+        "-5",
+        "-6",
+        "-8",
+        "-10",
+        "-12",
+        "-16",
+        "-20",
+        "-24",
+        "-32"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [],
+      "steps": [
+        "Apply HSE-2 and look up an inch, mm, or DN value in the dash-size table.",
+        "Write the matching dash designation from the table, such as -8.",
+        "Map 1/2 in, 12.7 mm, DN12, or #8 to -8.",
+        "Write CHECK: followed by a space and the original text when no dash-size table entry matches."
+      ],
+      "exceptions": [
+        "Write CHECK: followed by a space and the original text when the hose size cannot be found in the dash-size table."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "1/2 in",
+          "to": "-8"
+        },
+        {
+          "from": "DN12",
+          "to": "-8"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "max_working_pressure": {
+      "written_form": "Write the value as a whole number followed by one space and bar.",
+      "unit": "bar",
+      "decimals": 0,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Under HSE-3, convert psi by multiplying by 0.0689476 and convert MPa by multiplying by 10.",
+        "Round the result to a whole bar.",
+        "Write the metric result as a number followed by one space and bar."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "5000 psi",
+          "to": "345 bar"
+        },
+        {
+          "from": "35 MPa",
+          "to": "350 bar"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "end_fitting": {
+      "written_form": "Write the fitting as the corresponding canonical picklist value, preserving its capitalization, spaces, and symbols.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "JIC 37° Female Swivel",
+        "ORFS Female Swivel",
+        "BSPP Female Swivel",
+        "NPT Male",
+        "Flange Code 61",
+        "Flange Code 62"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "JIC female",
+          "written": "JIC 37° Female Swivel"
+        },
+        {
+          "form": "JIC swivel",
+          "written": "JIC 37° Female Swivel"
+        },
+        {
+          "form": "37 deg female",
+          "written": "JIC 37° Female Swivel"
+        },
+        {
+          "form": "ORFS female",
+          "written": "ORFS Female Swivel"
+        },
+        {
+          "form": "O-ring face seal",
+          "written": "ORFS Female Swivel"
+        },
+        {
+          "form": "BSP female",
+          "written": "BSPP Female Swivel"
+        },
+        {
+          "form": "BSPP female",
+          "written": "BSPP Female Swivel"
+        },
+        {
+          "form": "NPT male",
+          "written": "NPT Male"
+        },
+        {
+          "form": "MNPT",
+          "written": "NPT Male"
+        },
+        {
+          "form": "SAE 3000 flange",
+          "written": "Flange Code 61"
+        },
+        {
+          "form": "code 61",
+          "written": "Flange Code 61"
+        },
+        {
+          "form": "SAE 6000 flange",
+          "written": "Flange Code 62"
+        },
+        {
+          "form": "code 62",
+          "written": "Flange Code 62"
+        }
+      ],
+      "steps": [
+        "Under HSE-4, write JIC 37° Female Swivel for JIC female, JIC swivel, or 37 deg female.",
+        "Under HSE-4, write ORFS Female Swivel for ORFS female or O-ring face seal.",
+        "Under HSE-4, write BSPP Female Swivel for BSP female or BSPP female.",
+        "Under HSE-4, write NPT Male for NPT male or MNPT.",
+        "Under HSE-4, write Flange Code 61 for SAE 3000 flange or code 61.",
+        "Under HSE-4, write Flange Code 62 for SAE 6000 flange or code 62."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "JIC female",
+          "to": "JIC 37° Female Swivel"
+        },
+        {
+          "from": "SAE 6000 flange",
+          "to": "Flange Code 62"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "assembly_length": {
+      "written_form": "Write the assembly length as a whole number followed by one space and mm.",
+      "unit": "mm",
+      "decimals": 0,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Under HSE-5, convert metres to millimetres by multiplying by 1000.",
+        "Round the result to a whole millimetre.",
+        "Write the result as a number followed by one space and mm."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "1.5 m",
+          "to": "1500 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "glove_size": {
+      "written_form": "Write the glove size as its EN ISO 21420 number.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11"
+      ],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [
+        {
+          "form": "S",
+          "written": "7"
+        },
+        {
+          "form": "small",
+          "written": "7"
+        },
+        {
+          "form": "M",
+          "written": "8"
+        },
+        {
+          "form": "medium",
+          "written": "8"
+        },
+        {
+          "form": "L",
+          "written": "9"
+        },
+        {
+          "form": "large",
+          "written": "9"
+        },
+        {
+          "form": "XL",
+          "written": "10"
+        },
+        {
+          "form": "XXL",
+          "written": "11"
+        },
+        {
+          "form": "2XL",
+          "written": "11"
+        }
+      ],
+      "steps": [
+        "Under GLV-1, write 7 for S or small.",
+        "Under GLV-1, write 8 for M or medium.",
+        "Under GLV-1, write 9 for L or large.",
+        "Under GLV-1, write 10 for XL.",
+        "Under GLV-1, write 11 for XXL or 2XL.",
+        "Under GLV-1, when the value is written as size n, write n."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "L",
+          "to": "9"
+        },
+        {
+          "from": "size 10",
+          "to": "10"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "cut_level": {
+      "written_form": "Write the cut level as Cut A through Cut F, or mark an unconvertible level with CHECK: followed by the original text.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Cut A",
+        "Cut B",
+        "Cut C",
+        "Cut D",
+        "Cut E",
+        "Cut F"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "ISO cut C",
+          "written": "Cut C"
+        },
+        {
+          "form": "cut C",
+          "written": "Cut C"
+        }
+      ],
+      "steps": [
+        "Under GLV-2, for an EN 388 code such as 4X43D, take the fifth character and write the corresponding cut level, such as Cut D.",
+        "Under GLV-2, write Cut C for ISO cut C or cut C.",
+        "Under GLV-2, write CHECK: followed by a space and the original text for an old numeric level or an ANSI level."
+      ],
+      "exceptions": [
+        "Mark an old numeric level or an ANSI level with CHECK: followed by the original text because there is no reliable conversion."
+      ],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "EN388 4X43D",
+          "to": "Cut D"
+        },
+        {
+          "from": "ISO cut C",
+          "to": "Cut C"
+        },
+        {
+          "from": "level 5",
+          "to": "CHECK: level 5"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "glove_material": {
+      "written_form": "Write the glove material as the corresponding canonical picklist value.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Nitrile",
+        "Latex",
+        "Neoprene",
+        "Leather",
+        "HPPE",
+        "Aramid",
+        "PVC"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "nitrile",
+          "written": "Nitrile"
+        },
+        {
+          "form": "latex",
+          "written": "Latex"
+        },
+        {
+          "form": "natural rubber",
+          "written": "Latex"
+        },
+        {
+          "form": "neoprene",
+          "written": "Neoprene"
+        },
+        {
+          "form": "chloroprene",
+          "written": "Neoprene"
+        },
+        {
+          "form": "leather",
+          "written": "Leather"
+        },
+        {
+          "form": "cowhide",
+          "written": "Leather"
+        },
+        {
+          "form": "goatskin",
+          "written": "Leather"
+        },
+        {
+          "form": "Dyneema",
+          "written": "HPPE"
+        },
+        {
+          "form": "UHMWPE",
+          "written": "HPPE"
+        },
+        {
+          "form": "Kevlar",
+          "written": "Aramid"
+        },
+        {
+          "form": "aramid",
+          "written": "Aramid"
+        },
+        {
+          "form": "para-aramid",
+          "written": "Aramid"
+        }
+      ],
+      "steps": [
+        "Under GLV-3, write Nitrile for nitrile.",
+        "Under GLV-3, write Latex for latex or natural rubber.",
+        "Under GLV-3, write Neoprene for neoprene or chloroprene.",
+        "Under GLV-3, write Leather for leather, cowhide, or goatskin.",
+        "Under GLV-3, write HPPE for Dyneema, HPPE, or UHMWPE.",
+        "Under GLV-3, write Aramid for Kevlar, aramid, or para-aramid.",
+        "Under GLV-3, write PVC for PVC."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "Kevlar",
+          "to": "Aramid"
+        },
+        {
+          "from": "Dyneema",
+          "to": "HPPE"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "coating": {
+      "written_form": "Write the coating as the corresponding canonical picklist value.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Nitrile Palm",
+        "PU Palm",
+        "Latex Crinkle",
+        "None"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [
+        {
+          "form": "sandy nitrile",
+          "written": "Nitrile Palm"
+        },
+        {
+          "form": "nitrile palm",
+          "written": "Nitrile Palm"
+        },
+        {
+          "form": "foam nitrile",
+          "written": "Nitrile Palm"
+        },
+        {
+          "form": "PU coated palm",
+          "written": "PU Palm"
+        },
+        {
+          "form": "polyurethane palm",
+          "written": "PU Palm"
+        },
+        {
+          "form": "crinkle latex",
+          "written": "Latex Crinkle"
+        },
+        {
+          "form": "uncoated",
+          "written": "None"
+        },
+        {
+          "form": "none",
+          "written": "None"
+        }
+      ],
+      "steps": [
+        "Under GLV-4, write Nitrile Palm for sandy nitrile, nitrile palm, or foam nitrile.",
+        "Under GLV-4, write PU Palm for PU coated palm or polyurethane palm.",
+        "Under GLV-4, write Latex Crinkle for crinkle latex.",
+        "Under GLV-4, write None for uncoated or none."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "PU coated palm",
+          "to": "PU Palm"
+        }
+      ],
+      "unit_spacing": ""
+    },
+    "cuff_length": {
+      "written_form": "Write the cuff length as a whole number followed by one space and mm.",
+      "unit": "mm",
+      "decimals": 0,
+      "values": [],
+      "closed": false,
+      "not_listed": "",
+      "accepted": [],
+      "steps": [
+        "Under GLV-5, convert inches to millimetres by multiplying by 25.4.",
+        "Round the result to a whole millimetre.",
+        "Write the result as a number followed by one space and mm."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "12 in",
+          "to": "305 mm"
+        }
+      ],
+      "unit_spacing": "space"
+    },
+    "impact_protection": {
+      "written_form": "Write the value as Yes or No.",
+      "unit": "",
+      "decimals": null,
+      "values": [
+        "Yes",
+        "No"
+      ],
+      "closed": true,
+      "not_listed": "Write CHECK: followed by a space and the original text.",
+      "accepted": [],
+      "steps": [
+        "(GLV-6) Write Yes when the input indicates a TPR back, impact, or an EN 388 'P' marking.",
+        "(GLV-6) Write No when the input does not indicate impact protection and the value can be determined from the closed list."
+      ],
+      "exceptions": [],
+      "unclear": [],
+      "examples": [
+        {
+          "from": "TPR back",
+          "to": "Yes"
+        }
+      ],
+      "unit_spacing": ""
+    }
+  }
+}

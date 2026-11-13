@@ -1,0 +1,162 @@
+"""Общее для всего конвейера: логгер, запоминание ответов модели и сравнение имён атрибутов и фраз."""
+import logging
+import re
+import threading
+from typing import Callable, Hashable
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+logger = logging.getLogger("normalization_pipeline")
+
+
+logger.setLevel(logging.INFO)
+
+
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("%(asctime)s | %(message)s"))
+    logger.addHandler(handler)
+# MCP (FastMCP) вешает на корневой логгер свой обработчик уровня INFO: без этого каждая строка
+# конвейера печаталась дважды, а httpx писал строку на каждый вызов OpenAI
+logger.propagate = False
+for _noisy in ("httpx", "httpcore", "openai"):
+    logging.getLogger(_noisy).setLevel(logging.WARNING)
+
+
+class _SkipJobsPolling(logging.Filter):
+    """Фронтенд опрашивает GET /jobs каждые 5 с, пока идёт фоновая задача, — в журнал не пишем."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Пропускает в журнал всё, кроме опроса GET /jobs."""
+        return "/jobs" not in record.getMessage()
+
+
+logging.getLogger("uvicorn.access").addFilter(_SkipJobsPolling())
+
+
+class Memo:
+    """Запомненные ответы модели на один и тот же вопрос: ключ → ответ, потокобезопасно.
+
+    Вызов модели идёт без блокировки: две строки с одним вопросом могут спросить дважды, но не
+    ждут друг друга. Все экземпляры известны классу, Memo.clear_all() очищает их разом (тесты,
+    подгрузка новых документов).
+    """
+
+    _all: list["Memo"] = []
+
+    def __init__(self, name: str):
+        self.name = name
+        self._data: dict = {}
+        self._lock = threading.Lock()
+        Memo._all.append(self)
+
+    def remember(self, key: Hashable, compute: Callable[[], object]):
+        """Ответ по ключу: запомненный или вычисленный compute() и запомненный."""
+        with self._lock:
+            if key in self._data:
+                return self._data[key]
+        value = compute()
+        with self._lock:
+            return self._data.setdefault(key, value)
+
+    def __contains__(self, key: Hashable) -> bool:
+        with self._lock:
+            return key in self._data
+
+    def clear(self) -> None:
+        """Забыть все ответы этого кэша."""
+        with self._lock:
+            self._data.clear()
+
+    @classmethod
+    def clear_all(cls) -> None:
+        """Забыть ответы всех кэшей конвейера."""
+        for memo in cls._all:
+            memo.clear()
+
+
+def _context_line(context: str) -> str:
+    """Строка контекста для промпта; пустой контекст не добавляет ничего."""
+    return f"Row context: {context}\n" if context else ""
+
+
+def _normalize_phrase(text: str) -> str:
+    """Нормализует фразу для сравнения: нижний регистр, пунктуация→пробел, порядок слов не важен."""
+    text = text.lower()
+    text = re.sub(r"[()\-,]", " ", text)
+    return " ".join(sorted(text.split()))
+
+
+def _norm_attr(text: str) -> str:
+    """Нормализует имя атрибута для сравнения (без сортировки слов, только регистр/пробелы)."""
+    return re.sub(r"\s+", " ", text).strip().lower()
+
+
+def _attribute_is_excluded(attribute: str, excluded: list[str]) -> bool:
+    """Проверяет, попадает ли атрибут строки в список исключённых (по подстроке)."""
+    a = _norm_attr(attribute)
+    if not a or not excluded:
+        return False
+    for e in excluded:
+        e_norm = _norm_attr(e)
+        if not e_norm:
+            continue
+        if a in e_norm or e_norm in a:
+            return True
+    return False
+
+
+def _attribute_matches(attribute: str, owner: str) -> bool:
+    """Совпадает ли атрибут строки с атрибутом-владельцем правила.
+
+    Сравнение по целым словам, а не по подстроке: «design» не должен считаться совпадением
+    с «material designation», иначе к материалу подтягивается keyword совсем другой темы.
+    """
+    a = _norm_attr(attribute)
+    o = _norm_attr(owner)
+    if not a or not o:
+        return True  # нет данных о владельце — применяем (backward compat)
+    a_words = " " + " ".join(re.findall(r"\w+", a)) + " "
+    o_words = " " + " ".join(re.findall(r"\w+", o)) + " "
+    return o_words in a_words or a_words in o_words
+
+
+def _names_clash(attribute: str, name: str) -> bool:
+    """Разные ли это названные атрибуты: общее слово есть, но ни один не входит в другой.
+
+    «nominal length» и «Nominal size» пересекаются словом «nominal» и при этом означают
+    разное — шаблон одного к другому применять нельзя. А «dimension» и «Wear travel, in»
+    не пересекаются вовсе: это общая группа, которой ретрив вправе накрыть строку.
+    """
+    a = set(re.findall(r"\w+", _norm_attr(attribute)))
+    n = set(re.findall(r"\w+", _norm_attr(name)))
+    if not a or not n or not (a & n):
+        return False
+    return not (a <= n or n <= a)
+
+
+def _unit_key(text: str) -> str:
+    """Ключ единицы измерения: без пробелов, точек и регистра ('  in.' == ' IN')."""
+    return re.sub(r"[\s.]", "", text).lower()
+
+
+_WORD_RE = re.compile(r"\w+")
+
+
+def _digit_groups(text: str) -> set[str]:
+    """Группы цифр текста."""
+    return set(re.findall(r"\d+", str(text)))
+
+
+def _alnum(text: str) -> str:
+    """Только буквы и цифры в нижнем регистре: «18Cr-10Ni» и «18Cr10Ni» дают одно и то же."""
+    return re.sub(r"[^a-z0-9]", "", str(text).lower())
+
+
+def _char_bag(text: str) -> str:
+    """Мультимножество букв и цифр: не зависит ни от порядка частей, ни от разделителей."""
+    return "".join(sorted(re.findall(r"[a-z0-9]", str(text).lower())))

@@ -4,7 +4,8 @@ import "../../../css/HeaderChat.css"
 const Header = () => {
     return(
         <div className="header">
-            <p className="HCustom">Test AiChat</p>
+            <p className="HCustom">Нормализация атрибутов</p>
+            <p className="HSub">Приложите .xlsx — приведу значения к загруженным стандартам</p>
         </div>
     );
 }

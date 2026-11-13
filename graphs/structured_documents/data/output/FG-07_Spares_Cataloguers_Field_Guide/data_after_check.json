@@ -1,0 +1,2659 @@
+[
+  {
+    "page_number": 0,
+    "source_page_index": 0,
+    "detected_angle": 0,
+    "confidence": 14.73,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "FIELD GUIDE FG-07 · 2ND EDITION"
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "The Spares Cataloguer's Field Guide"
+        },
+        {
+          "type": "paragraph",
+          "text": "How to write MRO spares and consumables data so that everyone finds the same part."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Inside"
+        },
+        {
+          "type": "paragraph",
+          "text": "• 8 golden rules you can learn over a coffee"
+        },
+        {
+          "type": "paragraph",
+          "text": "• 10 chapters: bearings, seals, O-rings, belts, oils, greases, filters, bolts, hoses and gloves"
+        },
+        {
+          "type": "paragraph",
+          "text": "• Before / after examples for every field"
+        },
+        {
+          "type": "paragraph",
+          "text": "• FAQ, checklist and lookup tables"
+        },
+        {
+          "type": "paragraph",
+          "text": "Published by the Materials Cataloguing Team · October 2026 · Sample document for system testing"
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 297,
+      "prompt_tokens": 4519,
+      "total_tokens": 4816,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 1,
+    "source_page_index": 1,
+    "detected_angle": 0,
+    "confidence": 13.87,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Hi, cataloguer!"
+        },
+        {
+          "type": "paragraph",
+          "text": "You're the person who decides whether the warehouse holds one bin of 6205-2RS/C3 bearings or five bins of the same bearing under five different names. This guide is here to make that decision easy."
+        },
+        {
+          "type": "paragraph",
+          "text": "Each record you work on arrives as rows with three columns: Item, Attribute and Value. In this guide we call the item a category (what kind of thing it is) and the attribute a field (one fact about it). You'll translate each row into the guide's words and write it back in the same three columns, in the same order. If your tool has a fourth column for notes, list the rule codes you used - for example GR2; BRG-1."
+        },
+        {
+          "type": "table",
+          "title": "How this guide is organised",
+          "columns": [
+            "Part",
+            "What you'll find",
+            "Use it when"
+          ],
+          "rows": [
+            {
+              "Part": "Golden rules (GR1-GR8)",
+              "What you'll find": "Eight rules that apply everywhere",
+              "Use it when": "Always - they're the default"
+            },
+            {
+              "Part": "Cheat sheet",
+              "What you'll find": "Unit conversions on one page",
+              "Use it when": "You see inches, psi, gallons, pounds"
+            },
+            {
+              "Part": "Chapters 1-10",
+              "What you'll find": "One per category: fields at a glance, rule cards, before/after",
+              "Use it when": "You're working on that category"
+            },
+            {
+              "Part": "FAQ",
+              "What you'll find": "The questions everyone asks in week one",
+              "Use it when": "You're unsure and nobody's around"
+            },
+            {
+              "Part": "Lookup tables",
+              "What you'll find": "AS568 sizes, dash sizes, UNC threads, V-belt offsets",
+              "Use it when": "A rule card tells you to look something up"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Words we use",
+          "columns": [
+            "Word",
+            "Meaning"
+          ],
+          "rows": [
+            {
+              "Word": "Category",
+              "Meaning": "The kind of item, e.g. Rolling Bearing. Written in the Item column, Title Case."
+            },
+            {
+              "Word": "Field",
+              "Meaning": "One fact about the item, e.g. bore_diameter. Written in the Attribute column as a lower_snake_case key."
+            },
+            {
+              "Word": "Value",
+              "Meaning": "The fact itself, e.g. 25 mm. Written in the Value column."
+            },
+            {
+              "Word": "Picklist",
+              "Meaning": "A closed list of allowed values. If a field has one, the value must come from it."
+            },
+            {
+              "Word": "Rule card",
+              "Meaning": "A small box in each chapter telling you, in IF / THEN form, how to turn messy input into a clean value."
+            },
+            {
+              "Word": "TBD / CHECK:",
+              "Meaning": "Your two safety valves: TBD when the value is missing, CHECK: when it can't be mapped."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "The order of work. 1) Tidy spaces. 2) Missing? write TBD. 3) Fix the category (GR1). 4) Fix the field key (GR2). 5) Apply the chapter's rule card. 6) Convert units (GR5) and tidy numbers (GR4). 7) Still doesn't fit? CHECK: (GR7)."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 925,
+      "prompt_tokens": 4519,
+      "total_tokens": 5444,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 2,
+    "source_page_index": 2,
+    "detected_angle": 0,
+    "confidence": 14.55,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "The 8 golden rules"
+        },
+        {
+          "type": "paragraph",
+          "text": "Learn these and you'll get 80 % of rows right without opening a chapter."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "GR1 Use the category name from this guide"
+        },
+        {
+          "type": "paragraph",
+          "text": "Every row starts with a category. Write it exactly as the chapter title, in Title Case: Rolling Bearing, O-Ring, Hex Bolt. Nicknames like Brg, Oring or Hyd Hose are fine to receive - just never to write."
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "BEFORE": "Brg",
+              "AFTER": "Rolling Bearing"
+            },
+            {
+              "BEFORE": "Hyd Hose",
+              "AFTER": "Hydraulic Hose"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "GR2 Field keys are lower_snake_case"
+        },
+        {
+          "type": "paragraph",
+          "text": "The attribute column holds a field key, not a label. Keys are lower case with underscores, exactly as listed in each chapter's 'Fields at a glance' table. Labels such as 'Shaft Dia' or 'Pack Size' are translated into the key."
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "BEFORE": "Shaft Dia",
+              "AFTER": "shaft_diameter"
+            },
+            {
+              "BEFORE": "Part No",
+              "AFTER": "designation"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "GR3 Picklist values are spelled exactly like the guide"
+        },
+        {
+          "type": "paragraph",
+          "text": "If a field has a picklist, copy the value character for character: words in Title Case, acronyms in capitals, symbols kept (Deep Groove Ball, Lithium Complex, SiC/Carbon, JIC 37° Female Swivel)."
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "BEFORE": "deep groove",
+              "AFTER": "Deep Groove Ball"
+            },
+            {
+              "BEFORE": "li complex",
+              "AFTER": "Lithium Complex"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "GR4 Numbers: metric, one space, short and tidy"
+        },
+        {
+          "type": "paragraph",
+          "text": "Measured values are metric: number, one space, unit (25 mm, 10.3 bar, 208 L). Use at most one decimal and drop trailing zeros (70 mm, not 70.0 mm). The only exception is O-ring dimensions, which always carry two decimals (3.53 mm, 25.00 mm)."
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "BEFORE": "25mm",
+              "AFTER": "25 mm"
+            },
+            {
+              "BEFORE": "70 .0 mm",
+              "AFTER": "70 mm"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "GR5 Convert imperial units - don't keep both"
+        },
+        {
+          "type": "paragraph",
+          "text": "Inches, pounds, gallons, psi and ounces are converted with the cheat sheet on page 4. Write only the metric result; never '50.8 mm (2 in)'"
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "BEFORE": "2 in",
+              "AFTER": "50.8 mm"
+            },
+            {
+              "BEFORE": "150 psid",
+              "AFTER": "10.3 bar"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "GR6 Don't know? Write TBD"
+        },
+        {
+          "type": "paragraph",
+          "text": "Empty cells, dashes, n/a, ?, 'unknown', 'see drawing' all become TBD (capitals). Never guess - a TBD gets fixed, a guess gets bought."
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "BEFORE": "n/a",
+              "AFTER": "TBD"
+            },
+            {
+              "BEFORE": "?",
+              "AFTER": "TBD"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1246,
+      "prompt_tokens": 4519,
+      "total_tokens": 5765,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 3,
+    "source_page_index": 3,
+    "detected_angle": 0,
+    "confidence": 10.93,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "GR7 Can't map it? Flag it with CHECK:"
+        },
+        {
+          "type": "paragraph",
+          "text": "If a value doesn't fit the field's picklist or format even after every rule in its chapter, write CHECK: followed by a space and the original text. A reviewer will pick it up."
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "BEFORE": "semi-synthetic",
+              "AFTER": "CHECK: semi-synthetic"
+            },
+            {
+              "BEFORE": "level 5",
+              "AFTER": "CHECK: level 5"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "GR8 One row in, one row out"
+        },
+        {
+          "type": "paragraph",
+          "text": "Never split one row into several or merge rows together. Keep the order of the file. If a value carries information for another field (like 'EP2' for a grease), use only the part that belongs to this row's field."
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "BEFORE": "EP2 (for nlgi_grade)",
+              "AFTER": "NLGI 2"
+            },
+            {
+              "BEFORE": "EP2 (for ep_additive)",
+              "AFTER": "Yes"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Cheat sheet: units"
+        },
+        {
+          "type": "paragraph",
+          "text": "Multiply, then round as the field says. If the chapter has a standard-pack or lookup table, that wins over the plain conversion."
+        },
+        {
+          "type": "table",
+          "title": "",
+          "columns": [
+            "If you see",
+            "Write in",
+            "Do this"
+          ],
+          "rows": [
+            {
+              "If you see": "inch (in, \" )",
+              "Write in": "mm",
+              "Do this": "x 25.4"
+            },
+            {
+              "If you see": "foot (ft, ')",
+              "Write in": "m",
+              "Do this": "x 0.3048"
+            },
+            {
+              "If you see": "psi / psid / psig",
+              "Write in": "bar",
+              "Do this": "x 0.0689476"
+            },
+            {
+              "If you see": "MPa",
+              "Write in": "bar",
+              "Do this": "x 10"
+            },
+            {
+              "If you see": "US gallon (gal)",
+              "Write in": "L",
+              "Do this": "x 3.785"
+            },
+            {
+              "If you see": "US quart (qt)",
+              "Write in": "L",
+              "Do this": "x 0.946"
+            },
+            {
+              "If you see": "pound (lb)",
+              "Write in": "kg",
+              "Do this": "x 0.4536"
+            },
+            {
+              "If you see": "ounce (oz)",
+              "Write in": "kg",
+              "Do this": "x 0.02835"
+            },
+            {
+              "If you see": "gram (g)",
+              "Write in": "kg",
+              "Do this": "/ 1000"
+            },
+            {
+              "If you see": "metre (m)",
+              "Write in": "mm",
+              "Do this": "x 1000 (lengths of belts, hoses, gloves)"
+            },
+            {
+              "If you see": "°F",
+              "Write in": "°C",
+              "Do this": "(F - 32) / 1.8"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Rounding. Round half up. 15.876 kg becomes 15.9 kg; 344.7 bar becomes 345 bar when the field asks for whole numbers; 24.9936 mm becomes 24.99 mm for O-rings."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1021,
+      "prompt_tokens": 4519,
+      "total_tokens": 5540,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 4,
+    "source_page_index": 4,
+    "detected_angle": 0,
+    "confidence": 17.34,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Rolling Bearing"
+        },
+        {
+          "type": "paragraph",
+          "text": "Bearings are the most duplicated items in any spares catalogue, because every manufacturer adds its own suffixes to the same basic part. Your job is to strip the brand dialect and leave a designation any store-person can match on the shelf."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: Rolling Bearing  You may receive: Bearing; Ball Bearing; Roller Bearing; Brg; Deep Groove Ball Bearing; Anti-friction Bearing"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "BRG-1": "designation",
+              "Labels you may see": "Designation; Part No; Bearing No; Bearing Number; Code",
+              "What to write": "Base number, then -seal, then /clearance: 6205-2RS/C3"
+            },
+            {
+              "BRG-2": "bearing_type",
+              "Labels you may see": "Type; Bearing Type",
+              "What to write": "Picklist value"
+            },
+            {
+              "BRG-3": "bore_diameter",
+              "Labels you may see": "Bore; ID; Inner Diameter; d",
+              "What to write": "{n} mm"
+            },
+            {
+              "BRG-4": "outside_diameter",
+              "Labels you may see": "OD; Outer Diameter; D",
+              "What to write": "{n} mm"
+            },
+            {
+              "BRG-5": "width",
+              "Labels you may see": "Width; B; Thickness",
+              "What to write": "{n} mm"
+            },
+            {
+              "BRG-6": "seal_type",
+              "Labels you may see": "Seals; Seal; Shields; Closure",
+              "What to write": "Picklist value"
+            },
+            {
+              "BRG-7": "internal_clearance",
+              "Labels you may see": "Clearance; Internal Clearance; Radial Clearance",
+              "What to write": "Picklist value"
+            },
+            {
+              "BRG-8": "cage_material",
+              "Labels you may see": "Cage; Cage Material; Retainer",
+              "What to write": "Picklist value"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "BRG-1 designation\nIF seal suffix IN (2RS1, 2RSH, 2RSR, LLU, DDU, 2RS) THEN write -2RS\nIF seal suffix IN (ZZ, 2ZR, 2Z, ZZC) THEN write -2Z\nIF clearance suffix present (C2, C3, C4, C5) THEN append /Cn at the end\nREMOVE spaces, dots and extra hyphens between the parts; REMOVE cage codes (M, MA, J, TN9) - they go to cage_material\nWatch out! Don't 'upgrade' a bearing: 6205 and 6205-2RS are different parts. Only translate what is written."
+        },
+        {
+          "type": "paragraph",
+          "text": "BRG-2 bearing_type\nIF value IN (DGBB; deep groove; radial ball) THEN write \"Deep Groove Ball\"\nIF value IN (ACBB; angular contact) THEN write \"Angular Contact Ball\"\nIF value IN (CRB; cylindrical) THEN write \"Cylindrical Roller\"\nIF value IN (SRB; spherical; self-aligning roller) THEN write \"Spherical Roller\"\nIF value IN (TRB; taper; tapered) THEN write \"Tapered Roller\"\nIF value IN (thrust) THEN write \"Thrust Ball\"\nIF value IN (self-aligning ball) THEN write \"Self-Aligning Ball\""
+        },
+        {
+          "type": "paragraph",
+          "text": "BRG-3 bore_diameter\nIF unit is inch THEN multiply by 25.4\nIF no unit THEN assume mm (bearing catalogues are metric)"
+        },
+        {
+          "type": "paragraph",
+          "text": "BRG-4 outside_diameter\nSame as bore_diameter"
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1072,
+      "prompt_tokens": 4519,
+      "total_tokens": 5591,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 5,
+    "source_page_index": 5,
+    "detected_angle": 0,
+    "confidence": 10.27,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "FG-07 · The Spares Cataloguer's Field Guide"
+        },
+        {
+          "type": "paragraph",
+          "text": "2nd edition"
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "BRG-5 width"
+        },
+        {
+          "type": "paragraph",
+          "text": "Same as bore_diameter"
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "BRG-6 seal_type"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (rubber seals both sides; 2RS1; LLU; sealed both sides) THEN write \"2RS\"\nIF value IN (metal shields; shielded both sides; ZZ) THEN write \"2Z\"\nIF value IN (one rubber seal; RS1) THEN write \"RS\"\nIF value IN (one shield) THEN write \"Z\"\nIF value IN (open; no seals) THEN write \"Open\""
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "BRG-7 internal_clearance"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (C2; less than normal) THEN write \"C2\"\nIF value IN (normal; CN; standard) THEN write \"CN\"\nIF value IN (C3; C 3; greater than normal) THEN write \"C3\"\nIF value IN (C4) THEN write \"C4\"\nIF value IN (C5) THEN write \"C5\""
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "BRG-8 cage_material"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (J; pressed steel; steel) THEN write \"Steel\"\nIF value IN (M; MA; machined brass; brass) THEN write \"Brass\"\nIF value IN (TN9; TN; nylon; PA66; polyamide) THEN write \"Polyamide\""
+        },
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Part No: 6205 2RS1 C3": "designation: 6205-2RS/C3"
+            },
+            {
+              "Designation: 6205ZZ": "designation: 6205-ZZ"
+            },
+            {
+              "Bearing No: 6310-2RSR-C3": "designation: 6310-2RS/C3"
+            },
+            {
+              "Type: DGBB": "bearing_type: Deep Groove Ball"
+            },
+            {
+              "Bearing Type: spherical": "bearing_type: Spherical Roller"
+            },
+            {
+              "Type: taper": "bearing_type: Tapered Roller"
+            },
+            {
+              "Bore: 1 in": "bore_diameter: 25.4 mm"
+            },
+            {
+              "ID: 25mm": "bore_diameter: 25 mm"
+            },
+            {
+              "OD: 52": "outside_diameter: 52 mm"
+            },
+            {
+              "Seals: metal shields": "seal_type: 2Z"
+            },
+            {
+              "Clearance: normal": "internal_clearance: CN"
+            },
+            {
+              "Cage: TN9": "cage_material: Polyamide"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Pro tip. Bore code shortcut: for series 6000-6300 with bore code 04 and up, bore = code x 5 mm (6205 -> 25 mm). Use it to sanity-check, not to fill blanks."
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        },
+        {
+          "type": "paragraph",
+          "text": "6"
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 977,
+      "prompt_tokens": 4519,
+      "total_tokens": 5496,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 6,
+    "source_page_index": 6,
+    "detected_angle": 0,
+    "confidence": 14.68,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Mechanical Seal"
+        },
+        {
+          "type": "paragraph",
+          "text": "Mechanical seals follow API 682, so most of the vocabulary is already standard - it's just written fifteen different ways. Stick to the API words and you're done."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: Mechanical Seal  You may receive: Mech Seal; Mechanical Seal; Pump Seal; Cartridge Seal"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "Rule": "MSL-1",
+              "Field key": "arrangement",
+              "Labels you may see": "Arrangement; Config; Configuration",
+              "What to write": "Arrangement 1 | 2 | 3"
+            },
+            {
+              "Rule": "MSL-2",
+              "Field key": "seal_category",
+              "Labels you may see": "Category; Cat; API Category",
+              "What to write": "Category 1 | 2 | 3"
+            },
+            {
+              "Rule": "MSL-3",
+              "Field key": "seal_type",
+              "Labels you may see": "Seal Type; Type; Design",
+              "What to write": "Type A | B | C"
+            },
+            {
+              "Rule": "MSL-4",
+              "Field key": "shaft_diameter",
+              "Labels you may see": "Shaft Size; Shaft Dia; Sleeve Size; Shaft",
+              "What to write": "{n} mm"
+            },
+            {
+              "Rule": "MSL-5",
+              "Field key": "face_combination",
+              "Labels you may see": "Faces; Face Materials; Face Combination",
+              "What to write": "{rotating}/{stationary}"
+            },
+            {
+              "Rule": "MSL-6",
+              "Field key": "secondary_seal",
+              "Labels you may see": "Elastomer; Secondary Seal; O-rings",
+              "What to write": "Picklist value (same as O-Ring material)"
+            },
+            {
+              "Rule": "MSL-7",
+              "Field key": "flush_plan",
+              "Labels you may see": "Flush Plan; API Plan; Piping Plan",
+              "What to write": "Plan {code}"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "MSL-1 arrangement\nIF value IN (single; single seal) THEN write \"Arrangement 1\"\nIF value IN (tandem; dual unpressurized; dual unpressurised) THEN write \"Arrangement 2\"\nIF value IN (double; dual pressurized; double pressurized; back-to-back) THEN write \"Arrangement 3\""
+        },
+        {
+          "type": "paragraph",
+          "text": "MSL-2 seal_category\nIF value matches cat 1/2/3 in any spelling (CAT2, Cat. 2) THEN write Category n"
+        },
+        {
+          "type": "paragraph",
+          "text": "MSL-3 seal_type\nIF value IN (pusher; O-ring pusher; rotating pusher) THEN write \"Type A\"\nIF value IN (metal bellows; low temperature bellows) THEN write \"Type B\"\nIF value IN (high temperature metal bellows; flexible graphite bellows) THEN write \"Type C\""
+        },
+        {
+          "type": "paragraph",
+          "text": "MSL-4 shaft_diameter\nREMOVE the diameter sign Ø\nIF unit is inch THEN multiply by 25.4"
+        },
+        {
+          "type": "paragraph",
+          "text": "MSL-5 face_combination\nIF value IN (carbon; carbon graphite; antimony carbon) THEN write \"Carbon\"\nIF value IN (silicon carbide; SSiC; RBSiC; SiC) THEN write \"SiC\"\nIF value IN (tungsten carbide; WC; TC) THEN write \"TC\"\nTranslate each face with the picklist, keep the order given, join with / (no spaces)\nSeparators vs, v, against, - , / all mean the same"
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 927,
+      "prompt_tokens": 4519,
+      "total_tokens": 5446,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 7,
+    "source_page_index": 7,
+    "detected_angle": 0,
+    "confidence": 12.34,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "MSL-6 secondary_seal"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (EPR; ethylene propylene) THEN write \"EPDM\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (silicone; Si) THEN write \"VMQ\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (Aflas; TFE/P) THEN write \"FEPM\""
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "MSL-7 flush_plan"
+        },
+        {
+          "type": "paragraph",
+          "text": "Write Plan, one space, the plan number, suffix letter in capitals: Plan 53A"
+        },
+        {
+          "type": "paragraph",
+          "text": "Combined plans joined with /: Plan 11/52"
+        },
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Arrangement: tandem": "arrangement: Arrangement 2"
+            },
+            {
+              "Config: double pressurized": "arrangement: Arrangement 3"
+            },
+            {
+              "Category: CAT2": "seal_category: Category 2"
+            },
+            {
+              "Seal Type: metal bellows": "seal_type: Type B"
+            },
+            {
+              "Shaft Size: 2.5 in": "shaft_diameter: 63.5 mm"
+            },
+            {
+              "Shaft Dia: Ø60": "shaft_diameter: 60 mm"
+            },
+            {
+              "Faces: SiC vs carbon": "face_combination: SiC/Carbon"
+            },
+            {
+              "Face Materials: tungsten carbide / silicon carbide": "face_combination: TC/SiC"
+            },
+            {
+              "Elastomer: Viton": "secondary_seal: FKM"
+            },
+            {
+              "Flush Plan: API plan 53a": "flush_plan: Plan 53A"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "CHAPTER 3 · CODE ORG"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "O-Ring"
+        },
+        {
+          "type": "paragraph",
+          "text": "O-rings are cheap, but a wrong one stops a compressor. The two things that matter are size and compound. Note the special rule: O-ring dimensions always have two decimals."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: O-Ring  You may receive: O-ring; Oring; O Ring; Seal Ring; Toroidal Seal"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "Rule": "ORG-1",
+              "Field key": "size_reference",
+              "Labels you may see": "Size; Dash No; Dash Number; AS568",
+              "What to write": "AS568-{nnn}"
+            },
+            {
+              "Rule": "ORG-2",
+              "Field key": "inner_diameter",
+              "Labels you may see": "ID; Inner Diameter; Inside Diameter",
+              "What to write": "{n.nn} mm (two decimals!)"
+            },
+            {
+              "Rule": "ORG-3",
+              "Field key": "cross_section",
+              "Labels you may see": "CS; Cross Section; Section; W",
+              "What to write": "{n.nn} mm (two decimals!)"
+            },
+            {
+              "Rule": "ORG-4",
+              "Field key": "material",
+              "Labels you may see": "Material; Compound; Elastomer",
+              "What to write": "Picklist value"
+            },
+            {
+              "Rule": "ORG-5",
+              "Field key": "hardness",
+              "Labels you may see": "Hardness; Durometer; Shore",
+              "What to write": "{n} Shore A"
+            },
+            {
+              "Rule": "ORG-6",
+              "Field key": "aed_resistant",
+              "Labels you may see": "RGD; AED; Explosive Decompression; ED Resistant",
+              "What to write": "Yes | No"
+            }
+          ]
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1254,
+      "prompt_tokens": 4519,
+      "total_tokens": 5773,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 8,
+    "source_page_index": 8,
+    "detected_angle": 0,
+    "confidence": 5.87,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "ORG-1 size_reference\nIF value is a 3-digit dash number with or without prefix (214, -214, 2-214, AS 568-214) THEN write AS568-214\nThe leading '2-' used by some suppliers is a compound prefix, not part of the size"
+        },
+        {
+          "type": "paragraph",
+          "text": "ORG-2 inner_diameter\nIF inch THEN x 25.4\nALWAYS two decimals: 25.00 mm"
+        },
+        {
+          "type": "paragraph",
+          "text": "ORG-3 cross_section\nDecimal comma becomes point: 3,53 -> 3.53 mm"
+        },
+        {
+          "type": "paragraph",
+          "text": "ORG-4 material\nIF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\"\nIF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\"\nIF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\"\nIF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\"\nIF value IN (EPR; ethylene propylene) THEN write \"EPDM\"\nIF value IN (silicone; Si) THEN write \"VMQ\"\nIF value IN (Aflas; TFE/P) THEN write \"FEPM\""
+        },
+        {
+          "type": "paragraph",
+          "text": "ORG-5 hardness\nIF value in duro, A, Sh A, Shore A or IRHD THEN write {n} Shore A (IRHD treated as equal)"
+        },
+        {
+          "type": "paragraph",
+          "text": "ORG-6 aed_resistant\nIF value mentions RGD resistant, AED, ED, NORSOK M-710 or ISO 23936-2 THEN Yes"
+        },
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Size: 2-214": "size_reference: AS568-214"
+            },
+            {
+              "Dash No: 214": "size_reference: AS568-214"
+            },
+            {
+              "ID: 0.984 in": "inner_diameter: 24.99 mm"
+            },
+            {
+              "Cross Section: 0.139\"": "cross_section: 3.53 mm"
+            },
+            {
+              "CS: 3,53": "cross_section: 3.53 mm"
+            },
+            {
+              "Material: Viton": "material: FKM"
+            },
+            {
+              "Compound: Buna-N": "material: NBR"
+            },
+            {
+              "Material: silicone": "material: VMQ"
+            },
+            {
+              "Hardness: 70 duro": "hardness: 70 Shore A"
+            },
+            {
+              "Hardness: 90 IRHD": "hardness: 90 Shore A"
+            },
+            {
+              "RGD: NORSOK M-710": "aed_resistant: Yes"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Pro tip. Two decimals for O-rings is deliberate: AS568 sizes differ by as little as 0.08 mm, and rounding to one decimal merges different rings."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 870,
+      "prompt_tokens": 4519,
+      "total_tokens": 5389,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 9,
+    "source_page_index": 9,
+    "detected_angle": 0,
+    "confidence": 10.96,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "V-Belt"
+        },
+        {
+          "type": "paragraph",
+          "text": "V-belts come in classical (A, B, C, D), narrow wedge (SPZ, SPA, SPB, SPC) and US narrow (3V, 5V, 8V) sections. The section plus the datum length is the whole identity of the belt."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: V-Belt  You may receive: V Belt; Vee Belt; Wedge Belt; Drive Belt; Fan Belt"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "VBT-1": "belt_section",
+              "Section; Profile; Belt Section": "Picklist value"
+            },
+            {
+              "VBT-2": "datum_length",
+              "Length; Datum Length; Ld; Pitch Length": "{n} mm (whole number)"
+            },
+            {
+              "VBT-3": "construction",
+              "Type; Construction; Belt Type": "Picklist value"
+            },
+            {
+              "VBT-4": "matched_set_qty",
+              "Set; Matched Set; Qty in Set": "{n}"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "VBT-1 belt_section\nIF value IN (13x8; 13 x 8 mm) THEN write \"A\"\nIF value IN (17x11; 17 x 11 mm) THEN write \"B\"\nIF value IN (22x14) THEN write \"C\"\nIF value IN (32x19) THEN write \"D\"\nIF value IN (spz) THEN write \"SPZ\"\nIF value IN (spa) THEN write \"SPA\"\nIF value IN (spb) THEN write \"SPB\"\nIF value IN (spc) THEN write \"SPC\"\nIF value IN (XPZ; cogged SPZ) THEN write \"XPZ\"\nIF value IN (XPA) THEN write \"XPA\"\nIF value IN (XPB) THEN write \"XPB\"\nIF value IN (3V; 9N) THEN write \"3V\"\nIF value IN (5V; 15N) THEN write \"5V\""
+        },
+        {
+          "type": "paragraph",
+          "text": "VBT-2 datum_length\nREMOVE Ld, Lw, Lp prefixes\nIF value looks like A42, B75 (classical, inside length in inches) THEN datum = inches x 25.4 + offset\n(A +30, B +40, C +58, D +75 mm)"
+        },
+        {
+          "type": "paragraph",
+          "text": "VBT-3 construction\nIF value IN (wrapped; classical wrapped; envelope) THEN write \"Wrapped\"\nIF value IN (cogged; notched; raw edge; XP) THEN write \"Raw Edge Cogged\"\nIF value IN (power band; banded; joined; multi-belt) THEN write \"Banded\""
+        },
+        {
+          "type": "paragraph",
+          "text": "VBT-4 matched_set_qty\nKeep only the number: set of 4 -> 4"
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 878,
+      "prompt_tokens": 4519,
+      "total_tokens": 5397,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 10,
+    "source_page_index": 10,
+    "detected_angle": 0,
+    "confidence": 11.12,
+    "content": {
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Section: spb": "belt_section: SPB"
+            },
+            {
+              "Profile: 17x11": "belt_section: B"
+            },
+            {
+              "Section: 13 x 8 mm": "belt_section: A"
+            },
+            {
+              "Length: 2000mm": "datum_length: 2000 mm"
+            },
+            {
+              "Datum Length: Ld 1250": "datum_length: 1250 mm"
+            },
+            {
+              "Length: B75": "datum_length: 1945 mm"
+            },
+            {
+              "Type: notched": "construction: Raw Edge Cogged"
+            },
+            {
+              "Construction: power band": "construction: Banded"
+            },
+            {
+              "Set: set of 4": "matched_set_qty: 4"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "CHAPTER 5 · CODE LUB"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Lubricating Oil"
+        },
+        {
+          "type": "paragraph",
+          "text": "One oil, a dozen names. Grade, base stock and application are what make two oils interchangeable - brand names are not part of this guide and never go in a field."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: Lubricating Oil  You may receive: Oil; Lube Oil; Lubricant; Turbine Oil; Hydraulic Oil; Gear Oil; Compressor Oil"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "LUB-1": "viscosity_grade",
+              "Viscosity; Grade; Viscosity Grade; VG": "ISO VG {n} | SAE {grade}"
+            },
+            {
+              "LUB-2": "base_oil",
+              "Base Oil; Base Stock; Base": "Picklist value"
+            },
+            {
+              "LUB-3": "application",
+              "Application; Use; Service": "Picklist value"
+            },
+            {
+              "LUB-4": "iso_class",
+              "ISO Class; ISO 6743; Classification": "ISO 6743 family letters"
+            },
+            {
+              "LUB-5": "pack_size",
+              "Pack; Pack Size; Packaging; Container": "{n} L"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "LUB-1 viscosity_grade\nIF value is VG46, ISO 46, ISO VG46 or 46 cSt THEN ISO VG 46 (valid ISO grades: 10 15 22 32 46 68 100 150 220 320 460 680)\nIF value is a multigrade like 15W40 THEN SAE 15W-40 (hyphen before the hot grade)\nIF value is SAE 90, SAE 140 THEN keep SAE {n}"
+        },
+        {
+          "type": "paragraph",
+          "text": "LUB-2 base_oil\nIF value IN (mineral; Group I; Group II) THEN write \"Mineral\"\nIF value IN (Group III; hydrocracked) THEN write \"Group III\"\nIF value IN (synthetic hydrocarbon; polyalphaolefin; PAO) THEN write \"PAO\"\nIF value IN (ester; synthetic ester) THEN write \"Ester\"\nIF value IN (polyglycol; polyalkylene glycol; PAG) THEN write \"PAG\"\nWatch out! 'Semi-synthetic' and 'synthetic blend' don't tell you the base - write CHECK: and let the lubrication engineer decide."
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1066,
+      "prompt_tokens": 4519,
+      "total_tokens": 5585,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 11,
+    "source_page_index": 11,
+    "detected_angle": 0,
+    "confidence": 2.43,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "LUB-3 application"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (R&O turbine; turbine; steam turbine) THEN write \"Turbine\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (AW hydraulic; hydraulic; HM) THEN write \"Hydraulic\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (EP gear; gear; industrial gear) THEN write \"Gear\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (compressor; screw compressor) THEN write \"Compressor\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (gas engine) THEN write \"Gas Engine\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (diesel; HDDO; engine oil) THEN write \"Diesel Engine\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (circulating; paper machine) THEN write \"Circulating\""
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "LUB-4 iso_class"
+        },
+        {
+          "type": "paragraph",
+          "text": "REMOVE ISO, L- and the viscosity number: ISO L-HM 46 -> HM"
+        },
+        {
+          "type": "paragraph",
+          "text": "Allowed: HH HL HM HV HG TSA TGA CKB CKC CKD DAA DAB DAH"
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "LUB-5 pack_size"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (drum; 55 gal drum; 205 L drum; 45 imp gal drum) THEN write \"208 L\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (5 gal pail) THEN write \"18.9 L\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (IBC; tote) THEN write \"1000 L\""
+        },
+        {
+          "type": "paragraph",
+          "text": "Standard packs first (table above), otherwise convert gallons x 3.785, quarts x 0.946"
+        },
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Viscosity: VG46": "viscosity_grade: ISO VG 46"
+            },
+            {
+              "Grade: ISO 32": "viscosity_grade: ISO VG 32"
+            },
+            {
+              "Viscosity Grade: 15W40": "viscosity_grade: SAE 15W-40"
+            },
+            {
+              "Viscosity: 320 cSt": "viscosity_grade: ISO VG 320"
+            },
+            {
+              "Base Oil: synthetic hydrocarbon": "base_oil: PAO"
+            },
+            {
+              "Base Stock: semi-synthetic": "base_oil: CHECK: semi-synthetic"
+            },
+            {
+              "Application: AW hydraulic": "application: Hydraulic"
+            },
+            {
+              "Use: R&O turbine": "application: Turbine"
+            },
+            {
+              "ISO Class: ISO L-HM 46": "iso_class: HM"
+            },
+            {
+              "Pack: 55 gal drum": "pack_size: 208 L"
+            },
+            {
+              "Pack Size: 5 gal pail": "pack_size: 18.9 L"
+            },
+            {
+              "Packaging: IBC": "pack_size: 1000 L"
+            }
+          ]
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 932,
+      "prompt_tokens": 4519,
+      "total_tokens": 5451,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 12,
+    "source_page_index": 12,
+    "detected_angle": 0,
+    "confidence": 13.1,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Grease"
+        },
+        {
+          "type": "paragraph",
+          "text": "Greases are defined by consistency (NLGI), thickener and base oil viscosity. Get those three right and you can find a substitute in any warehouse."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: Grease  You may receive: Grease; Lubricating Grease; EP Grease; Bearing Grease"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "GRS-1": "nlgi_grade",
+              "NLGI; NLGI Grade; Consistency; Grade": "NLGI {n}"
+            },
+            {
+              "GRS-2": "thickener",
+              "Thickener; Soap; Soap Type": "Picklist value"
+            },
+            {
+              "GRS-3": "base_oil_viscosity",
+              "Base Oil Viscosity; Base Viscosity; Oil Viscosity": "{n} cSt @ 40 °C"
+            },
+            {
+              "GRS-4": "ep_additive",
+              "EP; Extreme Pressure; EP Additive": "Yes | No"
+            },
+            {
+              "GRS-5": "pack_size",
+              "Pack; Pack Size; Packaging": "{n} kg"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "GRS-1 nlgi_grade\nStrip EP, #, grade and spaces, keep the number: EP2 -> NLGI 2; #2 -> NLGI 2\nGrades 000 and 00 keep their zeros: NLGI 00"
+        },
+        {
+          "type": "paragraph",
+          "text": "GRS-2 thickener\nIF value IN (lithium; Li; lithium soap) THEN write \"Lithium\"\nIF value IN (Li complex; Li-X; LiX; lithium complex) THEN write \"Lithium Complex\"\nIF value IN (Ca sulphonate; calcium sulfonate; CaS) THEN write \"Calcium Sulfonate\"\nIF value IN (polyurea; PU thickener) THEN write \"Polyurea\"\nIF value IN (Al complex; aluminum complex) THEN write \"Aluminium Complex\"\nIF value IN (clay; bentonite; organoclay) THEN write \"Bentonite\""
+        },
+        {
+          "type": "paragraph",
+          "text": "GRS-3 base_oil_viscosity\nIF ISO VG n base THEN n cSt @ 40 °C\nmm2/s and mm2/s equal cSt"
+        },
+        {
+          "type": "paragraph",
+          "text": "GRS-4 ep_additive\nIF value is EP or contains EP THEN Yes; IF non-EP THEN No"
+        },
+        {
+          "type": "paragraph",
+          "text": "GRS-5 pack_size\nGrease is sold by weight: g / 1000, lb x 0.4536, oz x 0.02835; one decimal"
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 800,
+      "prompt_tokens": 4519,
+      "total_tokens": 5319,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 13,
+    "source_page_index": 13,
+    "detected_angle": 0,
+    "confidence": 12.43,
+    "content": {
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "NLGI: EP2": "nlgi_grade: NLGI 2"
+            },
+            {
+              "Consistency: #2": "nlgi_grade: NLGI 2"
+            },
+            {
+              "NLGI Grade: 00": "nlgi_grade: NLGI 00"
+            },
+            {
+              "Thickener: Li complex": "thickener: Lithium Complex"
+            },
+            {
+              "Soap: Ca sulphonate": "thickener: Calcium Sulfonate"
+            },
+            {
+              "Base Oil Viscosity: ISO VG 220 base": "base_oil_viscosity: 220 cSt @ 40 °C"
+            },
+            {
+              "EP: EP": "ep_additive: Yes"
+            },
+            {
+              "Pack: 400 g cartridge": "pack_size: 0.4 kg"
+            },
+            {
+              "Pack: 35 lb pail": "pack_size: 15.9 kg"
+            },
+            {
+              "Pack Size: 14 oz tube": "pack_size: 0.4 kg"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "CHAPTER 7 · CODE FLT"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Filter Element"
+        },
+        {
+          "type": "paragraph",
+          "text": "A filter element is described by what it filters, how fine, on which basis, and with what media. Part numbers are useful but they live in the purchasing record, not here."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: Filter Element  You may receive: Filter; Filter Element; Filter Cartridge; Cartridge; Element"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "FLT-1": "filter_service",
+              "Service; Application; Filter Type": "Picklist value"
+            },
+            {
+              "FLT-2": "micron_rating",
+              "Micron; Micron Rating; Rating; Filtration Rating": "{n} µm"
+            },
+            {
+              "FLT-3": "rating_basis",
+              "Beta; Rating Basis; Efficiency": "Absolute | Nominal"
+            },
+            {
+              "FLT-4": "media",
+              "Media; Filter Media; Element Material": "Picklist value"
+            },
+            {
+              "FLT-5": "collapse_pressure",
+              "Collapse; Collapse Pressure; Burst; Differential Rating": "{n} bar"
+            },
+            {
+              "FLT-6": "seal_material",
+              "Seals; Seal Material; Gasket": "Picklist value (same as O-Ring material)"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "FLT-1 filter_service\nIF value IN (hydraulic; HYD) THEN write \"Hydraulic\"\nIF value IN (LO; lube; lube oil) THEN write \"Lube Oil\"\nIF value IN (fuel; diesel fuel) THEN write \"Fuel\"\nIF value IN (inlet air; air intake; intake) THEN write \"Air Intake\"\nIF value IN (coalescing; coalescer) THEN write \"Coalescer\"\nIF value IN (gas; fuel gas) THEN write \"Gas\""
+        },
+        {
+          "type": "paragraph",
+          "text": "FLT-2 micron_rating\nmicron, microns, u, um, µ all become µm"
+        },
+        {
+          "type": "paragraph",
+          "text": "FLT-3 rating_basis\nIF value IN (abs; absolute; beta 200; beta 1000; B10>=200) THEN write \"Absolute\"\nIF value IN (nom; nominal) THEN write \"Nominal\""
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1051,
+      "prompt_tokens": 4519,
+      "total_tokens": 5570,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 14,
+    "source_page_index": 14,
+    "detected_angle": 0,
+    "confidence": 7.1,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "FG-07 · The Spares Cataloguer's Field Guide"
+        },
+        {
+          "type": "paragraph",
+          "text": "2nd edition"
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "FLT-4 media"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (microglass; glass fibre; fiberglass) THEN write \"Glass Fiber\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (paper; cellulose) THEN write \"Cellulose\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (SS wire mesh; wire mesh; SS mesh) THEN write \"Stainless Steel Mesh\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (synthetic; polyester) THEN write \"Synthetic\""
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "FLT-5 collapse_pressure"
+        },
+        {
+          "type": "paragraph",
+          "text": "psid x 0.0689476, one decimal"
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "FLT-6 seal_material"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (EPR; ethylene propylene) THEN write \"EPDM\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (silicone; Si) THEN write \"VMQ\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (Aflas; TFE/P) THEN write \"FEPM\""
+        },
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Service: LO": "filter_service: Lube Oil"
+            },
+            {
+              "Application: inlet air": "filter_service: Air Intake"
+            },
+            {
+              "Micron: 10 micron": "micron_rating: 10 μm"
+            },
+            {
+              "Rating: 25u": "micron_rating: 25 μm"
+            },
+            {
+              "Beta: beta 200": "rating_basis: Absolute"
+            },
+            {
+              "Media: microglass": "media: Glass Fiber"
+            },
+            {
+              "Media: paper": "media: Cellulose"
+            },
+            {
+              "Collapse: 150 psid": "collapse_pressure: 10.3 bar"
+            },
+            {
+              "Seals: Buna-N": "seal_material: NBR"
+            },
+            {
+              "Micron Rating: n/a": "micron_rating: TBD"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        },
+        {
+          "type": "paragraph",
+          "text": "15"
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 903,
+      "prompt_tokens": 4519,
+      "total_tokens": 5422,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 15,
+    "source_page_index": 15,
+    "detected_angle": 0,
+    "confidence": 9.25,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Hex Bolt"
+        },
+        {
+          "type": "paragraph",
+          "text": "Hex bolts look simple until you meet DIN, ISO, SAE and ASTM in the same spreadsheet. The thread and the grade are the two fields people get wrong."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: Hex Bolt  You may receive: Bolt; Hex Bolt; Hex Head Bolt; Hex Cap Screw; HHB"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "BLT-1": "thread",
+              "Size; Thread; Thread Size; Dia": "M{d}{x{pitch}} | {frac}-{t}pi}"
+            },
+            {
+              "BLT-2": "length",
+              "Length; L; Bolt Length": "{n} mm"
+            },
+            {
+              "BLT-3": "strength_grade",
+              "Grade; Property Class; Class; Strength": "Picklist value"
+            },
+            {
+              "BLT-4": "standard",
+              "Standard; Spec; Norm": "Picklist value"
+            },
+            {
+              "BLT-5": "finish",
+              "Finish; Coating; Surface": "Picklist value"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Rule cards"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "BLT-1 thread"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF metric with coarse pitch (M16 x 2.0, M12x1.75) THEN drop the pitch: M16\nIF metric with fine pitch THEN keep it: M16x1.5\nIF inch fraction without TPI THEN add the UNC TPI from the table on page 20: 5/8\" UNC -> 5/8-11 UNC\nIF inch with TPI but no series THEN assume UNC: 1/2-13 -> 1/2-13 UNC"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "BLT-2 length"
+        },
+        {
+          "type": "paragraph",
+          "text": "inch x 25.4, one decimal"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "BLT-3 strength_grade"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (8.8; cl 8.8; class 8.8) THEN write \"8.8\"\nIF value IN (10.9; 10.9 class) THEN write \"10.9\"\nIF value IN (12.9) THEN write \"12.9\"\nIF value IN (A2 70; 304 SS 70) THEN write \"A2-70\"\nIF value IN (A4 80; 316 SS 80) THEN write \"A4-80\"\nIF value IN (Gr5; grade 5) THEN write \"SAE Grade 5\"\nIF value IN (Gr8; grade 8) THEN write \"SAE Grade 8\"\nIF value IN (A325) THEN write \"ASTM A325\"\nIF value IN (A490) THEN write \"ASTM A490\""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "BLT-4 standard"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (DIN 931; part thread; partially threaded) THEN write \"ISO 4014\"\nIF value IN (DIN 933; fully threaded; full thread) THEN write \"ISO 4017\"\nIF value IN (ANSI B18.2.1; B18.2.1) THEN write \"ASME B18.2.1\""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "BLT-5 finish"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (self colour; plain; black) THEN write \"Plain\"\nIF value IN (BZP; ZP; electro-galvanized; zinc plated) THEN write \"Zinc Plated\"\nIF value IN (HDG; galvanised; hot dip) THEN write \"Hot-Dip Galvanized\"\nIF value IN (zinc flake) THEN write \"Zinc Flake\"\nIF value IN (black oxide) THEN write \"Black Oxide\"\nIF value IN (PTFE; Xylan; fluoropolymer) THEN write \"PTFE Coated\""
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1212,
+      "prompt_tokens": 4519,
+      "total_tokens": 5731,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 16,
+    "source_page_index": 16,
+    "detected_angle": 0,
+    "confidence": 8.1,
+    "content": {
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Size: M16 x 2.0": "thread: M16"
+            },
+            {
+              "Thread: M16x1.5": "thread: M16x1.5"
+            },
+            {
+              "Thread: 5/8\" UNC": "thread: 5/8-11 UNC"
+            },
+            {
+              "Thread Size: 1/2-13": "thread: 1/2-13 UNC"
+            },
+            {
+              "Length: 2 in": "length: 50.8 mm"
+            },
+            {
+              "Length: 70mm": "length: 70 mm"
+            },
+            {
+              "Grade: Gr8": "strength_grade: SAE Grade 8"
+            },
+            {
+              "Property Class: A4 80": "strength_grade: A4-80"
+            },
+            {
+              "Standard: DIN 933": "standard: ISO 4017"
+            },
+            {
+              "Finish: BZP": "finish: Zinc Plated"
+            },
+            {
+              "Coating: HDG": "finish: Hot-Dip Galvanized"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "CHAPTER 9 · CODE HSE"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Hydraulic Hose"
+        },
+        {
+          "type": "paragraph",
+          "text": "Hydraulic hose is identified by construction standard and dash size. Similar-looking standards (R2AT and 2SN) are close cousins, not twins - don't convert one into the other."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: Hydraulic Hose  You may receive: Hose; Hydraulic Hose; Hose Assembly; Hyd Hose"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "HSE-1": "hose_standard",
+              "Standard; Spec; Type; Hose Type": "Picklist value"
+            },
+            {
+              "HSE-2": "dash_size",
+              "Size; ID; Hose Size; Dash Size": "{n}"
+            },
+            {
+              "HSE-3": "max_working_pressure",
+              "WP; Pressure; Working Pressure; MAWP": "{n} bar (whole number)"
+            },
+            {
+              "HSE-4": "end_fitting",
+              "Fitting; End Fitting; Ends; Coupling": "Picklist value"
+            },
+            {
+              "HSE-5": "assembly_length",
+              "Length; Assembly Length; OAL": "{n} mm (whole number)"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "HSE-1 hose_standard\nIF value IN (R1AT; R1) THEN write \"SAE 100R1AT\"\nIF value IN (R2AT; R2) THEN write \"SAE 100R2AT\"\nIF value IN (1SN) THEN write \"EN 853 1SN\"\nIF value IN (2SN) THEN write \"EN 853 2SN\"\nIF value IN (4SP) THEN write \"EN 856 4SP\"\nIF value IN (4SH) THEN write \"EN 856 4SH\"\nIF value IN (R13) THEN write \"SAE 100R13\"\n\nWatch out! R2AT and 2SN are not the same standard. Translate what is written; never swap one for the other."
+        },
+        {
+          "type": "paragraph",
+          "text": "HSE-2 dash_size\nLook up inch, mm or DN in the dash-size table (page 20): 1/2 in, 12.7 mm, DN12, #8 -> -8"
+        },
+        {
+          "type": "paragraph",
+          "text": "HSE-3 max_working_pressure\npsi x 0.0689476, MPa x 10, round to whole bar"
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1115,
+      "prompt_tokens": 4519,
+      "total_tokens": 5634,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 17,
+    "source_page_index": 17,
+    "detected_angle": 0,
+    "confidence": 11.89,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "HSE-4 end_fitting"
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (JIC female; JIC swivel; 37 deg female) THEN write \"JIC 37° Female Swivel\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (ORFS female; O-ring face seal) THEN write \"ORFS Female Swivel\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (BSP female; BSPP female) THEN write \"BSPP Female Swivel\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (NPT male; MNPT) THEN write \"NPT Male\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (SAE 3000 flange; code 61) THEN write \"Flange Code 61\""
+        },
+        {
+          "type": "paragraph",
+          "text": "IF value IN (SAE 6000 flange; code 62) THEN write \"Flange Code 62\""
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "HSE-5 assembly_length"
+        },
+        {
+          "type": "paragraph",
+          "text": "m x 1000; inch x 25.4"
+        },
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Standard: 2SN": "hose_standard: EN 853 2SN"
+            },
+            {
+              "Type: R2AT": "hose_standard: SAE 100R2AT"
+            },
+            {
+              "Spec: 4SH": "hose_standard: EN 856 4SH"
+            },
+            {
+              "Size: 1/2 in": "dash_size: -8"
+            },
+            {
+              "ID: DN12": "dash_size: -8"
+            },
+            {
+              "WP: 5000 psi": "max_working_pressure: 345 bar"
+            },
+            {
+              "Pressure: 35 MPa": "max_working_pressure: 350 bar"
+            },
+            {
+              "Fitting: JIC female": "end_fitting: JIC 37° Female Swivel"
+            },
+            {
+              "End Fitting: SAE 6000 flange": "end_fitting: Flange Code 62"
+            },
+            {
+              "Length: 1.5 m": "assembly_length: 1500 mm"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "CHAPTER 10 · CODE GLV"
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Safety Gloves"
+        },
+        {
+          "type": "paragraph",
+          "text": "Gloves are PPE, so the protection levels matter as much as the size. EN 388:2016 cut levels are letters A-F; the old numeric levels can't be translated reliably."
+        },
+        {
+          "type": "paragraph",
+          "text": "Write the category as: Safety Gloves  You may receive: Gloves; Glove; Safety Gloves; Work Gloves; Cut Resistant Gloves"
+        },
+        {
+          "type": "table",
+          "title": "Fields at a glance",
+          "columns": [
+            "Rule",
+            "Field key",
+            "Labels you may see",
+            "What to write"
+          ],
+          "rows": [
+            {
+              "GLV-1": "glove_size",
+              "Size; Glove Size": "{n} (EN ISO 21420 number)"
+            },
+            {
+              "GLV-2": "cut_level",
+              "Cut; Cut Level; Cut Resistance": "Cut A ... Cut F"
+            },
+            {
+              "GLV-3": "glove_material",
+              "Material; Shell; Liner; Glove Material": "Picklist value"
+            },
+            {
+              "GLV-4": "coating",
+              "Coating; Palm Coating; Dip": "Picklist value"
+            },
+            {
+              "GLV-5": "cuff_length",
+              "Length; Cuff Length; Glove Length": "{n} mm (whole number)"
+            },
+            {
+              "GLV-6": "impact_protection",
+              "Impact; Impact Protection; Back of Hand": "Yes | No"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1160,
+      "prompt_tokens": 4519,
+      "total_tokens": 5679,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 18,
+    "source_page_index": 18,
+    "detected_angle": 0,
+    "confidence": 10.4,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Rule cards"
+        },
+        {
+          "type": "paragraph",
+          "text": "GLV-1 glove_size\nIF value IN (S; small) THEN write \"7\"\nIF value IN (M; medium) THEN write \"8\"\nIF value IN (L; large) THEN write \"9\"\nIF value IN (XL) THEN write \"10\"\nIF value IN (XXL; 2XL) THEN write \"11\"\nIF value is 'size n' THEN n"
+        },
+        {
+          "type": "paragraph",
+          "text": "GLV-2 cut_level\nIF value is an EN 388 code like 4X43D THEN the 5th character is the cut level: Cut D\nIF value is 'ISO cut C' or 'cut C' THEN Cut C\nIF value is an old numeric level (level 5) or an ANSI level (A4) THEN CHECK: (no reliable conversion)"
+        },
+        {
+          "type": "paragraph",
+          "text": "GLV-3 glove_material\nIF value IN (nitrile) THEN write \"Nitrile\"\nIF value IN (latex; natural rubber) THEN write \"Latex\"\nIF value IN (neoprene; chloroprene) THEN write \"Neoprene\"\nIF value IN (leather; cowhide; goatskin) THEN write \"Leather\"\nIF value IN (Dyneema; HPPE; UHMWPE) THEN write \"HPPE\"\nIF value IN (Kevlar; aramid; para-aramid) THEN write \"Aramid\"\nIF value IN (PVC) THEN write \"PVC\""
+        },
+        {
+          "type": "paragraph",
+          "text": "GLV-4 coating\nIF value IN (sandy nitrile; nitrile palm; foam nitrile) THEN write \"Nitrile Palm\"\nIF value IN (PU coated palm; polyurethane palm) THEN write \"PU Palm\"\nIF value IN (crinkle latex) THEN write \"Latex Crinkle\"\nIF value IN (uncoated; none) THEN write \"None\""
+        },
+        {
+          "type": "paragraph",
+          "text": "GLV-5 cuff_length\ninch x 25.4, round to whole mm"
+        },
+        {
+          "type": "paragraph",
+          "text": "GLV-6 impact_protection\nIF TPR back, impact, EN 388 'P' marking THEN Yes"
+        },
+        {
+          "type": "table",
+          "title": "Before → after",
+          "columns": [
+            "BEFORE",
+            "AFTER"
+          ],
+          "rows": [
+            {
+              "Size: L": "glove_size: 9"
+            },
+            {
+              "Size: size 10": "glove_size: 10"
+            },
+            {
+              "Cut Level: EN388 4X43D": "cut_level: Cut D"
+            },
+            {
+              "Cut: ISO cut C": "cut_level: Cut C"
+            },
+            {
+              "Cut Level: level 5": "cut_level: CHECK: level 5"
+            },
+            {
+              "Material: Kevlar": "glove_material: Aramid"
+            },
+            {
+              "Shell: Dyneema": "glove_material: HPPE"
+            },
+            {
+              "Coating: PU coated palm": "coating: PU Palm"
+            },
+            {
+              "Length: 12 in": "cuff_length: 305 mm"
+            },
+            {
+              "Impact: TPR back": "impact_protection: Yes"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 896,
+      "prompt_tokens": 4519,
+      "total_tokens": 5415,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 19,
+    "source_page_index": 19,
+    "detected_angle": 0,
+    "confidence": 14.41,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "FAQ"
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. The value is right but in the wrong field. Can I move it?\nA. No (GR8). Translate what is in the row. If 'EP2' arrives in the nlgi_grade field, write NLGI 2 there; whoever sends ep_additive separately will get Yes on that row."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. The supplier wrote both units: '50.8 mm (2 in)'. Which do I keep?\nA. The metric number only, tidied per GR4: 50.8 mm."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. Why 'CHECK:' and not just leaving it?\nA. Because a CHECK: row is searchable. Reviewers filter on it every morning; a silently kept value is never looked at again."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. A brand name is the only thing I have (Viton, Kevlar, Aflas).\nA. Several brand names are listed as accepted inputs and translate to the generic material. If a brand isn't listed, write CHECK: with the brand name."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. Is 'TBD' the same as 'CHECK:'?\nA. No. TBD means nobody told us. CHECK: means somebody told us something we can't translate."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. Can I write 25.0 mm to show precision?\nA. Not for normal fields (GR4 drops trailing zeros). O-ring dimensions are the exception: always two decimals."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. The category is spelled 'Oring' / 'O Ring' / 'o-ring'.\nA. All the same: write O-Ring (GR1). Watch the capital R."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. Should I correct R2AT to 2SN because they're 'the same hose'?\nA. Never. They're similar, not identical (see chapter 8)."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. Old cut level '5' - isn't that roughly Cut D?\nA. Roughly isn't good enough for PPE. Write CHECK: level 5."
+        },
+        {
+          "type": "paragraph",
+          "text": "Q. Two rows describe the same field for the same item with different values.\nA. Translate both as they are. Duplicate detection happens later, not here."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Your end-of-batch checklist"
+        },
+        {
+          "type": "table",
+          "title": "Check",
+          "columns": [
+            "Check"
+          ],
+          "rows": [
+            {
+              "Check": "[] Every Item is a category name from a chapter title, Title Case."
+            },
+            {
+              "Check": "[] Every Attribute is a lower_snake_case field key from that chapter."
+            },
+            {
+              "Check": "[] Picklist values match the guide exactly - capitals, spaces and symbols."
+            },
+            {
+              "Check": "[] Numbers have one space before the unit and no trailing zeros (O-rings: two decimals)."
+            },
+            {
+              "Check": "[] No inches, psi, gallons, pounds or ounces left anywhere."
+            },
+            {
+              "Check": "[] Missing values say TBD; untranslatable values start with CHECK: and keep the original text."
+            },
+            {
+              "Check": "[] Row count and row order are unchanged."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Sample field guide for testing data standardization. Keep it on your desk, not in a drawer."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 902,
+      "prompt_tokens": 4519,
+      "total_tokens": 5421,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 20,
+    "source_page_index": 20,
+    "detected_angle": 0,
+    "confidence": 7.9,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Lookup tables"
+        },
+        {
+          "type": "table",
+          "title": "AS568 O-ring sizes (selection)",
+          "columns": [
+            "Dash no.",
+            "ID, mm",
+            "CS, mm"
+          ],
+          "rows": [
+            {
+              "Dash no.": "-010",
+              "ID, mm": "6.07",
+              "CS, mm": "1.78"
+            },
+            {
+              "Dash no.": "-014",
+              "ID, mm": "12.42",
+              "CS, mm": "1.78"
+            },
+            {
+              "Dash no.": "-110",
+              "ID, mm": "9.19",
+              "CS, mm": "2.62"
+            },
+            {
+              "Dash no.": "-116",
+              "ID, mm": "18.72",
+              "CS, mm": "2.62"
+            },
+            {
+              "Dash no.": "-210",
+              "ID, mm": "18.64",
+              "CS, mm": "3.53"
+            },
+            {
+              "Dash no.": "-214",
+              "ID, mm": "24.99",
+              "CS, mm": "3.53"
+            },
+            {
+              "Dash no.": "-222",
+              "ID, mm": "37.69",
+              "CS, mm": "3.53"
+            },
+            {
+              "Dash no.": "-325",
+              "ID, mm": "37.47",
+              "CS, mm": "5.33"
+            },
+            {
+              "Dash no.": "-334",
+              "ID, mm": "59.69",
+              "CS, mm": "5.33"
+            },
+            {
+              "Dash no.": "-428",
+              "ID, mm": "113.67",
+              "CS, mm": "6.99"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Hydraulic hose dash sizes",
+          "columns": [
+            "Dash",
+            "Inch",
+            "mm",
+            "DN"
+          ],
+          "rows": [
+            {
+              "Dash": "-4",
+              "Inch": "1/4",
+              "mm": "6.4",
+              "DN": "DN6"
+            },
+            {
+              "Dash": "-5",
+              "Inch": "5/16",
+              "mm": "7.9",
+              "DN": "DN8"
+            },
+            {
+              "Dash": "-6",
+              "Inch": "3/8",
+              "mm": "9.5",
+              "DN": "DN10"
+            },
+            {
+              "Dash": "-8",
+              "Inch": "1/2",
+              "mm": "12.7",
+              "DN": "DN12"
+            },
+            {
+              "Dash": "-10",
+              "Inch": "5/8",
+              "mm": "15.9",
+              "DN": "DN16"
+            },
+            {
+              "Dash": "-12",
+              "Inch": "3/4",
+              "mm": "19.1",
+              "DN": "DN19"
+            },
+            {
+              "Dash": "-16",
+              "Inch": "1",
+              "mm": "25.4",
+              "DN": "DN25"
+            },
+            {
+              "Dash": "-20",
+              "Inch": "1-1/4",
+              "mm": "31.8",
+              "DN": "DN31"
+            },
+            {
+              "Dash": "-24",
+              "Inch": "1-1/2",
+              "mm": "38.1",
+              "DN": "DN38"
+            },
+            {
+              "Dash": "-32",
+              "Inch": "2",
+              "mm": "50.8",
+              "DN": "DN51"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "UNC threads per inch",
+          "columns": [
+            "Diameter, in",
+            "TPI (UNC)"
+          ],
+          "rows": [
+            {
+              "Diameter, in": "1/4",
+              "TPI (UNC)": "20"
+            },
+            {
+              "Diameter, in": "5/16",
+              "TPI (UNC)": "18"
+            },
+            {
+              "Diameter, in": "3/8",
+              "TPI (UNC)": "16"
+            },
+            {
+              "Diameter, in": "1/2",
+              "TPI (UNC)": "13"
+            },
+            {
+              "Diameter, in": "5/8",
+              "TPI (UNC)": "11"
+            },
+            {
+              "Diameter, in": "3/4",
+              "TPI (UNC)": "10"
+            },
+            {
+              "Diameter, in": "7/8",
+              "TPI (UNC)": "9"
+            },
+            {
+              "Diameter, in": "1",
+              "TPI (UNC)": "8"
+            }
+          ]
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1278,
+      "prompt_tokens": 4519,
+      "total_tokens": 5797,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 21,
+    "source_page_index": 21,
+    "detected_angle": 0,
+    "confidence": 5.01,
+    "content": {
+      "blocks": [
+        {
+          "type": "table",
+          "title": "Classical V-belt sections",
+          "columns": [
+            "Section",
+            "Top width x height, mm",
+            "Datum length = inside length +"
+          ],
+          "rows": [
+            {
+              "Section": "A",
+              "Top width x height, mm": "13 x 8",
+              "Datum length = inside length +": "+30"
+            },
+            {
+              "Section": "B",
+              "Top width x height, mm": "17 x 11",
+              "Datum length = inside length +": "+40"
+            },
+            {
+              "Section": "C",
+              "Top width x height, mm": "22 x 14",
+              "Datum length = inside length +": "+58"
+            },
+            {
+              "Section": "D",
+              "Top width x height, mm": "32 x 19",
+              "Datum length = inside length +": "+75"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Glove sizes",
+          "columns": [
+            "Letter",
+            "EN ISO 21420 size"
+          ],
+          "rows": [
+            {
+              "Letter": "S",
+              "EN ISO 21420 size": "7"
+            },
+            {
+              "Letter": "M",
+              "EN ISO 21420 size": "8"
+            },
+            {
+              "Letter": "L",
+              "EN ISO 21420 size": "9"
+            },
+            {
+              "Letter": "XL",
+              "EN ISO 21420 size": "10"
+            },
+            {
+              "Letter": "XXL",
+              "EN ISO 21420 size": "11"
+            }
+          ]
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 461,
+      "prompt_tokens": 4519,
+      "total_tokens": 4980,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  }
+]

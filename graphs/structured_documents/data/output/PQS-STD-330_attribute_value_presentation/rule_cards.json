@@ -1,0 +1,3864 @@
+{
+ "global": {
+  "steps": [
+   "Delete leading and trailing spaces, tabs, and line breaks, and reduce every internal run of whitespace to one ordinary space (5.1).",
+   "Leave an empty field empty and do not insert any substitute value (5.2).",
+   "Replace a complete value matching a listed not-applicable entry, regardless of capitalization, with N/A and stop processing that value (5.3).",
+   "Replace a complete value matching a listed pending entry, regardless of capitalization, with TBA and stop processing that value (5.4).",
+   "Delete a leading attribute name followed by a colon, equals sign, or space before applying attribute-specific rules (5.5).",
+   "Compare the received value with recognized variants and prescribed forms while disregarding differences in capitalization, spaces, hyphens, underscores, and full stops, and adopt the prescribed form when a match is found (5.8).",
+   "If no match is found, interchange the two parts of a single-comma descriptive value when permitted, omit the comma, and compare again, but never rearrange designations governed by Clauses 8 and 9 (5.9).",
+   "Apply the rules governing the attribute, including its numerical presentation, accepted units, unit conversion, designations, and recognized variants (4.3, 7.1-7.3).",
+   "Convert only units accepted for the attribute, round converted results half up to the specified number of decimal places, and do not round values already received in the prescribed unit (7.2-7.3).",
+   "Delete trailing zeros from the decimal part and delete the decimal point when no decimal digit remains, while writing a leading zero before the decimal point for magnitudes below one (6.4).",
+   "Use a full stop as the only decimal separator, delete thousands separators, and apply the prescribed sign, unit spacing, range, tolerance, and dimension formatting rules (6.4, 6.6, 6.10, 6.12-6.13).",
+   "Apply the prescribed capitalization and punctuation last, retaining capitals in abbreviations, codes, chemical formulas, and proper names (4.3, 5.6-5.7).",
+   "Leave a value unchanged and enter it in the query register when it is ambiguous, contains unresolved alternatives, uses an unaccepted unit, lacks a required unit, cannot be matched after permitted rearrangement, or would lose information if presented (4.4, 6.8-6.9, A.1).",
+   "Do not make assumptions, infer meanings, correct spelling, substitute a nearby recognized variant, divide or combine values, or transfer information between attributes (A.1).",
+   "Take tag numbers, serial numbers, manufacturers' model numbers and type codes, manufacturers' names, document and certificate numbers, dates, free-text remarks, and attributes outside this standard as received, subject only to whitespace processing (20.1-20.2)."
+  ],
+  "accepted": [
+   {
+    "form": "NA",
+    "written": "N/A"
+   },
+   {
+    "form": "n/a",
+    "written": "N/A"
+   },
+   {
+    "form": "N.A.",
+    "written": "N/A"
+   },
+   {
+    "form": "not applicable",
+    "written": "N/A"
+   },
+   {
+    "form": "-",
+    "written": "N/A"
+   },
+   {
+    "form": "--",
+    "written": "N/A"
+   },
+   {
+    "form": "TBD",
+    "written": "TBA"
+   },
+   {
+    "form": "TBC",
+    "written": "TBA"
+   },
+   {
+    "form": "to be confirmed",
+    "written": "TBA"
+   },
+   {
+    "form": "to be advised",
+    "written": "TBA"
+   },
+   {
+    "form": "by vendor",
+    "written": "TBA"
+   },
+   {
+    "form": "later",
+    "written": "TBA"
+   }
+  ],
+  "unclear": [
+   "The mapping of a supplier or contractor's different attribute name to the standard attribute name is outside the scope of the standard (1.2).",
+   "An apparent conflict between a general clause and a supplementary attribute clause must be referred to the data owner rather than resolved by the user (4.2).",
+   "Values requiring an engineering decision must be referred to the responsible discipline (A.3)."
+  ],
+  "examples": [],
+  "unit_spacing": "space",
+  "trailing_zeros": "remove"
+ },
+ "groups": {
+  "Gauge pressure": {
+   "written_form": "Write the value as a number followed by one space and the unit barg, using gauge-pressure units converted to barg and rounded to one decimal place after conversion.",
+   "unit": "barg",
+   "decimals": 1,
+   "values": [
+    "barg",
+    "bar g",
+    "bar(g)",
+    "bar",
+    "psig",
+    "psi",
+    "psi(g)",
+    "kPa",
+    "kPag",
+    "MPa",
+    "MPag",
+    "kg/cm2"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "bar g",
+     "written": "barg"
+    },
+    {
+     "form": "bar(g)",
+     "written": "barg"
+    },
+    {
+     "form": "bar",
+     "written": "barg"
+    },
+    {
+     "form": "psig",
+     "written": "barg"
+    },
+    {
+     "form": "psi",
+     "written": "barg"
+    },
+    {
+     "form": "psi(g)",
+     "written": "barg"
+    },
+    {
+     "form": "kPa",
+     "written": "barg"
+    },
+    {
+     "form": "kPag",
+     "written": "barg"
+    },
+    {
+     "form": "MPa",
+     "written": "barg"
+    },
+    {
+     "form": "MPag",
+     "written": "barg"
+    },
+    {
+     "form": "kg/cm2",
+     "written": "barg"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of Clause 5.1.",
+    "Recognize complete not-applicable or pending entries under Clauses 5.3 and 5.4 before processing the gauge pressure.",
+    "Remove a leading attribute name under Clause 5.5 before processing the gauge pressure.",
+    "Recognize the listed gauge-pressure unit forms and treat a pressure unit without a gauge or absolute indication as gauge pressure under Clause 7.4.",
+    "Convert psig, psi and psi(g) by multiplying by 0.0689476 under Clause 7.4.",
+    "Convert kPa and kPag by multiplying by 0.01 under Clause 7.4.",
+    "Convert MPa and MPag by multiplying by 10 under Clause 7.4.",
+    "Convert kg/cm2 by multiplying by 0.980665 under Clause 7.4.",
+    "Do not convert gauge pressure to absolute pressure or absolute pressure to gauge pressure under Clause 7.7.",
+    "Round the gauge pressure to one decimal place after conversion under Clause 7.4.",
+    "Write the number and barg with exactly one space under Clause 6.6.",
+    "Apply the prescribed capitalisation and punctuation under Clauses 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Leave a value with an unresolved qualifier, ambiguity, alternative, or information-loss risk unchanged and enter it in the query register.",
+    "Do not convert gauge pressure to absolute pressure or absolute pressure to gauge pressure."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Absolute pressure": {
+   "written_form": "Write the value as a number followed by one space and the unit bara, using accepted absolute-pressure units converted to bara and rounded to one decimal place after conversion.",
+   "unit": "bara",
+   "decimals": 1,
+   "values": [
+    "bara",
+    "bar a",
+    "bar(a)",
+    "psia"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "bar a",
+     "written": "bara"
+    },
+    {
+     "form": "bar(a)",
+     "written": "bara"
+    },
+    {
+     "form": "psia",
+     "written": "bara"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of Clause 5.1.",
+    "Recognize complete not-applicable or pending entries under Clauses 5.3 and 5.4 before processing the absolute pressure.",
+    "Remove a leading attribute name under Clause 5.5 before processing the absolute pressure.",
+    "Accept only bara, bar a, bar(a) and psia for absolute pressure under Clause 7.5.",
+    "Convert psia by multiplying by 0.0689476 under Clause 7.5.",
+    "Reject a pressure unit without an absolute indication in an absolute-pressure attribute and enter the value in the query register under Clause 7.5.",
+    "Do not convert gauge pressure to absolute pressure or absolute pressure to gauge pressure under Clause 7.7.",
+    "Round the absolute pressure to one decimal place after conversion under Clause 7.5.",
+    "Write the number and bara with exactly one space under Clause 6.6.",
+    "Apply the prescribed capitalisation and punctuation under Clauses 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Leave a value with an unresolved qualifier, ambiguity, alternative, or information-loss risk unchanged and enter it in the query register.",
+    "Do not convert gauge pressure to absolute pressure or absolute pressure to gauge pressure."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Differential pressure": {
+   "written_form": "Write the value as a number followed by one space and the unit bar, using accepted differential-pressure units converted to bar and rounded to two decimal places after conversion.",
+   "unit": "bar",
+   "decimals": 2,
+   "values": [
+    "bar",
+    "mbar",
+    "psi",
+    "psid",
+    "kPa"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "mbar",
+     "written": "bar"
+    },
+    {
+     "form": "psi",
+     "written": "bar"
+    },
+    {
+     "form": "psid",
+     "written": "bar"
+    },
+    {
+     "form": "kPa",
+     "written": "bar"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of Clause 5.1.",
+    "Recognize complete not-applicable or pending entries under Clauses 5.3 and 5.4 before processing the differential pressure.",
+    "Remove a leading attribute name under Clause 5.5 before processing the differential pressure.",
+    "Accept bar without conversion under Clause 7.6.",
+    "Convert mbar by multiplying by 0.001 under Clause 7.6.",
+    "Convert psi and psid by multiplying by 0.0689476 under Clause 7.6.",
+    "Convert kPa by multiplying by 0.01 under Clause 7.6.",
+    "Round the differential pressure to two decimal places after conversion under Clause 7.6.",
+    "Write the number and bar with exactly one space under Clause 6.6.",
+    "Apply the prescribed capitalisation and punctuation under Clauses 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Leave a value with an unresolved qualifier, ambiguity, alternative, or information-loss risk unchanged and enter it in the query register."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Temperature": {
+   "written_form": "Write the value as a number followed by one space and the unit degC, converting Fahrenheit temperatures to degrees Celsius and rounding converted results to a whole number.",
+   "unit": "degC",
+   "decimals": 0,
+   "values": [
+    "degC",
+    "deg C",
+    "°C",
+    "C",
+    "degF",
+    "deg F",
+    "°F",
+    "F"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "deg C",
+     "written": "degC"
+    },
+    {
+     "form": "°C",
+     "written": "degC"
+    },
+    {
+     "form": "C",
+     "written": "degC"
+    },
+    {
+     "form": "degF",
+     "written": "degC"
+    },
+    {
+     "form": "deg F",
+     "written": "degC"
+    },
+    {
+     "form": "°F",
+     "written": "degC"
+    },
+    {
+     "form": "F",
+     "written": "degC"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of Clause 5.1.",
+    "Recognize complete not-applicable or pending entries under Clauses 5.3 and 5.4 before processing the temperature.",
+    "Remove a leading attribute name under Clause 5.5 before processing the temperature.",
+    "Accept degC, deg C, °C and C standing alone after the number without conversion under Clause 7.8.",
+    "For degF, deg F, °F or F standing alone after the number, subtract 32 and multiply the result by 5/9 under Clause 7.8.",
+    "Round a converted Fahrenheit result to a whole number under Clause 7.8.",
+    "Write a result of minus zero as 0 under Clause 7.8.",
+    "Write the number and degC with exactly one space under Clause 6.6.",
+    "Apply the prescribed capitalisation and punctuation under Clauses 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Leave a value with an unresolved qualifier, ambiguity, alternative, or information-loss risk unchanged and enter it in the query register."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Short length": {
+   "written_form": "Write the value as a number followed by one space and the unit mm, converting accepted short-length units to millimetres and rounding converted results to one decimal place.",
+   "unit": "mm",
+   "decimals": 1,
+   "values": [
+    "mm",
+    "in",
+    "inch",
+    "inches",
+    "cm",
+    "m"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "in",
+     "written": "mm"
+    },
+    {
+     "form": "inch",
+     "written": "mm"
+    },
+    {
+     "form": "inches",
+     "written": "mm"
+    },
+    {
+     "form": "cm",
+     "written": "mm"
+    },
+    {
+     "form": "m",
+     "written": "mm"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of Clause 5.1.",
+    "Recognize complete not-applicable or pending entries under Clauses 5.3 and 5.4 before processing the short length.",
+    "Remove a leading attribute name under Clause 5.5 before processing the short length.",
+    "Treat every length attribute not identified as a long length under Clauses 12 to 18 as a short length under Clause 7.10.",
+    "Accept mm without conversion under Clause 7.9.",
+    "Convert a value written with an inch mark, or with in, inch or inches, by multiplying by 25.4 under Clause 7.9.",
+    "Convert cm by multiplying by 10 under Clause 7.9.",
+    "Convert m by multiplying by 1000 under Clause 7.9.",
+    "Round the short length to one decimal place after conversion under Clause 7.9.",
+    "Do not convert an outside diameter to an inside diameter under Clause 17.2.",
+    "Write the number and mm with exactly one space under Clause 6.6.",
+    "Apply the prescribed capitalisation and punctuation under Clauses 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Leave a value with an unresolved qualifier, ambiguity, alternative, or information-loss risk unchanged and enter it in the query register.",
+    "Do not convert an outside diameter to an inside diameter."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Long length": {
+   "written_form": "Write the value as a number followed by one space and the unit m, converting accepted long-length units to metres and rounding converted results to two decimal places.",
+   "unit": "m",
+   "decimals": 2,
+   "values": [
+    "m",
+    "mtr",
+    "meter",
+    "meters",
+    "metre",
+    "metres",
+    "mm",
+    "ft",
+    "feet"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "mtr",
+     "written": "m"
+    },
+    {
+     "form": "meter",
+     "written": "m"
+    },
+    {
+     "form": "meters",
+     "written": "m"
+    },
+    {
+     "form": "metre",
+     "written": "m"
+    },
+    {
+     "form": "metres",
+     "written": "m"
+    },
+    {
+     "form": "mm",
+     "written": "m"
+    },
+    {
+     "form": "ft",
+     "written": "m"
+    },
+    {
+     "form": "feet",
+     "written": "m"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of Clause 5.1.",
+    "Recognize complete not-applicable or pending entries under Clauses 5.3 and 5.4 before processing the long length.",
+    "Remove a leading attribute name under Clause 5.5 before processing the long length.",
+    "Treat a cable or pipe length, a storage-tank height or diameter, a pump head, and similar dimensions of large magnitude as a long length under Clause 3.12.",
+    "Accept m, mtr, meter, meters, metre and metres without conversion under Clause 7.10.",
+    "Convert mm by multiplying by 0.001 under Clause 7.10.",
+    "Convert ft, feet or a value written with an apostrophe by multiplying by 0.3048 under Clause 7.10.",
+    "Round the long length to two decimal places after conversion under Clause 7.10.",
+    "Write the number and m with exactly one space under Clause 6.6.",
+    "Apply the prescribed capitalisation and punctuation under Clauses 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Leave a value with an unresolved qualifier, ambiguity, alternative, or information-loss risk unchanged and enter it in the query register."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Volumetric flow": {
+   "written_form": "Write the value as a number followed by one space and the unit m3/h, converting accepted flow units to cubic metres per hour and rounding converted results to one decimal place.",
+   "unit": "m3/h",
+   "decimals": 1,
+   "values": [
+    "m3/h",
+    "m3/hr",
+    "cmh",
+    "gpm",
+    "USgpm",
+    "l/s",
+    "l/min"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "m3/hr",
+     "written": "m3/h"
+    },
+    {
+     "form": "cmh",
+     "written": "m3/h"
+    },
+    {
+     "form": "gpm",
+     "written": "m3/h"
+    },
+    {
+     "form": "USgpm",
+     "written": "m3/h"
+    },
+    {
+     "form": "l/s",
+     "written": "m3/h"
+    },
+    {
+     "form": "l/min",
+     "written": "m3/h"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of Clause 5.1.",
+    "Recognize complete not-applicable or pending entries under Clauses 5.3 and 5.4 before processing the volumetric flow.",
+    "Remove a leading attribute name under Clause 5.5 before processing the volumetric flow.",
+    "Accept m3/h, m3/hr and cmh without conversion under Clause 7.11.",
+    "Convert gpm and USgpm by multiplying by 0.2271 under Clause 7.11.",
+    "Convert l/s by multiplying by 3.6 under Clause 7.11.",
+    "Convert l/min by multiplying by 0.06 under Clause 7.11.",
+    "Round the flow to one decimal place after conversion under Clause 7.11.",
+    "Write the number and m3/h with exactly one space under Clauses 6.6 and 6.7.",
+    "Apply the prescribed capitalisation and punctuation under Clauses 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Leave a value with an unresolved qualifier, ambiguity, alternative, or information-loss risk unchanged and enter it in the query register."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Power": {
+   "written_form": "Write the value as a number followed by one space and the unit kW, converting accepted power units to kilowatts and rounding converted results to one decimal place.",
+   "unit": "kW",
+   "decimals": 1,
+   "values": [
+    "kW",
+    "hp",
+    "bhp",
+    "W",
+    "MW"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "hp",
+     "written": "kW"
+    },
+    {
+     "form": "bhp",
+     "written": "kW"
+    },
+    {
+     "form": "W",
+     "written": "kW"
+    },
+    {
+     "form": "MW",
+     "written": "kW"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of Clause 5.1.",
+    "Recognize complete not-applicable or pending entries under Clauses 5.3 and 5.4 before processing the power.",
+    "Remove a leading attribute name under Clause 5.5 before processing the power.",
+    "Accept kW without conversion under Clause 7.12.",
+    "Convert hp and bhp by multiplying by 0.746 under Clause 7.12.",
+    "Convert W by multiplying by 0.001 under Clause 7.12.",
+    "Convert MW by multiplying by 1000 under Clause 7.12.",
+    "Round the power to one decimal place after conversion under Clause 7.12.",
+    "Write the number and kW with exactly one space under Clause 6.6.",
+    "Apply the prescribed capitalisation and punctuation under Clauses 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Leave a value with an unresolved qualifier, ambiguity, alternative, or information-loss risk unchanged and enter it in the query register."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Apparent power": {
+   "written_form": "Write apparent power as a number in kVA, multiplying MVA values by 1000 and rounding the result to one decimal place after conversion.",
+   "unit": "kVA",
+   "decimals": 1,
+   "values": [
+    "kVA",
+    "MVA"
+   ],
+   "closed": true,
+   "not_listed": "enter it in the query register",
+   "accepted": [
+    {
+     "form": "MVA",
+     "written": "kVA"
+    }
+   ],
+   "steps": [
+    "Hold apparent power in kVA in accordance with 7.13.",
+    "Retain kVA values without conversion in accordance with 7.13.",
+    "Multiply MVA values by 1000 and write the result in kVA in accordance with 7.13.",
+    "Round apparent power to one decimal place after conversion in accordance with 7.13.",
+    "Separate the number and kVA by exactly one space in accordance with 6.6."
+   ],
+   "exceptions": [
+    "Leave a value with an unjudged qualifier unchanged and enter it in the query register in accordance with 6.9.",
+    "Enter a number received without its required unit in the query register in accordance with 6.8."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Mass": {
+   "written_form": "Write mass as a number in kg, multiplying lb or lbs values by 0.4536, t values by 1000, and rounding the result to one decimal place after conversion.",
+   "unit": "kg",
+   "decimals": 1,
+   "values": [
+    "kg",
+    "kgs",
+    "lb",
+    "lbs",
+    "t"
+   ],
+   "closed": true,
+   "not_listed": "enter it in the query register",
+   "accepted": [
+    {
+     "form": "kgs",
+     "written": "kg"
+    },
+    {
+     "form": "lb",
+     "written": "kg"
+    },
+    {
+     "form": "lbs",
+     "written": "kg"
+    },
+    {
+     "form": "t",
+     "written": "kg"
+    }
+   ],
+   "steps": [
+    "Hold mass in kg in accordance with 7.14.",
+    "Retain kg and kgs values without conversion in accordance with 7.14.",
+    "Multiply pounds written as lb or lbs by 0.4536 and write the result in kg in accordance with 7.14.",
+    "Multiply tonnes written as t by 1000 and write the result in kg in accordance with 7.14.",
+    "Round mass to one decimal place after conversion in accordance with 7.14.",
+    "Separate the number and kg by exactly one space in accordance with 6.6."
+   ],
+   "exceptions": [
+    "Leave a value with an unjudged qualifier unchanged and enter it in the query register in accordance with 6.9.",
+    "Enter a number received without its required unit in the query register in accordance with 6.8."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Volume": {
+   "written_form": "Write vessel and tank volume as a number in m3, multiplying l or ltr values by 0.001 and bbl values by 0.159, and rounding the result to one decimal place after conversion; write foam and water extinguisher charge in l.",
+   "unit": "m3",
+   "decimals": 1,
+   "values": [
+    "m3",
+    "l",
+    "ltr",
+    "bbl"
+   ],
+   "closed": true,
+   "not_listed": "enter it in the query register",
+   "accepted": [
+    {
+     "form": "l",
+     "written": "m3"
+    },
+    {
+     "form": "ltr",
+     "written": "m3"
+    },
+    {
+     "form": "bbl",
+     "written": "m3"
+    }
+   ],
+   "steps": [
+    "Hold the volume of vessels and tanks in m3 in accordance with 7.15.",
+    "Retain m3 values without conversion in accordance with 7.15.",
+    "Multiply litre values written as l or ltr by 0.001 and write the result in m3 in accordance with 7.15.",
+    "Multiply barrel values written as bbl by 0.159 and write the result in m3 in accordance with 7.15.",
+    "Round volume to one decimal place after conversion in accordance with 7.15.",
+    "Hold the charge of foam and water extinguishers in l and accept no other unit for it in accordance with 7.15.",
+    "Separate the number and its unit by exactly one space in accordance with 6.6."
+   ],
+   "exceptions": [
+    "Leave a value with an unjudged qualifier unchanged and enter it in the query register in accordance with 6.9.",
+    "Enter a number received without its required unit in the query register in accordance with 6.8."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Area": {
+   "written_form": "Write area as a number in m2, multiplying sq ft or ft2 values by 0.0929 and rounding the result to one decimal place after conversion.",
+   "unit": "m2",
+   "decimals": 1,
+   "values": [
+    "m2",
+    "sq m",
+    "sq ft",
+    "ft2"
+   ],
+   "closed": true,
+   "not_listed": "enter it in the query register",
+   "accepted": [
+    {
+     "form": "sq m",
+     "written": "m2"
+    },
+    {
+     "form": "sq ft",
+     "written": "m2"
+    },
+    {
+     "form": "ft2",
+     "written": "m2"
+    }
+   ],
+   "steps": [
+    "Hold area in m2 in accordance with 7.16.",
+    "Retain m2 and sq m values without conversion in accordance with 7.16.",
+    "Multiply square-foot values written as sq ft or ft2 by 0.0929 and write the result in m2 in accordance with 7.16.",
+    "Round area to one decimal place after conversion in accordance with 7.16.",
+    "Separate the number and m2 by exactly one space in accordance with 6.6."
+   ],
+   "exceptions": [
+    "Leave a value with an unjudged qualifier unchanged and enter it in the query register in accordance with 6.9.",
+    "Enter a number received without its required unit in the query register in accordance with 6.8."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Rotational speed": {
+   "written_form": "Write rotational speed as a number in rpm, preserving the numeric value for the accepted unit forms rpm, RPM, r/min and min-1.",
+   "unit": "rpm",
+   "decimals": null,
+   "values": [
+    "rpm",
+    "RPM",
+    "r/min",
+    "min-1"
+   ],
+   "closed": true,
+   "not_listed": "enter it in the query register",
+   "accepted": [
+    {
+     "form": "RPM",
+     "written": "rpm"
+    },
+    {
+     "form": "r/min",
+     "written": "rpm"
+    },
+    {
+     "form": "min-1",
+     "written": "rpm"
+    }
+   ],
+   "steps": [
+    "Hold rotational speed in rpm in accordance with 7.17.",
+    "Convert the accepted forms RPM, r/min and min-1 to rpm without changing the numeric value in accordance with 7.17.",
+    "Separate the number and rpm by exactly one space in accordance with 6.6."
+   ],
+   "exceptions": [
+    "Leave a value with an unjudged qualifier unchanged and enter it in the query register in accordance with 6.9.",
+    "Enter a number received without its required unit in the query register in accordance with 6.8."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Frequency": {
+   "written_form": "Write frequency as a number in Hz.",
+   "unit": "Hz",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Hold frequency in Hz in accordance with 7.17.",
+    "Separate the number and Hz by exactly one space in accordance with 6.6."
+   ],
+   "exceptions": [
+    "Leave a value with an unjudged qualifier unchanged and enter it in the query register in accordance with 6.9.",
+    "Enter a number received without its required unit in the query register in accordance with 6.8."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Current": {
+   "written_form": "Write current as a number in A, multiplying kA values by 1000.",
+   "unit": "A",
+   "decimals": null,
+   "values": [
+    "kA"
+   ],
+   "closed": true,
+   "not_listed": "enter it in the query register",
+   "accepted": [
+    {
+     "form": "kA",
+     "written": "A"
+    }
+   ],
+   "steps": [
+    "Hold current in A in accordance with 7.17.",
+    "Multiply kA values by 1000 and write the result in A in accordance with 7.17.",
+    "Separate the number and A by exactly one space in accordance with 6.6."
+   ],
+   "exceptions": [
+    "Leave a value with an unjudged qualifier unchanged and enter it in the query register in accordance with 6.9.",
+    "Enter a number received without its required unit in the query register in accordance with 6.8."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Duration": {
+   "written_form": "Write duration as a number in min, multiplying values in h or hr by 60 and rounding the result to a whole number.",
+   "unit": "min",
+   "decimals": 0,
+   "values": [
+    "h",
+    "hr"
+   ],
+   "closed": true,
+   "not_listed": "enter it in the query register",
+   "accepted": [
+    {
+     "form": "h",
+     "written": "min"
+    },
+    {
+     "form": "hr",
+     "written": "min"
+    }
+   ],
+   "steps": [
+    "Hold durations such as battery autonomy in min in accordance with 7.17.",
+    "Multiply hour values written as h or hr by 60 and write the result in min in accordance with 7.17.",
+    "Round the converted duration to a whole number in accordance with 7.17.",
+    "Separate the number and min by exactly one space in accordance with 6.6."
+   ],
+   "exceptions": [
+    "Leave a value with an unjudged qualifier unchanged and enter it in the query register in accordance with 6.9.",
+    "Enter a number received without its required unit in the query register in accordance with 6.8."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Nominal size": {
+   "written_form": "Write the value as NPS, a space, and the inch size without an inch mark, using a hyphen between the whole number and fraction.",
+   "unit": "inches",
+   "decimals": null,
+   "values": [
+    "NPS 1/2",
+    "NPS 3/4",
+    "NPS 1",
+    "NPS 1-1/4",
+    "NPS 1-1/2",
+    "NPS 2",
+    "NPS 2-1/2",
+    "NPS 3",
+    "NPS 4",
+    "NPS 6",
+    "NPS 8",
+    "NPS 10",
+    "NPS 12",
+    "NPS 14",
+    "NPS 16",
+    "NPS 18",
+    "NPS 20",
+    "NPS 24"
+   ],
+   "closed": true,
+   "not_listed": "Enter a DN or NPS not listed in 8.3 in the query register; enter a number followed by mm alone in the query register.",
+   "accepted": [],
+   "steps": [
+    "Apply the whitespace requirements of 5.1.",
+    "Recognize a received inch size with an inch mark or with in, inch, or inches, a size preceded by NPS with or without a space, or an inch size followed by NB, disregarding NB (8.2).",
+    "Rewrite a fraction separated from the whole number by a space, a Unicode fraction character, or a decimal size as the corresponding hyphenated fraction (8.2).",
+    "Convert a recognized DN size to the corresponding NPS value listed in 8.3.",
+    "Write the value as NPS, a space, and the size without an inch mark, and use a hyphen between the whole number and fraction (8.1).",
+    "Enter a number followed by mm alone, or a DN or NPS not listed in 8.3, in the query register (8.4).",
+    "Apply the prescribed capitals and final punctuation rules of 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Enter a number followed by mm alone in the query register because it is not recognized as a nominal size (8.4).",
+    "Enter a DN or NPS not listed in 8.3 in the query register (8.4)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "none"
+  },
+  "Pressure class": {
+   "written_form": "Write the value as CL, a space, and the class number.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "CL 150",
+    "CL 300",
+    "CL 600",
+    "CL 800",
+    "CL 900",
+    "CL 1500",
+    "CL 2500"
+   ],
+   "closed": true,
+   "not_listed": "Enter any other class number in the query register.",
+   "accepted": [],
+   "steps": [
+    "Apply the whitespace requirements of 5.1.",
+    "Recognize Class, CL, or ANSI before the number, with or without a space, a hash sign before or after the number, lb or lbs after the number, and class after the number (8.5).",
+    "Write the value as CL, a space, and the class number (8.5).",
+    "Do not convert a pressure class to a PN rating (8.7).",
+    "Apply the prescribed capitals and final punctuation rules of 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Enter any class number other than 150, 300, 600, 800, 900, 1500, or 2500 in the query register (8.5).",
+    "Do not convert the value to a PN rating (8.7)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "PN rating": {
+   "written_form": "Write the value as PN, a space, and the rating number.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "PN 6",
+    "PN 10",
+    "PN 16",
+    "PN 25",
+    "PN 40",
+    "PN 63",
+    "PN 100"
+   ],
+   "closed": true,
+   "not_listed": "The document does not state what to do with a PN number outside the listed set.",
+   "accepted": [],
+   "steps": [
+    "Apply the whitespace requirements of 5.1.",
+    "Recognize PN before or after the number when separated by a space, a hyphen, or nothing (8.6).",
+    "Write the value as PN, a space, and the number (8.6).",
+    "Do not convert a PN rating to a pressure class (8.7).",
+    "Apply the prescribed capitals and final punctuation rules of 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Do not convert the value to a pressure class (8.7)."
+   ],
+   "unclear": [
+    "The document lists the PN numbers in use but does not state what to do with a PN number outside that list."
+   ],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Pipe schedule": {
+   "written_form": "Write the value as SCH, a space, and the schedule, retaining S immediately after a schedule number when it denotes a stainless steel schedule.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "SCH STD",
+    "SCH XS",
+    "SCH XXS"
+   ],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [
+    {
+     "form": "standard",
+     "written": "SCH STD"
+    },
+    {
+     "form": "standard weight",
+     "written": "SCH STD"
+    },
+    {
+     "form": "STD",
+     "written": "SCH STD"
+    },
+    {
+     "form": "extra strong",
+     "written": "SCH XS"
+    },
+    {
+     "form": "XS",
+     "written": "SCH XS"
+    },
+    {
+     "form": "double extra strong",
+     "written": "SCH XXS"
+    },
+    {
+     "form": "XXS",
+     "written": "SCH XXS"
+    }
+   ],
+   "steps": [
+    "Apply the whitespace requirements of 5.1.",
+    "Recognize Sch, SCH, Schedule, or S- before the schedule, with or without a space or full stop (8.8).",
+    "Replace standard, standard weight, or STD with SCH STD, extra strong or XS with SCH XS, and double extra strong or XXS with SCH XXS (8.8).",
+    "Write the value as SCH, a space, and the schedule (8.8).",
+    "Retain S immediately after a schedule number when it denotes a stainless steel schedule distinct from the same number without S (8.8).",
+    "Apply the prescribed capitals and final punctuation rules of 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Retain S immediately after a schedule number when it denotes a stainless steel schedule (8.8)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Taper pipe thread": {
+   "written_form": "Write the inch fraction followed immediately by an inch mark, then a space and NPT, and place FNPT or MNPT immediately before NPT when the gender is known.",
+   "unit": "inches",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply the whitespace requirements of 5.1.",
+    "Recognize the thread gender from F, female, FNPT, NPTF, NPT(F), or NPT-F, and from M, male, MNPT, NPTM, NPT(M), or NPT-M, in any position relative to NPT (8.10).",
+    "Rewrite a received size with an inch mark, in, inch, or a Unicode fraction character as an inch fraction (8.10).",
+    "Rewrite decimal sizes as fractions, with 0.25 becoming 1/4, 0.5 becoming 1/2, 0.75 becoming 3/4, 1.5 becoming 1-1/2, and 1 and 2 remaining whole numbers (8.10).",
+    "Write the fraction followed without a space by an inch mark, then a space and NPT (8.9).",
+    "Write FNPT or MNPT immediately before NPT without a space when the gender is known (8.9).",
+    "Apply the prescribed capitals and final punctuation rules of 5.6 and 5.7."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "none"
+  },
+  "Metric thread": {
+   "written_form": "Write the value as M followed without a space by the diameter and, when received, a lower-case x followed without a space by the pitch.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply the whitespace requirements of 5.1.",
+    "Recognize spaces and an upper-case X in the received value (8.11).",
+    "Do not add a pitch when none was received and do not delete a received pitch (8.11).",
+    "Write M followed without a space by the diameter and, when received, a lower-case x and the pitch without spaces (8.11).",
+    "Apply the prescribed capitals and final punctuation rules of 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Do not add a pitch when it was not received or delete a pitch that was received (8.11)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Bolt or stud diameter": {
+   "written_form": "Write an inch-series diameter as the fraction followed immediately by an inch mark, or write a metric diameter in accordance with 8.11.",
+   "unit": "inches for inch-series diameters",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply the whitespace requirements of 5.1.",
+    "Recognize an inch-series fraction followed by in, inch, or an inch mark (8.12).",
+    "Rewrite decimal inch-series diameters as fractions: 0.5 as 1/2, 0.625 as 5/8, 0.75 as 3/4, 0.875 as 7/8, 1.125 as 1-1/8, and 1.25 as 1-1/4, with 1 remaining as a whole number (8.12).",
+    "Write an inch-series diameter as the fraction followed without a space by an inch mark (8.12).",
+    "Write a metric bolt diameter in accordance with 8.11 (8.12).",
+    "Do not convert an inch bolt diameter into a metric diameter or a metric bolt diameter into an inch diameter (8.12).",
+    "Apply the prescribed capitals and final punctuation rules of 5.6 and 5.7."
+   ],
+   "exceptions": [
+    "Do not convert inch and metric bolt diameters into one another (8.12)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "none"
+  },
+  "Voltage": {
+   "written_form": "Write a voltage below 1000 V as the number, a space, and VAC or VDC; write a voltage of 1000 V or more as the number in kV, a space, and kV without a suffix, and write the specified cable or transformer ratio as two kV values separated by a slash without spaces.",
+   "unit": "V or kV",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply the whitespace requirements of 5.1.",
+    "Recognize alternating current from V AC, VAC, Vac after the number or AC before it, and direct current from V DC, VDC, Vdc after the number or DC before it (9.3).",
+    "Convert a received voltage below 1 kV expressed in kV to V, and convert a received voltage equal to or greater than 1000 V expressed in V to kV (9.2).",
+    "Write a voltage below 1000 V as the number, a space, and VAC or VDC (9.1).",
+    "Write a voltage of 1000 V or more as the number in kV, a space, and kV without a suffix (9.1).",
+    "Add VAC or VDC when the equipment clause states that the attribute is AC or DC and the received value does not state it (9.3).",
+    "Write a three-phase voltage and its phase voltage as the higher number, a slash without spaces, the lower number, a space, and VAC (9.4).",
+    "Write a cable rated voltage as Uo and U in kV, separated by a slash without spaces, followed by a space and kV, deleting Uo/U before the numbers (9.5).",
+    "Write a transformer voltage ratio in the same form as a cable rated voltage, with the high voltage first and both voltages in kV (9.5).",
+    "Apply the prescribed capitals, numeric presentation, unit spacing, and final punctuation rules of 5.6, 5.7, 6.6, and 6.7."
+   ],
+   "exceptions": [
+    "Enter the value in the query register when neither the equipment clause nor the received value states whether it is AC or DC (9.3).",
+    "Write high-voltage values without an AC or DC suffix because all high voltage in the installations covered is alternating current (9.1)."
+   ],
+   "unclear": [
+    "For a voltage attribute not identified by an equipment clause as AC or DC, the document requires a query when the received value also does not state AC or DC (9.3)."
+   ],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Signal": {
+   "written_form": "Write the signal as 4-20mA, or as 4-20mA HART with one space before HART; write the other prescribed signals exactly as Foundation Fieldbus, Profibus PA or Volt-free contact.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "4-20mA",
+    "4-20mA HART",
+    "Foundation Fieldbus",
+    "Profibus PA",
+    "Volt-free contact"
+   ],
+   "closed": true,
+   "not_listed": "enter it in the query register",
+   "accepted": [
+    {
+     "form": "4-20 mA",
+     "written": "4-20mA"
+    },
+    {
+     "form": "4..20mA",
+     "written": "4-20mA"
+    },
+    {
+     "form": "4…20 mA",
+     "written": "4-20mA"
+    },
+    {
+     "form": "4 to 20 mA",
+     "written": "4-20mA"
+    },
+    {
+     "form": "4~20mA",
+     "written": "4-20mA"
+    },
+    {
+     "form": "4-20 mA + HART",
+     "written": "4-20mA HART"
+    },
+    {
+     "form": "4-20mA/HART",
+     "written": "4-20mA HART"
+    },
+    {
+     "form": "HART 4-20mA",
+     "written": "4-20mA HART"
+    },
+    {
+     "form": "FF",
+     "written": "Foundation Fieldbus"
+    },
+    {
+     "form": "FF H1",
+     "written": "Foundation Fieldbus"
+    },
+    {
+     "form": "FOUNDATION fieldbus",
+     "written": "Foundation Fieldbus"
+    },
+    {
+     "form": "PROFIBUS-PA",
+     "written": "Profibus PA"
+    },
+    {
+     "form": "PB-PA",
+     "written": "Profibus PA"
+    },
+    {
+     "form": "VFC",
+     "written": "Volt-free contact"
+    },
+    {
+     "form": "dry contact",
+     "written": "Volt-free contact"
+    },
+    {
+     "form": "potential-free contact",
+     "written": "Volt-free contact"
+    }
+   ],
+   "steps": [
+    "Delete preceding and following whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Present a complete value of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, ignoring capitals, as N/A and stop processing it (5.3).",
+    "Present a complete value of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, ignoring capitals, as TBA and stop processing it (5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign or space (5.5).",
+    "Delete a terminal full stop, comma or semicolon and quotation marks enclosing the complete value (5.6).",
+    "Replace each recognized analogue-signal form with its prescribed form 4-20mA or 4-20mA HART (9.6).",
+    "Write Foundation Fieldbus, Profibus PA and Volt-free contact in their prescribed forms when a recognized variant is received (9.7).",
+    "Enter any other signal in the query register (9.7).",
+    "Write prescribed values with exactly their prescribed capitals and punctuation (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "none"
+  },
+  "IP rating": {
+   "written_form": "Write an IP code as IP followed directly by its two digits, or write a dual rating as the first complete code followed by a slash and the two digits of the second code.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete preceding and following whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Present a complete value of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, ignoring capitals, as N/A and stop processing it (5.3).",
+    "Present a complete value of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, ignoring capitals, as TBA and stop processing it (5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign or space (5.5).",
+    "Delete a terminal full stop, comma or semicolon and quotation marks enclosing the complete value (5.6).",
+    "Write a single IP code as IP followed directly by its two digits (9.8).",
+    "Remove spaces and hyphens between IP and the digits when normalizing a received code (9.8).",
+    "Write a dual rating as the first complete code, a slash and the two digits of the second code (9.8).",
+    "Write the prescribed code with exactly its prescribed capitals and punctuation (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Ex marking": {
+   "written_form": "Write an Ex marking as Ex followed by the protection code or codes, gas group, temperature class and, where received, equipment protection level, with single spaces between the parts and the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [
+    {
+     "form": "EEx",
+     "written": "Ex"
+    }
+   ],
+   "steps": [
+    "Delete preceding and following whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Present a complete value of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, ignoring capitals, as N/A and stop processing it (5.3).",
+    "Present a complete value of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, ignoring capitals, as TBA and stop processing it (5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign or space (5.5).",
+    "Delete a terminal full stop, comma or semicolon and quotation marks enclosing the complete value (5.6).",
+    "Replace the former prefix EEx with Ex and recognize Ex received in any capitals (9.11).",
+    "Treat hyphens and commas separating marking parts as spaces (9.11).",
+    "Write the protection code or codes, gas group, temperature class and received equipment protection level in that sequence, separated by single spaces (9.9).",
+    "Write protection codes in lower case except for n-type codes, write gas groups as IIA, IIB or IIC, write IIB+H2 without spaces, write temperature classes as an upper-case T followed by its digit, and write equipment protection levels as an upper-case G followed by a lower-case letter (9.10).",
+    "Do not add any element that was not received (9.11).",
+    "Enter markings for dust, ATEX category markings or certificate numbers in the query register (9.11).",
+    "Write prescribed components with exactly their prescribed capitals and punctuation (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Motor efficiency class": {
+   "written_form": "Write the motor efficiency class as IE followed directly by its digit.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete preceding and following whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Present a complete value of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, ignoring capitals, as N/A and stop processing it (5.3).",
+    "Present a complete value of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, ignoring capitals, as TBA and stop processing it (5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign or space (5.5).",
+    "Delete a terminal full stop, comma or semicolon and quotation marks enclosing the complete value (5.6).",
+    "Write the efficiency class as IE followed directly by the digit (9.12).",
+    "Remove spaces and hyphens between IE and the digit when normalizing a received value (9.12).",
+    "Write the prescribed value with exactly its prescribed capitals and punctuation (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Insulation class": {
+   "written_form": "Write the insulation class as the single letter alone.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete preceding and following whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Present a complete value of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, ignoring capitals, as N/A and stop processing it (5.3).",
+    "Present a complete value of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, ignoring capitals, as TBA and stop processing it (5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign or space (5.5).",
+    "Delete a terminal full stop, comma or semicolon and quotation marks enclosing the complete value (5.6).",
+    "Delete the preceding words ‘class’, ‘ins. class’ or ‘insulation class’ and the following word ‘class’ from the insulation-class value (9.13).",
+    "Write only the single letter as the insulation class (9.13).",
+    "Write the prescribed value with exactly its prescribed capitals and punctuation (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Motor mounting arrangement": {
+   "written_form": "Write the motor mounting arrangement as the short IM code without the letters IM, using B3, B5, B35 or V1.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "B3",
+    "B5",
+    "B35",
+    "V1"
+   ],
+   "closed": true,
+   "not_listed": "",
+   "accepted": [
+    {
+     "form": "IM B3",
+     "written": "B3"
+    },
+    {
+     "form": "IMB3",
+     "written": "B3"
+    },
+    {
+     "form": "IM 1001",
+     "written": "B3"
+    },
+    {
+     "form": "IM B5",
+     "written": "B5"
+    },
+    {
+     "form": "IM 3001",
+     "written": "B5"
+    },
+    {
+     "form": "IM B35",
+     "written": "B35"
+    },
+    {
+     "form": "IM 2001",
+     "written": "B35"
+    },
+    {
+     "form": "IM V1",
+     "written": "V1"
+    },
+    {
+     "form": "IM 3011",
+     "written": "V1"
+    }
+   ],
+   "steps": [
+    "Delete preceding and following whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Present a complete value of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, ignoring capitals, as N/A and stop processing it (5.3).",
+    "Present a complete value of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, ignoring capitals, as TBA and stop processing it (5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign or space (5.5).",
+    "Delete a terminal full stop, comma or semicolon and quotation marks enclosing the complete value (5.6).",
+    "Replace each recognized mounting designation with its short IM code without the letters IM (9.14).",
+    "Write only B3, B5, B35 or V1 for the corresponding recognized designations (9.14).",
+    "Write the prescribed value with exactly its prescribed capitals and punctuation (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Motor cooling method": {
+   "written_form": "Write the motor cooling method as IC followed directly by the code.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete preceding and following whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Present a complete value of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, ignoring capitals, as N/A and stop processing it (5.3).",
+    "Present a complete value of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, ignoring capitals, as TBA and stop processing it (5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign or space (5.5).",
+    "Delete a terminal full stop, comma or semicolon and quotation marks enclosing the complete value (5.6).",
+    "Write the cooling method as IC followed directly by the code (9.15).",
+    "Remove spaces and hyphens between IC and the code when normalizing a received value (9.15).",
+    "Write the prescribed value with exactly its prescribed capitals and punctuation (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Transformer vector group": {
+   "written_form": "Write the transformer vector group without spaces as the upper-case high-voltage letter, followed by upper-case N where present, lower-case low-voltage letters and finally the clock number.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete preceding and following whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Present a complete value of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, ignoring capitals, as N/A and stop processing it (5.3).",
+    "Present a complete value of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, ignoring capitals, as TBA and stop processing it (5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign or space (5.5).",
+    "Delete a terminal full stop, comma or semicolon and quotation marks enclosing the complete value (5.6).",
+    "Write the vector group without spaces as the upper-case high-voltage letter, upper-case N where present, lower-case low-voltage letters and final clock number (9.16).",
+    "Write the prescribed value with exactly its prescribed capitals and punctuation (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Transformer cooling": {
+   "written_form": "Write transformer cooling in capitals, and separate two stages with a slash without spaces.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete leading, trailing and repeated internal whitespace in accordance with Clause 5.1.",
+    "Write transformer cooling in capitals and separate two stages with a slash without spaces in accordance with Clause 9.16.",
+    "Apply the prescribed capitalization in accordance with Clause 5.7.",
+    "Leave the value unchanged and enter it in the query register if its presentation would not produce one unambiguous value in accordance with Clauses 4.1 and 4.4."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Cable size": {
+   "written_form": "Write a cable size as the number of cores, a space, a lower case x, a space, the cross-section, a space and mm2; write paired and triad cables with pair or triad after the number instead of cores.",
+   "unit": "mm2",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete leading, trailing and repeated internal whitespace in accordance with Clause 5.1.",
+    "Interpret C, core and cores after a number as cores, P, pr, pair and pairs as pairs, and T, triad and triads as triads.",
+    "Interpret a number multiplied by a cross-section without any of those words as cores.",
+    "Recognize mm2, mm², sq mm and sqmm as the cross-section unit.",
+    "Write the value in the prescribed cable-size form in accordance with Clauses 9.17 and 9.18.",
+    "Write the cross-section unit as mm2 using keyboard characters in accordance with Clause 6.7.",
+    "Separate the number and mm2 by exactly one space in accordance with Clause 6.6.",
+    "Enter a cross-section received without a unit or in AWG in the query register.",
+    "Leave the value unchanged and enter it in the query register if it cannot be presented as one unambiguous cable size."
+   ],
+   "exceptions": [
+    "Enter a cross-section received without a unit or in AWG in the query register."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Material": {
+   "written_form": "Write each material in its prescribed canonical form, using the specification and grade where applicable, omitting ASTM and the words Gr, Gr. and Grade, writing SA or SA- as A, separating specification and grade with a space, and writing grades in capitals.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "A105",
+    "A106 B",
+    "A333 6",
+    "A216 WCB",
+    "A352 LCC",
+    "A351 CF8M",
+    "A182 F316",
+    "A182 F316L",
+    "A234 WPB",
+    "A403 WP316L",
+    "A516 70",
+    "A179",
+    "A193 B7",
+    "A193 B7M",
+    "A194 2H",
+    "A194 2HM",
+    "SS304",
+    "SS316",
+    "SS316L",
+    "CS",
+    "LTCS",
+    "Duplex SS",
+    "HDG steel",
+    "Painted CS",
+    "Aluminium",
+    "Ni-plated brass",
+    "Brass",
+    "GRP",
+    "Ductile iron",
+    "Copper",
+    "Tinned copper",
+    "Alloy 625",
+    "Stellite 6",
+    "PTFE",
+    "RPTFE",
+    "Graphite",
+    "FKM",
+    "NBR",
+    "EPDM",
+    "PEEK"
+   ],
+   "closed": true,
+   "not_listed": "Leave any other material unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "ASTM A105",
+     "written": "A105"
+    },
+    {
+     "form": "SA105",
+     "written": "A105"
+    },
+    {
+     "form": "SA-105",
+     "written": "A105"
+    },
+    {
+     "form": "A-105",
+     "written": "A105"
+    },
+    {
+     "form": "A106 Gr B",
+     "written": "A106 B"
+    },
+    {
+     "form": "A106 Gr.B",
+     "written": "A106 B"
+    },
+    {
+     "form": "A106-B",
+     "written": "A106 B"
+    },
+    {
+     "form": "ASTM A106 Grade B",
+     "written": "A106 B"
+    },
+    {
+     "form": "SA106 B",
+     "written": "A106 B"
+    },
+    {
+     "form": "A333 Gr 6",
+     "written": "A333 6"
+    },
+    {
+     "form": "WCB",
+     "written": "A216 WCB"
+    },
+    {
+     "form": "ASTM A216 WCB",
+     "written": "A216 WCB"
+    },
+    {
+     "form": "A216 Gr WCB",
+     "written": "A216 WCB"
+    },
+    {
+     "form": "SA216 WCB",
+     "written": "A216 WCB"
+    },
+    {
+     "form": "LCC",
+     "written": "A352 LCC"
+    },
+    {
+     "form": "CF8M",
+     "written": "A351 CF8M"
+    },
+    {
+     "form": "ASTM A351 CF8M",
+     "written": "A351 CF8M"
+    },
+    {
+     "form": "F316",
+     "written": "A182 F316"
+    },
+    {
+     "form": "F316L",
+     "written": "A182 F316L"
+    },
+    {
+     "form": "ASTM A182 F316",
+     "written": "A182 F316"
+    },
+    {
+     "form": "ASTM A182 F316L",
+     "written": "A182 F316L"
+    },
+    {
+     "form": "WPB",
+     "written": "A234 WPB"
+    },
+    {
+     "form": "WP316L",
+     "written": "A403 WP316L"
+    },
+    {
+     "form": "A516 Gr 70",
+     "written": "A516 70"
+    },
+    {
+     "form": "SA-516 70",
+     "written": "A516 70"
+    },
+    {
+     "form": "SA516 Gr.70",
+     "written": "A516 70"
+    },
+    {
+     "form": "ASTM A516 Grade 70",
+     "written": "A516 70"
+    },
+    {
+     "form": "SA179",
+     "written": "A179"
+    },
+    {
+     "form": "B7",
+     "written": "A193 B7"
+    },
+    {
+     "form": "ASTM A193 B7",
+     "written": "A193 B7"
+    },
+    {
+     "form": "A193 Gr B7",
+     "written": "A193 B7"
+    },
+    {
+     "form": "2H",
+     "written": "A194 2H"
+    },
+    {
+     "form": "ASTM A194 2H",
+     "written": "A194 2H"
+    },
+    {
+     "form": "A194 Gr 2H",
+     "written": "A194 2H"
+    },
+    {
+     "form": "carbon steel",
+     "written": "CS"
+    },
+    {
+     "form": "C.S.",
+     "written": "CS"
+    },
+    {
+     "form": "duplex",
+     "written": "Duplex SS"
+    },
+    {
+     "form": "duplex stainless steel",
+     "written": "Duplex SS"
+    },
+    {
+     "form": "DSS",
+     "written": "Duplex SS"
+    },
+    {
+     "form": "hot dip galvanized steel",
+     "written": "HDG steel"
+    },
+    {
+     "form": "hot-dip galvanised steel",
+     "written": "HDG steel"
+    },
+    {
+     "form": "galvanized steel (HDG)",
+     "written": "HDG steel"
+    },
+    {
+     "form": "painted carbon steel",
+     "written": "Painted CS"
+    },
+    {
+     "form": "painted steel",
+     "written": "Painted CS"
+    },
+    {
+     "form": "aluminum",
+     "written": "Aluminium"
+    },
+    {
+     "form": "Al",
+     "written": "Aluminium"
+    },
+    {
+     "form": "nickel plated brass",
+     "written": "Ni-plated brass"
+    },
+    {
+     "form": "NP brass",
+     "written": "Ni-plated brass"
+    },
+    {
+     "form": "glass reinforced polyester",
+     "written": "GRP"
+    },
+    {
+     "form": "FRP",
+     "written": "GRP"
+    },
+    {
+     "form": "fiberglass",
+     "written": "GRP"
+    },
+    {
+     "form": "DI",
+     "written": "Ductile iron"
+    },
+    {
+     "form": "SG iron",
+     "written": "Ductile iron"
+    },
+    {
+     "form": "Cu",
+     "written": "Copper"
+    },
+    {
+     "form": "Inconel 625",
+     "written": "Alloy 625"
+    },
+    {
+     "form": "UNS N06625",
+     "written": "Alloy 625"
+    },
+    {
+     "form": "St6",
+     "written": "Stellite 6"
+    },
+    {
+     "form": "Teflon",
+     "written": "PTFE"
+    },
+    {
+     "form": "reinforced PTFE",
+     "written": "RPTFE"
+    },
+    {
+     "form": "R-PTFE",
+     "written": "RPTFE"
+    },
+    {
+     "form": "flexible graphite",
+     "written": "Graphite"
+    },
+    {
+     "form": "Grafoil",
+     "written": "Graphite"
+    },
+    {
+     "form": "Viton",
+     "written": "FKM"
+    },
+    {
+     "form": "FPM",
+     "written": "FKM"
+    },
+    {
+     "form": "nitrile",
+     "written": "NBR"
+    },
+    {
+     "form": "Buna-N",
+     "written": "NBR"
+    }
+   ],
+   "steps": [
+    "Delete leading, trailing and repeated internal whitespace in accordance with Clause 5.1.",
+    "Compare the received material with the recognized variants and prescribed forms before making other changes in accordance with Clause 5.8.",
+    "For an ASTM or ASME designation, remove the ASTM prefix, replace SA or SA- with A, replace Gr, Gr. or Grade with nothing, replace the specification-grade hyphen with a space, and capitalize the grade.",
+    "Write stainless steel without an ASTM designation as SS followed directly by its grade number in accordance with Clause 10.6.",
+    "Do not assign a grade to stainless steel received without a grade; enter it in the query register in accordance with Clause 10.6.",
+    "Write the prescribed canonical material form with the capitals specified in Clauses 10.6 to 10.11.",
+    "Leave any other material, trade name not mentioned in Clause 10.12, or value naming two materials unchanged and enter it in the query register."
+   ],
+   "exceptions": [
+    "Leave stainless steel received without any grade unchanged and enter it in the query register.",
+    "Leave any other material, including unlisted trade names and values naming two materials, unchanged and enter it in the query register."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "End connection": {
+   "written_form": "Write the end connection as RF, FF, RTJ, BW, SW, THD, Wafer or Lug using the prescribed capitals.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "RF",
+    "FF",
+    "RTJ",
+    "BW",
+    "SW",
+    "THD",
+    "Wafer",
+    "Lug"
+   ],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [
+    {
+     "form": "raised face",
+     "written": "RF"
+    },
+    {
+     "form": "RF flanged",
+     "written": "RF"
+    },
+    {
+     "form": "flanged RF",
+     "written": "RF"
+    },
+    {
+     "form": "RFF",
+     "written": "RF"
+    },
+    {
+     "form": "flanged, raised face",
+     "written": "RF"
+    },
+    {
+     "form": "flat face",
+     "written": "FF"
+    },
+    {
+     "form": "full face",
+     "written": "FF"
+    },
+    {
+     "form": "ring joint",
+     "written": "RTJ"
+    },
+    {
+     "form": "ring type joint",
+     "written": "RTJ"
+    },
+    {
+     "form": "RJ",
+     "written": "RTJ"
+    },
+    {
+     "form": "butt weld",
+     "written": "BW"
+    },
+    {
+     "form": "butt-welded",
+     "written": "BW"
+    },
+    {
+     "form": "BWE",
+     "written": "BW"
+    },
+    {
+     "form": "socket weld",
+     "written": "SW"
+    },
+    {
+     "form": "SWE",
+     "written": "SW"
+    },
+    {
+     "form": "threaded",
+     "written": "THD"
+    },
+    {
+     "form": "screwed",
+     "written": "THD"
+    },
+    {
+     "form": "thrd",
+     "written": "THD"
+    },
+    {
+     "form": "double flanged",
+     "written": "RF"
+    },
+    {
+     "form": "flanged",
+     "written": "RF"
+    }
+   ],
+   "steps": [
+    "Delete leading, trailing and repeated internal whitespace in accordance with Clause 5.1.",
+    "Compare the received value with the recognized end-connection variants and adopt the prescribed form in accordance with Clauses 5.8 and 11.2.",
+    "For a butterfly valve, restrict End connection to Wafer, Lug and RF in accordance with Clause 12.4.",
+    "For a double flanged butterfly valve, write RF and recognize double flanged and flanged as RF in accordance with Clause 12.4.",
+    "Write the prescribed capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Flange type": {
+   "written_form": "Write the flange type as WN, SO, BL, SW or LJ using the prescribed capitals.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "WN",
+    "SO",
+    "BL",
+    "SW",
+    "LJ"
+   ],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [
+    {
+     "form": "weld neck",
+     "written": "WN"
+    },
+    {
+     "form": "welding neck",
+     "written": "WN"
+    },
+    {
+     "form": "slip-on",
+     "written": "SO"
+    },
+    {
+     "form": "slip on",
+     "written": "SO"
+    },
+    {
+     "form": "blind",
+     "written": "BL"
+    },
+    {
+     "form": "lap joint",
+     "written": "LJ"
+    }
+   ],
+   "steps": [
+    "Delete leading, trailing and repeated internal whitespace in accordance with Clause 5.1.",
+    "Compare the received value with the recognized flange-type variants and adopt the prescribed form in accordance with Clauses 5.8 and 11.3.",
+    "Write the prescribed capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Valve operator": {
+   "written_form": "Write the valve operator as Handwheel, Lever, Gear, Pneumatic actuator or Electric actuator.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Handwheel",
+    "Lever",
+    "Gear",
+    "Pneumatic actuator",
+    "Electric actuator"
+   ],
+   "closed": true,
+   "not_listed": "Enter any other control-valve operator value in the query register.",
+   "accepted": [
+    {
+     "form": "HW",
+     "written": "Handwheel"
+    },
+    {
+     "form": "hand wheel",
+     "written": "Handwheel"
+    },
+    {
+     "form": "lever operated",
+     "written": "Lever"
+    },
+    {
+     "form": "wrench",
+     "written": "Lever"
+    },
+    {
+     "form": "gear operator",
+     "written": "Gear"
+    },
+    {
+     "form": "gearbox",
+     "written": "Gear"
+    },
+    {
+     "form": "gear operated",
+     "written": "Gear"
+    },
+    {
+     "form": "GO",
+     "written": "Gear"
+    },
+    {
+     "form": "pneumatic",
+     "written": "Pneumatic actuator"
+    },
+    {
+     "form": "air operated",
+     "written": "Pneumatic actuator"
+    },
+    {
+     "form": "MOV",
+     "written": "Electric actuator"
+    },
+    {
+     "form": "motor operated",
+     "written": "Electric actuator"
+    },
+    {
+     "form": "electric",
+     "written": "Electric actuator"
+    }
+   ],
+   "steps": [
+    "Delete leading, trailing and repeated internal whitespace in accordance with Clause 5.1.",
+    "Compare the received value with the recognized operator variants and adopt the prescribed form in accordance with Clauses 5.8 and 11.4.",
+    "For a control valve, admit only Pneumatic actuator and Electric actuator in accordance with Clause 12.5.",
+    "Enter any other control-valve operator value in the query register in accordance with Clause 12.5.",
+    "Write the prescribed capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Fail position": {
+   "written_form": "Write the fail position as Fail closed, Fail open or Fail last.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Fail closed",
+    "Fail open",
+    "Fail last"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "FC",
+     "written": "Fail closed"
+    },
+    {
+     "form": "fail close",
+     "written": "Fail closed"
+    },
+    {
+     "form": "fail-to-close",
+     "written": "Fail closed"
+    },
+    {
+     "form": "FTC",
+     "written": "Fail closed"
+    },
+    {
+     "form": "FO",
+     "written": "Fail open"
+    },
+    {
+     "form": "fail-to-open",
+     "written": "Fail open"
+    },
+    {
+     "form": "FTO",
+     "written": "Fail open"
+    },
+    {
+     "form": "FL",
+     "written": "Fail last"
+    },
+    {
+     "form": "fail in place",
+     "written": "Fail last"
+    },
+    {
+     "form": "fail as is",
+     "written": "Fail last"
+    }
+   ],
+   "steps": [
+    "Delete leading, trailing and repeated internal whitespace in accordance with Clause 5.1.",
+    "Compare the received value with the recognized fail-position variants and adopt the prescribed form in accordance with Clauses 5.8 and 11.5.",
+    "Write the prescribed capitalization in accordance with Clause 5.7.",
+    "Leave an unrecognized fail position unchanged and enter it in the query register."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Bonnet": {
+   "written_form": "Write the bonnet as Bolted, Pressure seal or Welded.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Bolted",
+    "Pressure seal",
+    "Welded"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "bolted bonnet",
+     "written": "Bolted"
+    },
+    {
+     "form": "BB",
+     "written": "Bolted"
+    },
+    {
+     "form": "pressure seal bonnet",
+     "written": "Pressure seal"
+    },
+    {
+     "form": "PSB",
+     "written": "Pressure seal"
+    },
+    {
+     "form": "welded bonnet",
+     "written": "Welded"
+    }
+   ],
+   "steps": [
+    "Delete leading, trailing and repeated internal whitespace in accordance with Clause 5.1.",
+    "Compare the received value with the recognized bonnet variants and adopt the prescribed form in accordance with Clauses 5.8 and 11.5.",
+    "Write the prescribed capitalization in accordance with Clause 5.7.",
+    "Leave an unrecognized bonnet value unchanged and enter it in the query register."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Ball type": {
+   "written_form": "Write the ball type as Floating or Trunnion.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Floating",
+    "Trunnion"
+   ],
+   "closed": true,
+   "not_listed": "Enter it in the query register.",
+   "accepted": [
+    {
+     "form": "floating ball",
+     "written": "Floating"
+    },
+    {
+     "form": "trunnion mounted",
+     "written": "Trunnion"
+    },
+    {
+     "form": "trunnion-mounted",
+     "written": "Trunnion"
+    },
+    {
+     "form": "TMB",
+     "written": "Trunnion"
+    }
+   ],
+   "steps": [
+    "Apply 11.6 and write a ball valve ball type as Floating or Trunnion.",
+    "Replace the recognized variants with their corresponding prescribed form."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Bore": {
+   "written_form": "Write the bore as Full bore or Reduced bore.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Full bore",
+    "Reduced bore"
+   ],
+   "closed": true,
+   "not_listed": "Enter it in the query register.",
+   "accepted": [
+    {
+     "form": "FB",
+     "written": "Full bore"
+    },
+    {
+     "form": "full port",
+     "written": "Full bore"
+    },
+    {
+     "form": "RB",
+     "written": "Reduced bore"
+    },
+    {
+     "form": "reduced port",
+     "written": "Reduced bore"
+    }
+   ],
+   "steps": [
+    "Apply 11.6 and write the bore as Full bore or Reduced bore.",
+    "Replace the recognized variants with their corresponding prescribed form."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Check type": {
+   "written_form": "Write the check type as Swing, Piston or Dual plate.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Swing",
+    "Piston",
+    "Dual plate"
+   ],
+   "closed": true,
+   "not_listed": "Enter it in the query register.",
+   "accepted": [
+    {
+     "form": "swing check",
+     "written": "Swing"
+    },
+    {
+     "form": "piston check",
+     "written": "Piston"
+    },
+    {
+     "form": "dual plate check",
+     "written": "Dual plate"
+    },
+    {
+     "form": "DPC",
+     "written": "Dual plate"
+    },
+    {
+     "form": "double door",
+     "written": "Dual plate"
+    }
+   ],
+   "steps": [
+    "Apply 11.6 and write a check valve type as Swing, Piston or Dual plate.",
+    "Replace the recognized variants with their corresponding prescribed form."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Trim": {
+   "written_form": "Write the trim as Trim, a space and the trim number, with any letter suffix in capitals.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply 11.7 and write the trim as Trim, a space and the trim number, retaining any letter suffix in capitals.",
+    "Replace TRIM joined to the number, API trim, trim no., or a hash sign preceding the number with the prescribed form."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Characteristic": {
+   "written_form": "Write the flow characteristic as Equal percentage, Linear or Quick opening.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Equal percentage",
+    "Linear",
+    "Quick opening"
+   ],
+   "closed": true,
+   "not_listed": "Enter it in the query register.",
+   "accepted": [
+    {
+     "form": "=%",
+     "written": "Equal percentage"
+    },
+    {
+     "form": "EQ%",
+     "written": "Equal percentage"
+    },
+    {
+     "form": "equal %",
+     "written": "Equal percentage"
+    },
+    {
+     "form": "LIN",
+     "written": "Linear"
+    },
+    {
+     "form": "QO",
+     "written": "Quick opening"
+    }
+   ],
+   "steps": [
+    "Apply 11.8 and write the flow characteristic as Equal percentage, Linear or Quick opening.",
+    "Replace the recognized variants with their corresponding prescribed form."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Leakage class": {
+   "written_form": "Write the seat leakage class as Class followed by the Roman numeral.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply 11.8 and write the seat leakage class as Class followed by the Roman numeral.",
+    "Replace a Roman numeral alone or class followed by an ordinary digit with the prescribed form.",
+    "Delete ANSI, FCI or ANSI/FCI 70-2 when it precedes the class."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Cv": {
+   "written_form": "Write Cv as the number alone.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply 11.8 and write Cv as the number alone.",
+    "Delete Cv, an equals sign or a colon from the received value."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Relief valve type": {
+   "written_form": "Write the relief valve type as Conventional, Balanced bellows or Pilot operated.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Conventional",
+    "Balanced bellows",
+    "Pilot operated"
+   ],
+   "closed": true,
+   "not_listed": "Enter it in the query register.",
+   "accepted": [
+    {
+     "form": "conv.",
+     "written": "Conventional"
+    },
+    {
+     "form": "spring loaded",
+     "written": "Conventional"
+    },
+    {
+     "form": "bellows",
+     "written": "Balanced bellows"
+    },
+    {
+     "form": "balanced bellow",
+     "written": "Balanced bellows"
+    },
+    {
+     "form": "POPRV",
+     "written": "Pilot operated"
+    },
+    {
+     "form": "pilot",
+     "written": "Pilot operated"
+    }
+   ],
+   "steps": [
+    "Apply 11.9 and write the relief valve type as Conventional, Balanced bellows or Pilot operated.",
+    "Replace the recognized variants with their corresponding prescribed form."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Orifice": {
+   "written_form": "Write the orifice as a single capital letter, deleting the accompanying words \"orifice\", \"API\" and \"size\".",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply 5.1 by deleting leading and trailing whitespace and reducing each internal run of whitespace to one ordinary space.",
+    "Apply 5.3 and 5.4 to replace complete not-applicable or pending entries before applying the attribute rule.",
+    "Apply 5.5 by deleting a leading occurrence of the attribute name followed by a colon, equals sign or space.",
+    "Apply 11.9 by deleting the words \"orifice\", \"API\" and \"size\" and writing the remaining orifice as a single capital letter.",
+    "Apply 5.7 by using exactly the prescribed capitals and deleting a trailing full stop, comma or semicolon under 5.6."
+   ],
+   "exceptions": [
+    "Leave the value unchanged and enter it in the query register if the clauses do not produce one unambiguous result.",
+    "Do not infer a probable orifice letter or substitute the nearest recognized form."
+   ],
+   "unclear": [
+    "The standard does not specify which capital letters are valid or how a received orifice designation maps to a letter."
+   ],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Pipe manufacture": {
+   "written_form": "Write pipe manufacture as Seamless, ERW or LSAW, using the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Seamless",
+    "ERW",
+    "LSAW"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "SMLS",
+     "written": "Seamless"
+    },
+    {
+     "form": "S/L",
+     "written": "Seamless"
+    }
+   ],
+   "steps": [
+    "Apply 5.1 by deleting leading and trailing whitespace and reducing each internal run of whitespace to one ordinary space.",
+    "Apply 5.3 and 5.4 to replace complete not-applicable or pending entries before applying the attribute rule.",
+    "Apply 5.5 by deleting a leading occurrence of the attribute name followed by a colon, equals sign or space.",
+    "Apply 11.10 by replacing SMLS or S/L with Seamless and by writing the result as Seamless, ERW or LSAW.",
+    "Apply 5.7 by using exactly the prescribed capitals and deleting a trailing full stop, comma or semicolon under 5.6."
+   ],
+   "exceptions": [
+    "Leave the value unchanged and enter it in the query register if it is not one of the prescribed forms or recognized variants.",
+    "Leave the value unchanged and enter it in the query register if the clauses do not produce one unambiguous result."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Pipe end finish": {
+   "written_form": "Write pipe end finish as BE or PE, using the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "BE",
+    "PE"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "bevelled end",
+     "written": "BE"
+    },
+    {
+     "form": "beveled end",
+     "written": "BE"
+    },
+    {
+     "form": "BEV",
+     "written": "BE"
+    },
+    {
+     "form": "plain end",
+     "written": "PE"
+    }
+   ],
+   "steps": [
+    "Apply 5.1 by deleting leading and trailing whitespace and reducing each internal run of whitespace to one ordinary space.",
+    "Apply 5.3 and 5.4 to replace complete not-applicable or pending entries before applying the attribute rule.",
+    "Apply 5.5 by deleting a leading occurrence of the attribute name followed by a colon, equals sign or space.",
+    "Apply 11.10 by replacing bevelled end, beveled end or BEV with BE, replacing plain end with PE, and writing the result as BE or PE.",
+    "Apply 5.7 by using exactly the prescribed capitals and deleting a trailing full stop, comma or semicolon under 5.6."
+   ],
+   "exceptions": [
+    "Leave the value unchanged and enter it in the query register if it is not one of the prescribed forms or recognized variants.",
+    "Leave the value unchanged and enter it in the query register if the clauses do not produce one unambiguous result."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Elbow radius": {
+   "written_form": "Write elbow radius as LR or SR, using the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "LR",
+    "SR"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "long radius",
+     "written": "LR"
+    },
+    {
+     "form": "1.5D",
+     "written": "LR"
+    },
+    {
+     "form": "1.5 D",
+     "written": "LR"
+    },
+    {
+     "form": "short radius",
+     "written": "SR"
+    },
+    {
+     "form": "1D",
+     "written": "SR"
+    },
+    {
+     "form": "1 D",
+     "written": "SR"
+    }
+   ],
+   "steps": [
+    "Apply 5.1 by deleting leading and trailing whitespace and reducing each internal run of whitespace to one ordinary space.",
+    "Apply 5.3 and 5.4 to replace complete not-applicable or pending entries before applying the attribute rule.",
+    "Apply 5.5 by deleting a leading occurrence of the attribute name followed by a colon, equals sign or space.",
+    "Apply 11.10 by replacing long radius, 1.5D or 1.5 D with LR and replacing short radius, 1D or 1 D with SR.",
+    "Apply 5.7 by using exactly the prescribed capitals and deleting a trailing full stop, comma or semicolon under 5.6."
+   ],
+   "exceptions": [
+    "Leave the value unchanged and enter it in the query register if it is not one of the prescribed forms or recognized variants.",
+    "Leave the value unchanged and enter it in the query register if the clauses do not produce one unambiguous result."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Angle": {
+   "written_form": "Write the angle as the number, one space and deg.",
+   "unit": "deg",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [
+    {
+     "form": "degree",
+     "written": "deg"
+    },
+    {
+     "form": "degrees",
+     "written": "deg"
+    }
+   ],
+   "steps": [
+    "Apply 5.1 by deleting leading and trailing whitespace and reducing each internal run of whitespace to one ordinary space.",
+    "Apply 5.3 and 5.4 to replace complete not-applicable or pending entries before applying the attribute rule.",
+    "Apply 5.5 by deleting a leading occurrence of the attribute name followed by a colon, equals sign or space.",
+    "Apply 11.10 by writing the number, one space and deg, and by replacing degree or degrees with deg.",
+    "Apply 6.6 by separating the number and deg with exactly one space.",
+    "Apply 6.7 by writing the unit as deg using keyboard characters only.",
+    "Apply the general numerical rules by using the full stop as the decimal separator, deleting unnecessary trailing decimal zeros and writing a leading zero for a magnitude less than one.",
+    "Apply 5.7 by using the prescribed capitalization and deleting a trailing full stop, comma or semicolon under 5.6."
+   ],
+   "exceptions": [
+    "Leave the value unchanged and enter it in the query register if the clauses do not produce one unambiguous result.",
+    "Do not infer an angle from a value containing alternatives or from a value whose unit is absent or ambiguous."
+   ],
+   "unclear": [
+    "The text recognizes the degree sign but does not provide its literal character, so its exact accepted input form is not stated."
+   ],
+   "examples": [],
+   "unit_spacing": "space"
+  },
+  "Gasket type": {
+   "written_form": "Write gasket type as Spiral wound, Ring joint or Sheet, using the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Spiral wound",
+    "Ring joint",
+    "Sheet"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "SPW",
+     "written": "Spiral wound"
+    },
+    {
+     "form": "SWG",
+     "written": "Spiral wound"
+    },
+    {
+     "form": "spiral-wound",
+     "written": "Spiral wound"
+    },
+    {
+     "form": "RJ gasket",
+     "written": "Ring joint"
+    },
+    {
+     "form": "RTJ gasket",
+     "written": "Ring joint"
+    }
+   ],
+   "steps": [
+    "Apply 5.1 by deleting leading and trailing whitespace and reducing each internal run of whitespace to one ordinary space.",
+    "Apply 5.3 and 5.4 to replace complete not-applicable or pending entries before applying the attribute rule.",
+    "Apply 5.5 by deleting a leading occurrence of the attribute name followed by a colon, equals sign or space.",
+    "Apply 11.11 by replacing SPW, SWG or spiral-wound with Spiral wound, replacing RJ gasket or RTJ gasket with Ring joint, and writing the result as Spiral wound, Ring joint or Sheet.",
+    "Apply 5.7 by using exactly the prescribed capitals and deleting a trailing full stop, comma or semicolon under 5.6."
+   ],
+   "exceptions": [
+    "Leave the value unchanged and enter it in the query register if it is not one of the prescribed forms or recognized variants.",
+    "Leave the value unchanged and enter it in the query register if the clauses do not produce one unambiguous result."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Bolt coating": {
+   "written_form": "Write bolt coating as PTFE coated, HDG or Uncoated, using the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "PTFE coated",
+    "HDG",
+    "Uncoated"
+   ],
+   "closed": true,
+   "not_listed": "enter the value in the query register",
+   "accepted": [
+    {
+     "form": "Teflon coated",
+     "written": "PTFE coated"
+    },
+    {
+     "form": "PTFE-coated",
+     "written": "PTFE coated"
+    },
+    {
+     "form": "hot dip galvanized",
+     "written": "HDG"
+    },
+    {
+     "form": "galvanized",
+     "written": "HDG"
+    },
+    {
+     "form": "black",
+     "written": "Uncoated"
+    },
+    {
+     "form": "plain",
+     "written": "Uncoated"
+    }
+   ],
+   "steps": [
+    "Apply 5.1 by deleting leading and trailing whitespace and reducing each internal run of whitespace to one ordinary space.",
+    "Apply 5.3 and 5.4 to replace complete not-applicable or pending entries before applying the attribute rule.",
+    "Apply 5.5 by deleting a leading occurrence of the attribute name followed by a colon, equals sign or space.",
+    "Apply 11.11 by replacing Teflon coated or PTFE-coated with PTFE coated, replacing hot dip galvanized or galvanized with HDG, replacing black or plain with Uncoated, and writing the result as PTFE coated, HDG or Uncoated.",
+    "Apply 5.7 by using exactly the prescribed capitals and deleting a trailing full stop, comma or semicolon under 5.6."
+   ],
+   "exceptions": [
+    "Leave the value unchanged and enter it in the query register if it is not one of the prescribed forms or recognized variants.",
+    "Leave the value unchanged and enter it in the query register if the clauses do not produce one unambiguous result."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Pump type": {
+   "written_form": "Write the API pump type as its letters and digits together without separation.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply 5.1 by deleting leading and trailing whitespace and reducing each internal run of whitespace to one ordinary space.",
+    "Apply 5.3 and 5.4 to replace complete not-applicable or pending entries before applying the attribute rule.",
+    "Apply 5.5 by deleting a leading occurrence of the attribute name followed by a colon, equals sign or space.",
+    "Apply 11.12 by deleting the words API, 610 and type and deleting hyphens and spaces between the remaining letters and digits.",
+    "Apply 5.7 by retaining exactly the capitals required by the designation and deleting a trailing full stop, comma or semicolon under 5.6."
+   ],
+   "exceptions": [
+    "Leave the value unchanged and enter it in the query register if deleting the specified words, hyphens or spaces would lose information.",
+    "Leave the value unchanged and enter it in the query register if the clauses do not produce one unambiguous result.",
+    "Do not infer missing letters or digits or substitute the nearest pump type."
+   ],
+   "unclear": [
+    "The standard specifies the format of an API pump type but does not list the permitted pump-type letter and digit combinations."
+   ],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Seal": {
+   "written_form": "Write the value as Single mechanical seal or Double mechanical seal, with the words capitalized exactly as shown.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Single mechanical seal",
+    "Double mechanical seal"
+   ],
+   "closed": true,
+   "not_listed": "Enter the value in the query register.",
+   "accepted": [
+    {
+     "form": "single seal",
+     "written": "Single mechanical seal"
+    },
+    {
+     "form": "SMS",
+     "written": "Single mechanical seal"
+    },
+    {
+     "form": "double seal",
+     "written": "Double mechanical seal"
+    },
+    {
+     "form": "dual seal",
+     "written": "Double mechanical seal"
+    },
+    {
+     "form": "DMS",
+     "written": "Double mechanical seal"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Compare the received value with the recognized variants and prescribed forms, disregarding differences in capitals, spaces, hyphens, underscores and full stops (5.8).",
+    "Replace a recognized variant with its prescribed form (5.8).",
+    "Write the prescribed form with exactly its specified capitalization (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Seal plan": {
+   "written_form": "Write the value as Plan, followed by one space and the plan number, with any letter in the plan number capitalized.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Delete API when it precedes the plan designation (11.12).",
+    "Replace PLAN joined to the number or separated from it by a hyphen with Plan, a space and the plan number (11.12).",
+    "Capitalize any letter in the plan number (11.12).",
+    "If a double seal has two plans, write both plans in the received order, separated by a slash without spaces (14.2).",
+    "Apply the prescribed capitalization and punctuation (5.7)."
+   ],
+   "exceptions": [
+    "For a double seal with two plans, retain both plans in received order and separate them with a slash without spaces (14.2)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Driver": {
+   "written_form": "Write the value as Electric motor or Diesel engine, with the words capitalized exactly as shown.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Electric motor",
+    "Diesel engine"
+   ],
+   "closed": true,
+   "not_listed": "Enter the value in the query register.",
+   "accepted": [
+    {
+     "form": "motor",
+     "written": "Electric motor"
+    },
+    {
+     "form": "E-motor",
+     "written": "Electric motor"
+    },
+    {
+     "form": "EM",
+     "written": "Electric motor"
+    },
+    {
+     "form": "diesel",
+     "written": "Diesel engine"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Compare the received value with the recognized variants and prescribed forms, disregarding differences in capitals, spaces, hyphens, underscores and full stops (5.8).",
+    "Replace a recognized variant with its prescribed form (5.8).",
+    "Write the prescribed form with exactly its specified capitalization (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Temperature sensor": {
+   "written_form": "Write the value as Pt100 or as Type followed by the thermocouple letter, with one space between Type and the letter.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [
+    {
+     "form": "RTD Pt100",
+     "written": "Pt100"
+    },
+    {
+     "form": "PT-100",
+     "written": "Pt100"
+    },
+    {
+     "form": "Pt 100",
+     "written": "Pt100"
+    },
+    {
+     "form": "K-type",
+     "written": "Type K"
+    },
+    {
+     "form": "thermocouple K",
+     "written": "Type K"
+    },
+    {
+     "form": "TC K",
+     "written": "Type K"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Compare the received value with the recognized variants and prescribed forms, disregarding differences in capitals, spaces, hyphens, underscores and full stops (5.8).",
+    "Replace RTD Pt100, PT-100 or Pt 100 with Pt100 (11.13).",
+    "Replace K-type, thermocouple K or TC K with Type K (11.13).",
+    "Write a thermocouple value as Type followed by its thermocouple letter, separated by one space (11.13).",
+    "Write Pt100 and Type followed by the thermocouple letter with the prescribed capitalization (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [
+    "The recognized forms corresponding to J are not individually specified."
+   ],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Wiring": {
+   "written_form": "Write the value as 3-wire or 4-wire; write N/A for thermocouples.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "3-wire",
+    "4-wire",
+    "N/A"
+   ],
+   "closed": true,
+   "not_listed": "Enter the value in the query register.",
+   "accepted": [
+    {
+     "form": "3 wire",
+     "written": "3-wire"
+    },
+    {
+     "form": "4 wire",
+     "written": "4-wire"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Write N/A when the temperature sensor is a thermocouple (15.2).",
+    "For a resistance thermometer, replace 3 wire with 3-wire or 4 wire with 4-wire (11.13).",
+    "Write the prescribed form with exactly its specified capitalization and punctuation (5.7)."
+   ],
+   "exceptions": [
+    "Wiring applies to resistance thermometers only and shall be N/A for thermocouples (15.2)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Level measuring principle": {
+   "written_form": "Write the value as GWR, Radar, DP or Displacer, using exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "GWR",
+    "Radar",
+    "DP",
+    "Displacer"
+   ],
+   "closed": true,
+   "not_listed": "Enter the value in the query register.",
+   "accepted": [
+    {
+     "form": "guided wave radar",
+     "written": "GWR"
+    },
+    {
+     "form": "guided radar",
+     "written": "GWR"
+    },
+    {
+     "form": "non-contact radar",
+     "written": "Radar"
+    },
+    {
+     "form": "differential pressure",
+     "written": "DP"
+    },
+    {
+     "form": "d/p",
+     "written": "DP"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Compare the received value with the recognized variants and prescribed forms, disregarding differences in capitals, spaces, hyphens, underscores and full stops (5.8).",
+    "Replace a recognized variant with its prescribed form (11.14).",
+    "Write the prescribed form with exactly its specified capitalization (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Flow meter type": {
+   "written_form": "Write the value as Coriolis, Magnetic, Vortex or Ultrasonic, using exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Coriolis",
+    "Magnetic",
+    "Vortex",
+    "Ultrasonic"
+   ],
+   "closed": true,
+   "not_listed": "Enter the value in the query register.",
+   "accepted": [
+    {
+     "form": "coriolis mass",
+     "written": "Coriolis"
+    },
+    {
+     "form": "CMF",
+     "written": "Coriolis"
+    },
+    {
+     "form": "mag",
+     "written": "Magnetic"
+    },
+    {
+     "form": "electromagnetic",
+     "written": "Magnetic"
+    },
+    {
+     "form": "magflow",
+     "written": "Magnetic"
+    },
+    {
+     "form": "USM",
+     "written": "Ultrasonic"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Compare the received value with the recognized variants and prescribed forms, disregarding differences in capitals, spaces, hyphens, underscores and full stops (5.8).",
+    "Replace a recognized variant with its prescribed form (11.14).",
+    "Write the prescribed form with exactly its specified capitalization (5.7)."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Accuracy": {
+   "written_form": "Write the value as +/-, the number, the percent sign, one space and the reference: span, of reading or of full scale.",
+   "unit": "%",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "Enter the value in the query register.",
+   "accepted": [],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce internal runs of whitespace to one ordinary space (5.1).",
+    "Write the accuracy as +/-, the number, the percent sign, one space and the reference (11.15).",
+    "Add +/- when the received value lacks the plus-minus sign (11.15).",
+    "Replace span, % span or of calibrated span with span (11.15).",
+    "Replace rdg, of rdg or reading with of reading (11.15).",
+    "Replace FS, of FS or full scale with of full scale (11.15).",
+    "Enter the value in the query register when it lacks a reference, unless it is the accuracy of a pressure gauge (11.15).",
+    "Write the prescribed signs, percent sign and reference with the specified capitalization and punctuation (5.7)."
+   ],
+   "exceptions": [
+    "For pressure gauges, use of full scale when the received value lacks the reference (11.15)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "none"
+  },
+  "Cable insulation": {
+   "written_form": "Write the cable insulation as XLPE or PVC, using exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "XLPE",
+    "PVC"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "cross-linked polyethylene",
+     "written": "XLPE"
+    },
+    {
+     "form": "XLPE insulated",
+     "written": "XLPE"
+    }
+   ],
+   "steps": [
+    "Apply the general processing sequence in Clause 4.3, including whitespace removal and recognition of complete not-applicable or pending entries.",
+    "Replace a recognized cable-insulation variant with its prescribed form in accordance with Clause 11.16.",
+    "Write the prescribed form with exactly its specified capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [
+    "Leave an empty field without a value in accordance with Clause 5.2.",
+    "Present a complete not-applicable entry as N/A and a complete pending entry as TBA in accordance with Clauses 5.3 and 5.4.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register in accordance with Clause 4.4."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Cable armour": {
+   "written_form": "Write the cable armour as SWA, GSWB, or Unarmoured, using exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "SWA",
+    "GSWB",
+    "Unarmoured"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "steel wire armour",
+     "written": "SWA"
+    },
+    {
+     "form": "steel wire armoured",
+     "written": "SWA"
+    },
+    {
+     "form": "GSWA",
+     "written": "SWA"
+    },
+    {
+     "form": "galvanized steel wire braid",
+     "written": "GSWB"
+    },
+    {
+     "form": "steel wire braid",
+     "written": "GSWB"
+    },
+    {
+     "form": "SWB",
+     "written": "GSWB"
+    },
+    {
+     "form": "unarmored",
+     "written": "Unarmoured"
+    },
+    {
+     "form": "non-armoured",
+     "written": "Unarmoured"
+    }
+   ],
+   "steps": [
+    "Apply the general processing sequence in Clause 4.3, including whitespace removal and recognition of complete not-applicable or pending entries.",
+    "Replace a recognized cable-armour variant with its prescribed form in accordance with Clause 11.16.",
+    "Write the prescribed form with exactly its specified capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [
+    "Leave an empty field without a value in accordance with Clause 5.2.",
+    "Present a complete not-applicable entry as N/A and a complete pending entry as TBA in accordance with Clauses 5.3 and 5.4.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register in accordance with Clause 4.4."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Cable sheath": {
+   "written_form": "Write the cable outer sheath as LSZH or PVC, using exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "LSZH",
+    "PVC"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "LS0H",
+     "written": "LSZH"
+    },
+    {
+     "form": "LSOH",
+     "written": "LSZH"
+    },
+    {
+     "form": "low smoke zero halogen",
+     "written": "LSZH"
+    }
+   ],
+   "steps": [
+    "Apply the general processing sequence in Clause 4.3, including whitespace removal and recognition of complete not-applicable or pending entries.",
+    "Replace a recognized cable-sheath variant with its prescribed form in accordance with Clause 11.16.",
+    "Write the prescribed form with exactly its specified capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [
+    "Leave an empty field without a value in accordance with Clause 5.2.",
+    "Present a complete not-applicable entry as N/A and a complete pending entry as TBA in accordance with Clauses 5.3 and 5.4.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register in accordance with Clause 4.4."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Cable screen": {
+   "written_form": "Write the cable screen as Overall, Individual and overall, or Unscreened, using exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Overall",
+    "Individual and overall",
+    "Unscreened"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "OS",
+     "written": "Overall"
+    },
+    {
+     "form": "overall screen",
+     "written": "Overall"
+    },
+    {
+     "form": "collective screen",
+     "written": "Overall"
+    },
+    {
+     "form": "IS/OS",
+     "written": "Individual and overall"
+    },
+    {
+     "form": "ISOS",
+     "written": "Individual and overall"
+    },
+    {
+     "form": "individual and overall screen",
+     "written": "Individual and overall"
+    },
+    {
+     "form": "unshielded",
+     "written": "Unscreened"
+    }
+   ],
+   "steps": [
+    "Apply the general processing sequence in Clause 4.3, including whitespace removal and recognition of complete not-applicable or pending entries.",
+    "Replace a recognized cable-screen variant with its prescribed form in accordance with Clause 11.17.",
+    "Write the prescribed form with exactly its specified capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [
+    "Leave an empty field without a value in accordance with Clause 5.2.",
+    "Present a complete not-applicable entry as N/A and a complete pending entry as TBA in accordance with Clauses 5.3 and 5.4.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register in accordance with Clause 4.4."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Cable gland type": {
+   "written_form": "Write the cable gland type as Barrier or Compression, using exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Barrier",
+    "Compression"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "barrier gland",
+     "written": "Barrier"
+    },
+    {
+     "form": "compound filled",
+     "written": "Barrier"
+    },
+    {
+     "form": "compression gland",
+     "written": "Compression"
+    },
+    {
+     "form": "standard gland",
+     "written": "Compression"
+    }
+   ],
+   "steps": [
+    "Apply the general processing sequence in Clause 4.3, including whitespace removal and recognition of complete not-applicable or pending entries.",
+    "Replace a recognized cable-gland variant with its prescribed form in accordance with Clause 11.17.",
+    "Write the prescribed form with exactly its specified capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [
+    "Leave an empty field without a value in accordance with Clause 5.2.",
+    "Present a complete not-applicable entry as N/A and a complete pending entry as TBA in accordance with Clauses 5.3 and 5.4.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register in accordance with Clause 4.4."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Vessel orientation": {
+   "written_form": "Write the vessel orientation as Vertical or Horizontal, using exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Vertical",
+    "Horizontal"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "V",
+     "written": "Vertical"
+    },
+    {
+     "form": "vert.",
+     "written": "Vertical"
+    },
+    {
+     "form": "H",
+     "written": "Horizontal"
+    },
+    {
+     "form": "horiz.",
+     "written": "Horizontal"
+    }
+   ],
+   "steps": [
+    "Apply the general processing sequence in Clause 4.3, including whitespace removal and recognition of complete not-applicable or pending entries.",
+    "Replace a recognized vessel-orientation variant with its prescribed form in accordance with Clause 11.18.",
+    "Write the prescribed form with exactly its specified capitals in accordance with Clause 5.7."
+   ],
+   "exceptions": [
+    "Leave an empty field without a value in accordance with Clause 5.2.",
+    "Present a complete not-applicable entry as N/A and a complete pending entry as TBA in accordance with Clauses 5.3 and 5.4.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register in accordance with Clause 4.4."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Vessel head type": {
+   "written_form": "Write the vessel head type as 2:1 SE, Hemi, or Tori, using exactly the prescribed capitalization and punctuation.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "2:1 SE",
+    "Hemi",
+    "Tori"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "2:1 elliptical",
+     "written": "2:1 SE"
+    },
+    {
+     "form": "elliptical",
+     "written": "2:1 SE"
+    },
+    {
+     "form": "2:1 semi-elliptical",
+     "written": "2:1 SE"
+    },
+    {
+     "form": "SE 2:1",
+     "written": "2:1 SE"
+    },
+    {
+     "form": "hemispherical",
+     "written": "Hemi"
+    },
+    {
+     "form": "torispherical",
+     "written": "Tori"
+    },
+    {
+     "form": "F&D",
+     "written": "Tori"
+    }
+   ],
+   "steps": [
+    "Apply the general processing sequence in Clause 4.3, including whitespace removal and recognition of complete not-applicable or pending entries.",
+    "Replace a recognized vessel-head-type variant with its prescribed form in accordance with Clause 11.18.",
+    "Write the prescribed form with exactly its specified capitals and punctuation in accordance with Clause 5.7."
+   ],
+   "exceptions": [
+    "Leave an empty field without a value in accordance with Clause 5.2.",
+    "Present a complete not-applicable entry as N/A and a complete pending entry as TBA in accordance with Clauses 5.3 and 5.4.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register in accordance with Clause 4.4."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Design code": {
+   "written_form": "Write the design code as ASME VIII-1, ASME VIII-2, or API 650, using exactly the prescribed capitalization and punctuation.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "ASME VIII-1",
+    "ASME VIII-2",
+    "API 650"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register.",
+   "accepted": [
+    {
+     "form": "ASME VIII Div 1",
+     "written": "ASME VIII-1"
+    },
+    {
+     "form": "ASME Sec VIII Div. 1",
+     "written": "ASME VIII-1"
+    },
+    {
+     "form": "ASME Section VIII Division 1",
+     "written": "ASME VIII-1"
+    },
+    {
+     "form": "API650",
+     "written": "API 650"
+    },
+    {
+     "form": "API Std 650",
+     "written": "API 650"
+    }
+   ],
+   "steps": [
+    "Apply the general processing sequence in Clause 4.3, including whitespace removal and recognition of complete not-applicable or pending entries.",
+    "Replace a recognized design-code variant with its prescribed form in accordance with Clause 11.19.",
+    "Write the prescribed form with exactly its specified capitals and punctuation in accordance with Clause 5.7."
+   ],
+   "exceptions": [
+    "Leave an empty field without a value in accordance with Clause 5.2.",
+    "Present a complete not-applicable entry as N/A and a complete pending entry as TBA in accordance with Clauses 5.3 and 5.4.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register in accordance with Clause 4.4."
+   ],
+   "unclear": [
+    "Clause 11.19 states that corresponding forms for Division 2 are recognized but does not specify those forms literally."
+   ],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Radiography": {
+   "written_form": "Write the radiography value as Full RT, Spot RT, or No RT, using the prescribed capitalisation and spaces.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Full RT",
+    "Spot RT",
+    "No RT"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register if it cannot be presented unambiguously.",
+   "accepted": [
+    {
+     "form": "100% RT",
+     "written": "Full RT"
+    },
+    {
+     "form": "full",
+     "written": "Full RT"
+    },
+    {
+     "form": "spot",
+     "written": "Spot RT"
+    },
+    {
+     "form": "no radiography",
+     "written": "No RT"
+    },
+    {
+     "form": "nil",
+     "written": "No RT"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce any internal run of whitespace to one ordinary space (5.1).",
+    "Recognize a complete not-applicable or pending value and replace it with N/A or TBA where applicable (5.3–5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign, or space (5.5).",
+    "Delete a terminal full stop, comma, or semicolon and enclosing quotation marks (5.6).",
+    "Compare the received value with the recognized radiography variants and prescribed forms and replace a matching variant with its prescribed form (5.8, 11.19).",
+    "Write the prescribed radiography form with exactly its specified capitals, spaces, and punctuation (5.7)."
+   ],
+   "exceptions": [
+    "Leave a value presenting alternatives joined by “or”, “and”, a slash, or a semicolon unchanged and enter it in the query register unless the attribute clause states how to write the alternatives.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register (4.4)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Tank roof": {
+   "written_form": "Write the tank roof value as Cone roof, Dome roof, EFR, or IFR, using the prescribed capitalisation and spaces.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Cone roof",
+    "Dome roof",
+    "EFR",
+    "IFR"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register if it cannot be presented unambiguously.",
+   "accepted": [
+    {
+     "form": "fixed cone roof",
+     "written": "Cone roof"
+    },
+    {
+     "form": "cone",
+     "written": "Cone roof"
+    },
+    {
+     "form": "CRT",
+     "written": "Cone roof"
+    },
+    {
+     "form": "dome",
+     "written": "Dome roof"
+    },
+    {
+     "form": "external floating roof",
+     "written": "EFR"
+    },
+    {
+     "form": "internal floating roof",
+     "written": "IFR"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce any internal run of whitespace to one ordinary space (5.1).",
+    "Recognize a complete not-applicable or pending value and replace it with N/A or TBA where applicable (5.3–5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign, or space (5.5).",
+    "Delete a terminal full stop, comma, or semicolon and enclosing quotation marks (5.6).",
+    "Compare the received value with the recognized tank-roof variants and prescribed forms and replace a matching variant with its prescribed form (5.8, 11.20).",
+    "Write the prescribed tank-roof form with exactly its specified capitals and spaces (5.7)."
+   ],
+   "exceptions": [
+    "Leave a value presenting alternatives joined by “or”, “and”, a slash, or a semicolon unchanged and enter it in the query register unless the attribute clause states how to write the alternatives.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register (4.4)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "TEMA type": {
+   "written_form": "Write the TEMA type as three capital letters without spaces.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce any internal run of whitespace to one ordinary space (5.1).",
+    "Recognize a complete not-applicable or pending value and replace it with N/A or TBA where applicable (5.3–5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign, or space (5.5).",
+    "Delete a terminal full stop, comma, or semicolon and enclosing quotation marks (5.6).",
+    "Delete the word “TEMA” when it precedes the type and the word “type” when it follows the type (11.20).",
+    "Delete hyphens and spaces between the letters (11.20).",
+    "Write the resulting TEMA type as three capital letters without spaces (5.7, 11.20)."
+   ],
+   "exceptions": [
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register (4.4)."
+   ],
+   "unclear": [
+    "The standard does not specify which three-letter TEMA types are valid."
+   ],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Gas detection principle": {
+   "written_form": "Write the gas detection principle as IR, Catalytic, or Electrochemical, using the prescribed capitalisation.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "IR",
+    "Catalytic",
+    "Electrochemical"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register if it cannot be presented unambiguously.",
+   "accepted": [
+    {
+     "form": "infrared",
+     "written": "IR"
+    },
+    {
+     "form": "IR point",
+     "written": "IR"
+    },
+    {
+     "form": "infrared point",
+     "written": "IR"
+    },
+    {
+     "form": "NDIR",
+     "written": "IR"
+    },
+    {
+     "form": "cat bead",
+     "written": "Catalytic"
+    },
+    {
+     "form": "pellistor",
+     "written": "Catalytic"
+    },
+    {
+     "form": "EC",
+     "written": "Electrochemical"
+    },
+    {
+     "form": "electro-chemical",
+     "written": "Electrochemical"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce any internal run of whitespace to one ordinary space (5.1).",
+    "Recognize a complete not-applicable or pending value and replace it with N/A or TBA where applicable (5.3–5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign, or space (5.5).",
+    "Delete a terminal full stop, comma, or semicolon and enclosing quotation marks (5.6).",
+    "Compare the received value with the recognized gas-detection-principle variants and prescribed forms and replace a matching variant with its prescribed form (5.8, 11.21).",
+    "Write the prescribed gas detection principle with exactly its specified capitals (5.7)."
+   ],
+   "exceptions": [
+    "Leave a value presenting alternatives joined by “or”, “and”, a slash, or a semicolon unchanged and enter it in the query register unless the attribute clause states how to write the alternatives.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register (4.4)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Gas": {
+   "written_form": "Write the gas value as Methane, H2S, Hydrogen, or Oxygen, using the prescribed capitalisation.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Methane",
+    "H2S",
+    "Hydrogen",
+    "Oxygen"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register if it cannot be presented unambiguously.",
+   "accepted": [
+    {
+     "form": "CH4",
+     "written": "Methane"
+    },
+    {
+     "form": "hydrogen sulfide",
+     "written": "H2S"
+    },
+    {
+     "form": "hydrogen sulphide",
+     "written": "H2S"
+    },
+    {
+     "form": "H2",
+     "written": "Hydrogen"
+    },
+    {
+     "form": "O2",
+     "written": "Oxygen"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce any internal run of whitespace to one ordinary space (5.1).",
+    "Recognize a complete not-applicable or pending value and replace it with N/A or TBA where applicable (5.3–5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign, or space (5.5).",
+    "Delete a terminal full stop, comma, or semicolon and enclosing quotation marks (5.6).",
+    "Compare the received value with the recognized gas variants and prescribed forms and replace a matching variant with its prescribed form (5.8, 11.21).",
+    "Write the prescribed gas form with exactly its specified capitals (5.7)."
+   ],
+   "exceptions": [
+    "Leave a value presenting alternatives joined by “or”, “and”, a slash, or a semicolon unchanged and enter it in the query register unless the attribute clause states how to write the alternatives.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register (4.4)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Gas detector range unit": {
+   "written_form": "Write the gas detector range unit as %LEL, ppm, or %vol, without converting one of these units into another.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "%LEL",
+    "ppm",
+    "%vol"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register if it is not one of the recognized units or cannot be presented unambiguously.",
+   "accepted": [
+    {
+     "form": "% LEL",
+     "written": "%LEL"
+    },
+    {
+     "form": "LEL%",
+     "written": "%LEL"
+    },
+    {
+     "form": "ppmv",
+     "written": "ppm"
+    },
+    {
+     "form": "% vol",
+     "written": "%vol"
+    },
+    {
+     "form": "vol%",
+     "written": "%vol"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce any internal run of whitespace to one ordinary space (5.1).",
+    "Recognize a complete not-applicable or pending value and replace it with N/A or TBA where applicable (5.3–5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign, or space (5.5).",
+    "Delete a terminal full stop, comma, or semicolon and enclosing quotation marks (5.6).",
+    "Compare the received unit with the recognized unit variants and prescribed units and replace a matching variant with its prescribed unit (5.8, 11.22).",
+    "Do not convert %LEL, ppm, and %vol into one another (11.22).",
+    "Write the prescribed unit with exactly its specified capitals and symbols (5.7)."
+   ],
+   "exceptions": [
+    "Leave an ambiguous or otherwise unpresentable unit unchanged and enter it in the query register (4.4)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "none"
+  },
+  "Extinguisher type": {
+   "written_form": "Write the extinguisher type as Portable or Wheeled, using the prescribed capitalisation.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Portable",
+    "Wheeled"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register if it cannot be presented unambiguously.",
+   "accepted": [
+    {
+     "form": "hand held",
+     "written": "Portable"
+    },
+    {
+     "form": "handheld",
+     "written": "Portable"
+    },
+    {
+     "form": "trolley",
+     "written": "Wheeled"
+    },
+    {
+     "form": "trolley mounted",
+     "written": "Wheeled"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce any internal run of whitespace to one ordinary space (5.1).",
+    "Recognize a complete not-applicable or pending value and replace it with N/A or TBA where applicable (5.3–5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign, or space (5.5).",
+    "Delete a terminal full stop, comma, or semicolon and enclosing quotation marks (5.6).",
+    "Compare the received value with the recognized extinguisher-type variants and prescribed forms and replace a matching variant with its prescribed form (5.8, 11.23).",
+    "Write the prescribed extinguisher type with exactly its specified capitals (5.7)."
+   ],
+   "exceptions": [
+    "Leave a value presenting alternatives joined by “or”, “and”, a slash, or a semicolon unchanged and enter it in the query register unless the attribute clause states how to write the alternatives.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register (4.4)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Extinguishing agent": {
+   "written_form": "Write the extinguishing agent as DCP, CO2, AFFF, or Water, using the prescribed capitalisation.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "DCP",
+    "CO2",
+    "AFFF",
+    "Water"
+   ],
+   "closed": true,
+   "not_listed": "Leave the value unchanged and enter it in the query register if it cannot be presented unambiguously.",
+   "accepted": [
+    {
+     "form": "dry chemical powder",
+     "written": "DCP"
+    },
+    {
+     "form": "dry powder",
+     "written": "DCP"
+    },
+    {
+     "form": "powder",
+     "written": "DCP"
+    },
+    {
+     "form": "carbon dioxide",
+     "written": "CO2"
+    },
+    {
+     "form": "AFFF foam",
+     "written": "AFFF"
+    },
+    {
+     "form": "foam",
+     "written": "AFFF"
+    }
+   ],
+   "steps": [
+    "Delete leading and trailing whitespace and reduce any internal run of whitespace to one ordinary space (5.1).",
+    "Recognize a complete not-applicable or pending value and replace it with N/A or TBA where applicable (5.3–5.4).",
+    "Delete a leading occurrence of the attribute name followed by a colon, equals sign, or space (5.5).",
+    "Delete a terminal full stop, comma, or semicolon and enclosing quotation marks (5.6).",
+    "Compare the received value with the recognized extinguishing-agent variants and prescribed forms and replace a matching variant with its prescribed form (5.8, 11.23).",
+    "Write the prescribed extinguishing agent with exactly its specified capitals (5.7)."
+   ],
+   "exceptions": [
+    "Leave a value presenting alternatives joined by “or”, “and”, a slash, or a semicolon unchanged and enter it in the query register unless the attribute clause states how to write the alternatives.",
+    "Leave an ambiguous or otherwise unpresentable value unchanged and enter it in the query register (4.4)."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Affirmative or negative value": {
+   "written_form": "Write the value as Yes or No, with exactly the prescribed capitalization.",
+   "unit": "",
+   "decimals": null,
+   "values": [
+    "Yes",
+    "No"
+   ],
+   "closed": true,
+   "not_listed": "Leave unchanged and enter in the query register.",
+   "accepted": [
+    {
+     "form": "Y",
+     "written": "Yes"
+    },
+    {
+     "form": "yes",
+     "written": "Yes"
+    },
+    {
+     "form": "true",
+     "written": "Yes"
+    },
+    {
+     "form": "N",
+     "written": "No"
+    },
+    {
+     "form": "no",
+     "written": "No"
+    },
+    {
+     "form": "false",
+     "written": "No"
+    }
+   ],
+   "steps": [
+    "Apply Clause 11.24: write an affirmative value as Yes and a negative value as No.",
+    "Apply Clause 5.7: use exactly the capitals of the prescribed form."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Count": {
+   "written_form": "Write the count as a whole number using digits only, without the counted-object name or the qualifiers nos, no., pcs or off.",
+   "unit": "",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply Clause 11.25: write the count as a whole number in digits only.",
+    "Apply Clause 11.25: write numbers from one to twelve that are received in words as digits.",
+    "Apply Clause 11.25: delete nos, no., pcs, off and the name of the counted object following the number."
+   ],
+   "exceptions": [],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": ""
+  },
+  "Charge": {
+   "written_form": "Write the charge as a number followed by one space and kg for DCP and CO2, or l for AFFF and Water.",
+   "unit": "kg for DCP and CO2; l for AFFF and Water",
+   "decimals": null,
+   "values": [],
+   "closed": false,
+   "not_listed": "",
+   "accepted": [],
+   "steps": [
+    "Apply Clause 18.2: store a DCP or CO2 charge in kg.",
+    "Apply Clause 18.2: store an AFFF or Water charge in l.",
+    "Apply Clause 6.6: separate the number and unit by exactly one space."
+   ],
+   "exceptions": [
+    "Do not convert a charge received in the other of these two units; enter it in the query register."
+   ],
+   "unclear": [],
+   "examples": [],
+   "unit_spacing": "space"
+  }
+ }
+}

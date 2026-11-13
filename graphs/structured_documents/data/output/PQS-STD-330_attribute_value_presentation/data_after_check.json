@@ -1,0 +1,1348 @@
+[
+  {
+    "page_number": 0,
+    "source_page_index": 0,
+    "detected_angle": 0,
+    "confidence": 8.81,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "PQS-STD 330"
+        },
+        {
+          "type": "paragraph",
+          "text": "Presentation of Attribute Values in Equipment and Material Records"
+        },
+        {
+          "type": "paragraph",
+          "text": "First edition, September 2026"
+        },
+        {
+          "type": "paragraph",
+          "text": "Fictitious standard prepared as test material for data normalization software. Not for engineering, procurement or safety use."
+        },
+        {
+          "type": "paragraph",
+          "text": "Page 1 of 22"
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 156,
+      "prompt_tokens": 4370,
+      "total_tokens": 4526,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 1,
+    "source_page_index": 1,
+    "detected_angle": 0,
+    "confidence": 16.27,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Foreword"
+        },
+        {
+          "type": "paragraph",
+          "text": "This standard sets out the manner in which attribute values of equipment and bulk material records are to be presented in the equipment register and the material catalogue. It was prepared by the master data working group to replace the informal working notes previously in use, and it restates their requirements in a form suitable for formal reference."
+        },
+        {
+          "type": "paragraph",
+          "text": "The requirements of this standard concern presentation only. They prescribe the form in which a technical value is written; they do not prescribe what that value ought to be for a given service, which remains a matter for the responsible engineering discipline."
+        },
+        {
+          "type": "paragraph",
+          "text": "No worked conversions or sample values are included. Users are expected to apply the clauses as written; where a clause does not lead to one unambiguous result, the value is to be retained unchanged and entered in the query register described in Annex A."
+        },
+        {
+          "type": "paragraph",
+          "text": "This is a fictitious document produced solely as test material for data normalization software. It does not represent the requirements of any real organization or standards body."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 287,
+      "prompt_tokens": 4370,
+      "total_tokens": 4657,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 2,
+    "source_page_index": 2,
+    "detected_angle": 0,
+    "confidence": 13.38,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Scope"
+        },
+        {
+          "type": "paragraph",
+          "text": "1.1 This standard applies to the Value field of attribute records held for valves, piping components, pumps, electric motors, instruments, cables and cable accessories, junction boxes, transformers, pressure vessels, storage tanks, heat exchangers, gas detectors and portable or wheeled fire extinguishers."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.2 Attribute names are fixed by Clauses 12 to 18 and are outside the scope of normalization. Where a supplier or contractor has used a different attribute name, the mapping of that name to the name used in this standard shall be completed before the value is processed; the mapping itself is not addressed here."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.3 This standard does not verify the engineering correctness of any value. A value that is presented in accordance with this standard may still be technically wrong, and the reverse; the discipline engineer remains responsible for technical content."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.4 Tag numbering, equipment hierarchy, document metadata, maintenance strategies, commercial data and prices are not covered."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Normative references"
+        },
+        {
+          "type": "paragraph",
+          "text": "2.1 The designations referred to in this standard originate in the following publications, which are cited for the meaning of the designations only. Compliance of a value with these publications is not checked under this standard: ASME B16.5 for pressure classes of flanges and flanged fittings; ASME B36.10M and B36.19M for pipe sizes and schedules; EN 1092-1 for PN ratings; ASME B1.20.1 for taper pipe threads; API 526, API 600 and API 610 for relief valve orifices, valve trims and pump types; IEC 60034, IEC 60079 and IEC 60529 for rotating machines, explosive atmospheres and enclosure protection; IEC 60502-1 for power cables; and ANSI/FCI 70-2 for control valve seat leakage."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Terms and definitions"
+        },
+        {
+          "type": "paragraph",
+          "text": "3.1 Attribute: a named characteristic of a type of equipment, such as a size or a body material, as listed in Clauses 12 to 18."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.2 Value: the content held against one attribute of one record."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.3 Received value: a value in the form in which it was delivered or entered, before this standard is applied."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.4 Presented value: a value after all applicable clauses of this standard have been applied."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.5 Prescribed form: the single form in which this standard requires a given value to be written."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 767,
+      "prompt_tokens": 4370,
+      "total_tokens": 5137,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 3,
+    "source_page_index": 3,
+    "detected_angle": 0,
+    "confidence": 12.53,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "3.6 Recognized variant: a spelling of a value, named in this standard, that is replaced by the prescribed form."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.7 Designation: a value consisting of a keyword and a number or code, including nominal sizes, pressure classes, schedules, thread sizes, IP codes and Ex markings."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.8 Catalogue item: a type of material or equipment that may be purchased repeatedly under one catalogue number."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.9 Tagged item: an individual installed object identified by its own tag number."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.10 Query register: the list of values that could not be presented under this standard, maintained in accordance with Annex A."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.11 Short length: a dimension of a component or instrument, including diameters, thicknesses, insertion lengths and stud lengths."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.12 Long length: a length of cable or pipe, the height or diameter of a storage tank, pump head and similar dimensions of large magnitude."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "4 Conformance and order of application"
+        },
+        {
+          "type": "paragraph",
+          "text": "4.1 A presented value conforms to this standard when every clause applicable to its attribute has been applied and the result is one value in the prescribed form. A value that has been entered in the query register in accordance with this standard also conforms."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.2 Clauses 5 to 11 apply to all equipment. Clauses 12 to 18 identify, for each type of equipment, the attributes that are held, the unit of each quantity attribute and a limited number of supplementary requirements. The supplementary requirements add to Clauses 5 to 11; none of them is intended to set aside a general clause, and any apparent conflict shall be referred to the data owner rather than resolved by the user."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.3 The clauses shall be applied in the following sequence: first the whitespace requirements of 5.1; next the recognition of not-applicable and pending entries in 5.3 and 5.4; then the removal of a repeated attribute name in accordance with 5.5; then the clause governing the attribute, including numerical presentation, unit conversion, designations and recognized variants; and finally capitalisation and punctuation."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.4 Two persons applying this standard independently to the same received value shall obtain the same presented value. Where they would not, the received value is to be treated as ambiguous and entered in the query register."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 682,
+      "prompt_tokens": 4370,
+      "total_tokens": 5052,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 4,
+    "source_page_index": 4,
+    "detected_angle": 0,
+    "confidence": 12.71,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "5 Basic editing of values"
+        },
+        {
+          "type": "paragraph",
+          "text": "5.1 Spaces, tabs and line breaks preceding or following the value shall be deleted. Any run of two or more whitespace characters within the value, including non-breaking spaces and line breaks carried over from converted documents, shall be reduced to a single ordinary space."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.2 A field that contains no value shall remain without a value. Neither N/A nor any other entry shall be inserted into it, because the absence of a value and a value that does not apply are different facts."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.3 A value consisting entirely of ‘NA’, ‘n/a’, ‘N.A.’, ‘not applicable’, ‘-’ or ‘--’, in any combination of capitals, shall be presented as N/A. No other clause is applied to such a value once it has been replaced."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.4 A value consisting entirely of ‘TBA’, ‘TBD’, ‘TBC’, ‘to be confirmed’, ‘to be advised’, ‘by vendor’ or ‘later’, in any combination of capitals, shall be presented as TBA. No other clause is applied to such a value once it has been replaced. The entries of 5.3 and of this clause are recognized only when they constitute the complete value."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.5 Where a value begins with the name of the attribute to which it belongs, followed by a colon, an equals sign or a space, that leading portion shall be deleted before any other clause governing the attribute is applied."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.6 A full stop, comma or semicolon standing at the end of a value shall be deleted. Quotation marks enclosing the complete value shall be deleted; an inch mark that forms part of a size or thread designation is not a quotation mark and shall be treated in accordance with Clause 8. Round and square brackets shall be retained."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.7 Values, codes, abbreviations and designations for which this standard gives a prescribed form shall be written with exactly the capitals of that prescribed form, whatever capitals the received value used. Other descriptive text shall begin with a capital letter and continue in lower case, except for abbreviations, codes, chemical formulas and proper names, whose capitals are retained."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.8 A received value is first compared, as received, with the recognized variants and prescribed forms of this standard. Where it matches one of them, the prescribed form is adopted without further change; a number of recognized variants themselves contain a comma and shall not be rearranged."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.9 Where a received value matches no recognized variant or prescribed form, contains exactly one comma, and the text following the comma does not begin with a digit, the two parts shall be interchanged and the comma omitted, so that the describing words precede the noun, and the comparison of 5.8 shall be made once more. Descriptive text not governed by any recognized variant is rearranged in the same way without a further comparison. Designations governed by Clauses 8 and 9 are never rearranged."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 747,
+      "prompt_tokens": 4370,
+      "total_tokens": 5117,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 5,
+    "source_page_index": 5,
+    "detected_angle": 0,
+    "confidence": 15.97,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "5.10"
+        },
+        {
+          "type": "paragraph",
+          "text": "For the purpose of the comparisons of 5.8 and 5.9, differences in capitals, spaces, hyphens, underscores and full stops shall be disregarded."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "5.11"
+        },
+        {
+          "type": "paragraph",
+          "text": "Each field shall hold one value only. A received value presenting alternatives joined by “or”, “and”, a slash or a semicolon shall be left unchanged and entered in the query register, unless the clause governing the attribute states how two values are to be written."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "5.12"
+        },
+        {
+          "type": "paragraph",
+          "text": "A value whose ordinary form includes a slash is a single value. This applies in particular to dual IP codes, cable voltage ratings, transformer voltage ratios, three-phase voltages, signals with HART and any value that coincides with a recognized variant containing a slash."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "5.13"
+        },
+        {
+          "type": "paragraph",
+          "text": "A value shall not be divided between two attributes, two values shall not be combined, and information shall not be transferred from one attribute to another. Where presenting a value in accordance with this standard would cause information to be lost, the value shall be left unchanged and entered in the query register."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "5.14"
+        },
+        {
+          "type": "paragraph",
+          "text": "Assumptions shall not be made. Probable meanings shall not be inferred, spelling errors shall not be corrected, and the nearest recognized variant shall not be substituted for a value that does not match one exactly. A value open to more than one reading shall be left unchanged and entered in the query register."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "6 Numerical presentation"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "6.1"
+        },
+        {
+          "type": "paragraph",
+          "text": "The full stop is the only decimal separator in a presented value."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "6.2"
+        },
+        {
+          "type": "paragraph",
+          "text": "A comma between two digits in a received value shall be read as a decimal separator, except where it is followed by exactly three digits and by no further digit. In that case the value is ambiguous, since the comma may equally be a thousands separator, and it shall be entered in the query register."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "6.3"
+        },
+        {
+          "type": "paragraph",
+          "text": "Spaces and apostrophes separating groups of three digits are thousands separators and shall be deleted. Presented values shall contain no thousands separators of any kind."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "6.4"
+        },
+        {
+          "type": "paragraph",
+          "text": "Zeros at the end of the decimal part of a number shall be deleted, and the full stop shall be deleted where no decimal digit remains. A number whose magnitude is less than one shall be written with a zero before the full stop."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "6.5"
+        },
+        {
+          "type": "paragraph",
+          "text": "A plus sign preceding a number shall be deleted. A negative number shall be written with the hyphen-minus immediately before its first digit; a typographic minus sign or a dash used in its place shall be replaced by the hyphen-minus."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 977,
+      "prompt_tokens": 4370,
+      "total_tokens": 5347,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 6,
+    "source_page_index": 6,
+    "detected_angle": 0,
+    "confidence": 11.4,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "6.6 A number and its unit shall be separated by exactly one space, with the following exception: the percent sign, and the units %LEL and %vol which are treated in the same way as the percent sign, shall be written immediately after the number without a space."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.7 Units shall be written using keyboard characters only. Superscripts and special symbols shall not appear in a presented value; accordingly the units are written m2, m3, m3/h and mm2 with an ordinary digit, degC for degrees Celsius, deg for plane angle, um for micrometres and ohm for ohms."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.8 A number without a unit, received for an attribute that requires a unit, shall not be taken to be in the prescribed unit. It shall be entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.9 A number qualified by approx., about, ca., max., min., a tilde, or a less-than or greater-than sign shall be left unchanged and entered in the query register, since the significance of the qualifier cannot be judged."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.10 A range shall be written as the lower value, a space, the word \"to\", a space, the upper value, a space and the unit, the unit being written once only. In a received value the two ends may be separated by a hyphen, an en dash, the word to, two or three consecutive full stops or a tilde, and the unit may follow each end or the upper end alone. A hyphen at the beginning of the value, or immediately following another separator, is a minus sign. Where conversion is required, each end shall be converted and rounded independently. A range of which only one end is received shall be entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.11 Signals such as 4-20mA are designations and not ranges; they are governed by Clause 9 and not by 6.10."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.12 A tolerance or accuracy shall be written with the characters +/- immediately before the number. The plus-minus sign, the characters + - and the characters + / - in a received value have the same meaning and shall be written as +/- ."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.13 A set of dimensions shall be written with a lower case x between successive numbers, without spaces on either side of the x, followed by one space and the unit written once. Received values may separate the numbers with x, X, the multiplication sign or an asterisk, with or without spaces. The received order of the numbers shall be kept, and each number shall be converted separately where conversion is needed."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "7 Units of measurement"
+        },
+        {
+          "type": "paragraph",
+          "text": "7.1 This clause states the unit in which each kind of quantity is held, the other units that are accepted and the factor by which each accepted unit is converted. Units are recognized irrespective of capitals; a space between number and unit is optional in a received value; and a full stop immediately following a unit abbreviation is disregarded."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 778,
+      "prompt_tokens": 4370,
+      "total_tokens": 5148,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 7,
+    "source_page_index": 7,
+    "detected_angle": 0,
+    "confidence": 14.92,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "7.2 A value received in a unit not accepted by this clause for the quantity concerned shall not be converted; it shall be entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.3 After conversion the result shall be rounded half up to the number of decimals stated for the quantity, and 6.4 shall then be applied. A value received in the prescribed unit shall not be rounded; only Clause 6 is applied to it."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.4 Gauge pressure shall be held in barg. The following are accepted for gauge pressure: ‘barg’, ‘bar g’, ‘bar(g)’ and ‘bar’ without conversion; ‘psig’, ‘psi’ and ‘psi(g)’, to be multiplied by 0.0689476; ‘kPa’ and ‘kPag’, to be multiplied by 0.01; ‘MPa’ and ‘MPag’, to be multiplied by 10; and ‘kg/cm2’, to be multiplied by 0.980665. A pressure unit received without a gauge or absolute indication in a gauge attribute shall be read as gauge. Gauge pressure is rounded to one decimal after conversion."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.5 Absolute pressure shall be held in bara. The following are accepted for absolute pressure: ‘bara’, ‘bar a’ and ‘bar(a)’ without conversion, and ‘psia’, to be multiplied by 0.0689476. A pressure unit received without an absolute indication in an absolute attribute is not accepted and the value shall be entered in the query register. Absolute pressure is rounded to one decimal after conversion."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.6 Differential pressure shall be held in bar. The following are accepted for differential pressure: ‘bar’ without conversion; ‘mbar’, to be multiplied by 0.001; ‘psi’ and ‘psid’, to be multiplied by 0.0689476; and ‘kPa’, to be multiplied by 0.01. Differential pressure is rounded to two decimals after conversion."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.7 Gauge pressure shall not be converted to absolute pressure, and absolute pressure shall not be converted to gauge pressure."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.8 Temperature shall be held in degC. The spellings ‘degC’, ‘deg C’, ‘°C’, and a letter ‘C’ standing alone after the number, are accepted without conversion. A temperature received in degrees Fahrenheit, written ‘degF’, ‘deg F’, ‘°F’ or as a letter ‘F’ standing alone after the number, shall be reduced by 32, multiplied by 5/9 and rounded to a whole number. A result of minus zero shall be written as 0."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.9 Short lengths shall be held in mm. The following are accepted: ‘mm’ without conversion; inches, written with an inch mark or as ‘in’, ‘inch’ or ‘inches’, to be multiplied by 25.4; ‘cm’, to be multiplied by 10; and ‘m’, to be multiplied by 1000. Short lengths are rounded to one decimal after conversion."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.10 Long lengths shall be held in m. The following are accepted: ‘m’, ‘mtr’, ‘meter’, ‘meters’, ‘metre’ and ‘metres’ without conversion; ‘mm’, to be multiplied by 0.001; and feet, written ‘ft’ or ‘feet’ or with an apostrophe, to be multiplied by 0.3048. Long lengths are rounded to two decimals after conversion. Clauses 12 to 18 identify the attributes held as long lengths; every other length attribute is a short length."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 886,
+      "prompt_tokens": 4370,
+      "total_tokens": 5256,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 8,
+    "source_page_index": 8,
+    "detected_angle": 0,
+    "confidence": 12.19,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7.11 Volumetric flow shall be held in m3/h. The following are accepted: ‘m3/h’, ‘m3/hr’, ‘m3/h’ and ‘cmh’ without conversion; US gallons per minute, written ‘gpm’ or ‘USgpm’, to be multiplied by 0.2271; litres per second, written ‘l/s’, to be multiplied by 3.6; and litres per minute, written ‘l/min’, to be multiplied by 0.06. Flow is rounded to one decimal after conversion."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7.12 Power, including heat duty, shall be held in kW. The following are accepted: ‘kW’ without conversion; ‘hp’ and ‘bhp’, to be multiplied by 0.746; ‘W’, to be multiplied by 0.001; and ‘MW’, to be multiplied by 1000. Power is rounded to one decimal after conversion."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7.13 Apparent power, used for transformers and UPS systems, shall be held in kVA. ‘kVA’ is accepted without conversion and ‘MVA’ is to be multiplied by 1000. Apparent power is rounded to one decimal after conversion."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7.14 Mass shall be held in kg. The following are accepted: ‘kg’ and ‘kgs’ without conversion; pounds, written ‘lb’ or ‘lbs’, to be multiplied by 0.4536; and tonnes, written ‘t’, to be multiplied by 1000. Mass is rounded to one decimal after conversion."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7.15 The volume of vessels and tanks shall be held in m3. The following are accepted: ‘m3’ and ‘m3’ without conversion; litres, written ‘l’ or ‘ltr’, to be multiplied by 0.001; and barrels, written ‘bbl’, to be multiplied by 0.159. Volume is rounded to one decimal after conversion. The charge of foam and water extinguishers is held in l, and no other unit is accepted for it."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7.16 Area shall be held in m2. The following are accepted: ‘m2’, ‘m2’ and ‘sq m’ without conversion, and square feet, written ‘sq ft’ or ‘ft2’, to be multiplied by 0.0929. Area is rounded to one decimal after conversion."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7.17 Rotational speed shall be held in rpm, and ‘rpm’, ‘RPM’, ‘r/min’ and ‘min-1’ are accepted without conversion. Frequency shall be held in Hz. Current shall be held in A, ‘kA’ being accepted and multiplied by 1000. Durations such as battery autonomy shall be held in min, hours written ‘h’ or ‘hr’ being multiplied by 60 and rounded to a whole number."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "8 Nominal size, pressure rating, schedule and threads"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "8.1 The nominal size of pipe, valves, fittings and flanges shall be expressed in inches in the form NPS, a space and the size, without an inch mark. A fractional size shall be written with a hyphen between the whole number and the fraction."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "8.2 The following received forms are recognized as nominal sizes in inches: the size followed by an inch mark or by ‘in’, ‘inch’ or ‘inches’; the size preceded by ‘NPS’, with or without an intervening space; and an inch size followed by ‘NB’, the NB being disregarded. A fraction separated from the whole number by a space, a fraction written with a Unicode fraction character and a decimal size shall each be rewritten as the hyphenated fraction."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1032,
+      "prompt_tokens": 4370,
+      "total_tokens": 5402,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 9,
+    "source_page_index": 9,
+    "detected_angle": 0,
+    "confidence": 13.26,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "8.3 A size in DN shall be converted to NPS as follows: DN15 to NPS 1/2; DN20 to NPS 3/4; DN25 to NPS 1; DN32 to NPS 1-1/4; DN40 to NPS 1-1/2; DN50 to NPS 2; DN65 to NPS 2-1/2; DN80 to NPS 3; DN100 to NPS 4; DN150 to NPS 6; DN200 to NPS 8; DN250 to NPS 10; DN300 to NPS 12; DN350 to NPS 14; DN400 to NPS 16; DN450 to NPS 18; DN500 to NPS 20; and DN600 to NPS 24."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.4 A DN size is recognized where the letters DN precede or follow the number, with or without a space, and where the number is followed by ‘NB’ or ‘mm NB’. A number followed by mm alone is not recognized as a nominal size, since it is frequently an outside diameter, and shall be entered in the query register. A DN or NPS not listed in 8.3 shall likewise be entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.5 A pressure class shall be written as CL, a space and the class number. The class numbers in use are 150, 300, 600, 800, 900, 1500 and 2500, and any other number shall be entered in the query register. The received forms recognized are ‘Class’, ‘CL’ or ‘ANSI’ preceding the number, with or without a space; a hash sign preceding or following the number; ‘lb’ or ‘lbs’ following the number; and ‘class’ following the number."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.6 A PN rating shall be written as PN, a space and the number. The PN numbers in use are 6, 10, 16, 25, 40, 63 and 100. The letters PN may precede or follow the number in the received value, separated from it by a space, by a hyphen or by nothing."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.7 A pressure class shall not be converted to a PN rating and a PN rating shall not be converted to a pressure class. The attribute Rating may hold either."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.8 A pipe schedule shall be written as SCH, a space and the schedule. ‘Sch’, ‘SCH’, ‘Schedule’ and ‘S-’ preceding the schedule are recognized, with or without a space or full stop. The weight designations are written SCH STD, SCH XS and SCH XXS; the received words ‘standard’, ‘standard weight’ and ‘STD’ denote SCH STD, ‘extra strong’ and ‘XS’ denote SCH XS, and ‘double extra strong’ and ‘XXS’ denote SCH XXS. A schedule number followed by the letter S is a stainless steel schedule distinct from the same number without the letter, and the S shall be retained immediately after the number."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.9 A taper pipe thread shall be written as the size in inches as a fraction, followed without a space by an inch mark, then a space and NPT. Where the gender is known it shall be written immediately before NPT without a space, giving FNPT for female threads and MNPT for male threads."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.10 The gender of a taper pipe thread is recognized from ‘F’, ‘female’, ‘FNPT’, ‘NPTF’, ‘NPT(F)’ and ‘NPT-F’, and correspondingly from ‘M’, ‘male’, ‘MNPT’, ‘NPTM’, ‘NPT(M)’ and ‘NPT-M’, in any position relative to NPT. The size may be received with an inch mark, ‘in’ or ‘inch’, or as a Unicode fraction character; a decimal size shall be rewritten as a fraction, 0.25 becoming 1/4, 0.5 becoming 1/2, 0.75 becoming 3/4, 1.5 becoming 1-1/2, and 1 and 2 remaining as whole numbers."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1041,
+      "prompt_tokens": 4370,
+      "total_tokens": 5411,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 10,
+    "source_page_index": 10,
+    "detected_angle": 0,
+    "confidence": 14.91,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "8.11 A metric thread shall be written as M followed without a space by the diameter and, where the pitch is received, a lower case x and the pitch, likewise without spaces. A pitch shall be neither added where it was not received nor deleted where it was. Spaces and an upper case X in the received value are recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "8.12 The diameter of an inch-series bolt or stud shall be written as the fraction followed without a space by an inch mark. The fraction followed by ‘in’, ‘inch’ or an inch mark is recognized, and decimal diameters shall be rewritten as fractions: 0.5 as 1/2, 0.625 as 5/8, 0.75 as 3/4, 0.875 as 7/8, 1.125 as 1-1/8 and 1.25 as 1-1/4, with 1 remaining as a whole number. Metric bolt diameters are written in accordance with 8.11. Inch and metric bolt diameters shall not be converted into one another."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "9 Electrical and instrument designations"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9.1 A voltage below 1000 V shall be written as the number, a space and VAC or VDC. A voltage of 1000 V or more shall be written in kV as the number, a space and kV, with no suffix, all high voltage in the installations covered being alternating current."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9.2 A received voltage expressed in kV but below 1 kV shall be rewritten in V, and a received voltage expressed in V and equal to or greater than 1000 shall be rewritten in kV."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9.3 Alternating current is recognized from ‘V AC’, ‘VAC’ and ‘Vac’ following the number and from ‘AC’ preceding it; direct current is recognized from ‘V DC’, ‘VDC’ and ‘Vdc’ following the number and from ‘DC’ preceding it. Where Clauses 12 to 18 state that an attribute is AC or DC and the received value does not state it, VAC or VDC as appropriate shall be added. Where neither the equipment clause nor the received value states it, the value shall be entered in the query register."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9.4 A three-phase voltage stated together with its phase voltage shall be written as the two numbers separated by a slash without spaces, the higher first, followed by a space and VAC."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9.5 The rated voltage of a cable shall be written as Uo and U in kV, separated by a slash without spaces, followed by a space and kV. Values received in V shall be rewritten in kV, and the characters ‘Uo/U’ preceding the numbers shall be deleted. The voltage ratio of a transformer shall be written in the same manner with the high voltage first, both voltages in kV."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9.6 An analogue signal shall be written 4-20mA without any space, and with HART as 4-20mA HART, a single space preceding HART. The received forms ‘4-20 mA’, ‘4..20mA’, ‘4…20 mA’, ‘4 to 20 mA’ and ‘4~20mA’ are recognized, as are the same forms followed by HART and the forms ‘4-20 mA + HART’, ‘4-20mA/HART’ and ‘HART 4-20mA’."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1033,
+      "prompt_tokens": 4370,
+      "total_tokens": 5403,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 11,
+    "source_page_index": 11,
+    "detected_angle": 0,
+    "confidence": 12.34,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "9.7 Foundation Fieldbus shall be written in that form, ‘FF’, ‘FF H1’ and ‘FOUNDATION fieldbus’ being recognized. Profibus PA shall be written in that form, ‘PROFIBUS-PA’ and ‘PB-PA’ being recognized. A volt-free contact shall be written Volt-free contact, ‘VFC’, ‘dry contact’ and ‘potential-free contact’ being recognized. Any other signal shall be entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.8 An IP code shall be written as IP followed directly by its two digits. Spaces and hyphens between IP and the digits in the received value are recognized. A dual rating shall be written as the first complete code, a slash and the two digits of the second code only; the received value may carry IP before both codes or before the first only."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.9 An Ex marking shall be written as Ex followed by the protection code or codes, the gas group, the temperature class and, where received, the equipment protection level, in that sequence and separated by single spaces."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.10 Within an Ex marking, protection codes are written in lower case, with the exception of the n-type codes, which consist of a lower case n followed by an upper case letter. The gas group is written in capitals as IIA, IIB or IIC, and IIB+H2 is written without spaces. The temperature class is an upper case T followed by its digit. The equipment protection level is an upper case G followed by a lower case letter."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.11 The former prefix EEx shall be written Ex, and Ex received in any capitals is recognized. Hyphens and commas separating the parts of a received marking shall be treated as spaces. No element shall be added that was not received; in particular a level letter shall not be added to a protection code received without one, and an equipment protection level shall not be derived from the other elements. Markings for dust, ATEX category markings and certificate numbers are outside the scope of this standard, and values containing them shall be entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.12 A motor efficiency class shall be written as IE followed directly by the digit; spaces and hyphens between them in the received value are recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.13 An insulation class shall be written as the single letter alone. The words ‘class’, ‘ins. class’ and ‘insulation class’ preceding the letter, and ‘class’ following it, shall be deleted."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.14 The mounting arrangement of a motor shall be written as the short IM code without the letters IM, namely B3, B5, B35 or V1. For B3, ‘IM B3’, ‘IMB3’ and ‘IM 1001’ are recognized; for B5, ‘IM B5’ and ‘IM 3001’; for B35, ‘IM B35’ and ‘IM 2001’; and for V1, ‘IM V1’ and ‘IM 3011’."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.15 The cooling method of a motor shall be written as IC followed directly by the code; spaces and hyphens between them in the received value are recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.16 The vector group of a transformer shall be written without spaces as the high voltage letter in upper case, followed by N in upper case where present, then the low voltage letters in lower case and finally the clock number. Transformer cooling shall be written in capitals, and two stages shall be separated by a slash without spaces."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 875,
+      "prompt_tokens": 4370,
+      "total_tokens": 5245,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 12,
+    "source_page_index": 12,
+    "detected_angle": 0,
+    "confidence": 12.13,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9.17"
+        },
+        {
+          "type": "paragraph",
+          "text": "A cable size shall be written as the number of cores, a space, a lower case x, a space, the cross-section, a space and mm2. A paired cable shall be written as the number of pairs, a space, the word pair, a space, a lower case x, a space, the cross-section, a space and mm2, and a triad cable in the same manner using the word triad."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9.18"
+        },
+        {
+          "type": "paragraph",
+          "text": "In a received cable size, ‘C’, ‘core’ and ‘cores’ following a number denote cores, ‘P’, ‘pr’, ‘pair’ and ‘pairs’ denote pairs, and ‘T’, ‘triad’ and ‘triads’ denote triads; a number multiplied by a cross-section without any of these words denotes cores. The cross-section unit is recognized from ‘mm2’, ‘mm²’, ‘sq mm’ and ‘sqmm’. A cross-section received without a unit or in AWG shall be entered in the query register."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "10 Materials"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "10.1"
+        },
+        {
+          "type": "paragraph",
+          "text": "An ASTM or ASME material designation shall be written without the prefix ASTM, as the specification letter and number, a space and the grade. The words ‘Gr’, ‘Gr.’ and ‘Grade’ shall be deleted; the ASME prefix ‘SA’ or ‘SA-’ shall be written as A; a hyphen between specification and grade shall be written as a space; and the grade shall be written in capitals. A grade received without its specification is accepted only where recognized in this clause."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "10.2"
+        },
+        {
+          "type": "paragraph",
+          "text": "Forged carbon steel is written A105, with ‘ASTM A105’, ‘SA105’, ‘SA-105’ and ‘A-105’ recognized. Seamless carbon steel pipe is written A106 B, with ‘A106 Gr B’, ‘A106 Gr.B’, ‘A106-B’, ‘ASTM A106 Grade B’ and ‘SA106 B’ recognized. Low-temperature pipe is written A333 6, with ‘A333 Gr 6’ recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "10.3"
+        },
+        {
+          "type": "paragraph",
+          "text": "Cast carbon steel is written A216 WCB, with the grade ‘WCB’ alone and ‘ASTM A216 WCB’, ‘A216 Gr WCB’ and ‘SA216 WCB’ recognized. Low-temperature cast steel is written A352 LCC, with ‘LCC’ recognized. Cast stainless steel is written A351 CF8M, with ‘CF8M’ and ‘ASTM A351 CF8M’ recognized. Forged stainless steel is written A182 F316 or A182 F316L, with ‘F316’, ‘F316L’, ‘ASTM A182 F316’ and ‘ASTM A182 F316L’ recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "10.4"
+        },
+        {
+          "type": "paragraph",
+          "text": "Carbon steel fittings are written A234 WPB, with ‘WPB’ recognized, and stainless steel fittings A403 WP316L, with ‘WP316L’ recognized. Plate is written A516 70, with ‘A516 Gr 70’, ‘SA-516 70’, ‘SA516 Gr.70’ and ‘ASTM A516 Grade 70’ recognized. Heat exchanger tubes are written A179, with ‘SA179’ recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "10.5"
+        },
+        {
+          "type": "paragraph",
+          "text": "Stud material is written A193 B7 or A193 B7M, with ‘B7’, ‘ASTM A193 B7’ and ‘A193 Gr B7’ recognized for the former. Nut material is written A194 2H or A194 2HM, with ‘2H’, ‘ASTM A194 2H’ and ‘A194 Gr 2H’ recognized for the former."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1207,
+      "prompt_tokens": 4370,
+      "total_tokens": 5577,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 13,
+    "source_page_index": 13,
+    "detected_angle": 0,
+    "confidence": 10.84,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "10.6 Stainless steel without an ASTM designation is written as SS followed directly by the grade number, namely SS304, SS316 and SS316L. For each grade the forms ‘SS’ followed by a space and the grade, the grade followed by ‘SS’ or ‘SS’, ‘AISI’ followed by the grade, ‘S.S.’ followed by the grade, ‘stainless steel’ followed by the grade and the grade followed by ‘stainless’ are recognized. Stainless steel received without any grade shall not be assigned one; it shall be entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.7 Carbon steel without a designation is written CS, with ‘carbon steel’ and ‘C.S.’ recognized. Low-temperature carbon steel is written LTCS. Duplex stainless steel is written Duplex SS, with ‘duplex’, ‘duplex stainless steel’ and ‘DSS’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.8 Hot dip galvanized steel is written HDG steel, with ‘hot dip galvanized steel’, ‘hot-dip galvanised steel’ and ‘galvanized steel (HDG)’ recognized. Painted carbon steel is written Painted CS, with ‘painted carbon steel’ and ‘painted steel’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.9 Aluminium is written with the British spelling, Aluminium, with ‘aluminum’ and ‘Al’ recognized. Nickel plated brass is written Ni-plated brass, with ‘nickel plated brass’ and ‘NP brass’ recognized, and brass without plating is written Brass. Glass reinforced plastic is written GRP, with ‘glass reinforced polyester’, ‘FRP’ and ‘fiberglass’ recognized. Ductile iron is written Ductile iron, with ‘DI’ and ‘SG iron’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.10 Copper is written Copper, with ‘Cu’ recognized, and tinned copper is written Tinned copper. Nickel alloy 625 is written Alloy 625, with ‘Inconel 625’ and ‘UNS N06625’ recognized. Stellite hard facing is written Stellite 6, with ‘St6’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.11 Non-metallic materials are written PTFE, with ‘Teflon’ recognized; RPTFE, with ‘reinforced PTFE’ and ‘R-PTFE’ recognized; Graphite, with ‘flexible graphite’ and ‘Grafoil’ recognized; FKM, with ‘Viton’ and ‘FPM’ recognized; NBR, with ‘nitrile’ and ‘Buna-N’ recognized; EPDM; and PEEK."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.12 Any other material, including trade names not mentioned in this clause and values naming two materials, shall be left unchanged and entered in the query register."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "11 Descriptive terms"
+        },
+        {
+          "type": "paragraph",
+          "text": "11.1 The terms in this clause are presented by comparison in accordance with 5.8 to 5.10: a received value matching a recognized variant is replaced by the prescribed form; a value matching nothing is rearranged in accordance with 5.9 and compared again; and a value still matching nothing is entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.2 End connections and flange facings. Raised face is written RF, with ‘raised face’, ‘RF flanged’, ‘flanged RF’, ‘RFF’ and ‘flanged, raised face’ recognized. Flat face is written FF, with ‘flat face’ and ‘full face’ recognized. Ring type joint is written RTJ, with ‘ring joint’, ‘ring type joint’ and ‘RJ’ recognized. Butt weld is written BW, with ‘butt weld’, ‘butt-welded’ and ‘BWE’ recognized. Socket weld is written SW, with ‘socket weld’ and ‘SWE’ recognized. Threaded ends are written THD, with ‘threaded’, ‘screwed’ and ‘thrd’ recognized. Wafer and lug bodies are written Wafer and Lug."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 949,
+      "prompt_tokens": 4370,
+      "total_tokens": 5319,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 14,
+    "source_page_index": 14,
+    "detected_angle": 0,
+    "confidence": 10.24,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.3 Flange types are written WN for weld neck, with ‘weld neck’ and ‘welding neck’ recognized; SO for slip-on, with ‘slip-on’ and ‘slip on’ recognized; BL for blind, with ‘blind’ recognized; SW for socket weld; and LJ for lap joint, with ‘lap joint’ recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.4 Valve operators are written Handwheel, with ‘HW’ and ‘hand wheel’ recognized; Lever, with ‘lever operated’ and ‘wrench’ recognized; Gear, with ‘gear operator’, ‘gearbox’, ‘gear operated’ and ‘GO’ recognized; Pneumatic actuator, with ‘pneumatic’ and ‘air operated’ recognized; and Electric actuator, with ‘MOV’, ‘motor operated’ and ‘electric’ recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.5 Fail positions are written Fail closed, with ‘FC’, ‘fail close’, ‘fail-to-close’ and ‘FTC’ recognized; Fail open, with ‘FO’, ‘fail-to-open’ and ‘FTO’ recognized; and Fail last, with ‘FL’, ‘fail in place’ and ‘fail as is’ recognized. Bonnets are written Bolted, with ‘bolted bonnet’ and ‘BB’ recognized; Pressure seal, with ‘pressure seal bonnet’ and ‘PSB’ recognized; and Welded, with ‘welded bonnet’ recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.6 The ball of a ball valve is written Floating, with ‘floating ball’ recognized, or Trunnion, with ‘trunnion mounted’, ‘trunnion-mounted’ and ‘TMB’ recognized. The bore is written Full bore, with ‘FB’ and ‘full port’ recognized, or Reduced bore, with ‘RB’ and ‘reduced port’ recognized. Check valves are written Swing, with ‘swing check’ recognized; Piston, with ‘piston check’ recognized; or Dual plate, with ‘dual plate check’, ‘DPC’ and ‘double door’ recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.7 A valve trim is written as Trim, a space and the trim number, with any letter suffix in capitals. ‘TRIM’ joined to the number, ‘API trim’, ‘trim no.’ and a hash sign preceding the number are recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.8 The flow characteristic of a control valve is written Equal percentage, with ‘=%’, ‘EQ%’ and ‘equal %’ recognized; Linear, with ‘LIN’ recognized; or Quick opening, with ‘QO’ recognized. Seat leakage class is written as Class followed by the Roman numeral; the Roman numeral alone and ‘class’ followed by an ordinary digit are recognized, and ‘ANSI’, ‘FCI’ or ‘ANSI/FCI 70-2’ preceding the class are deleted. Cv is written as the number alone, ‘Cv’, an equals sign or a colon being deleted."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.9 Relief valves are written Conventional, with ‘conv.’ and ‘spring loaded’ recognized; Balanced bellows, with ‘bellows’ and ‘balanced bellow’ recognized; or Pilot operated, with ‘POPRV’ and ‘pilot’ recognized. The orifice is written as its single capital letter, the words ‘orifice’, ‘API’ and ‘size’ accompanying it being deleted."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.10 Pipe manufacture is written Seamless, with ‘SMLS’ and ‘S/L’ recognized, ERW or LSAW. Pipe ends are written BE, with ‘bevelled end’, ‘beveled end’ and ‘BEV’ recognized, or PE, with ‘plain end’ recognized. The radius of an elbow is written LR, with 'long radius', '1.5D' and '1.5 D' recognized, or SR, with 'short radius', '1D' and '1 D' recognized. An angle is written as the number, a space and deg, the received forms 'deg', 'degree', 'degrees' and the degree sign being recognized."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 1010,
+      "prompt_tokens": 4370,
+      "total_tokens": 5380,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 15,
+    "source_page_index": 15,
+    "detected_angle": 0,
+    "confidence": 11.31,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.11 Gaskets are written Spiral wound, with 'SPW', 'SWG' and 'spiral-wound' recognized; Ring joint, with 'RJ gasket' and 'RTJ gasket' recognized; or Sheet. Bolt coatings are written PTFE coated, with 'Teflon coated' and 'PTFE-coated' recognized; HDG, with 'hot dip galvanized' and 'galvanized' recognized; or Uncoated, with 'black' and 'plain' recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.12 The API pump type is written as its letters and digits together without separation; the words 'API', '610' and 'type' are deleted, as are hyphens and spaces between letters and digits. Seals are written Single mechanical seal, with 'single seal' and 'SMS' recognized, or Double mechanical seal, with 'double seal', 'dual seal' and 'DMS' recognized. A seal plan is written as Plan, a space and the plan number with any letter in capitals; 'API' preceding it is deleted, and 'PLAN' joined to the number or separated from it by a hyphen is recognized. Drivers are written Electric motor, with 'motor', 'E-motor' and 'EM' recognized, or Diesel engine, with 'diesel' recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.13 Temperature sensors are written Pt100, with 'RTD Pt100', 'PT-100' and 'Pt 100' recognized, or as Type followed by the thermocouple letter, such as Type K, with 'K-type', 'thermocouple K' and 'TC K' recognized and the corresponding forms for J. Wiring is written 3-wire or 4-wire, with '3 wire' and '4 wire' recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.14 Level measuring principles are written GWR, with 'guided wave radar' and 'guided radar' recognized; Radar, with 'non-contact radar' recognized; DP, with 'differential pressure' and 'd/p' recognized; or Displacer. Flow meters are written Coriolis, with 'coriolis mass' and 'CMF' recognized; Magnetic, with 'mag', 'electromagnetic' and 'magflow' recognized; Vortex; or Ultrasonic, with 'USM' recognized."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.15 Accuracy is written as +/-, the number, the percent sign, a space and the reference, which is of span, with 'span', '% span' and 'of calibrated span' recognized; of reading, with 'rdg', 'of rdg' and 'reading' recognized; or of full scale, with 'FS', 'of FS' and 'full scale' recognized. Where the received value lacks the plus-minus, +/- shall be added. Where it lacks the reference, the value shall be entered in the query register, except that the reference of full scale applies to pressure gauges."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "11.16 Cable insulation is written XLPE, with 'cross-linked polyethylene' and 'XLPE insulated' recognized, or PVC. Armour is written SWA, with 'steel wire armour', 'steel wire armoured' and 'GSWA' recognized; GSWB, with 'galvanized steel wire braid', 'steel wire braid' and 'SWB' recognized; or Unarmoured, with 'unarmored' and 'non-armoured' recognized. The outer sheath is written LSZH, with 'LS0H', 'LSOH' and 'low smoke zero halogen' recognized, or PVC."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.25 An attribute stating a number of things, such as terminals, entries, poles, stages or passes, shall be written as a whole number in digits only. Numbers from one to twelve written in words"
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 999,
+      "prompt_tokens": 4370,
+      "total_tokens": 5369,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 16,
+    "source_page_index": 16,
+    "detected_angle": 0,
+    "confidence": 9.99,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "11.17 Cable screens are written Overall, with ‘OS’, ‘overall screen’ and ‘collective screen’ recognized; Individual and overall, with ‘IS/OS’, ‘ISOS’ and ‘individual and overall screen’ recognized; or Unscreened, with ‘unshielded’ recognized. Cable glands are written Barrier, with ‘barrier gland’ and ‘compound filled’ recognized, or Compression, with ‘compression gland’ and ‘standard gland’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.18 Vessel orientation is written Vertical, with ‘V’ and ‘vert.’ recognized, or Horizontal, with ‘H’ and ‘horiz.’ recognized. Heads are written 2:1 SE, with ‘2:1 elliptical’, ‘elliptical’, ‘2:1 semi-elliptical’ and ‘SE 2:1’ recognized; Hemi, with ‘hemispherical’ recognized; or Tori, with ‘torispherical’ and ‘F&D’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.19 Design codes are written ASME VIII-1, with ‘ASME VIII Div 1’, ‘ASME Sec VIII Div. 1’ and ‘ASME Section VIII Division 1’ recognized; ASME VIII-2, with the corresponding forms for Division 2 recognized; and API 650, with ‘API650’ and ‘API Std 650’ recognized. Radiography is written Full RT, with ‘100% RT’ and ‘full’ recognized; Spot RT, with ‘spot’ recognized; or No RT, with ‘no radiography’ and ‘nil’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.20 Tank roofs are written Cone roof, with ‘fixed cone roof’, ‘cone’ and ‘CRT’ recognized; Dome roof, with ‘dome’ recognized; EFR, with ‘external floating roof’ recognized; or IFR, with ‘internal floating roof’ recognized. The TEMA type is written as three capital letters without spaces; ‘TEMA’ preceding and ‘type’ following are deleted, as are hyphens and spaces between the letters."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.21 Gas detection principles are written IR, with ‘infrared’, ‘IR point’, ‘infrared point’ and ‘NDIR’ recognized; Catalytic, with ‘cat bead’ and ‘pellistor’ recognized; or Electrochemical, with ‘EC’ and ‘electro-chemical’ recognized. Gases are written Methane, with ‘CH4’ recognized; H2S, with ‘hydrogen sulfide’ and ‘hydrogen sulphide’ recognized; Hydrogen, with ‘H2’ recognized; or Oxygen, with ‘O2’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.22 Gas detector range units are recognized as follows: ‘%LEL’, ‘% LEL’ and ‘LEL%’ for %LEL; ‘ppm’ and ‘ppmv’ for ppm; and ‘%vol’, ‘% vol’ and ‘vol%’ for %vol. These units shall not be converted into one another."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.23 Extinguishers are written Portable, with ‘hand held’ and ‘handheld’ recognized, or Wheeled, with ‘trolley’ and ‘trolley mounted’ recognized. The agent is written DCP, with ‘dry chemical powder’, ‘dry powder’ and ‘powder’ recognized; CO2, with ‘carbon dioxide’ recognized; AFFF, with ‘AFFF foam’ and ‘foam’ recognized; or Water."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.24 Affirmative and negative values are written Yes, with ‘Y’, ‘yes’ and ‘true’ recognized, and No, with ‘N’, ‘no’ and ‘false’ recognized."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.25 An attribute stating a number of things, such as terminals, entries, poles, stages or passes, shall be written as a whole number in digits only. Numbers from one to twelve written in words shall be written in digits, and ‘nos’, ‘no.’, ‘pcs’, ‘off’ and the name of the counted object following the number shall be deleted."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 965,
+      "prompt_tokens": 4370,
+      "total_tokens": 5335,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 17,
+    "source_page_index": 17,
+    "detected_angle": 0,
+    "confidence": 13.07,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "12 Valves"
+        },
+        {
+          "type": "paragraph",
+          "text": "12.1 Gate, globe, check and ball valves hold the attributes Size, Rating, End connection, Body material, Trim, Operator, Bonnet and Weight. Ball valves additionally hold Ball type, Bore and Seat material, and check valves additionally hold Check type."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.2 Size is the nominal size of the end connections in accordance with Clause 8, and Rating is a pressure class or PN rating in accordance with Clause 8. Weight is held in kg. Trim applies to gate, globe and check valves and shall be N/A for ball valves."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.3 A valve whose inlet and outlet sizes differ does not belong to the types covered by 12.1 and shall be entered in the query register."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.4 For butterfly valves, End connection is limited to Wafer, Lug and RF. A double flanged butterfly valve is written RF, and for this type of valve alone the received forms ‘double flanged’ and ‘flanged’ are recognized as RF. End connection is used to record the body style of butterfly valves only."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.6 Relief valves hold Inlet size, Inlet rating, Outlet size, Outlet rating, Orifice, Set pressure and Type. Inlet rating and Outlet rating are pressure classes. Set pressure is always a gauge pressure in barg, and a set pressure received in an absolute unit shall be entered in the query register."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "13 Piping components"
+        },
+        {
+          "type": "paragraph",
+          "text": "13.1 Pipe holds Size, Schedule, Material, Manufacture, End finish and Length. Length is a long length in m."
+        },
+        {
+          "type": "paragraph",
+          "text": "13.2 Pipe held in the catalogue is a single item irrespective of the length ordered. Two pipe records differing only in Length describe the same catalogue item, Length being a quantity and not a characteristic of the item."
+        },
+        {
+          "type": "paragraph",
+          "text": "13.3 Elbows hold Size, Schedule, Material, Radius and Angle. Flanges hold Type, Size, Rating, Facing and Material; Facing uses the terms of end connections, restricted to RF, FF and RTJ."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 757,
+      "prompt_tokens": 4370,
+      "total_tokens": 5127,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 18,
+    "source_page_index": 18,
+    "detected_angle": 0,
+    "confidence": 12.6,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "13.4 Gaskets hold Type, Size, Rating, Winding material and Filler material. Winding material and Filler material apply to spiral wound gaskets only and shall be N/A for other gasket types."
+        },
+        {
+          "type": "paragraph",
+          "text": "13.5 Stud bolts hold Diameter, Length, Stud material, Nut material and Coating. Diameter is written in accordance with 8.12. Length of a stud is a short length in mm and, unlike the length of pipe, is a characteristic of the item: studs of different length are different items."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "14 Pumps and motors"
+        },
+        {
+          "type": "paragraph",
+          "text": "14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver. Flow is held in m3/h at the rated point, Head is a long length in m at the rated point, and Speed is held in rpm."
+        },
+        {
+          "type": "paragraph",
+          "text": "14.2 Head shall never be derived from a pressure, since the derivation requires the density of the liquid. Where a double seal has two plans, both shall be written in the received order separated by a slash without spaces."
+        },
+        {
+          "type": "paragraph",
+          "text": "14.3 Electric motors hold Power, Voltage, Frequency, Speed, Efficiency class, Insulation class, IP rating, Ex marking and Mounting. Power is held in kW. Voltage is an AC attribute: VAC shall be added where it is not received, and 1000 V and above are written in kV in accordance with 9.1."
+        },
+        {
+          "type": "paragraph",
+          "text": "14.4 Speed of a motor is the full load speed stated on the nameplate. The synchronous speed shall not be substituted for it, and the number of poles shall not be derived from it."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "15 Instrumentation"
+        },
+        {
+          "type": "paragraph",
+          "text": "15.1 Pressure transmitters hold Range, Output, Accuracy, Process connection, Wetted material, IP rating, Ex marking and Power supply. Range is a range of gauge pressure in barg and is the calibrated range. Output is a signal in accordance with Clause 9. Process connection is a taper pipe thread. Power supply is a DC attribute, and VDC shall be added where it is not received."
+        },
+        {
+          "type": "paragraph",
+          "text": "15.2 Temperature elements hold Sensor, Wiring, Sheath material, Insertion length and Process connection. Wiring applies to resistance thermometers only and shall be N/A for thermocouples. Insertion length is a short length in mm."
+        },
+        {
+          "type": "paragraph",
+          "text": "15.3 Level transmitters hold Principle, Range, Output, Size and Rating, Size and Rating being those of the process connection flange. Range is held in mm."
+        },
+        {
+          "type": "paragraph",
+          "text": "15.4 Flow meters hold Meter type, Size, Rating, Range, Accuracy and Output. Range is held in m3/h. A range received in units of mass shall not be converted and shall be entered in the query register."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 778,
+      "prompt_tokens": 4370,
+      "total_tokens": 5148,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 19,
+    "source_page_index": 19,
+    "detected_angle": 0,
+    "confidence": 10.95,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "16 Electrical equipment"
+        },
+        {
+          "type": "paragraph",
+          "text": "16.1 Power, control and instrument cables hold Voltage rating, Size, Insulation, Armour, Sheath, Screen and Length. Size is a cable size in accordance with 9.17 and 9.18. Length is a long length in m."
+        },
+        {
+          "type": "paragraph",
+          "text": "16.2 Cable held in the catalogue is a single item irrespective of the length on the drum or in the record. Two cable records differing only in Length describe the same catalogue item."
+        },
+        {
+          "type": "paragraph",
+          "text": "16.3 Cable glands hold Gland type, Thread, Material, Ex marking and IP rating. Thread is a metric thread or a taper pipe thread in accordance with Clause 8, and a metric thread shall not be converted to an NPT size."
+        },
+        {
+          "type": "paragraph",
+          "text": "16.4 Junction boxes hold Material, Dimensions, Terminals, Entries, IP rating and Ex marking. Dimensions are width, height and depth in mm in that order, written in accordance with 6.13. Terminals and Entries are counts in accordance with 11.25."
+        },
+        {
+          "type": "paragraph",
+          "text": "16.5 Transformers hold Power, Voltage ratio, Vector group, Cooling and Impedance. Power is held in kVA and Impedance is a percentage."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "17 Vessels, tanks and heat exchangers"
+        },
+        {
+          "type": "paragraph",
+          "text": "17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No."
+        },
+        {
+          "type": "paragraph",
+          "text": "17.2 An outside diameter shall not be converted to an inside diameter."
+        },
+        {
+          "type": "paragraph",
+          "text": "17.3 Storage tanks hold Capacity, Diameter, Height, Roof, Design code and Design temperature. Capacity is held in m3; Diameter and Height are long lengths in m."
+        },
+        {
+          "type": "paragraph",
+          "text": "17.4 Shell-and-tube heat exchangers hold TEMA type, Duty, Area, Shell design pressure, Tube design pressure and Tube material. Duty is held in kW, Area in m2, and both design pressures in barg."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "18 Fire and gas equipment"
+        },
+        {
+          "type": "paragraph",
+          "text": "18.1 Gas detectors hold Principle, Gas, Range, Output and Ex marking. Range is held in %LEL for flammable gases, in ppm for toxic gases and in %vol for oxygen."
+        },
+        {
+          "type": "paragraph",
+          "text": "18.2 Extinguishers hold Type, Agent and Charge. Charge is held in kg for DCP and CO2 and in l for AFFF and Water. A charge received in the other of these two units shall not be converted and shall be entered in the query register."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 792,
+      "prompt_tokens": 4370,
+      "total_tokens": 5162,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 20,
+    "source_page_index": 20,
+    "detected_angle": 0,
+    "confidence": 16.03,
+    "content": {
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "19 Item identity"
+        },
+        {
+          "type": "paragraph",
+          "text": "19.1 The presentation of values under this standard does not determine the number of items recorded. Records shall not be combined because their presented values coincide, and a record shall not be divided. Whether two records describe the same item is decided separately and on presented values only."
+        },
+        {
+          "type": "paragraph",
+          "text": "19.2 Two records of the same type of catalogue item describe the same item where every attribute characterizing the item has the same presented value in both. Weight is not such an attribute: two records of the same valve may state different weights, which constitutes a data quality finding but does not make them different valves. The length of pipe and of cable is not such an attribute, in accordance with 13.2 and 16.2; the length of a stud bolt is."
+        },
+        {
+          "type": "paragraph",
+          "text": "19.3 For the comparison of 19.2, N/A is equal to N/A. An absent value, TBA and any value entered in the query register are equal to no value, and the identity of the records concerned remains undetermined."
+        },
+        {
+          "type": "paragraph",
+          "text": "19.4 Every tagged item, such as a pump, motor, vessel or transmitter, is a distinct item even where its presented values coincide entirely with those of another tag. Coincident values establish only that the tags are of the same model or type, which is relevant to spare parts."
+        },
+        {
+          "type": "paragraph",
+          "text": "19.5 Records of different types of equipment never describe the same item."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "20 Values excluded from presentation"
+        },
+        {
+          "type": "paragraph",
+          "text": "20.1 Tag numbers, serial numbers, manufacturers’ model numbers and type codes, manufacturers’ names, document and certificate numbers, dates and free-text remarks shall be taken as received, subject only to 5.1."
+        },
+        {
+          "type": "paragraph",
+          "text": "20.2 Attributes not named in this standard are likewise taken as received, subject only to 5.1."
+        },
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Annex A (normative) Query register"
+        },
+        {
+          "type": "paragraph",
+          "text": "A.1 A value that this standard requires to be entered in the query register shall remain in the register exactly as received, with only the whitespace requirements of 5.1 applied. A value shall not be partly presented: either every applicable clause is applied, or the value is left entirely as received."
+        },
+        {
+          "type": "paragraph",
+          "text": "A.2 Each entry in the query register shall state the tag or item number, the attribute, the value as received, the clause that could not be applied and a brief reason."
+        },
+        {
+          "type": "paragraph",
+          "text": "A.3 The master data group shall review the query register after each data load. Values found to be further spellings of a value already provided for shall be collected and added as recognized variants at the next revision of this standard, and not between revisions. Values requiring an engineering decision shall be referred to the discipline concerned."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 751,
+      "prompt_tokens": 4370,
+      "total_tokens": 5121,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  },
+  {
+    "page_number": 21,
+    "source_page_index": 21,
+    "detected_angle": 0,
+    "confidence": 13.18,
+    "content": {
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "A.4 A value in the query register is equal to no value for the purpose of Clause 19."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Annex B (informative) Change record"
+        },
+        {
+          "type": "paragraph",
+          "text": "B.1 This first edition restates, in the form of a standard, the requirements previously issued as informal working notes. The requirements are unchanged in substance. The wording has been revised throughout, the clauses have been numbered for reference, and a clause on terms and definitions and a clause on conformance have been added."
+        },
+        {
+          "type": "paragraph",
+          "text": "B.2 Registers prepared before this edition may contain dual IP codes written in an earlier form. Such values are presented in accordance with 9.8 in the same manner as any other received value."
+        }
+      ]
+    },
+    "token_usage": {
+      "completion_tokens": 261,
+      "prompt_tokens": 4370,
+      "total_tokens": 4631,
+      "completion_tokens_details": null,
+      "prompt_tokens_details": null
+    }
+  }
+]
