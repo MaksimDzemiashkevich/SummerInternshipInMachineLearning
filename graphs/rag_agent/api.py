@@ -253,6 +253,9 @@ def chat(
         save_workspace(session)
 
     files = [_file_payload(workspace.get(file_id)) for file_id in produced if workspace.get(file_id)]
+    if toolbox.backgrounded and not files:
+        # «запущено, выполнено N%» ничего не даёт: результат придёт отдельным сообщением с файлом
+        reply = ""
     return {"reply": reply, "session_id": session, "files": files, "jobs_active": len(jobs.active(session))}
 
 

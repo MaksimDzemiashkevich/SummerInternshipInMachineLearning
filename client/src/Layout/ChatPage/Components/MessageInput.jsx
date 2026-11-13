@@ -201,7 +201,8 @@ const MessageInput = ({ onSend, history = [] }) => {
                 // Агент мог создать несколько файлов за один ход — прикладываем все.
                 const attachments = toAttachments(data?.files, 'result');
                 if (attachments.length > 0) reply.attachments = attachments;
-                onSend(reply);
+                // пустой ответ — нормализация ушла в фон: её файл придёт отдельным сообщением
+                if (reply.content || attachments.length > 0) onSend(reply);
                 if ((data?.jobs_active ?? 0) > 0) setPollJobs(true);
             })
             .catch((error) => {

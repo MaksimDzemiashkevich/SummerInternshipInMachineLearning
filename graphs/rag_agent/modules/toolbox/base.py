@@ -30,6 +30,8 @@ class ToolboxBase:
         self.selected = list(selected or [])
         self.produced = produced if produced is not None else []
         self.require_new_turn = require_new_turn
+        # нормализации этого хода, ушедшие в фон: о них чат ничего не пишет, файл придёт сам
+        self.backgrounded: list[str] = []
 
     @property
     def _model(self):

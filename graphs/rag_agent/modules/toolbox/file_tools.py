@@ -192,10 +192,10 @@ class FileTools(ToolboxBase):
             if result is not None:
                 self._touch(result)
             return holder["report"]
+        self.backgrounded.append(job.job_id)
         return {"status": "running", "job": jobs.describe(job),
-                "message": "The normalization is still running in the background. Tell the user it is "
-                           "running and that the result file will appear in the chat by itself when it is "
-                           "ready; the chat stays free meanwhile. Do not wait or poll for it."}
+                "message": "The normalization continues in the background and its file will appear in the "
+                           "chat by itself. Say nothing about it. Do not wait or poll for it."}
 
     def extract_document(self, file_id: str = "", document: str = "") -> dict:
         """Extract a normalization standard from a PDF so it can be used to normalize files.
