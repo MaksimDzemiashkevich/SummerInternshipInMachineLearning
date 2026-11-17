@@ -1,0 +1,3409 @@
+{
+ "specs": [
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the base number, then normalize the seal suffix: 2RS1, 2RSH, 2RSR, LLU, DDU, and 2RS become -2RS; ZZ, 2ZR, 2Z, and ZZC become -2Z. If a clearance suffix C2, C3, C4, or C5 is present, append /Cn at the end. Remove spaces, dots, and extra hyphens between parts, and remove cage codes M, MA, J, and TN9; they go to cage_material. Only translate what is written; do not upgrade a bearing.",
+   "flag_when": "If a value doesn't fit the field's format even after every rule in its chapter, write CHECK: followed by a space and the original text.",
+   "variants": [],
+   "attribute": "designation",
+   "aliases": [
+    "Designation",
+    "Part No",
+    "Bearing No",
+    "Bearing Number",
+    "Code"
+   ],
+   "rules": "[Fields at a glance] BRG-1: 'designation'; Labels you may see: 'Designation; Part No; Bearing No; Bearing Number; Code'; What to write: 'Base number, then -seal, then /clearance: 6205-2RS/C3'\nBRG-1 designation\nIF seal suffix IN (2RS1, 2RSH, 2RSR, LLU, DDU, 2RS) THEN write -2RS\nIF seal suffix IN (ZZ, 2ZR, 2Z, ZZC) THEN write -2Z\nIF clearance suffix present (C2, C3, C4, C5) THEN append /Cn at the end\nREMOVE spaces, dots and extra hyphens between the parts; REMOVE cage codes (M, MA, J, TN9) - they go to cage_material\nWatch out! Don't 'upgrade' a bearing: 6205 and 6205-2RS are different parts. Only translate what is written.\n[Before → after] Part No: 6205 2RS1 C3: 'designation: 6205-2RS/C3'\n[Before → after] Designation: 6205ZZ: 'designation: 6205-ZZ'\n[Before → after] Bearing No: 6310-2RSR-C3: 'designation: 6310-2RS/C3'",
+   "verified_fixes": [
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "Инструкция не задаёт конкретные преобразования суффиксов, не указывает допустимые коды зазора и не говорит, что коды сепаратора переносятся в cage_material и нельзя добавлять отсутствующий суффикс.",
+     "quote": "IF seal suffix IN (2RS1, 2RSH, 2RSR, LLU, DDU, 2RS) THEN write -2RS\nIF seal suffix IN (ZZ, 2ZR, 2Z, ZZC) THEN write -2Z\nIF clearance suffix present (C2, C3, C4, C5) THEN append /Cn at the end"
+    },
+    {
+     "field": "flag_when",
+     "variant": "",
+     "problem": "Не указано, что CHECK: записывается с пробелом после двоеточия и только после применения всех правил главы.",
+     "quote": "If a value doesn't fit the field's picklist or format even after every rule in its chapter, write CHECK: followed by a space and the original text."
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Deep Groove Ball",
+     "accepted": [
+      "DGBB",
+      "deep groove",
+      "radial ball"
+     ]
+    },
+    {
+     "value": "Angular Contact Ball",
+     "accepted": [
+      "ACBB",
+      "angular contact"
+     ]
+    },
+    {
+     "value": "Cylindrical Roller",
+     "accepted": [
+      "CRB",
+      "cylindrical"
+     ]
+    },
+    {
+     "value": "Spherical Roller",
+     "accepted": [
+      "SRB",
+      "spherical",
+      "self-aligning roller"
+     ]
+    },
+    {
+     "value": "Tapered Roller",
+     "accepted": [
+      "TRB",
+      "taper",
+      "tapered"
+     ]
+    },
+    {
+     "value": "Thrust Ball",
+     "accepted": [
+      "thrust"
+     ]
+    },
+    {
+     "value": "Self-Aligning Ball",
+     "accepted": [
+      "self-aligning ball"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "If the input is missing, write TBD; otherwise, map the input to the corresponding picklist value and write the value exactly as listed.",
+   "flag_when": "If the value is empty, a dash, n/a, ?, 'unknown', or 'see drawing', write TBD; if the value is not in the picklist, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "bearing_type",
+   "aliases": [
+    "Bearing Type",
+    "Type",
+    "DGBB",
+    "ACBB",
+    "CRB",
+    "SRB",
+    "TRB",
+    "Deep Groove Ball"
+   ],
+   "rules": "[Fields at a glance] BRG-2: 'bearing_type'; Labels you may see: 'Type; Bearing Type'; What to write: 'Picklist value'\nBRG-2 bearing_type\nIF value IN (DGBB; deep groove; radial ball) THEN write \"Deep Groove Ball\"\nIF value IN (ACBB; angular contact) THEN write \"Angular Contact Ball\"\nIF value IN (CRB; cylindrical) THEN write \"Cylindrical Roller\"\nIF value IN (SRB; spherical; self-aligning roller) THEN write \"Spherical Roller\"\nIF value IN (TRB; taper; tapered) THEN write \"Tapered Roller\"\nIF value IN (thrust) THEN write \"Thrust Ball\"\nIF value IN (self-aligning ball) THEN write \"Self-Aligning Ball\"\n[Before → after] Type: DGBB: 'bearing_type: Deep Groove Ball'\n[Before → after] Bearing Type: spherical: 'bearing_type: Spherical Roller'\n[Before → after] Type: taper: 'bearing_type: Tapered Roller'",
+   "verified_fixes": [
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "Не указано обязательное преобразование отсутствующего значения в TBD.",
+     "quote": "Empty cells, dashes, n/a, ?, 'unknown', 'see drawing' all become TBD (capitals)."
+    },
+    {
+     "field": "flag_when",
+     "variant": "",
+     "problem": "Пустое или специальное значение отсутствует в picklist, но по общему правилу должно преобразовываться в TBD, а не в CHECK:.",
+     "quote": "Empty cells, dashes, n/a, ?, 'unknown', 'see drawing' all become TBD (capitals)."
+    }
+   ]
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "mm",
+     "factor": 1,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Write the bore as a number in millimetres followed by one space and mm. Convert inch values by multiplying by 25.4; if no unit is present, assume mm.",
+   "flag_when": "",
+   "variants": [],
+   "attribute": "bore_diameter",
+   "aliases": [
+    "Bore",
+    "ID",
+    "Inner Diameter",
+    "d",
+    "Bore Diameter",
+    "Shaft Bore"
+   ],
+   "rules": "[Fields at a glance] BRG-3: 'bore_diameter'; Labels you may see: 'Bore; ID; Inner Diameter; d'; What to write: '{n} mm'\nBRG-3 bore_diameter\nIF unit is inch THEN multiply by 25.4\nIF no unit THEN assume mm (bearing catalogues are metric)\n[Before → after] Bore: 1 in: 'bore_diameter: 25.4 mm'\n[Before → after] ID: 25mm: 'bore_diameter: 25 mm'\nPro tip. Bore code shortcut: for series 6000-6300 with bore code 04 and up, bore = code x 5 mm (6205 -> 25 mm). Use it to sanity-check, not to fill blanks.",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "mm",
+     "factor": 1,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Write the outside diameter as a number in millimetres followed by one space and mm. Convert inch values by multiplying by 25.4.",
+   "flag_when": "",
+   "variants": [],
+   "attribute": "outside_diameter",
+   "aliases": [
+    "Outside Diameter",
+    "OD",
+    "Outer Diameter",
+    "D",
+    "Outside Dia"
+   ],
+   "rules": "[Fields at a glance] BRG-4: 'outside_diameter'; Labels you may see: 'OD; Outer Diameter; D'; What to write: '{n} mm'\nBRG-4 outside_diameter\nSame as bore_diameter\n[Before → after] OD: 52: 'outside_diameter: 52 mm'",
+   "verified_fixes": [
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "Инструкция без основания предполагает единицу mm для значения без единицы. Документ запрещает угадывать; исправленная инструкция не должна содержать этого предположения.",
+     "quote": "Never guess - a TBD gets fixed, a guess gets bought."
+    }
+   ]
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "mm",
+     "factor": 1,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Write the width as a number in millimetres followed by one space and mm. Convert inch values by multiplying by 25.4; if no unit is present, assume mm.",
+   "flag_when": "",
+   "variants": [],
+   "attribute": "width",
+   "aliases": [
+    "Width",
+    "B",
+    "Thickness",
+    "Bearing Width",
+    "Ring Width"
+   ],
+   "rules": "[Fields at a glance] BRG-5: 'width'; Labels you may see: 'Width; B; Thickness'; What to write: '{n} mm'\nSame as bore_diameter",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "2RS",
+     "accepted": [
+      "rubber seals both sides",
+      "2RS1",
+      "LLU",
+      "sealed both sides"
+     ]
+    },
+    {
+     "value": "2Z",
+     "accepted": [
+      "metal shields",
+      "shielded both sides",
+      "ZZ"
+     ]
+    },
+    {
+     "value": "RS",
+     "accepted": [
+      "one rubber seal",
+      "RS1"
+     ]
+    },
+    {
+     "value": "Z",
+     "accepted": [
+      "one shield"
+     ]
+    },
+    {
+     "value": "Open",
+     "accepted": [
+      "open",
+      "no seals"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map the input to the corresponding seal picklist value and write the value exactly as listed.",
+   "flag_when": "If the value is not in the picklist, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "bearing seal_type",
+   "aliases": [
+    "Seal Type",
+    "Seals",
+    "Seal",
+    "Shields",
+    "Closure",
+    "Bearing Closure"
+   ],
+   "rules": "[Fields at a glance] BRG-6: 'seal_type'; Labels you may see: 'Seals; Seal; Shields; Closure'; What to write: 'Picklist value'\nIF value IN (rubber seals both sides; 2RS1; LLU; sealed both sides) THEN write \"2RS\"\nIF value IN (metal shields; shielded both sides; ZZ) THEN write \"2Z\"\nIF value IN (one rubber seal; RS1) THEN write \"RS\"\nIF value IN (one shield) THEN write \"Z\"\nIF value IN (open; no seals) THEN write \"Open\"\n[Before → after] Seals: metal shields: 'seal_type: 2Z'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "C2",
+     "accepted": [
+      "C2",
+      "less than normal"
+     ]
+    },
+    {
+     "value": "CN",
+     "accepted": [
+      "CN",
+      "normal",
+      "standard"
+     ]
+    },
+    {
+     "value": "C3",
+     "accepted": [
+      "C3",
+      "C 3",
+      "greater than normal"
+     ]
+    },
+    {
+     "value": "C4",
+     "accepted": [
+      "C4"
+     ]
+    },
+    {
+     "value": "C5",
+     "accepted": [
+      "C5"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each accepted input to its corresponding clearance value and write the value exactly as listed.",
+   "flag_when": "If the value is missing, write TBD. If it does not map to a listed clearance value, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "internal_clearance",
+   "aliases": [
+    "Clearance",
+    "Internal Clearance",
+    "Radial Clearance",
+    "CN",
+    "C3",
+    "Bearing Clearance"
+   ],
+   "rules": "[Fields at a glance] BRG-7: 'internal_clearance'; Labels you may see: 'Clearance; Internal Clearance; Radial Clearance'; What to write: 'Picklist value'\nIF value IN (C2; less than normal) THEN write \"C2\"\nIF value IN (normal; CN; standard) THEN write \"CN\"\nIF value IN (C3; C 3; greater than normal) THEN write \"C3\"\nIF value IN (C4) THEN write \"C4\"\nIF value IN (C5) THEN write \"C5\"\n[Before → after] Clearance: normal: 'internal_clearance: CN'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Steel",
+     "accepted": [
+      "Steel",
+      "J",
+      "pressed steel",
+      "steel"
+     ]
+    },
+    {
+     "value": "Brass",
+     "accepted": [
+      "Brass",
+      "M",
+      "MA",
+      "machined brass",
+      "brass"
+     ]
+    },
+    {
+     "value": "Polyamide",
+     "accepted": [
+      "Polyamide",
+      "TN9",
+      "TN",
+      "nylon",
+      "PA66",
+      "polyamide"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each accepted input to its corresponding cage material and write the value exactly as listed.",
+   "flag_when": "If the value is missing, write TBD. If it does not map to a listed cage material, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "cage_material",
+   "aliases": [
+    "Cage",
+    "Cage Material",
+    "Retainer",
+    "Bearing Cage",
+    "Steel Cage",
+    "Brass Cage",
+    "Polyamide Cage"
+   ],
+   "rules": "[Fields at a glance] BRG-8: 'cage_material'; Labels you may see: 'Cage; Cage Material; Retainer'; What to write: 'Picklist value'\nIF value IN (J; pressed steel; steel) THEN write \"Steel\"\nIF value IN (M; MA; machined brass; brass) THEN write \"Brass\"\nIF value IN (TN9; TN; nylon; PA66; polyamide) THEN write \"Polyamide\"\nBefore → after (columns: BEFORE; AFTER)\n[Before → after] Cage: TN9: 'cage_material: Polyamide'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Arrangement 1",
+     "accepted": [
+      "Arrangement 1",
+      "single",
+      "single seal"
+     ]
+    },
+    {
+     "value": "Arrangement 2",
+     "accepted": [
+      "Arrangement 2",
+      "tandem",
+      "dual unpressurized",
+      "dual unpressurised"
+     ]
+    },
+    {
+     "value": "Arrangement 3",
+     "accepted": [
+      "Arrangement 3",
+      "double",
+      "dual pressurized",
+      "double pressurized",
+      "back-to-back"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map the arrangement description to Arrangement 1, Arrangement 2, or Arrangement 3 and write the selected value exactly.",
+   "flag_when": "If the value is missing, write TBD. If it does not map to a listed arrangement, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "arrangement",
+   "aliases": [
+    "Arrangement",
+    "Config",
+    "Configuration",
+    "Seal Arrangement",
+    "Arrangement 1",
+    "Arrangement 2",
+    "Arrangement 3"
+   ],
+   "rules": "[Fields at a glance] Rule: 'MSL-1'; Field key: 'arrangement'; Labels you may see: 'Arrangement; Config; Configuration'; What to write: 'Arrangement 1 | 2 | 3'\nMSL-1 arrangement\nIF value IN (single; single seal) THEN write \"Arrangement 1\"\nIF value IN (tandem; dual unpressurized; dual unpressurised) THEN write \"Arrangement 2\"\nIF value IN (double; dual pressurized; double pressurized; back-to-back) THEN write \"Arrangement 3\"\n[Before → after] Arrangement: tandem: 'arrangement: Arrangement 2'\n[Before → after] Config: double pressurized: 'arrangement: Arrangement 3'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Category 1",
+     "accepted": [
+      "Category 1",
+      "cat 1"
+     ]
+    },
+    {
+     "value": "Category 2",
+     "accepted": [
+      "Category 2",
+      "CAT2",
+      "Cat. 2"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Recognize the category number in any spelling and write it as Category 1, Category 2, or Category 3.",
+   "flag_when": "If the value is missing, write TBD. If no category number can be mapped, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "seal_category",
+   "aliases": [
+    "Category",
+    "Cat",
+    "API Category",
+    "Seal Category",
+    "CAT2",
+    "Category 1",
+    "Category 2"
+   ],
+   "rules": "[Fields at a glance] Rule: 'MSL-2'; Field key: 'seal_category'; Labels you may see: 'Category; Cat; API Category'; What to write: 'Category 1 | 2 | 3'\nMSL-2 seal_category\nIF value matches cat 1/2/3 in any spelling (CAT2, Cat. 2) THEN write Category n\n[Before → after] Category: CAT2: 'seal_category: Category 2'",
+   "verified_fixes": [
+    {
+     "field": "values",
+     "variant": "",
+     "problem": "Пропущено допустимое записываемое значение Category 3.",
+     "quote": "What to write: 'Category 1 | 2 | 3'"
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Type A",
+     "accepted": [
+      "Type A",
+      "pusher",
+      "O-ring pusher",
+      "rotating pusher"
+     ]
+    },
+    {
+     "value": "Type B",
+     "accepted": [
+      "Type B",
+      "metal bellows",
+      "low temperature bellows"
+     ]
+    },
+    {
+     "value": "Type C",
+     "accepted": [
+      "Type C",
+      "high temperature metal bellows",
+      "flexible graphite bellows"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each accepted seal description to its corresponding type and write Type A, Type B, or Type C exactly.",
+   "flag_when": "If the value is missing, write TBD. If it does not map to a listed seal type, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "mechanical seal_type",
+   "aliases": [
+    "Seal Type",
+    "Type",
+    "Design",
+    "Pusher",
+    "Metal Bellows",
+    "Type A",
+    "Type B",
+    "Type C"
+   ],
+   "rules": "[Fields at a glance] Rule: 'MSL-3'; Field key: 'seal_type'; Labels you may see: 'Seal Type; Type; Design'; What to write: 'Type A | B | C'\nMSL-3 seal_type\nIF value IN (pusher; O-ring pusher; rotating pusher) THEN write \"Type A\"\nIF value IN (metal bellows; low temperature bellows) THEN write \"Type B\"\nIF value IN (high temperature metal bellows; flexible graphite bellows) THEN write \"Type C\"\n[Before → after] Seal Type: metal bellows: 'seal_type: Type B'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "inch",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Remove the diameter sign Ø. Convert inch values to millimetres, then write the metric number with one space before mm, at most one decimal place, and no trailing zeros.",
+   "flag_when": "If the value is missing, write TBD. If the value cannot be parsed or converted, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "shaft_diameter",
+   "aliases": [
+    "Shaft Size",
+    "Shaft Dia",
+    "Sleeve Size",
+    "Shaft",
+    "Shaft Diameter",
+    "Shaft OD"
+   ],
+   "rules": "[Fields at a glance] Rule: 'MSL-4'; Field key: 'shaft_diameter'; Labels you may see: 'Shaft Size; Shaft Dia; Sleeve Size; Shaft'; What to write: '{n} mm'\nMSL-4 shaft_diameter\nREMOVE the diameter sign Ø\nIF unit is inch THEN multiply by 25.4\n[Before → after] Shaft Size: 2.5 in: 'shaft_diameter: 63.5 mm'\n[Before → after] Shaft Dia: Ø60: 'shaft_diameter: 60 mm'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each face as follows: carbon, carbon graphite, or antimony carbon to Carbon; silicon carbide, SSiC, RBSiC, or SiC to SiC; tungsten carbide, WC, or TC to TC. Preserve the given order and join the two mapped faces with / and no spaces; vs, v, against, -, and / are equivalent separators.",
+   "flag_when": "When a face cannot be mapped from the specified picklist, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "face_combination",
+   "aliases": [
+    "Faces",
+    "Face Materials",
+    "Face Combination",
+    "Seal Faces",
+    "Rotating Face",
+    "Stationary Face",
+    "SiC/Carbon"
+   ],
+   "rules": "[Fields at a glance] Rule: 'MSL-5'; Field key: 'face_combination'; Labels you may see: 'Faces; Face Materials; Face Combination'; What to write: '{rotating}/{stationary}'\nMSL-5 face_combination\nIF value IN (carbon; carbon graphite; antimony carbon) THEN write \"Carbon\"\nIF value IN (silicon carbide; SSiC; RBSiC; SiC) THEN write \"SiC\"\nIF value IN (tungsten carbide; WC; TC) THEN write \"TC\"\nTranslate each face with the picklist, keep the order given, join with / (no spaces)\nSeparators vs, v, against, - , / all mean the same\n[Before → after] Faces: SiC vs carbon: 'face_combination: SiC/Carbon'\n[Before → after] Face Materials: tungsten carbide / silicon carbide: 'face_combination: TC/SiC'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "NBR",
+     "accepted": [
+      "nitrile",
+      "Buna-N",
+      "Buna"
+     ]
+    },
+    {
+     "value": "HNBR",
+     "accepted": [
+      "hydrogenated nitrile",
+      "HSN"
+     ]
+    },
+    {
+     "value": "FKM",
+     "accepted": [
+      "Viton",
+      "fluorocarbon",
+      "FPM"
+     ]
+    },
+    {
+     "value": "FFKM",
+     "accepted": [
+      "Kalrez",
+      "perfluoroelastomer",
+      "perfluoro"
+     ]
+    },
+    {
+     "value": "EPDM",
+     "accepted": [
+      "EPR",
+      "ethylene propylene"
+     ]
+    },
+    {
+     "value": "VMQ",
+     "accepted": [
+      "silicone",
+      "Si"
+     ]
+    },
+    {
+     "value": "FEPM",
+     "accepted": [
+      "Aflas",
+      "TFE/P"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "",
+   "flag_when": "When the value is missing, write TBD; when the value is not in the picklist, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "secondary_seal",
+   "aliases": [
+    "Elastomer",
+    "Secondary Seal",
+    "O-rings",
+    "O-Ring Material",
+    "NBR",
+    "FKM",
+    "EPDM"
+   ],
+   "rules": "[Fields at a glance] Rule: 'MSL-6'; Field key: 'secondary_seal'; Labels you may see: 'Elastomer; Secondary Seal; O-rings'; What to write: 'Picklist value (same as O-Ring material)'\nIF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\"\nIF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\"\nIF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\"\nIF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\"\nIF value IN (EPR; ethylene propylene) THEN write \"EPDM\"\nIF value IN (silicone; Si) THEN write \"VMQ\"\nIF value IN (Aflas; TFE/P) THEN write \"FEPM\"\n[Before → after] Elastomer: Viton: 'secondary_seal: FKM'",
+   "verified_fixes": [
+    {
+     "field": "flag_when",
+     "variant": "",
+     "problem": "Условие охватывает отсутствующие значения и предписывает для них CHECK:, хотя пустые значения должны преобразовываться в TBD.",
+     "quote": "Empty cells, dashes, n/a, ?, 'unknown', 'see drawing' all become TBD (capitals)."
+    }
+   ]
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Write Plan, one space, the plan number, and any suffix letter in capitals. Join combined plans with /.",
+   "flag_when": "When the plan cannot be written in the specified Plan format, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "flush_plan",
+   "aliases": [
+    "Flush Plan",
+    "API Plan",
+    "Piping Plan",
+    "Plan",
+    "Plan 53A",
+    "Plan 11/52"
+   ],
+   "rules": "[Fields at a glance] Rule: 'MSL-7'; Field key: 'flush_plan'; Labels you may see: 'Flush Plan; API Plan; Piping Plan'; What to write: 'Plan {code}'\nWrite Plan, one space, the plan number, suffix letter in capitals: Plan 53A\nCombined plans joined with /: Plan 11/52\n[Before → after] Flush Plan: API plan 53a: 'flush_plan: Plan 53A'\nBefore → after (columns: BEFORE; AFTER)",
+   "verified_fixes": []
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "For a three-digit dash number with or without a prefix, including 214, -214, 2-214, and AS 568-214, remove the input prefix and write AS568-{nnn}.",
+   "flag_when": "When the value is not a three-digit dash number or cannot be converted to the specified AS568 format, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "size_reference",
+   "aliases": [
+    "Size",
+    "Dash No",
+    "Dash Number",
+    "AS568",
+    "Size Reference",
+    "AS568-214"
+   ],
+   "rules": "[Fields at a glance] Rule: 'ORG-1'; Field key: 'size_reference'; Labels you may see: 'Size; Dash No; Dash Number; AS568'; What to write: 'AS568-{nnn}'\nORG-1 size_reference\nIF value is a 3-digit dash number with or without prefix (214, -214, 2-214, AS 568-214) THEN write AS568-214\nThe leading '2-' used by some suppliers is a compound prefix, not part of the size\n[Before → after] Size: 2-214: 'size_reference: AS568-214'\n[Before → after] Dash No: 214: 'size_reference: AS568-214'\nAS568 O-ring sizes (selection) (columns: Dash no.; ID, mm; CS, mm)\n[AS568 O-ring sizes (selection)] Dash no.: '-010'; ID, mm: '6.07'; CS, mm: '1.78'\n[AS568 O-ring sizes (selection)] Dash no.: '-014'; ID, mm: '12.42'; CS, mm: '1.78'\n[AS568 O-ring sizes (selection)] Dash no.: '-110'; ID, mm: '9.19'; CS, mm: '2.62'\n[AS568 O-ring sizes (selection)] Dash no.: '-116'; ID, mm: '18.72'; CS, mm: '2.62'\n[AS568 O-ring sizes (selection)] Dash no.: '-210'; ID, mm: '18.64'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-214'; ID, mm: '24.99'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-222'; ID, mm: '37.69'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-325'; ID, mm: '37.47'; CS, mm: '5.33'\n[AS568 O-ring sizes (selection)] Dash no.: '-334'; ID, mm: '59.69'; CS, mm: '5.33'\n[AS568 O-ring sizes (selection)] Dash no.: '-428'; ID, mm: '113.67'; CS, mm: '6.99'",
+   "verified_fixes": [
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "Не указано, что форма «AS 568-214» также принимается и её префикс нормализуется при записи.",
+     "quote": "IF value is a 3-digit dash number with or without prefix (214, -214, 2-214, AS 568-214) THEN write AS568-214"
+    }
+   ]
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "number_pattern": "0.00",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "inch",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert inch values to millimetres, then write the result with exactly two decimal places and one space before mm.",
+   "flag_when": "",
+   "variants": [],
+   "attribute": "inner_diameter",
+   "aliases": [
+    "ID",
+    "Inner Diameter",
+    "Inside Diameter",
+    "O-Ring ID",
+    "Bore",
+    "Inside Dia"
+   ],
+   "rules": "[Fields at a glance] Rule: 'ORG-2'; Field key: 'inner_diameter'; Labels you may see: 'ID; Inner Diameter; Inside Diameter'; What to write: '{n.nn} mm (two decimals!)'\nORG-2 inner_diameter\nIF inch THEN x 25.4\nALWAYS two decimals: 25.00 mm\n[Before → after] ID: 0.984 in: 'inner_diameter: 24.99 mm'\nPro tip. Two decimals for O-rings is deliberate: AS568 sizes differ by as little as 0.08 mm, and rounding to one decimal merges different rings.\nQ. Can I write 25.0 mm to show precision?\nA. Not for normal fields (GR4 drops trailing zeros). O-ring dimensions are the exception: always two decimals.\nAS568 O-ring sizes (selection) (columns: Dash no.; ID, mm; CS, mm)\n[AS568 O-ring sizes (selection)] Dash no.: '-010'; ID, mm: '6.07'; CS, mm: '1.78'\n[AS568 O-ring sizes (selection)] Dash no.: '-014'; ID, mm: '12.42'; CS, mm: '1.78'\n[AS568 O-ring sizes (selection)] Dash no.: '-110'; ID, mm: '9.19'; CS, mm: '2.62'\n[AS568 O-ring sizes (selection)] Dash no.: '-116'; ID, mm: '18.72'; CS, mm: '2.62'\n[AS568 O-ring sizes (selection)] Dash no.: '-210'; ID, mm: '18.64'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-214'; ID, mm: '24.99'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-222'; ID, mm: '37.69'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-325'; ID, mm: '37.47'; CS, mm: '5.33'\n[AS568 O-ring sizes (selection)] Dash no.: '-334'; ID, mm: '59.69'; CS, mm: '5.33'\n[AS568 O-ring sizes (selection)] Dash no.: '-428'; ID, mm: '113.67'; CS, mm: '6.99'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "number_pattern": "0.00",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "inch",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert a decimal comma to a decimal point. Convert inch values to millimetres when applicable, then write the result with exactly two decimal places and one space before mm.",
+   "flag_when": "",
+   "variants": [],
+   "attribute": "cross_section",
+   "aliases": [
+    "CS",
+    "Cross Section",
+    "Section",
+    "W",
+    "O-Ring Section",
+    "Section Diameter"
+   ],
+   "rules": "[Fields at a glance] Rule: 'ORG-3'; Field key: 'cross_section'; Labels you may see: 'CS; Cross Section; Section; W'; What to write: '{n.nn} mm (two decimals!)'\nORG-3 cross_section\nDecimal comma becomes point: 3,53 -> 3.53 mm\n[Before → after] Cross Section: 0.139\": 'cross_section: 3.53 mm'\n[Before → after] CS: 3,53: 'cross_section: 3.53 mm'\nPro tip. Two decimals for O-rings is deliberate: AS568 sizes differ by as little as 0.08 mm, and rounding to one decimal merges different rings.\nQ. Can I write 25.0 mm to show precision?\nA. Not for normal fields (GR4 drops trailing zeros). O-ring dimensions are the exception: always two decimals.\nAS568 O-ring sizes (selection) (columns: Dash no.; ID, mm; CS, mm)\n[AS568 O-ring sizes (selection)] Dash no.: '-010'; ID, mm: '6.07'; CS, mm: '1.78'\n[AS568 O-ring sizes (selection)] Dash no.: '-014'; ID, mm: '12.42'; CS, mm: '1.78'\n[AS568 O-ring sizes (selection)] Dash no.: '-110'; ID, mm: '9.19'; CS, mm: '2.62'\n[AS568 O-ring sizes (selection)] Dash no.: '-116'; ID, mm: '18.72'; CS, mm: '2.62'\n[AS568 O-ring sizes (selection)] Dash no.: '-210'; ID, mm: '18.64'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-214'; ID, mm: '24.99'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-222'; ID, mm: '37.69'; CS, mm: '3.53'\n[AS568 O-ring sizes (selection)] Dash no.: '-325'; ID, mm: '37.47'; CS, mm: '5.33'\n[AS568 O-ring sizes (selection)] Dash no.: '-334'; ID, mm: '59.69'; CS, mm: '5.33'\n[AS568 O-ring sizes (selection)] Dash no.: '-428'; ID, mm: '113.67'; CS, mm: '6.99'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "NBR",
+     "accepted": [
+      "nitrile",
+      "Buna-N",
+      "Buna"
+     ]
+    },
+    {
+     "value": "HNBR",
+     "accepted": [
+      "hydrogenated nitrile",
+      "HSN"
+     ]
+    },
+    {
+     "value": "FKM",
+     "accepted": [
+      "Viton",
+      "fluorocarbon",
+      "FPM"
+     ]
+    },
+    {
+     "value": "FFKM",
+     "accepted": [
+      "Kalrez",
+      "perfluoroelastomer",
+      "perfluoro"
+     ]
+    },
+    {
+     "value": "EPDM",
+     "accepted": [
+      "EPR",
+      "ethylene propylene"
+     ]
+    },
+    {
+     "value": "VMQ",
+     "accepted": [
+      "silicone",
+      "Si"
+     ]
+    },
+    {
+     "value": "FEPM",
+     "accepted": [
+      "Aflas",
+      "TFE/P"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each listed input to its corresponding material code. Write the code exactly as shown.",
+   "flag_when": "If the value is not one of the listed inputs, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "material",
+   "aliases": [
+    "Material",
+    "Compound",
+    "Elastomer",
+    "O-Ring Material",
+    "NBR",
+    "HNBR",
+    "FKM",
+    "VMQ"
+   ],
+   "rules": "[Fields at a glance] Rule: 'ORG-4'; Field key: 'material'; Labels you may see: 'Material; Compound; Elastomer'; What to write: 'Picklist value'\nORG-4 material\nIF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\"\nIF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\"\nIF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\"\nIF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\"\nIF value IN (EPR; ethylene propylene) THEN write \"EPDM\"\nIF value IN (silicone; Si) THEN write \"VMQ\"\nIF value IN (Aflas; TFE/P) THEN write \"FEPM\"\n[Before → after] Material: Viton: 'material: FKM'\n[Before → after] Compound: Buna-N: 'material: NBR'\n[Before → after] Material: silicone: 'material: VMQ'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "Shore A",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the numeric value followed by one space and Shore A. Treat duro, A, Sh A, Shore A, and IRHD as Shore A.",
+   "flag_when": "If the value does not contain a numeric hardness with one of the specified hardness labels, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "hardness",
+   "aliases": [
+    "Hardness",
+    "Durometer",
+    "Shore",
+    "Shore A",
+    "IRHD",
+    "Duro"
+   ],
+   "rules": "[Fields at a glance] Rule: 'ORG-5'; Field key: 'hardness'; Labels you may see: 'Hardness; Durometer; Shore'; What to write: '{n} Shore A'\nORG-5 hardness\nIF value in duro, A, Sh A, Shore A or IRHD THEN write {n} Shore A (IRHD treated as equal)\n[Before → after] Hardness: 70 duro: 'hardness: 70 Shore A'\n[Before → after] Hardness: 90 IRHD: 'hardness: 90 Shore A'",
+   "verified_fixes": [
+    {
+     "field": "unit",
+     "variant": "",
+     "problem": "Поле единицы не содержит обозначение единицы, которое должно записываться после числового значения.",
+     "quote": "What to write: '{n} Shore A'"
+    },
+    {
+     "field": "number_pattern",
+     "variant": "",
+     "problem": "Не задан шаблон числа: для измеряемых значений допускается не более одного знака после десятичного разделителя, а завершающие нули удаляются.",
+     "quote": "Measured values are metric: number, one space, unit (25 mm, 10.3 bar, 208 L). Use at most one decimal and drop trailing zeros (70 mm, not 70.0 mm)."
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Yes",
+     "accepted": [
+      "RGD resistant",
+      "RGD",
+      "AED",
+      "Explosive Decompression",
+      "ED Resistant",
+      "ED",
+      "NORSOK M-710",
+      "ISO 23936-2"
+     ]
+    },
+    {
+     "value": "No",
+     "accepted": []
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Write Yes when the value mentions RGD resistant, RGD, AED, Explosive Decompression, ED Resistant, ED, NORSOK M-710, or ISO 23936-2.",
+   "flag_when": "If the value cannot be mapped to Yes or No, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "aed_resistant",
+   "aliases": [
+    "RGD",
+    "AED",
+    "Explosive Decompression",
+    "ED Resistant",
+    "AED Resistant",
+    "NORSOK M-710",
+    "ISO 23936-2"
+   ],
+   "rules": "[Fields at a glance] Rule: 'ORG-6'; Field key: 'aed_resistant'; Labels you may see: 'RGD; AED; Explosive Decompression; ED Resistant'; What to write: 'Yes | No'\nORG-6 aed_resistant\nIF value mentions RGD resistant, AED, ED, NORSOK M-710 or ISO 23936-2 THEN Yes\n[Before → after] RGD: NORSOK M-710: 'aed_resistant: Yes'",
+   "verified_fixes": [
+    {
+     "field": "values",
+     "variant": "",
+     "problem": "The accepted inputs omit the listed labels RGD, Explosive Decompression, and ED Resistant, while No is treated as an accepted input even though the rule only specifies the Yes trigger and does not define a negative-input mapping.",
+     "quote": "Labels you may see: 'RGD; AED; Explosive Decompression; ED Resistant'; What to write: 'Yes | No'"
+    },
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "The rule does not define 'negative value' as a condition for writing No; it only defines the listed trigger conditions for writing Yes.",
+     "quote": "IF value mentions RGD resistant, AED, ED, NORSOK M-710 or ISO 23936-2 THEN Yes"
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "A",
+     "accepted": [
+      "13x8",
+      "13 x 8 mm"
+     ]
+    },
+    {
+     "value": "B",
+     "accepted": [
+      "17x11",
+      "17 x 11 mm"
+     ]
+    },
+    {
+     "value": "C",
+     "accepted": [
+      "22x14"
+     ]
+    },
+    {
+     "value": "D",
+     "accepted": [
+      "32x19"
+     ]
+    },
+    {
+     "value": "SPZ",
+     "accepted": [
+      "spz"
+     ]
+    },
+    {
+     "value": "SPA",
+     "accepted": [
+      "spa"
+     ]
+    },
+    {
+     "value": "SPB",
+     "accepted": [
+      "spb"
+     ]
+    },
+    {
+     "value": "SPC",
+     "accepted": [
+      "spc"
+     ]
+    },
+    {
+     "value": "XPZ",
+     "accepted": [
+      "XPZ",
+      "cogged SPZ"
+     ]
+    },
+    {
+     "value": "XPA",
+     "accepted": [
+      "XPA"
+     ]
+    },
+    {
+     "value": "XPB",
+     "accepted": [
+      "XPB"
+     ]
+    },
+    {
+     "value": "3V",
+     "accepted": [
+      "3V",
+      "9N"
+     ]
+    },
+    {
+     "value": "5V",
+     "accepted": [
+      "5V",
+      "15N"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each listed belt section or profile to its corresponding section code. Write the section code exactly as shown.",
+   "flag_when": "If the value is not one of the listed inputs, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "belt_section",
+   "aliases": [
+    "Section",
+    "Profile",
+    "Belt Section",
+    "13x8",
+    "17x11",
+    "SPB",
+    "XPZ",
+    "3V",
+    "Top Width"
+   ],
+   "rules": "[Fields at a glance] VBT-1: 'belt_section'; Section; Profile; Belt Section: 'Picklist value'\nVBT-1 belt_section\nIF value IN (13x8; 13 x 8 mm) THEN write \"A\"\nIF value IN (17x11; 17 x 11 mm) THEN write \"B\"\nIF value IN (22x14) THEN write \"C\"\nIF value IN (32x19) THEN write \"D\"\nIF value IN (spz) THEN write \"SPZ\"\nIF value IN (spa) THEN write \"SPA\"\nIF value IN (spb) THEN write \"SPB\"\nIF value IN (spc) THEN write \"SPC\"\nIF value IN (XPZ; cogged SPZ) THEN write \"XPZ\"\nIF value IN (XPA) THEN write \"XPA\"\nIF value IN (XPB) THEN write \"XPB\"\nIF value IN (3V; 9N) THEN write \"3V\"\nIF value IN (5V; 15N) THEN write \"5V\"\n[Before → after] Section: spb: 'belt_section: SPB'\n[Before → after] Profile: 17x11: 'belt_section: B'\n[Before → after] Section: 13 x 8 mm: 'belt_section: A'\nClassical V-belt sections (columns: Section; Top width x height, mm; Datum length = inside length +)\n[Classical V-belt sections] Section: 'A'; Top width x height, mm: '13 x 8'; Datum length = inside length +: '+30'\n[Classical V-belt sections] Section: 'B'; Top width x height, mm: '17 x 11'; Datum length = inside length +: '+40'\n[Classical V-belt sections] Section: 'C'; Top width x height, mm: '22 x 14'; Datum length = inside length +: '+58'\n[Classical V-belt sections] Section: 'D'; Top width x height, mm: '32 x 19'; Datum length = inside length +: '+75'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "number_pattern": "0",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "A in",
+     "factor": 25.4,
+     "offset": 30
+    },
+    {
+     "from": "B in",
+     "factor": 25.4,
+     "offset": 40
+    },
+    {
+     "from": "C in",
+     "factor": 25.4,
+     "offset": 58
+    },
+    {
+     "from": "D in",
+     "factor": 25.4,
+     "offset": 75
+    }
+   ],
+   "series": [],
+   "instructions": "Remove Ld, Lw, or Lp prefixes. For classical values such as A42 or B75, multiply the inside length in inches by 25.4 and add the section offset: A +30, B +40, C +58, or D +75 mm; write a whole number followed by one space and mm.",
+   "flag_when": "If the value does not fit the specified length format or cannot be converted, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "datum_length",
+   "aliases": [
+    "Length",
+    "Datum Length",
+    "Ld",
+    "Pitch Length",
+    "Datum",
+    "Belt Length",
+    "Inside Length"
+   ],
+   "rules": "[Fields at a glance] VBT-2: 'datum_length'; Length; Datum Length; Ld; Pitch Length: '{n} mm (whole number)'\nVBT-2 datum_length\nREMOVE Ld, Lw, Lp prefixes\nIF value looks like A42, B75 (classical, inside length in inches) THEN datum = inches x 25.4 + offset\n(A +30, B +40, C +58, D +75 mm)\n[Before → after] Length: 2000mm: 'datum_length: 2000 mm'\n[Before → after] Datum Length: Ld 1250: 'datum_length: 1250 mm'\n[Before → after] Length: B75: 'datum_length: 1945 mm'\nClassical V-belt sections (columns: Section; Top width x height, mm; Datum length = inside length +)\n[Classical V-belt sections] Section: 'A'; Top width x height, mm: '13 x 8'; Datum length = inside length +: '+30'\n[Classical V-belt sections] Section: 'B'; Top width x height, mm: '17 x 11'; Datum length = inside length +: '+40'\n[Classical V-belt sections] Section: 'C'; Top width x height, mm: '22 x 14'; Datum length = inside length +: '+58'\n[Classical V-belt sections] Section: 'D'; Top width x height, mm: '32 x 19'; Datum length = inside length +: '+75'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Wrapped",
+     "accepted": [
+      "wrapped",
+      "classical wrapped",
+      "envelope"
+     ]
+    },
+    {
+     "value": "Raw Edge Cogged",
+     "accepted": [
+      "cogged",
+      "notched",
+      "raw edge",
+      "XP"
+     ]
+    },
+    {
+     "value": "Banded",
+     "accepted": [
+      "power band",
+      "banded",
+      "joined",
+      "multi-belt"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each listed construction description to its corresponding construction value. Write the value exactly as shown.",
+   "flag_when": "If the value is not one of the listed inputs, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "construction",
+   "aliases": [
+    "Type",
+    "Construction",
+    "Belt Type",
+    "Wrapped",
+    "Raw Edge Cogged",
+    "Banded",
+    "Notched"
+   ],
+   "rules": "[Fields at a glance] VBT-3: 'construction'; Type; Construction; Belt Type: 'Picklist value'\nVBT-3 construction\nIF value IN (wrapped; classical wrapped; envelope) THEN write \"Wrapped\"\nIF value IN (cogged; notched; raw edge; XP) THEN write \"Raw Edge Cogged\"\nIF value IN (power band; banded; joined; multi-belt) THEN write \"Banded\"\n[Before → after] Type: notched: 'construction: Raw Edge Cogged'\n[Before → after] Construction: power band: 'construction: Banded'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "number_pattern": "0",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Keep only the set quantity number. For example, write 4 for \"set of 4\".",
+   "flag_when": "If the quantity is missing, write TBD; if it cannot be extracted, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "matched_set_qty",
+   "aliases": [
+    "Set",
+    "Matched Set",
+    "Qty in Set",
+    "Set Quantity",
+    "Matched Quantity",
+    "Number in Set"
+   ],
+   "rules": "[Fields at a glance] VBT-4: 'matched_set_qty'; Set; Matched Set; Qty in Set: '{n}'\nVBT-4 matched_set_qty\nKeep only the number: set of 4 -> 4\n[Before → after] Set: set of 4: 'matched_set_qty: 4'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Write ISO grades as \"ISO VG {n}\" for VG46, ISO 46, ISO VG46, or 46 cSt, using only the valid grades 10, 15, 22, 32, 46, 68, 100, 150, 220, 320, 460, and 680. Write multigrades such as 15W40 as \"SAE 15W-40\", and write SAE 90 or SAE 140 as \"SAE {n}\".",
+   "flag_when": "If the value is not a valid ISO grade or a specified SAE grade format, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "viscosity_grade",
+   "aliases": [
+    "Viscosity",
+    "Grade",
+    "Viscosity Grade",
+    "VG",
+    "ISO VG",
+    "SAE Grade",
+    "cSt"
+   ],
+   "rules": "[Fields at a glance] LUB-1: 'viscosity_grade'; Viscosity; Grade; Viscosity Grade; VG: 'ISO VG {n} | SAE {grade}'\nLUB-1 viscosity_grade\nIF value is VG46, ISO 46, ISO VG46 or 46 cSt THEN ISO VG 46 (valid ISO grades: 10 15 22 32 46 68 100 150 220 320 460 680)\nIF value is a multigrade like 15W40 THEN SAE 15W-40 (hyphen before the hot grade)\nIF value is SAE 90, SAE 140 THEN keep SAE {n}\n[Before → after] Viscosity: VG46: 'viscosity_grade: ISO VG 46'\n[Before → after] Grade: ISO 32: 'viscosity_grade: ISO VG 32'\n[Before → after] Viscosity Grade: 15W40: 'viscosity_grade: SAE 15W-40'\n[Before → after] Viscosity: 320 cSt: 'viscosity_grade: ISO VG 320'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Mineral",
+     "accepted": [
+      "mineral",
+      "Group I",
+      "Group II"
+     ]
+    },
+    {
+     "value": "Group III",
+     "accepted": [
+      "Group III",
+      "hydrocracked"
+     ]
+    },
+    {
+     "value": "PAO",
+     "accepted": [
+      "synthetic hydrocarbon",
+      "polyalphaolefin",
+      "PAO"
+     ]
+    },
+    {
+     "value": "Ester",
+     "accepted": [
+      "ester",
+      "synthetic ester"
+     ]
+    },
+    {
+     "value": "PAG",
+     "accepted": [
+      "polyglycol",
+      "polyalkylene glycol"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each accepted input to its corresponding picklist value. Semi-synthetic and synthetic blend do not identify the base oil.",
+   "flag_when": "If the value is semi-synthetic, synthetic blend, or another input that cannot be mapped, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "base_oil",
+   "aliases": [
+    "Base Oil",
+    "Base Stock",
+    "Base",
+    "Mineral",
+    "PAO",
+    "Synthetic Hydrocarbon",
+    "Ester",
+    "PAG"
+   ],
+   "rules": "[Fields at a glance] LUB-2: 'base_oil'; Base Oil; Base Stock; Base: 'Picklist value'\nLUB-2 base_oil\nIF value IN (mineral; Group I; Group II) THEN write \"Mineral\"\nIF value IN (Group III; hydrocracked) THEN write \"Group III\"\nIF value IN (synthetic hydrocarbon; polyalphaolefin; PAO) THEN write \"PAO\"\nIF value IN (ester; synthetic ester) THEN write \"Ester\"\nIF value IN (polyglycol; polyalkylene glycol; PAG) THEN write \"PAG\"\nWatch out! 'Semi-synthetic' and 'synthetic blend' don't tell you the base - write CHECK: and let the lubrication engineer decide.\n[Before → after] Base Oil: synthetic hydrocarbon: 'base_oil: PAO'\n[Before → after] Base Stock: semi-synthetic: 'base_oil: CHECK: semi-synthetic'",
+   "verified_fixes": [
+    {
+     "field": "values",
+     "variant": "",
+     "problem": "Значение \"Mineral\" ошибочно указано как принимаемая форма входа; в правиле оно является только результатом записи.",
+     "quote": "IF value IN (mineral; Group I; Group II) THEN write \"Mineral\""
+    },
+    {
+     "field": "values",
+     "variant": "",
+     "problem": "Значение \"Ester\" ошибочно указано как принимаемая форма входа; в правиле оно является только результатом записи.",
+     "quote": "IF value IN (ester; synthetic ester) THEN write \"Ester\""
+    },
+    {
+     "field": "values",
+     "variant": "",
+     "problem": "Значение \"PAG\" ошибочно указано как принимаемая форма входа; в правиле оно является только результатом записи.",
+     "quote": "IF value IN (polyglycol; polyalkylene glycol; PAG) THEN write \"PAG\""
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Turbine",
+     "accepted": [
+      "R&O turbine",
+      "turbine",
+      "steam turbine",
+      "Turbine"
+     ]
+    },
+    {
+     "value": "Hydraulic",
+     "accepted": [
+      "AW hydraulic",
+      "hydraulic",
+      "HM",
+      "Hydraulic"
+     ]
+    },
+    {
+     "value": "Gear",
+     "accepted": [
+      "EP gear",
+      "gear",
+      "industrial gear",
+      "Gear"
+     ]
+    },
+    {
+     "value": "Compressor",
+     "accepted": [
+      "compressor",
+      "screw compressor",
+      "Compressor"
+     ]
+    },
+    {
+     "value": "Gas Engine",
+     "accepted": [
+      "gas engine",
+      "Gas Engine"
+     ]
+    },
+    {
+     "value": "Diesel Engine",
+     "accepted": [
+      "diesel",
+      "HDDO",
+      "engine oil",
+      "Diesel Engine"
+     ]
+    },
+    {
+     "value": "Circulating",
+     "accepted": [
+      "circulating",
+      "paper machine",
+      "Circulating"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map the input application name to the corresponding picklist value.",
+   "flag_when": "If the value cannot be mapped to a listed application, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "application",
+   "aliases": [
+    "Application",
+    "Use",
+    "Service",
+    "Turbine",
+    "Hydraulic",
+    "Gear",
+    "Compressor",
+    "Gas Engine"
+   ],
+   "rules": "[Fields at a glance] LUB-3: 'application'; Application; Use; Service: 'Picklist value'\nIF value IN (R&O turbine; turbine; steam turbine) THEN write \"Turbine\"\nIF value IN (AW hydraulic; hydraulic; HM) THEN write \"Hydraulic\"\nIF value IN (EP gear; gear; industrial gear) THEN write \"Gear\"\nIF value IN (compressor; screw compressor) THEN write \"Compressor\"\nIF value IN (gas engine) THEN write \"Gas Engine\"\nIF value IN (diesel; HDDO; engine oil) THEN write \"Diesel Engine\"\nIF value IN (circulating; paper machine) THEN write \"Circulating\"\n[Before → after] Application: AW hydraulic: 'application: Hydraulic'\n[Before → after] Use: R&O turbine: 'application: Turbine'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "HH",
+     "accepted": [
+      "HH"
+     ]
+    },
+    {
+     "value": "HL",
+     "accepted": [
+      "HL"
+     ]
+    },
+    {
+     "value": "HM",
+     "accepted": [
+      "HM",
+      "ISO L-HM 46"
+     ]
+    },
+    {
+     "value": "HV",
+     "accepted": [
+      "HV"
+     ]
+    },
+    {
+     "value": "HG",
+     "accepted": [
+      "HG"
+     ]
+    },
+    {
+     "value": "TSA",
+     "accepted": [
+      "TSA"
+     ]
+    },
+    {
+     "value": "TGA",
+     "accepted": [
+      "TGA"
+     ]
+    },
+    {
+     "value": "CKB",
+     "accepted": [
+      "CKB"
+     ]
+    },
+    {
+     "value": "CKC",
+     "accepted": [
+      "CKC"
+     ]
+    },
+    {
+     "value": "CKD",
+     "accepted": [
+      "CKD"
+     ]
+    },
+    {
+     "value": "DAA",
+     "accepted": [
+      "DAA"
+     ]
+    },
+    {
+     "value": "DAB",
+     "accepted": [
+      "DAB"
+     ]
+    },
+    {
+     "value": "DAH",
+     "accepted": [
+      "DAH"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Remove ISO, the L- prefix, and the viscosity number from an ISO 6743 classification, then write the remaining allowed family letters.",
+   "flag_when": "If the resulting family letters are not one of HH, HL, HM, HV, HG, TSA, TGA, CKB, CKC, CKD, DAA, DAB, or DAH, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "iso_class",
+   "aliases": [
+    "ISO Class",
+    "ISO 6743",
+    "Classification",
+    "ISO L-HM",
+    "HM",
+    "HL",
+    "HV"
+   ],
+   "rules": "[Fields at a glance] LUB-4: 'iso_class'; ISO Class; ISO 6743; Classification: 'ISO 6743 family letters'\nREMOVE ISO, L- and the viscosity number: ISO L-HM 46 -> HM\nAllowed: HH HL HM HV HG TSA TGA CKB CKC CKD DAA DAB DAH\n[Before → after] ISO Class: ISO L-HM 46: 'iso_class: HM'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "L",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "gal",
+     "factor": 3.785,
+     "offset": 0
+    },
+    {
+     "from": "qt",
+     "factor": 0.946,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Use standard pack mappings first: drum, 55 gal drum, 205 L drum, and 45 imp gal drum become 208 L; 5 gal pail becomes 18.9 L; IBC and tote become 1000 L. Otherwise convert gallons or quarts to litres and write the metric result.",
+   "flag_when": "If the pack size is missing, write TBD; if it cannot be mapped or converted, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "pack_size",
+   "aliases": [
+    "Pack",
+    "Pack Size",
+    "Packaging",
+    "Container",
+    "Drum",
+    "Pail",
+    "IBC",
+    "Tote"
+   ],
+   "rules": "[Fields at a glance] LUB-5: 'pack_size'; Pack; Pack Size; Packaging; Container: '{n} L'\nIF value IN (drum; 55 gal drum; 205 L drum; 45 imp gal drum) THEN write \"208 L\"\nIF value IN (5 gal pail) THEN write \"18.9 L\"\nIF value IN (IBC; tote) THEN write \"1000 L\"\nStandard packs first (table above), otherwise convert gallons x 3.785, quarts x 0.946\nBefore → after (columns: BEFORE; AFTER)\n[Before → after] Pack: 55 gal drum: 'pack_size: 208 L'\n[Before → after] Pack Size: 5 gal pail: 'pack_size: 18.9 L'\n[Before → after] Packaging: IBC: 'pack_size: 1000 L'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "converted",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Strip EP, #, grade, and spaces, keep the number, and write it as \"NLGI {n}\". Preserve zeros in grades 00 and 000.",
+   "flag_when": "When the value does not contain a recognizable NLGI grade number, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "nlgi_grade",
+   "aliases": [
+    "NLGI",
+    "NLGI Grade",
+    "Consistency",
+    "Grade",
+    "Grease Grade",
+    "NLGI Number"
+   ],
+   "rules": "BEFORE: 'EP2 (for nlgi_grade)'; AFTER: 'NLGI 2'\n[Fields at a glance] GRS-1: 'nlgi_grade'; NLGI; NLGI Grade; Consistency; Grade: 'NLGI {n}'\nGRS-1 nlgi_grade\nStrip EP, #, grade and spaces, keep the number: EP2 -> NLGI 2; #2 -> NLGI 2\nGrades 000 and 00 keep their zeros: NLGI 00\n[Before → after] NLGI: EP2: 'nlgi_grade: NLGI 2'\n[Before → after] Consistency: #2: 'nlgi_grade: NLGI 2'\n[Before → after] NLGI Grade: 00: 'nlgi_grade: NLGI 00'\nQ. The value is right but in the wrong field. Can I move it?\nA. No (GR8). Translate what is in the row. If 'EP2' arrives in the nlgi_grade field, write NLGI 2 there; whoever sends ep_additive separately will get Yes on that row.",
+   "verified_fixes": [
+    {
+     "field": "rounding_scope",
+     "variant": "",
+     "problem": "Округление не должно применяться ко всем значениям: правило требует сохранить число, включая ведущие нули в оценках 00 и 000.",
+     "quote": "Strip EP, #, grade and spaces, keep the number: EP2 -> NLGI 2; #2 -> NLGI 2"
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Lithium",
+     "accepted": [
+      "lithium",
+      "Li",
+      "lithium soap"
+     ]
+    },
+    {
+     "value": "Lithium Complex",
+     "accepted": [
+      "Li complex",
+      "Li-X",
+      "LiX",
+      "lithium complex"
+     ]
+    },
+    {
+     "value": "Calcium Sulfonate",
+     "accepted": [
+      "Ca sulphonate",
+      "calcium sulfonate",
+      "CaS"
+     ]
+    },
+    {
+     "value": "Polyurea",
+     "accepted": [
+      "polyurea",
+      "PU thickener"
+     ]
+    },
+    {
+     "value": "Aluminium Complex",
+     "accepted": [
+      "Al complex",
+      "aluminum complex"
+     ]
+    },
+    {
+     "value": "Bentonite",
+     "accepted": [
+      "clay",
+      "bentonite",
+      "organoclay"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each recognized input to its corresponding picklist value, preserving the exact capitalization and spelling of the written value.",
+   "flag_when": "When the value is not in the picklist, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "thickener",
+   "aliases": [
+    "Thickener",
+    "Soap",
+    "Soap Type",
+    "Thickener Type",
+    "Grease Thickener"
+   ],
+   "rules": "[Fields at a glance] GRS-2: 'thickener'; Thickener; Soap; Soap Type: 'Picklist value'\nGRS-2 thickener\nIF value IN (lithium; Li; lithium soap) THEN write \"Lithium\"\nIF value IN (Li complex; Li-X; LiX; lithium complex) THEN write \"Lithium Complex\"\nIF value IN (Ca sulphonate; calcium sulfonate; CaS) THEN write \"Calcium Sulfonate\"\nIF value IN (polyurea; PU thickener) THEN write \"Polyurea\"\nIF value IN (Al complex; aluminum complex) THEN write \"Aluminium Complex\"\nIF value IN (clay; bentonite; organoclay) THEN write \"Bentonite\"\n[Before → after] Thickener: Li complex: 'thickener: Lithium Complex'\n[Before → after] Soap: Ca sulphonate: 'thickener: Calcium Sulfonate'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "cSt",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "mm2/s",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "cSt",
+     "factor": 1,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "For an ISO VG base-oil viscosity, write the number as \"{n} cSt @ 40 °C\". Treat mm2/s as equivalent to cSt.",
+   "flag_when": "When the viscosity cannot be converted or does not provide a recognizable numeric value, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "base_oil_viscosity",
+   "aliases": [
+    "Base Oil Viscosity",
+    "Base Viscosity",
+    "Oil Viscosity",
+    "Viscosity at 40 °C",
+    "cSt @ 40 °C"
+   ],
+   "rules": "[Fields at a glance] GRS-3: 'base_oil_viscosity'; Base Oil Viscosity; Base Viscosity; Oil Viscosity: '{n} cSt @ 40 °C'\nGRS-3 base_oil_viscosity\nIF ISO VG n base THEN n cSt @ 40 °C\nmm2/s and mm2/s equal cSt\n[Before → after] Base Oil Viscosity: ISO VG 220 base: 'base_oil_viscosity: 220 cSt @ 40 °C'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Yes",
+     "accepted": [
+      "EP",
+      "EP2"
+     ]
+    },
+    {
+     "value": "No",
+     "accepted": [
+      "non-EP"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Write Yes when the value is EP or contains EP; write No for a non-EP value.",
+   "flag_when": "When the value is neither EP nor non-EP, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "ep_additive",
+   "aliases": [
+    "EP",
+    "Extreme Pressure",
+    "EP Additive",
+    "Extreme Pressure Additive"
+   ],
+   "rules": "BEFORE: 'EP2 (for ep_additive)'; AFTER: 'Yes'\n[Fields at a glance] GRS-4: 'ep_additive'; EP; Extreme Pressure; EP Additive: 'Yes | No'\nGRS-4 ep_additive\nIF value is EP or contains EP THEN Yes; IF non-EP THEN No\n[Before → after] EP: EP: 'ep_additive: Yes'\nQ. The value is right but in the wrong field. Can I move it?\nA. No (GR8). Translate what is in the row. If 'EP2' arrives in the nlgi_grade field, write NLGI 2 there; whoever sends ep_additive separately will get Yes on that row.",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "kg",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "g",
+     "factor": 0.001,
+     "offset": 0
+    },
+    {
+     "from": "lb",
+     "factor": 0.4536,
+     "offset": 0
+    },
+    {
+     "from": "oz",
+     "factor": 0.02835,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert grams, pounds, or ounces to kilograms, then round to one decimal place and write the result with a space before kg.",
+   "flag_when": "When the pack size cannot be converted to kilograms, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "Grease pack_size",
+   "aliases": [
+    "Pack",
+    "Pack Size",
+    "Packaging",
+    "Container",
+    "Grease Pack",
+    "Grease Container"
+   ],
+   "rules": "[Fields at a glance] GRS-5: 'pack_size'; Pack; Pack Size; Packaging: '{n} kg'\nGRS-5 pack_size\nGrease is sold by weight: g / 1000, lb x 0.4536, oz x 0.02835; one decimal\n[Before → after] Pack: 400 g cartridge: 'pack_size: 0.4 kg'\n[Before → after] Pack: 35 lb pail: 'pack_size: 15.9 kg'\n[Before → after] Pack Size: 14 oz tube: 'pack_size: 0.4 kg'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Hydraulic",
+     "accepted": [
+      "hydraulic",
+      "HYD"
+     ]
+    },
+    {
+     "value": "Lube Oil",
+     "accepted": [
+      "LO",
+      "lube",
+      "lube oil"
+     ]
+    },
+    {
+     "value": "Fuel",
+     "accepted": [
+      "fuel",
+      "diesel fuel"
+     ]
+    },
+    {
+     "value": "Air Intake",
+     "accepted": [
+      "inlet air",
+      "air intake",
+      "intake"
+     ]
+    },
+    {
+     "value": "Coalescer",
+     "accepted": [
+      "coalescing",
+      "coalescer"
+     ]
+    },
+    {
+     "value": "Gas",
+     "accepted": [
+      "gas",
+      "fuel gas"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each recognized input to its corresponding filter-service picklist value and write the value exactly as listed.",
+   "flag_when": "When the value is not in the picklist, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "filter_service",
+   "aliases": [
+    "Filter Service",
+    "Service",
+    "Application",
+    "Filter Type",
+    "Use",
+    "Fluid Service"
+   ],
+   "rules": "[Fields at a glance] FLT-1: 'filter_service'; Service; Application; Filter Type: 'Picklist value'\nFLT-1 filter_service\nIF value IN (hydraulic; HYD) THEN write \"Hydraulic\"\nIF value IN (LO; lube; lube oil) THEN write \"Lube Oil\"\nIF value IN (fuel; diesel fuel) THEN write \"Fuel\"\nIF value IN (inlet air; air intake; intake) THEN write \"Air Intake\"\nIF value IN (coalescing; coalescer) THEN write \"Coalescer\"\nIF value IN (gas; fuel gas) THEN write \"Gas\"\n[Before → after] Service: LO: 'filter_service: Lube Oil'\n[Before → after] Application: inlet air: 'filter_service: Air Intake'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "µm",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "micron",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "microns",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "u",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "um",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "µ",
+     "factor": 1,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Write the numeric value followed by one space and µm. Normalize micron, microns, u, um, and µ to µm; use at most one decimal and omit trailing zeros. If the value is n/a, write TBD.",
+   "flag_when": "If the value is n/a, write TBD. If the value does not match the required numeric format, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "micron_rating",
+   "aliases": [
+    "Micron",
+    "Microns",
+    "Micron Rating",
+    "Rating",
+    "Filtration Rating",
+    "Particle Rating"
+   ],
+   "rules": "[Fields at a glance] FLT-2: 'micron_rating'; Micron; Micron Rating; Rating; Filtration Rating: '{n} µm'\nFLT-2 micron_rating\nmicron, microns, u, um, µ all become µm\n[Before → after] Micron: 10 micron: 'micron_rating: 10 μm'\n[Before → after] Rating: 25u: 'micron_rating: 25 μm'\n[Before → after] Micron Rating: n/a: 'micron_rating: TBD'",
+   "verified_fixes": [
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "Не указано предусмотренное правилом исключение для значения n/a: его нужно записывать как TBD, а не обрабатывать как обычное числовое значение.",
+     "quote": "[Before → after] Micron Rating: n/a: 'micron_rating: TBD'"
+    },
+    {
+     "field": "flag_when",
+     "variant": "",
+     "problem": "Условие отправляет любое нечисловое значение в CHECK, поэтому не учитывает специальное преобразование n/a в TBD.",
+     "quote": "[Before → after] Micron Rating: n/a: 'micron_rating: TBD'"
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Absolute",
+     "accepted": [
+      "abs",
+      "absolute",
+      "beta 200",
+      "beta 1000",
+      "B10>=200"
+     ]
+    },
+    {
+     "value": "Nominal",
+     "accepted": [
+      "nom",
+      "nominal"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map abs, absolute, beta 200, beta 1000, and B10>=200 to Absolute; map nom and nominal to Nominal.",
+   "flag_when": "If the value is not in the mapping, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "rating_basis",
+   "aliases": [
+    "Beta",
+    "Rating Basis",
+    "Efficiency",
+    "Absolute",
+    "Nominal",
+    "Filtration Basis"
+   ],
+   "rules": "[Fields at a glance] FLT-3: 'rating_basis'; Beta; Rating Basis; Efficiency: 'Absolute | Nominal'\nFLT-3 rating_basis\nIF value IN (abs; absolute; beta 200; beta 1000; B10>=200) THEN write \"Absolute\"\nIF value IN (nom; nominal) THEN write \"Nominal\"\n[Before → after] Beta: beta 200: 'rating_basis: Absolute'",
+   "verified_fixes": [
+    {
+     "field": "values",
+     "variant": "",
+     "problem": "В accepted пропущена принятая форма входного значения «beta 1000».",
+     "quote": "IF value IN (abs; absolute; beta 200; beta 1000; B10>=200) THEN write \"Absolute\""
+    },
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "В инструкции пропущено преобразование beta 1000 в Absolute.",
+     "quote": "IF value IN (abs; absolute; beta 200; beta 1000; B10>=200) THEN write \"Absolute\""
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Glass Fiber",
+     "accepted": [
+      "microglass",
+      "glass fibre",
+      "fiberglass"
+     ]
+    },
+    {
+     "value": "Cellulose",
+     "accepted": [
+      "paper",
+      "cellulose"
+     ]
+    },
+    {
+     "value": "Stainless Steel Mesh",
+     "accepted": [
+      "SS wire mesh",
+      "wire mesh",
+      "SS mesh"
+     ]
+    },
+    {
+     "value": "Synthetic",
+     "accepted": [
+      "synthetic",
+      "polyester"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each accepted input to its corresponding picklist value and preserve the output spelling exactly.",
+   "flag_when": "If the value is not in the mapping, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "media",
+   "aliases": [
+    "Media",
+    "Filter Media",
+    "Element Material",
+    "Filter Material",
+    "Glass Fiber",
+    "Cellulose",
+    "Stainless Steel Mesh"
+   ],
+   "rules": "[Fields at a glance] FLT-4: 'media'; Media; Filter Media; Element Material: 'Picklist value'\nIF value IN (microglass; glass fibre; fiberglass) THEN write \"Glass Fiber\"\nIF value IN (paper; cellulose) THEN write \"Cellulose\"\nIF value IN (SS wire mesh; wire mesh; SS mesh) THEN write \"Stainless Steel Mesh\"\nIF value IN (synthetic; polyester) THEN write \"Synthetic\" psid x 0.0689476, one decimal\n[Before → after] Media: microglass: 'media: Glass Fiber'\n[Before → after] Media: paper: 'media: Cellulose'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "bar",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "psi",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "psid",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "psig",
+     "factor": 0.0689476,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert psi, psid, or psig to bar using the documented factor, then write the result with one space before bar. Use at most one decimal and omit trailing zeros.",
+   "flag_when": "If the value cannot be converted or does not match the required numeric format, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "collapse_pressure",
+   "aliases": [
+    "Collapse",
+    "Collapse Pressure",
+    "Burst",
+    "Differential Rating",
+    "Collapse Rating",
+    "Differential Pressure"
+   ],
+   "rules": "[Fields at a glance] FLT-5: 'collapse_pressure'; Collapse; Collapse Pressure; Burst; Differential Rating: '{n} bar'\n[Before → after] Collapse: 150 psid: 'collapse_pressure: 10.3 bar'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "NBR",
+     "accepted": [
+      "nitrile",
+      "Buna-N",
+      "Buna"
+     ]
+    },
+    {
+     "value": "HNBR",
+     "accepted": [
+      "hydrogenated nitrile",
+      "HSN"
+     ]
+    },
+    {
+     "value": "FKM",
+     "accepted": [
+      "Viton",
+      "fluorocarbon",
+      "FPM"
+     ]
+    },
+    {
+     "value": "FFKM",
+     "accepted": [
+      "Kalrez",
+      "perfluoroelastomer",
+      "perfluoro"
+     ]
+    },
+    {
+     "value": "EPDM",
+     "accepted": [
+      "EPR",
+      "ethylene propylene"
+     ]
+    },
+    {
+     "value": "VMQ",
+     "accepted": [
+      "silicone",
+      "Si"
+     ]
+    },
+    {
+     "value": "FEPM",
+     "accepted": [
+      "Aflas",
+      "TFE/P"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each accepted seal-material input to its corresponding O-Ring material code and preserve the code exactly.",
+   "flag_when": "If the value is missing, write TBD; otherwise, if the value is not in the mapping, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "seal_material",
+   "aliases": [
+    "Seals",
+    "Seal Material",
+    "Gasket",
+    "Seal Compound",
+    "Filter Seal",
+    "NBR",
+    "HNBR",
+    "FKM"
+   ],
+   "rules": "[Fields at a glance] FLT-6: 'seal_material'; Seals; Seal Material; Gasket: 'Picklist value (same as O-Ring material)'\nIF value IN (nitrile; Buna-N; Buna) THEN write \"NBR\"\nIF value IN (hydrogenated nitrile; HSN) THEN write \"HNBR\"\nIF value IN (Viton; fluorocarbon; FPM) THEN write \"FKM\"\nIF value IN (Kalrez; perfluoroelastomer; perfluoro) THEN write \"FFKM\"\nIF value IN (EPR; ethylene propylene) THEN write \"EPDM\"\nIF value IN (silicone; Si) THEN write \"VMQ\"\nIF value IN (Aflas; TFE/P) THEN write \"FEPM\"\n[Before → after] Seals: Buna-N: 'seal_material: NBR'\nBefore → after (columns: BEFORE; AFTER)",
+   "verified_fixes": [
+    {
+     "field": "flag_when",
+     "variant": "",
+     "problem": "The rule sends every value not found in the mapping to CHECK:, but missing values must be written as TBD rather than CHECK:.",
+     "quote": "Empty cells, dashes, n/a, ?, 'unknown', 'see drawing' all become TBD (capitals)."
+    }
+   ]
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "For metric threads, write M followed by the diameter; omit a coarse pitch and retain a fine pitch without spaces, such as M16 or M16x1.5. For inch threads, write the fraction followed by the TPI and UNC; add the table's UNC TPI when absent and assume UNC when a TPI is present without a series.",
+   "flag_when": "If the thread cannot be assembled into the required metric or inch format, write CHECK: followed by the original text.",
+   "variants": [
+    {
+     "applies_to": "metric with coarse pitch",
+     "instructions": "Write M followed by the diameter; omit the coarse pitch without spaces."
+    },
+    {
+     "applies_to": "metric with fine pitch",
+     "instructions": "Write M followed by the diameter and retain the fine pitch without spaces."
+    },
+    {
+     "applies_to": "inch fraction without TPI",
+     "instructions": "Write the fraction followed by the UNC TPI from the table and UNC."
+    },
+    {
+     "applies_to": "inch with TPI but no series",
+     "instructions": "Write the fraction followed by the TPI and UNC; assume UNC when the series is absent."
+    }
+   ],
+   "attribute": "thread",
+   "aliases": [
+    "Size",
+    "Thread",
+    "Thread Size",
+    "Dia",
+    "Thread Diameter",
+    "UNC",
+    "TPI"
+   ],
+   "rules": "[Fields at a glance] BLT-1: 'thread'; Size; Thread; Thread Size; Dia: 'M{d}{x{pitch}} | {frac}-{t}pi}'\nIF metric with coarse pitch (M16 x 2.0, M12x1.75) THEN drop the pitch: M16\nIF metric with fine pitch THEN keep it: M16x1.5\nIF inch fraction without TPI THEN add the UNC TPI from the table on page 20: 5/8\" UNC -> 5/8-11 UNC\nIF inch with TPI but no series THEN assume UNC: 1/2-13 -> 1/2-13 UNC inch x 25.4, one decimal\n[Before → after] Size: M16 x 2.0: 'thread: M16'\n[Before → after] Thread: M16x1.5: 'thread: M16x1.5'\n[Before → after] Thread: 5/8\" UNC: 'thread: 5/8-11 UNC'\n[Before → after] Thread Size: 1/2-13: 'thread: 1/2-13 UNC'\nUNC threads per inch (columns: Diameter, in; TPI (UNC))\n[UNC threads per inch] Diameter, in: '1/4'; TPI (UNC): '20'\n[UNC threads per inch] Diameter, in: '5/16'; TPI (UNC): '18'\n[UNC threads per inch] Diameter, in: '3/8'; TPI (UNC): '16'\n[UNC threads per inch] Diameter, in: '1/2'; TPI (UNC): '13'\n[UNC threads per inch] Diameter, in: '5/8'; TPI (UNC): '11'\n[UNC threads per inch] Diameter, in: '3/4'; TPI (UNC): '10'\n[UNC threads per inch] Diameter, in: '7/8'; TPI (UNC): '9'\n[UNC threads per inch] Diameter, in: '1'; TPI (UNC): '8'",
+   "verified_fixes": [
+    {
+     "field": "variants",
+     "variant": "",
+     "problem": "Правила для метрической резьбы с крупным шагом, метрической резьбы с мелким шагом и двух случаев дюймовой резьбы должны быть разделены на варианты по условию применения.",
+     "quote": "IF metric with coarse pitch (M16 x 2.0, M12x1.75) THEN drop the pitch: M16"
+    }
+   ]
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "number_pattern": "0.#",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "ft",
+     "factor": 304.8,
+     "offset": 0
+    },
+    {
+     "from": "'",
+     "factor": 304.8,
+     "offset": 0
+    },
+    {
+     "from": "m",
+     "factor": 1000,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert inch, foot, and metre values to millimetres using the specified factors. Write the metric result with at most one decimal place, dropping trailing zeros, with one space before mm.",
+   "flag_when": "",
+   "variants": [],
+   "attribute": "length",
+   "aliases": [
+    "Length",
+    "L",
+    "Bolt Length",
+    "Fastener Length"
+   ],
+   "rules": "[Fields at a glance] BLT-2: 'length'; Length; L; Bolt Length: '{n} mm'\n[Before → after] Length: 2 in: 'length: 50.8 mm'\n[Before → after] Length: 70mm: 'length: 70 mm'",
+   "verified_fixes": [
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "Инструкция охватывает только дюймы, но правила также требуют преобразовывать футы в миллиметры.",
+     "quote": "If you see: 'foot (ft, ')'; Write in: 'm'; Do this: 'x 0.3048'"
+    },
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "Инструкция охватывает только дюймы, но правила также требуют преобразовывать метры в миллиметры для длин.",
+     "quote": "If you see: 'metre (m)'; Write in: 'mm'; Do this: 'x 1000 (lengths of belts, hoses, gloves)'"
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "8.8",
+     "accepted": [
+      "8.8",
+      "cl 8.8",
+      "class 8.8"
+     ]
+    },
+    {
+     "value": "10.9",
+     "accepted": [
+      "10.9",
+      "10.9 class"
+     ]
+    },
+    {
+     "value": "12.9",
+     "accepted": [
+      "12.9"
+     ]
+    },
+    {
+     "value": "A2-70",
+     "accepted": [
+      "A2 70",
+      "304 SS 70"
+     ]
+    },
+    {
+     "value": "A4-80",
+     "accepted": [
+      "A4 80",
+      "316 SS 80"
+     ]
+    },
+    {
+     "value": "SAE Grade 5",
+     "accepted": [
+      "Gr5",
+      "grade 5"
+     ]
+    },
+    {
+     "value": "SAE Grade 8",
+     "accepted": [
+      "Gr8",
+      "grade 8"
+     ]
+    },
+    {
+     "value": "ASTM A325",
+     "accepted": [
+      "A325"
+     ]
+    },
+    {
+     "value": "ASTM A490",
+     "accepted": [
+      "A490"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each recognized grade or class name to its specified picklist value and preserve the capitalization and punctuation of the output.",
+   "flag_when": "The value does not match a listed grade or class.",
+   "variants": [],
+   "attribute": "strength_grade",
+   "aliases": [
+    "Grade",
+    "Property Class",
+    "Class",
+    "Strength",
+    "Bolt Grade",
+    "SAE Grade",
+    "ASTM Grade"
+   ],
+   "rules": "[Fields at a glance] BLT-3: 'strength_grade'; Grade; Property Class; Class; Strength: 'Picklist value'\nIF value IN (8.8; cl 8.8; class 8.8) THEN write \"8.8\"\nIF value IN (10.9; 10.9 class) THEN write \"10.9\"\nIF value IN (12.9) THEN write \"12.9\"\nIF value IN (A2 70; 304 SS 70) THEN write \"A2-70\"\nIF value IN (A4 80; 316 SS 80) THEN write \"A4-80\"\nIF value IN (Gr5; grade 5) THEN write \"SAE Grade 5\"\nIF value IN (Gr8; grade 8) THEN write \"SAE Grade 8\"\nIF value IN (A325) THEN write \"ASTM A325\"\nIF value IN (A490) THEN write \"ASTM A490\"\n[Before → after] Grade: Gr8: 'strength_grade: SAE Grade 8'\n[Before → after] Property Class: A4 80: 'strength_grade: A4-80'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "ISO 4014",
+     "accepted": [
+      "DIN 931",
+      "part thread",
+      "partially threaded"
+     ]
+    },
+    {
+     "value": "ISO 4017",
+     "accepted": [
+      "DIN 933",
+      "fully threaded",
+      "full thread"
+     ]
+    },
+    {
+     "value": "ASME B18.2.1",
+     "accepted": [
+      "ANSI B18.2.1",
+      "B18.2.1"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each recognized standard name or threading description to the specified standard value.",
+   "flag_when": "The value does not match a listed standard or description.",
+   "variants": [],
+   "attribute": "standard",
+   "aliases": [
+    "Standard",
+    "Spec",
+    "Norm",
+    "Bolt Standard",
+    "Thread Standard"
+   ],
+   "rules": "[Fields at a glance] BLT-4: 'standard'; Standard; Spec; Norm: 'Picklist value'\nIF value IN (DIN 931; part thread; partially threaded) THEN write \"ISO 4014\"\nIF value IN (DIN 933; fully threaded; full thread) THEN write \"ISO 4017\"\nIF value IN (ANSI B18.2.1; B18.2.1) THEN write \"ASME B18.2.1\"\n[Before → after] Standard: DIN 933: 'standard: ISO 4017'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Plain",
+     "accepted": [
+      "self colour",
+      "plain",
+      "black"
+     ]
+    },
+    {
+     "value": "Zinc Plated",
+     "accepted": [
+      "BZP",
+      "ZP",
+      "electro-galvanized",
+      "zinc plated"
+     ]
+    },
+    {
+     "value": "Hot-Dip Galvanized",
+     "accepted": [
+      "HDG",
+      "galvanised",
+      "hot dip"
+     ]
+    },
+    {
+     "value": "Zinc Flake",
+     "accepted": [
+      "zinc flake"
+     ]
+    },
+    {
+     "value": "Black Oxide",
+     "accepted": [
+      "black oxide"
+     ]
+    },
+    {
+     "value": "PTFE Coated",
+     "accepted": [
+      "PTFE",
+      "Xylan",
+      "fluoropolymer"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each recognized finish, coating, or surface description to the specified picklist value, preserving the output capitalization and punctuation.",
+   "flag_when": "The value does not match a listed finish, coating, or surface; write CHECK: followed by a space and the original text.",
+   "variants": [],
+   "attribute": "finish",
+   "aliases": [
+    "Finish",
+    "Coating",
+    "Surface",
+    "Surface Finish",
+    "Bolt Finish",
+    "Plating"
+   ],
+   "rules": "[Fields at a glance] BLT-5: 'finish'; Finish; Coating; Surface: 'Picklist value'\nIF value IN (self colour; plain; black) THEN write \"Plain\"\nIF value IN (BZP; ZP; electro-galvanized; zinc plated) THEN write \"Zinc Plated\"\nIF value IN (HDG; galvanised; hot dip) THEN write \"Hot-Dip Galvanized\"\nIF value IN (zinc flake) THEN write \"Zinc Flake\"\nIF value IN (black oxide) THEN write \"Black Oxide\"\nIF value IN (PTFE; Xylan; fluoropolymer) THEN write \"PTFE Coated\"\nBefore → after (columns: BEFORE; AFTER)\n[Before → after] Finish: BZP: 'finish: Zinc Plated'\n[Before → after] Coating: HDG: 'finish: Hot-Dip Galvanized'",
+   "verified_fixes": [
+    {
+     "field": "flag_when",
+     "variant": "",
+     "problem": "Условие не включает значения атрибута Surface и не указывает требуемое действие для значения, не соответствующего списку.",
+     "quote": "If a value doesn't fit the field's picklist or format even after every rule in its chapter, write CHECK: followed by a space and the original text."
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "SAE 100R1AT",
+     "accepted": [
+      "R1AT",
+      "R1"
+     ]
+    },
+    {
+     "value": "SAE 100R2AT",
+     "accepted": [
+      "R2AT",
+      "R2"
+     ]
+    },
+    {
+     "value": "EN 853 1SN",
+     "accepted": [
+      "1SN"
+     ]
+    },
+    {
+     "value": "EN 853 2SN",
+     "accepted": [
+      "2SN"
+     ]
+    },
+    {
+     "value": "EN 856 4SP",
+     "accepted": [
+      "4SP"
+     ]
+    },
+    {
+     "value": "EN 856 4SH",
+     "accepted": [
+      "4SH"
+     ]
+    },
+    {
+     "value": "SAE 100R13",
+     "accepted": [
+      "R13"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Translate the written hose designation to its specified standard value. Do not substitute R2AT for 2SN or otherwise swap similar hose standards.",
+   "flag_when": "The value does not match a listed hose designation.",
+   "variants": [],
+   "attribute": "hose_standard",
+   "aliases": [
+    "Standard",
+    "Spec",
+    "Type",
+    "Hose Type",
+    "Hose Standard",
+    "Construction Standard",
+    "R1AT",
+    "R2AT",
+    "2SN"
+   ],
+   "rules": "[Fields at a glance] HSE-1: 'hose_standard'; Standard; Spec; Type; Hose Type: 'Picklist value'\nHSE-1 hose_standard\nIF value IN (R1AT; R1) THEN write \"SAE 100R1AT\"\nIF value IN (R2AT; R2) THEN write \"SAE 100R2AT\"\nIF value IN (1SN) THEN write \"EN 853 1SN\"\nIF value IN (2SN) THEN write \"EN 853 2SN\"\nIF value IN (4SP) THEN write \"EN 856 4SP\"\nIF value IN (4SH) THEN write \"EN 856 4SH\"\nIF value IN (R13) THEN write \"SAE 100R13\"\nWatch out! R2AT and 2SN are not the same standard. Translate what is written; never swap one for the other.\n[Before → after] Standard: 2SN: 'hose_standard: EN 853 2SN'\n[Before → after] Type: R2AT: 'hose_standard: SAE 100R2AT'\n[Before → after] Spec: 4SH: 'hose_standard: EN 856 4SH'\nQ. Should I correct R2AT to 2SN because they're 'the same hose'?\nA. Never. They're similar, not identical (see chapter 8).",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "-4",
+     "accepted": [
+      "-4",
+      "1/4",
+      "6.4",
+      "DN6"
+     ]
+    },
+    {
+     "value": "-5",
+     "accepted": [
+      "-5",
+      "5/16",
+      "7.9",
+      "DN8"
+     ]
+    },
+    {
+     "value": "-6",
+     "accepted": [
+      "-6",
+      "3/8",
+      "9.5",
+      "DN10"
+     ]
+    },
+    {
+     "value": "-8",
+     "accepted": [
+      "-8",
+      "1/2 in",
+      "1/2",
+      "12.7",
+      "12.7 mm",
+      "DN12",
+      "#8"
+     ]
+    },
+    {
+     "value": "-10",
+     "accepted": [
+      "-10",
+      "5/8",
+      "15.9",
+      "DN16"
+     ]
+    },
+    {
+     "value": "-12",
+     "accepted": [
+      "-12",
+      "3/4",
+      "19.1",
+      "DN19"
+     ]
+    },
+    {
+     "value": "-16",
+     "accepted": [
+      "-16",
+      "1",
+      "25.4",
+      "DN25"
+     ]
+    },
+    {
+     "value": "-20",
+     "accepted": [
+      "-20",
+      "1-1/4",
+      "31.8",
+      "DN31"
+     ]
+    },
+    {
+     "value": "-24",
+     "accepted": [
+      "-24",
+      "1-1/2",
+      "38.1",
+      "DN38"
+     ]
+    },
+    {
+     "value": "-32",
+     "accepted": [
+      "-32",
+      "2",
+      "50.8",
+      "DN51"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Look up the inch, mm, DN, or # size in the hydraulic hose dash-size table and write the corresponding dash value.",
+   "flag_when": "The value is not found in the dash-size table.",
+   "variants": [],
+   "attribute": "dash_size",
+   "aliases": [
+    "Size",
+    "ID",
+    "Hose Size",
+    "Dash Size",
+    "Dash",
+    "DN",
+    "Hose Dash"
+   ],
+   "rules": "[Fields at a glance] HSE-2: 'dash_size'; Size; ID; Hose Size; Dash Size: '{n}'\nHSE-2 dash_size\nLook up inch, mm or DN in the dash-size table (page 20): 1/2 in, 12.7 mm, DN12, #8 -> -8\n[Before → after] Size: 1/2 in: 'dash_size: -8'\n[Before → after] ID: DN12: 'dash_size: -8'\nHydraulic hose dash sizes (columns: Dash; Inch; mm; DN)\n[Hydraulic hose dash sizes] Dash: '-4'; Inch: '1/4'; mm: '6.4'; DN: 'DN6'\n[Hydraulic hose dash sizes] Dash: '-5'; Inch: '5/16'; mm: '7.9'; DN: 'DN8'\n[Hydraulic hose dash sizes] Dash: '-6'; Inch: '3/8'; mm: '9.5'; DN: 'DN10'\n[Hydraulic hose dash sizes] Dash: '-8'; Inch: '1/2'; mm: '12.7'; DN: 'DN12'\n[Hydraulic hose dash sizes] Dash: '-10'; Inch: '5/8'; mm: '15.9'; DN: 'DN16'\n[Hydraulic hose dash sizes] Dash: '-12'; Inch: '3/4'; mm: '19.1'; DN: 'DN19'\n[Hydraulic hose dash sizes] Dash: '-16'; Inch: '1'; mm: '25.4'; DN: 'DN25'\n[Hydraulic hose dash sizes] Dash: '-20'; Inch: '1-1/4'; mm: '31.8'; DN: 'DN31'\n[Hydraulic hose dash sizes] Dash: '-24'; Inch: '1-1/2'; mm: '38.1'; DN: 'DN38'\n[Hydraulic hose dash sizes] Dash: '-32'; Inch: '2'; mm: '50.8'; DN: 'DN51'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "unit": "bar",
+   "number_pattern": "0",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "psi",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "psid",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "psig",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "MPa",
+     "factor": 10,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert psi, psid, or psig to bar by multiplying by 0.0689476, or convert MPa to bar by multiplying by 10. Round the result to a whole number and write the number followed by one space and bar.",
+   "flag_when": "",
+   "variants": [],
+   "attribute": "max_working_pressure",
+   "aliases": [
+    "WP",
+    "Pressure",
+    "Working Pressure",
+    "MAWP",
+    "Maximum Working Pressure",
+    "Burst Pressure"
+   ],
+   "rules": "[Fields at a glance] HSE-3: 'max_working_pressure'; WP; Pressure; Working Pressure; MAWP: '{n} bar (whole number)'\nHSE-3 max_working_pressure\npsi x 0.0689476, MPa x 10, round to whole bar\n[Before → after] WP: 5000 psi: 'max_working_pressure: 345 bar'\n[Before → after] Pressure: 35 MPa: 'max_working_pressure: 350 bar'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "JIC 37° Female Swivel",
+     "accepted": [
+      "JIC female",
+      "JIC swivel",
+      "37 deg female"
+     ]
+    },
+    {
+     "value": "ORFS Female Swivel",
+     "accepted": [
+      "ORFS female",
+      "O-ring face seal"
+     ]
+    },
+    {
+     "value": "BSPP Female Swivel",
+     "accepted": [
+      "BSP female",
+      "BSPP female"
+     ]
+    },
+    {
+     "value": "NPT Male",
+     "accepted": [
+      "NPT male",
+      "MNPT"
+     ]
+    },
+    {
+     "value": "Flange Code 61",
+     "accepted": [
+      "SAE 3000 flange",
+      "code 61"
+     ]
+    },
+    {
+     "value": "Flange Code 62",
+     "accepted": [
+      "SAE 6000 flange",
+      "code 62"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each listed input to its corresponding picklist value and preserve the capitalization, spaces, and symbols of the written value.",
+   "flag_when": "If the value does not match a listed input, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "end_fitting",
+   "aliases": [
+    "Fitting",
+    "End Fitting",
+    "Ends",
+    "Coupling",
+    "Hose Fitting",
+    "JIC",
+    "ORFS",
+    "BSPP",
+    "NPT"
+   ],
+   "rules": "[Fields at a glance] HSE-4: 'end_fitting'; Fitting; End Fitting; Ends; Coupling: 'Picklist value'\nIF value IN (JIC female; JIC swivel; 37 deg female) THEN write \"JIC 37° Female Swivel\"\nIF value IN (ORFS female; O-ring face seal) THEN write \"ORFS Female Swivel\"\nIF value IN (BSP female; BSPP female) THEN write \"BSPP Female Swivel\"\nIF value IN (NPT male; MNPT) THEN write \"NPT Male\"\nIF value IN (SAE 3000 flange; code 61) THEN write \"Flange Code 61\"\nIF value IN (SAE 6000 flange; code 62) THEN write \"Flange Code 62\" m x 1000; inch x 25.4\n[Before → after] Fitting: JIC female: 'end_fitting: JIC 37° Female Swivel'\n[Before → after] End Fitting: SAE 6000 flange: 'end_fitting: Flange Code 62'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "unit": "mm",
+   "number_pattern": "0",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "m",
+     "factor": 1000,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert metres to millimetres by multiplying by 1000. Round to a whole number and write the number followed by one space and mm.",
+   "flag_when": "",
+   "variants": [],
+   "attribute": "assembly_length",
+   "aliases": [
+    "Length",
+    "Assembly Length",
+    "OAL",
+    "Overall Length",
+    "Hose Length"
+   ],
+   "rules": "[Fields at a glance] HSE-5: 'assembly_length'; Length; Assembly Length; OAL: '{n} mm (whole number)'\nBefore → after (columns: BEFORE; AFTER)\n[Before → after] Length: 1.5 m: 'assembly_length: 1500 mm'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "7",
+     "accepted": [
+      "S",
+      "small"
+     ]
+    },
+    {
+     "value": "8",
+     "accepted": [
+      "M",
+      "medium"
+     ]
+    },
+    {
+     "value": "9",
+     "accepted": [
+      "L",
+      "large"
+     ]
+    },
+    {
+     "value": "10",
+     "accepted": [
+      "XL",
+      "size 10"
+     ]
+    },
+    {
+     "value": "11",
+     "accepted": [
+      "XXL",
+      "2XL"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map S or small to 7, M or medium to 8, L or large to 9, XL to 10, and XXL or 2XL to 11. If the input is written as size n, write n.",
+   "flag_when": "If the value is not a recognized glove size, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "glove_size",
+   "aliases": [
+    "Size",
+    "Glove Size",
+    "Letter Size",
+    "EN ISO 21420 Size",
+    "Hand Size",
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
+   ],
+   "rules": "[Fields at a glance] GLV-1: 'glove_size'; Size; Glove Size: '{n} (EN ISO 21420 number)'\nGLV-1 glove_size\nIF value IN (S; small) THEN write \"7\"\nIF value IN (M; medium) THEN write \"8\"\nIF value IN (L; large) THEN write \"9\"\nIF value IN (XL) THEN write \"10\"\nIF value IN (XXL; 2XL) THEN write \"11\"\nIF value is 'size n' THEN n\n[Before → after] Size: L: 'glove_size: 9'\n[Before → after] Size: size 10: 'glove_size: 10'\nGlove sizes (columns: Letter; EN ISO 21420 size)\n[Glove sizes] Letter: 'S'; EN ISO 21420 size: '7'\n[Glove sizes] Letter: 'M'; EN ISO 21420 size: '8'\n[Glove sizes] Letter: 'L'; EN ISO 21420 size: '9'\n[Glove sizes] Letter: 'XL'; EN ISO 21420 size: '10'\n[Glove sizes] Letter: 'XXL'; EN ISO 21420 size: '11'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Cut A",
+     "accepted": []
+    },
+    {
+     "value": "Cut C",
+     "accepted": [
+      "ISO cut C",
+      "cut C"
+     ]
+    },
+    {
+     "value": "Cut D",
+     "accepted": [
+      "EN388 4X43D"
+     ]
+    },
+    {
+     "value": "Cut F",
+     "accepted": []
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "For an EN 388 code like 4X43D, use its fifth character as the letter in Cut A through Cut F. For ISO cut C or cut C, write Cut C.",
+   "flag_when": "For an old numeric level such as level 5 or an ANSI level such as A4, write CHECK: followed by the original text.",
+   "variants": [],
+   "attribute": "cut_level",
+   "aliases": [
+    "Cut",
+    "Cut Level",
+    "Cut Resistance",
+    "Cut Protection",
+    "EN 388 Cut Level",
+    "ANSI Cut Level"
+   ],
+   "rules": "[Fields at a glance] GLV-2: 'cut_level'; Cut; Cut Level; Cut Resistance: 'Cut A ... Cut F'\nGLV-2 cut_level\nIF value is an EN 388 code like 4X43D THEN the 5th character is the cut level: Cut D\nIF value is 'ISO cut C' or 'cut C' THEN Cut C\nIF value is an old numeric level (level 5) or an ANSI level (A4) THEN CHECK: (no reliable conversion)\n[Before → after] Cut Level: EN388 4X43D: 'cut_level: Cut D'\n[Before → after] Cut: ISO cut C: 'cut_level: Cut C'\n[Before → after] Cut Level: level 5: 'cut_level: CHECK: level 5'\nQ. Old cut level '5' - isn't that roughly Cut D?\nA. Roughly isn't good enough for PPE. Write CHECK: level 5.",
+   "verified_fixes": [
+    {
+     "field": "values",
+     "variant": "",
+     "problem": "Пропущены допустимые значения Cut B и Cut E.",
+     "quote": "[Fields at a glance] GLV-2: 'cut_level'; Cut; Cut Level; Cut Resistance: 'Cut A ... Cut F'"
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Nitrile",
+     "accepted": [
+      "nitrile"
+     ]
+    },
+    {
+     "value": "Latex",
+     "accepted": [
+      "latex",
+      "natural rubber"
+     ]
+    },
+    {
+     "value": "Neoprene",
+     "accepted": [
+      "neoprene",
+      "chloroprene"
+     ]
+    },
+    {
+     "value": "Leather",
+     "accepted": [
+      "leather",
+      "cowhide",
+      "goatskin"
+     ]
+    },
+    {
+     "value": "HPPE",
+     "accepted": [
+      "Dyneema",
+      "HPPE",
+      "UHMWPE"
+     ]
+    },
+    {
+     "value": "Aramid",
+     "accepted": [
+      "Kevlar",
+      "aramid",
+      "para-aramid"
+     ]
+    },
+    {
+     "value": "PVC",
+     "accepted": [
+      "PVC"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each listed input to its corresponding generic material value and write the value exactly as shown.",
+   "flag_when": "If the material is not a listed input, write CHECK: followed by a space and the original text.",
+   "variants": [],
+   "attribute": "glove_material",
+   "aliases": [
+    "Material",
+    "Shell",
+    "Liner",
+    "Glove Material",
+    "Glove Shell",
+    "Nitrile",
+    "HPPE",
+    "Aramid"
+   ],
+   "rules": "[Fields at a glance] GLV-3: 'glove_material'; Material; Shell; Liner; Glove Material: 'Picklist value'\nGLV-3 glove_material\nIF value IN (nitrile) THEN write \"Nitrile\"\nIF value IN (latex; natural rubber) THEN write \"Latex\"\nIF value IN (neoprene; chloroprene) THEN write \"Neoprene\"\nIF value IN (leather; cowhide; goatskin) THEN write \"Leather\"\nIF value IN (Dyneema; HPPE; UHMWPE) THEN write \"HPPE\"\nIF value IN (Kevlar; aramid; para-aramid) THEN write \"Aramid\"\nIF value IN (PVC) THEN write \"PVC\"\n[Before → after] Material: Kevlar: 'glove_material: Aramid'\n[Before → after] Shell: Dyneema: 'glove_material: HPPE'\nQ. A brand name is the only thing I have (Viton, Kevlar, Aflas).\nA. Several brand names are listed as accepted inputs and translate to the generic material. If a brand isn't listed, write CHECK: with the brand name.",
+   "verified_fixes": [
+    {
+     "field": "flag_when",
+     "variant": "",
+     "problem": "Не указано обязательное наличие пробела после «CHECK:» перед исходным текстом.",
+     "quote": "If a value doesn't fit the field's picklist or format even after every rule in its chapter, write CHECK: followed by a space and the original text."
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Nitrile Palm",
+     "accepted": [
+      "sandy nitrile",
+      "nitrile palm",
+      "foam nitrile"
+     ]
+    },
+    {
+     "value": "PU Palm",
+     "accepted": [
+      "PU coated palm",
+      "polyurethane palm"
+     ]
+    },
+    {
+     "value": "Latex Crinkle",
+     "accepted": [
+      "crinkle latex"
+     ]
+    },
+    {
+     "value": "None",
+     "accepted": [
+      "uncoated",
+      "none"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Map each listed input to its corresponding picklist value. If the value is missing, write TBD; if it cannot be mapped, write CHECK: followed by the original text.",
+   "flag_when": "If the value is missing or cannot be mapped to the picklist.",
+   "variants": [],
+   "attribute": "coating",
+   "aliases": [
+    "Coating",
+    "Palm Coating",
+    "Dip",
+    "Glove Coating",
+    "Palm Dip",
+    "Nitrile Palm",
+    "PU Palm"
+   ],
+   "rules": "[Fields at a glance] GLV-4: 'coating'; Coating; Palm Coating; Dip: 'Picklist value'\nGLV-4 coating\nIF value IN (sandy nitrile; nitrile palm; foam nitrile) THEN write \"Nitrile Palm\"\nIF value IN (PU coated palm; polyurethane palm) THEN write \"PU Palm\"\nIF value IN (crinkle latex) THEN write \"Latex Crinkle\"\nIF value IN (uncoated; none) THEN write \"None\"\n[Before → after] Coating: PU coated palm: 'coating: PU Palm'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "quantity",
+   "unit": "mm",
+   "number_pattern": "0",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [
+    {
+     "from": "inch",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert inch values to millimetres by multiplying by 25.4, then round to a whole millimetre. Write the result as a number followed by one space and mm.",
+   "flag_when": "If the value is missing or cannot be parsed as a length.",
+   "variants": [],
+   "attribute": "cuff_length",
+   "aliases": [
+    "Length",
+    "Cuff Length",
+    "Glove Length",
+    "Cuff Size",
+    "Cuff Height"
+   ],
+   "rules": "[Fields at a glance] GLV-5: 'cuff_length'; Length; Cuff Length; Glove Length: '{n} mm (whole number)'\nGLV-5 cuff_length\ninch x 25.4, round to whole mm\n[Before → after] Length: 12 in: 'cuff_length: 305 mm'",
+   "verified_fixes": []
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Yes",
+     "accepted": [
+      "TPR back",
+      "impact",
+      "EN 388 'P' marking"
+     ]
+    },
+    {
+     "value": "No",
+     "accepted": []
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "number_pattern": "",
+   "locale": "en",
+   "rounding": "half_up",
+   "rounding_scope": "all",
+   "unit_space": true,
+   "number_format": "decimal",
+   "conversions": [],
+   "series": [],
+   "instructions": "Write Yes when the value indicates TPR back, impact, or an EN 388 'P' marking. Otherwise use the listed picklist value when applicable; if the value cannot be mapped, write CHECK: followed by the original text.",
+   "flag_when": "If the value is missing or cannot be mapped to Yes or No.",
+   "variants": [],
+   "attribute": "impact_protection",
+   "aliases": [
+    "Impact",
+    "Impact Protection",
+    "Back of Hand",
+    "Impact Rating",
+    "TPR Protection"
+   ],
+   "rules": "[Fields at a glance] GLV-6: 'impact_protection'; Impact; Impact Protection; Back of Hand: 'Yes | No'\nGLV-6 impact_protection\nIF TPR back, impact, EN 388 'P' marking THEN Yes\n[Before → after] Impact: TPR back: 'impact_protection: Yes'",
+   "verified_fixes": [
+    {
+     "field": "instructions",
+     "variant": "",
+     "problem": "The condition is written as 'impact protection' instead of the rule's specified 'impact'.",
+     "quote": "IF TPR back, impact, EN 388 'P' marking THEN Yes"
+    }
+   ]
+  }
+ ]
+}

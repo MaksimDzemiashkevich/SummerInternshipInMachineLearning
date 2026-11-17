@@ -1,0 +1,3021 @@
+{
+  "lists": [
+    {
+      "group": "designation",
+      "attribute": "designation",
+      "global": false,
+      "title": "BRG-1 designation",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "2RS1",
+          "value": "-2RS"
+        },
+        {
+          "form": "2RSH",
+          "value": "-2RS"
+        },
+        {
+          "form": "2RSR",
+          "value": "-2RS"
+        },
+        {
+          "form": "LLU",
+          "value": "-2RS"
+        },
+        {
+          "form": "DDU",
+          "value": "-2RS"
+        },
+        {
+          "form": "2RS",
+          "value": "-2RS"
+        },
+        {
+          "form": "ZZ",
+          "value": "-2Z"
+        },
+        {
+          "form": "2ZR",
+          "value": "-2Z"
+        },
+        {
+          "form": "2Z",
+          "value": "-2Z"
+        },
+        {
+          "form": "ZZC",
+          "value": "-2Z"
+        }
+      ]
+    },
+    {
+      "group": "bearing_type",
+      "attribute": "bearing_type",
+      "global": false,
+      "title": "BRG-2 bearing_type",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "DGBB",
+          "value": "Deep Groove Ball"
+        },
+        {
+          "form": "deep groove",
+          "value": "Deep Groove Ball"
+        },
+        {
+          "form": "radial ball",
+          "value": "Deep Groove Ball"
+        },
+        {
+          "form": "ACBB",
+          "value": "Angular Contact Ball"
+        },
+        {
+          "form": "angular contact",
+          "value": "Angular Contact Ball"
+        },
+        {
+          "form": "CRB",
+          "value": "Cylindrical Roller"
+        },
+        {
+          "form": "cylindrical",
+          "value": "Cylindrical Roller"
+        },
+        {
+          "form": "SRB",
+          "value": "Spherical Roller"
+        },
+        {
+          "form": "spherical",
+          "value": "Spherical Roller"
+        },
+        {
+          "form": "self-aligning roller",
+          "value": "Spherical Roller"
+        },
+        {
+          "form": "TRB",
+          "value": "Tapered Roller"
+        },
+        {
+          "form": "taper",
+          "value": "Tapered Roller"
+        },
+        {
+          "form": "tapered",
+          "value": "Tapered Roller"
+        },
+        {
+          "form": "thrust",
+          "value": "Thrust Ball"
+        }
+      ]
+    },
+    {
+      "group": "bearing seal_type",
+      "attribute": "seal_type",
+      "global": false,
+      "title": "",
+      "any_attribute": false,
+      "role": "register",
+      "pairs": [
+        {
+          "form": "rubber seals both sides",
+          "value": "2RS"
+        },
+        {
+          "form": "2RS1",
+          "value": "2RS"
+        },
+        {
+          "form": "LLU",
+          "value": "2RS"
+        },
+        {
+          "form": "sealed both sides",
+          "value": "2RS"
+        },
+        {
+          "form": "metal shields",
+          "value": "2Z"
+        },
+        {
+          "form": "shielded both sides",
+          "value": "2Z"
+        },
+        {
+          "form": "ZZ",
+          "value": "2Z"
+        },
+        {
+          "form": "one rubber seal",
+          "value": "RS"
+        },
+        {
+          "form": "RS1",
+          "value": "RS"
+        },
+        {
+          "form": "one shield",
+          "value": "Z"
+        },
+        {
+          "form": "no seals",
+          "value": "Open"
+        }
+      ]
+    },
+    {
+      "group": "internal_clearance",
+      "attribute": "internal_clearance",
+      "global": false,
+      "title": "",
+      "any_attribute": false,
+      "role": "register",
+      "pairs": [
+        {
+          "form": "less than normal",
+          "value": "C2"
+        },
+        {
+          "form": "normal",
+          "value": "CN"
+        },
+        {
+          "form": "standard",
+          "value": "CN"
+        },
+        {
+          "form": "C 3",
+          "value": "C3"
+        },
+        {
+          "form": "greater than normal",
+          "value": "C3"
+        }
+      ]
+    },
+    {
+      "group": "cage_material",
+      "attribute": "cage_material",
+      "global": false,
+      "title": "",
+      "any_attribute": false,
+      "role": "register",
+      "pairs": [
+        {
+          "form": "J",
+          "value": "Steel"
+        },
+        {
+          "form": "pressed steel",
+          "value": "Steel"
+        },
+        {
+          "form": "M",
+          "value": "Brass"
+        },
+        {
+          "form": "MA",
+          "value": "Brass"
+        },
+        {
+          "form": "machined brass",
+          "value": "Brass"
+        },
+        {
+          "form": "TN9",
+          "value": "Polyamide"
+        },
+        {
+          "form": "TN",
+          "value": "Polyamide"
+        },
+        {
+          "form": "nylon",
+          "value": "Polyamide"
+        },
+        {
+          "form": "PA66",
+          "value": "Polyamide"
+        }
+      ]
+    },
+    {
+      "group": "arrangement",
+      "attribute": "arrangement",
+      "global": false,
+      "title": "MSL-1 arrangement",
+      "any_attribute": false,
+      "role": "register",
+      "pairs": [
+        {
+          "form": "single",
+          "value": "Arrangement 1"
+        },
+        {
+          "form": "single seal",
+          "value": "Arrangement 1"
+        },
+        {
+          "form": "tandem",
+          "value": "Arrangement 2"
+        },
+        {
+          "form": "dual unpressurized",
+          "value": "Arrangement 2"
+        },
+        {
+          "form": "dual unpressurised",
+          "value": "Arrangement 2"
+        },
+        {
+          "form": "double",
+          "value": "Arrangement 3"
+        },
+        {
+          "form": "dual pressurized",
+          "value": "Arrangement 3"
+        },
+        {
+          "form": "double pressurized",
+          "value": "Arrangement 3"
+        },
+        {
+          "form": "back-to-back",
+          "value": "Arrangement 3"
+        }
+      ]
+    },
+    {
+      "group": "seal_category",
+      "attribute": "seal_category",
+      "global": false,
+      "title": "MSL-2 seal_category",
+      "any_attribute": false,
+      "role": "register",
+      "pairs": [
+        {
+          "form": "CAT2",
+          "value": "Category 2"
+        },
+        {
+          "form": "Cat. 2",
+          "value": "Category 2"
+        }
+      ]
+    },
+    {
+      "group": "mechanical seal_type",
+      "attribute": "seal_type",
+      "global": false,
+      "title": "MSL-3 seal_type",
+      "any_attribute": false,
+      "role": "register",
+      "pairs": [
+        {
+          "form": "pusher",
+          "value": "Type A"
+        },
+        {
+          "form": "O-ring pusher",
+          "value": "Type A"
+        },
+        {
+          "form": "rotating pusher",
+          "value": "Type A"
+        },
+        {
+          "form": "metal bellows",
+          "value": "Type B"
+        },
+        {
+          "form": "low temperature bellows",
+          "value": "Type B"
+        },
+        {
+          "form": "high temperature metal bellows",
+          "value": "Type C"
+        },
+        {
+          "form": "flexible graphite bellows",
+          "value": "Type C"
+        }
+      ]
+    },
+    {
+      "group": "face_combination",
+      "attribute": "face_combination",
+      "global": false,
+      "title": "",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "carbon graphite",
+          "value": "Carbon"
+        },
+        {
+          "form": "antimony carbon",
+          "value": "Carbon"
+        },
+        {
+          "form": "silicon carbide",
+          "value": "SiC"
+        },
+        {
+          "form": "SSiC",
+          "value": "SiC"
+        },
+        {
+          "form": "RBSiC",
+          "value": "SiC"
+        },
+        {
+          "form": "tungsten carbide",
+          "value": "TC"
+        },
+        {
+          "form": "WC",
+          "value": "TC"
+        }
+      ]
+    },
+    {
+      "group": "secondary_seal",
+      "attribute": "secondary_seal",
+      "global": false,
+      "title": "",
+      "any_attribute": false,
+      "role": "register",
+      "pairs": [
+        {
+          "form": "nitrile",
+          "value": "NBR"
+        },
+        {
+          "form": "Buna-N",
+          "value": "NBR"
+        },
+        {
+          "form": "Buna",
+          "value": "NBR"
+        },
+        {
+          "form": "hydrogenated nitrile",
+          "value": "HNBR"
+        },
+        {
+          "form": "HSN",
+          "value": "HNBR"
+        },
+        {
+          "form": "Viton",
+          "value": "FKM"
+        },
+        {
+          "form": "fluorocarbon",
+          "value": "FKM"
+        },
+        {
+          "form": "FPM",
+          "value": "FKM"
+        },
+        {
+          "form": "Kalrez",
+          "value": "FFKM"
+        },
+        {
+          "form": "perfluoroelastomer",
+          "value": "FFKM"
+        },
+        {
+          "form": "perfluoro",
+          "value": "FFKM"
+        },
+        {
+          "form": "EPR",
+          "value": "EPDM"
+        },
+        {
+          "form": "ethylene propylene",
+          "value": "EPDM"
+        },
+        {
+          "form": "silicone",
+          "value": "VMQ"
+        },
+        {
+          "form": "Si",
+          "value": "VMQ"
+        },
+        {
+          "form": "Aflas",
+          "value": "FEPM"
+        },
+        {
+          "form": "TFE/P",
+          "value": "FEPM"
+        }
+      ]
+    },
+    {
+      "group": "size_reference",
+      "attribute": "size_reference",
+      "global": false,
+      "title": "",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "214",
+          "value": "AS568-214"
+        },
+        {
+          "form": "-214",
+          "value": "AS568-214"
+        },
+        {
+          "form": "2-214",
+          "value": "AS568-214"
+        },
+        {
+          "form": "AS 568-214",
+          "value": "AS568-214"
+        }
+      ]
+    },
+    {
+      "group": "material",
+      "attribute": "material",
+      "global": false,
+      "title": "ORG-4 material",
+      "any_attribute": false,
+      "role": "register",
+      "pairs": [
+        {
+          "form": "nitrile",
+          "value": "NBR"
+        },
+        {
+          "form": "Buna-N",
+          "value": "NBR"
+        },
+        {
+          "form": "Buna",
+          "value": "NBR"
+        },
+        {
+          "form": "hydrogenated nitrile",
+          "value": "HNBR"
+        },
+        {
+          "form": "HSN",
+          "value": "HNBR"
+        },
+        {
+          "form": "Viton",
+          "value": "FKM"
+        },
+        {
+          "form": "fluorocarbon",
+          "value": "FKM"
+        },
+        {
+          "form": "FPM",
+          "value": "FKM"
+        },
+        {
+          "form": "Kalrez",
+          "value": "FFKM"
+        },
+        {
+          "form": "perfluoroelastomer",
+          "value": "FFKM"
+        },
+        {
+          "form": "perfluoro",
+          "value": "FFKM"
+        },
+        {
+          "form": "EPR",
+          "value": "EPDM"
+        },
+        {
+          "form": "ethylene propylene",
+          "value": "EPDM"
+        },
+        {
+          "form": "silicone",
+          "value": "VMQ"
+        },
+        {
+          "form": "Si",
+          "value": "VMQ"
+        },
+        {
+          "form": "Aflas",
+          "value": "FEPM"
+        },
+        {
+          "form": "TFE/P",
+          "value": "FEPM"
+        }
+      ]
+    },
+    {
+      "group": "aed_resistant",
+      "attribute": "aed_resistant",
+      "global": false,
+      "title": "RGD resistant, AED, ED, NORSOK M-710 or ISO 23936-2 → Yes",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "RGD resistant",
+          "value": "Yes"
+        },
+        {
+          "form": "AED",
+          "value": "Yes"
+        },
+        {
+          "form": "ED",
+          "value": "Yes"
+        },
+        {
+          "form": "NORSOK M-710",
+          "value": "Yes"
+        },
+        {
+          "form": "ISO 23936-2",
+          "value": "Yes"
+        }
+      ]
+    },
+    {
+      "group": "belt_section",
+      "attribute": "belt_section",
+      "global": false,
+      "title": "VBT-1 belt_section",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "13x8",
+          "value": "A"
+        },
+        {
+          "form": "13 x 8 mm",
+          "value": "A"
+        },
+        {
+          "form": "17x11",
+          "value": "B"
+        },
+        {
+          "form": "17 x 11 mm",
+          "value": "B"
+        },
+        {
+          "form": "22x14",
+          "value": "C"
+        },
+        {
+          "form": "32x19",
+          "value": "D"
+        },
+        {
+          "form": "cogged SPZ",
+          "value": "XPZ"
+        },
+        {
+          "form": "9N",
+          "value": "3V"
+        },
+        {
+          "form": "15N",
+          "value": "5V"
+        }
+      ]
+    },
+    {
+      "group": "construction",
+      "attribute": "construction",
+      "global": false,
+      "title": "VBT-3 construction",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "classical wrapped",
+          "value": "Wrapped"
+        },
+        {
+          "form": "envelope",
+          "value": "Wrapped"
+        },
+        {
+          "form": "cogged",
+          "value": "Raw Edge Cogged"
+        },
+        {
+          "form": "notched",
+          "value": "Raw Edge Cogged"
+        },
+        {
+          "form": "raw edge",
+          "value": "Raw Edge Cogged"
+        },
+        {
+          "form": "XP",
+          "value": "Raw Edge Cogged"
+        },
+        {
+          "form": "power band",
+          "value": "Banded"
+        },
+        {
+          "form": "joined",
+          "value": "Banded"
+        },
+        {
+          "form": "multi-belt",
+          "value": "Banded"
+        }
+      ]
+    },
+    {
+      "group": "viscosity_grade",
+      "attribute": "viscosity_grade",
+      "global": false,
+      "title": "VLB-1 viscosity_grade",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "VG46",
+          "value": "ISO VG 46"
+        },
+        {
+          "form": "ISO 46",
+          "value": "ISO VG 46"
+        },
+        {
+          "form": "ISO VG46",
+          "value": "ISO VG 46"
+        },
+        {
+          "form": "46 cSt",
+          "value": "ISO VG 46"
+        },
+        {
+          "form": "ISO 32",
+          "value": "ISO VG 32"
+        },
+        {
+          "form": "320 cSt",
+          "value": "ISO VG 320"
+        }
+      ]
+    },
+    {
+      "group": "base_oil",
+      "attribute": "base_oil",
+      "global": false,
+      "title": "LUB-2 base_oil",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "Group I",
+          "value": "Mineral"
+        },
+        {
+          "form": "Group II",
+          "value": "Mineral"
+        },
+        {
+          "form": "hydrocracked",
+          "value": "Group III"
+        },
+        {
+          "form": "synthetic hydrocarbon",
+          "value": "PAO"
+        },
+        {
+          "form": "polyalphaolefin",
+          "value": "PAO"
+        },
+        {
+          "form": "synthetic ester",
+          "value": "Ester"
+        },
+        {
+          "form": "polyglycol",
+          "value": "PAG"
+        },
+        {
+          "form": "polyalkylene glycol",
+          "value": "PAG"
+        }
+      ]
+    },
+    {
+      "group": "application",
+      "attribute": "application",
+      "global": false,
+      "title": "LUB-3 application",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "R&O turbine",
+          "value": "Turbine"
+        },
+        {
+          "form": "steam turbine",
+          "value": "Turbine"
+        },
+        {
+          "form": "AW hydraulic",
+          "value": "Hydraulic"
+        },
+        {
+          "form": "HM",
+          "value": "Hydraulic"
+        },
+        {
+          "form": "EP gear",
+          "value": "Gear"
+        },
+        {
+          "form": "industrial gear",
+          "value": "Gear"
+        },
+        {
+          "form": "screw compressor",
+          "value": "Compressor"
+        },
+        {
+          "form": "diesel",
+          "value": "Diesel Engine"
+        },
+        {
+          "form": "HDDO",
+          "value": "Diesel Engine"
+        },
+        {
+          "form": "engine oil",
+          "value": "Diesel Engine"
+        },
+        {
+          "form": "paper machine",
+          "value": "Circulating"
+        }
+      ]
+    },
+    {
+      "group": "pack_size",
+      "attribute": "pack_size",
+      "global": false,
+      "title": "LUB-5 pack_size",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "drum",
+          "value": "208 L"
+        },
+        {
+          "form": "55 gal drum",
+          "value": "208 L"
+        },
+        {
+          "form": "205 L drum",
+          "value": "208 L"
+        },
+        {
+          "form": "45 imp gal drum",
+          "value": "208 L"
+        },
+        {
+          "form": "5 gal pail",
+          "value": "18.9 L"
+        },
+        {
+          "form": "IBC",
+          "value": "1000 L"
+        },
+        {
+          "form": "tote",
+          "value": "1000 L"
+        }
+      ]
+    },
+    {
+      "group": "thickener",
+      "attribute": "thickener",
+      "global": false,
+      "title": "GRS-2 thickener",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "Li",
+          "value": "Lithium"
+        },
+        {
+          "form": "lithium soap",
+          "value": "Lithium"
+        },
+        {
+          "form": "Li complex",
+          "value": "Lithium Complex"
+        },
+        {
+          "form": "Li-X",
+          "value": "Lithium Complex"
+        },
+        {
+          "form": "LiX",
+          "value": "Lithium Complex"
+        },
+        {
+          "form": "Ca sulphonate",
+          "value": "Calcium Sulfonate"
+        },
+        {
+          "form": "CaS",
+          "value": "Calcium Sulfonate"
+        },
+        {
+          "form": "PU thickener",
+          "value": "Polyurea"
+        },
+        {
+          "form": "Al complex",
+          "value": "Aluminium Complex"
+        },
+        {
+          "form": "aluminum complex",
+          "value": "Aluminium Complex"
+        },
+        {
+          "form": "clay",
+          "value": "Bentonite"
+        },
+        {
+          "form": "organoclay",
+          "value": "Bentonite"
+        }
+      ]
+    },
+    {
+      "group": "ep_additive",
+      "attribute": "ep_additive",
+      "global": false,
+      "title": "GRS-4 ep_additive",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "EP",
+          "value": "Yes"
+        }
+      ]
+    },
+    {
+      "group": "filter_service",
+      "attribute": "filter_service",
+      "global": false,
+      "title": "FLT-1 filter_service",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "HYD",
+          "value": "Hydraulic"
+        },
+        {
+          "form": "LO",
+          "value": "Lube Oil"
+        },
+        {
+          "form": "lube",
+          "value": "Lube Oil"
+        },
+        {
+          "form": "diesel fuel",
+          "value": "Fuel"
+        },
+        {
+          "form": "inlet air",
+          "value": "Air Intake"
+        },
+        {
+          "form": "intake",
+          "value": "Air Intake"
+        },
+        {
+          "form": "coalescing",
+          "value": "Coalescer"
+        },
+        {
+          "form": "fuel gas",
+          "value": "Gas"
+        }
+      ]
+    },
+    {
+      "group": "micron_rating",
+      "attribute": "micron_rating",
+      "global": false,
+      "title": "Micron notation",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "micron",
+          "value": "µm"
+        },
+        {
+          "form": "microns",
+          "value": "µm"
+        },
+        {
+          "form": "u",
+          "value": "µm"
+        },
+        {
+          "form": "um",
+          "value": "µm"
+        },
+        {
+          "form": "µ",
+          "value": "µm"
+        }
+      ]
+    },
+    {
+      "group": "rating_basis",
+      "attribute": "rating_basis",
+      "global": false,
+      "title": "Rating basis mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "abs",
+          "value": "Absolute"
+        },
+        {
+          "form": "beta 200",
+          "value": "Absolute"
+        },
+        {
+          "form": "beta 1000",
+          "value": "Absolute"
+        },
+        {
+          "form": "B10>=200",
+          "value": "Absolute"
+        },
+        {
+          "form": "nom",
+          "value": "Nominal"
+        }
+      ]
+    },
+    {
+      "group": "media",
+      "attribute": "media",
+      "global": false,
+      "title": "Media mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "microglass",
+          "value": "Glass Fiber"
+        },
+        {
+          "form": "glass fibre",
+          "value": "Glass Fiber"
+        },
+        {
+          "form": "fiberglass",
+          "value": "Glass Fiber"
+        },
+        {
+          "form": "paper",
+          "value": "Cellulose"
+        },
+        {
+          "form": "SS wire mesh",
+          "value": "Stainless Steel Mesh"
+        },
+        {
+          "form": "wire mesh",
+          "value": "Stainless Steel Mesh"
+        },
+        {
+          "form": "SS mesh",
+          "value": "Stainless Steel Mesh"
+        },
+        {
+          "form": "polyester",
+          "value": "Synthetic"
+        }
+      ]
+    },
+    {
+      "group": "seal_material",
+      "attribute": "seal_material",
+      "global": false,
+      "title": "Seal material mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "nitrile",
+          "value": "NBR"
+        },
+        {
+          "form": "Buna-N",
+          "value": "NBR"
+        },
+        {
+          "form": "Buna",
+          "value": "NBR"
+        },
+        {
+          "form": "hydrogenated nitrile",
+          "value": "HNBR"
+        },
+        {
+          "form": "HSN",
+          "value": "HNBR"
+        },
+        {
+          "form": "Viton",
+          "value": "FKM"
+        },
+        {
+          "form": "fluorocarbon",
+          "value": "FKM"
+        },
+        {
+          "form": "FPM",
+          "value": "FKM"
+        },
+        {
+          "form": "Kalrez",
+          "value": "FFKM"
+        },
+        {
+          "form": "perfluoroelastomer",
+          "value": "FFKM"
+        },
+        {
+          "form": "perfluoro",
+          "value": "FFKM"
+        },
+        {
+          "form": "EPR",
+          "value": "EPDM"
+        },
+        {
+          "form": "ethylene propylene",
+          "value": "EPDM"
+        },
+        {
+          "form": "silicone",
+          "value": "VMQ"
+        },
+        {
+          "form": "Si",
+          "value": "VMQ"
+        },
+        {
+          "form": "Aflas",
+          "value": "FEPM"
+        },
+        {
+          "form": "TFE/P",
+          "value": "FEPM"
+        }
+      ]
+    },
+    {
+      "group": "thread",
+      "attribute": "thread",
+      "global": false,
+      "title": "Thread normalization",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "M16 x 2.0",
+          "value": "M16"
+        },
+        {
+          "form": "1/2-13",
+          "value": "1/2-13 UNC"
+        }
+      ]
+    },
+    {
+      "group": "thread",
+      "attribute": "thread",
+      "global": false,
+      "title": "UNC threads per inch",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "1/4",
+          "value": "20"
+        },
+        {
+          "form": "5/16",
+          "value": "18"
+        },
+        {
+          "form": "3/8",
+          "value": "16"
+        },
+        {
+          "form": "1/2",
+          "value": "13"
+        },
+        {
+          "form": "5/8",
+          "value": "11"
+        },
+        {
+          "form": "3/4",
+          "value": "10"
+        },
+        {
+          "form": "7/8",
+          "value": "9"
+        },
+        {
+          "form": "1",
+          "value": "8"
+        }
+      ]
+    },
+    {
+      "group": "strength_grade",
+      "attribute": "strength_grade",
+      "global": false,
+      "title": "Strength grade mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "cl 8.8",
+          "value": "8.8"
+        },
+        {
+          "form": "class 8.8",
+          "value": "8.8"
+        },
+        {
+          "form": "10.9 class",
+          "value": "10.9"
+        },
+        {
+          "form": "A2 70",
+          "value": "A2-70"
+        },
+        {
+          "form": "304 SS 70",
+          "value": "A2-70"
+        },
+        {
+          "form": "A4 80",
+          "value": "A4-80"
+        },
+        {
+          "form": "316 SS 80",
+          "value": "A4-80"
+        },
+        {
+          "form": "Gr5",
+          "value": "SAE Grade 5"
+        },
+        {
+          "form": "grade 5",
+          "value": "SAE Grade 5"
+        },
+        {
+          "form": "Gr8",
+          "value": "SAE Grade 8"
+        },
+        {
+          "form": "grade 8",
+          "value": "SAE Grade 8"
+        },
+        {
+          "form": "A325",
+          "value": "ASTM A325"
+        },
+        {
+          "form": "A490",
+          "value": "ASTM A490"
+        }
+      ]
+    },
+    {
+      "group": "standard",
+      "attribute": "standard",
+      "global": false,
+      "title": "Standard mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "DIN 931",
+          "value": "ISO 4014"
+        },
+        {
+          "form": "part thread",
+          "value": "ISO 4014"
+        },
+        {
+          "form": "partially threaded",
+          "value": "ISO 4014"
+        },
+        {
+          "form": "DIN 933",
+          "value": "ISO 4017"
+        },
+        {
+          "form": "fully threaded",
+          "value": "ISO 4017"
+        },
+        {
+          "form": "full thread",
+          "value": "ISO 4017"
+        },
+        {
+          "form": "ANSI B18.2.1",
+          "value": "ASME B18.2.1"
+        },
+        {
+          "form": "B18.2.1",
+          "value": "ASME B18.2.1"
+        }
+      ]
+    },
+    {
+      "group": "finish",
+      "attribute": "finish",
+      "global": false,
+      "title": "Finish mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "self colour",
+          "value": "Plain"
+        },
+        {
+          "form": "black",
+          "value": "Plain"
+        },
+        {
+          "form": "BZP",
+          "value": "Zinc Plated"
+        },
+        {
+          "form": "ZP",
+          "value": "Zinc Plated"
+        },
+        {
+          "form": "electro-galvanized",
+          "value": "Zinc Plated"
+        },
+        {
+          "form": "HDG",
+          "value": "Hot-Dip Galvanized"
+        },
+        {
+          "form": "galvanised",
+          "value": "Hot-Dip Galvanized"
+        },
+        {
+          "form": "hot dip",
+          "value": "Hot-Dip Galvanized"
+        },
+        {
+          "form": "PTFE",
+          "value": "PTFE Coated"
+        },
+        {
+          "form": "Xylan",
+          "value": "PTFE Coated"
+        },
+        {
+          "form": "fluoropolymer",
+          "value": "PTFE Coated"
+        }
+      ]
+    },
+    {
+      "group": "hose_standard",
+      "attribute": "hose_standard",
+      "global": false,
+      "title": "Hose standard mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "R1AT",
+          "value": "SAE 100R1AT"
+        },
+        {
+          "form": "R1",
+          "value": "SAE 100R1AT"
+        },
+        {
+          "form": "R2AT",
+          "value": "SAE 100R2AT"
+        },
+        {
+          "form": "R2",
+          "value": "SAE 100R2AT"
+        },
+        {
+          "form": "1SN",
+          "value": "EN 853 1SN"
+        },
+        {
+          "form": "2SN",
+          "value": "EN 853 2SN"
+        },
+        {
+          "form": "4SP",
+          "value": "EN 856 4SP"
+        },
+        {
+          "form": "4SH",
+          "value": "EN 856 4SH"
+        },
+        {
+          "form": "R13",
+          "value": "SAE 100R13"
+        }
+      ]
+    },
+    {
+      "group": "dash_size",
+      "attribute": "dash_size",
+      "global": false,
+      "title": "Hydraulic hose dash sizes",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "1/4",
+          "value": "-4"
+        },
+        {
+          "form": "6.4",
+          "value": "-4"
+        },
+        {
+          "form": "DN6",
+          "value": "-4"
+        },
+        {
+          "form": "5/16",
+          "value": "-5"
+        },
+        {
+          "form": "7.9",
+          "value": "-5"
+        },
+        {
+          "form": "DN8",
+          "value": "-5"
+        },
+        {
+          "form": "3/8",
+          "value": "-6"
+        },
+        {
+          "form": "9.5",
+          "value": "-6"
+        },
+        {
+          "form": "DN10",
+          "value": "-6"
+        },
+        {
+          "form": "1/2",
+          "value": "-8"
+        },
+        {
+          "form": "12.7",
+          "value": "-8"
+        },
+        {
+          "form": "DN12",
+          "value": "-8"
+        },
+        {
+          "form": "5/8",
+          "value": "-10"
+        },
+        {
+          "form": "15.9",
+          "value": "-10"
+        },
+        {
+          "form": "DN16",
+          "value": "-10"
+        },
+        {
+          "form": "3/4",
+          "value": "-12"
+        },
+        {
+          "form": "19.1",
+          "value": "-12"
+        },
+        {
+          "form": "DN19",
+          "value": "-12"
+        },
+        {
+          "form": "1",
+          "value": "-16"
+        },
+        {
+          "form": "25.4",
+          "value": "-16"
+        },
+        {
+          "form": "DN25",
+          "value": "-16"
+        },
+        {
+          "form": "1-1/4",
+          "value": "-20"
+        },
+        {
+          "form": "31.8",
+          "value": "-20"
+        },
+        {
+          "form": "DN31",
+          "value": "-20"
+        },
+        {
+          "form": "1-1/2",
+          "value": "-24"
+        },
+        {
+          "form": "38.1",
+          "value": "-24"
+        },
+        {
+          "form": "DN38",
+          "value": "-24"
+        },
+        {
+          "form": "2",
+          "value": "-32"
+        },
+        {
+          "form": "50.8",
+          "value": "-32"
+        },
+        {
+          "form": "DN51",
+          "value": "-32"
+        }
+      ]
+    },
+    {
+      "group": "end_fitting",
+      "attribute": "end_fitting",
+      "global": false,
+      "title": "End fitting mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "JIC female",
+          "value": "JIC 37° Female Swivel"
+        },
+        {
+          "form": "JIC swivel",
+          "value": "JIC 37° Female Swivel"
+        },
+        {
+          "form": "37 deg female",
+          "value": "JIC 37° Female Swivel"
+        },
+        {
+          "form": "ORFS female",
+          "value": "ORFS Female Swivel"
+        },
+        {
+          "form": "O-ring face seal",
+          "value": "ORFS Female Swivel"
+        },
+        {
+          "form": "BSP female",
+          "value": "BSPP Female Swivel"
+        },
+        {
+          "form": "BSPP female",
+          "value": "BSPP Female Swivel"
+        },
+        {
+          "form": "MNPT",
+          "value": "NPT Male"
+        },
+        {
+          "form": "SAE 3000 flange",
+          "value": "Flange Code 61"
+        },
+        {
+          "form": "code 61",
+          "value": "Flange Code 61"
+        },
+        {
+          "form": "SAE 6000 flange",
+          "value": "Flange Code 62"
+        },
+        {
+          "form": "code 62",
+          "value": "Flange Code 62"
+        }
+      ]
+    },
+    {
+      "group": "glove_size",
+      "attribute": "glove_size",
+      "global": false,
+      "title": "Glove size mappings",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "S",
+          "value": "7"
+        },
+        {
+          "form": "small",
+          "value": "7"
+        },
+        {
+          "form": "M",
+          "value": "8"
+        },
+        {
+          "form": "medium",
+          "value": "8"
+        },
+        {
+          "form": "L",
+          "value": "9"
+        },
+        {
+          "form": "large",
+          "value": "9"
+        },
+        {
+          "form": "XL",
+          "value": "10"
+        },
+        {
+          "form": "XXL",
+          "value": "11"
+        },
+        {
+          "form": "2XL",
+          "value": "11"
+        }
+      ]
+    },
+    {
+      "group": "glove_material",
+      "attribute": "glove_material",
+      "global": false,
+      "title": "GLV-3 glove_material",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "natural rubber",
+          "value": "Latex"
+        },
+        {
+          "form": "cowhide",
+          "value": "Leather"
+        },
+        {
+          "form": "goatskin",
+          "value": "Leather"
+        },
+        {
+          "form": "Dyneema",
+          "value": "HPPE"
+        },
+        {
+          "form": "UHMWPE",
+          "value": "HPPE"
+        },
+        {
+          "form": "Kevlar",
+          "value": "Aramid"
+        },
+        {
+          "form": "para-aramid",
+          "value": "Aramid"
+        },
+        {
+          "form": "chloroprene",
+          "value": "Neoprene"
+        }
+      ]
+    },
+    {
+      "group": "coating",
+      "attribute": "coating",
+      "global": false,
+      "title": "GLV-4 coating",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "sandy nitrile",
+          "value": "Nitrile Palm"
+        },
+        {
+          "form": "foam nitrile",
+          "value": "Nitrile Palm"
+        },
+        {
+          "form": "PU coated palm",
+          "value": "PU Palm"
+        },
+        {
+          "form": "polyurethane palm",
+          "value": "PU Palm"
+        },
+        {
+          "form": "crinkle latex",
+          "value": "Latex Crinkle"
+        },
+        {
+          "form": "uncoated",
+          "value": "None"
+        }
+      ]
+    },
+    {
+      "group": "impact_protection",
+      "attribute": "impact_protection",
+      "global": false,
+      "title": "GLV-6 impact_protection",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "TPR back",
+          "value": "Yes"
+        },
+        {
+          "form": "impact",
+          "value": "Yes"
+        },
+        {
+          "form": "EN 388 'P' marking",
+          "value": "Yes"
+        }
+      ]
+    },
+    {
+      "group": "nlgi_grade",
+      "attribute": "nlgi_grade",
+      "global": false,
+      "title": "GRS-1 nlgi_grade",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "EP2",
+          "value": "NLGI 2"
+        },
+        {
+          "form": "#2",
+          "value": "NLGI 2"
+        },
+        {
+          "form": "00",
+          "value": "NLGI 00"
+        }
+      ]
+    },
+    {
+      "group": "cut_level",
+      "attribute": "cut_level",
+      "global": false,
+      "title": "IF value is 'ISO cut C' or 'cut C'",
+      "any_attribute": false,
+      "role": "synonyms",
+      "pairs": [
+        {
+          "form": "ISO cut C",
+          "value": "Cut C"
+        }
+      ]
+    },
+    {
+      "group": "Global",
+      "attribute": "Global",
+      "global": true,
+      "title": "How this guide is organised",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Global",
+      "global": true,
+      "title": "Words we use",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Item",
+      "global": true,
+      "title": "(columns: BEFORE; AFTER)",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Attribute",
+      "global": true,
+      "title": "The attribute column holds a field key",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Value",
+      "global": true,
+      "title": "If a field has a picklist",
+      "any_attribute": true,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Value",
+      "global": true,
+      "title": "Measured values",
+      "any_attribute": true,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Value",
+      "global": true,
+      "title": "Inches, pounds, gallons, psi and ounces",
+      "any_attribute": true,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Value",
+      "global": true,
+      "title": "If a value doesn't fit the field's picklist or format",
+      "any_attribute": true,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Global",
+      "global": true,
+      "title": "If you see; Write in; Do this",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Global",
+      "global": true,
+      "title": "Rounding",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Value",
+      "global": true,
+      "title": "Q. The supplier wrote both units",
+      "any_attribute": true,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Global",
+      "global": true,
+      "title": "Q. A brand name is the only thing I have",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "Global",
+      "attribute": "Global",
+      "global": true,
+      "title": "Check",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "designation",
+      "attribute": "designation",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "designation",
+      "attribute": "designation",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "bearing_type",
+      "attribute": "bearing_type",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "bearing_type",
+      "attribute": "bearing_type",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "bore_diameter",
+      "attribute": "bore_diameter",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "bore_diameter",
+      "attribute": "bore_diameter",
+      "global": false,
+      "title": "BRG-3 bore_diameter",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "bore_diameter",
+      "attribute": "bore_diameter",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "outside_diameter",
+      "attribute": "outside_diameter",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "outside_diameter",
+      "attribute": "outside_diameter",
+      "global": false,
+      "title": "BRG-4 outside_diameter",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "outside_diameter",
+      "attribute": "outside_diameter",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "width",
+      "attribute": "width",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "width",
+      "attribute": "width",
+      "global": false,
+      "title": "Same as bore_diameter",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "bearing seal_type",
+      "attribute": "seal_type",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "bearing seal_type",
+      "attribute": "seal_type",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "internal_clearance",
+      "attribute": "internal_clearance",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "internal_clearance",
+      "attribute": "internal_clearance",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "cage_material",
+      "attribute": "cage_material",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "cage_material",
+      "attribute": "cage_material",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "arrangement",
+      "attribute": "arrangement",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "arrangement",
+      "attribute": "arrangement",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "seal_category",
+      "attribute": "seal_category",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "seal_category",
+      "attribute": "seal_category",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "mechanical seal_type",
+      "attribute": "seal_type",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "mechanical seal_type",
+      "attribute": "seal_type",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "shaft_diameter",
+      "attribute": "shaft_diameter",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "shaft_diameter",
+      "attribute": "shaft_diameter",
+      "global": false,
+      "title": "",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "shaft_diameter",
+      "attribute": "shaft_diameter",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "face_combination",
+      "attribute": "face_combination",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "face_combination",
+      "attribute": "face_combination",
+      "global": false,
+      "title": "Separators",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "face_combination",
+      "attribute": "face_combination",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "secondary_seal",
+      "attribute": "secondary_seal",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "secondary_seal",
+      "attribute": "secondary_seal",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "flush_plan",
+      "attribute": "flush_plan",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "flush_plan",
+      "attribute": "flush_plan",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "size_reference",
+      "attribute": "size_reference",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "size_reference",
+      "attribute": "size_reference",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "size_reference",
+      "attribute": "size_reference",
+      "global": false,
+      "title": "AS568 O-ring sizes (selection)",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "inner_diameter",
+      "attribute": "inner_diameter",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "inner_diameter",
+      "attribute": "inner_diameter",
+      "global": false,
+      "title": "",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "inner_diameter",
+      "attribute": "inner_diameter",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "inner_diameter",
+      "attribute": "inner_diameter",
+      "global": false,
+      "title": "AS568 O-ring sizes (selection)",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "cross_section",
+      "attribute": "cross_section",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "cross_section",
+      "attribute": "cross_section",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "cross_section",
+      "attribute": "cross_section",
+      "global": false,
+      "title": "AS568 O-ring sizes (selection)",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "material",
+      "attribute": "material",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "material",
+      "attribute": "material",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "hardness",
+      "attribute": "hardness",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "hardness",
+      "attribute": "hardness",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "aed_resistant",
+      "attribute": "aed_resistant",
+      "global": false,
+      "title": "Labels you may see",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "aed_resistant",
+      "attribute": "aed_resistant",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "V-Belt identity",
+      "attribute": "V-Belt identity",
+      "global": false,
+      "title": "V-belt sections",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "belt_section",
+      "attribute": "belt_section",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "belt_section",
+      "attribute": "belt_section",
+      "global": false,
+      "title": "Classical V-belt sections",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "datum_length",
+      "attribute": "datum_length",
+      "global": false,
+      "title": "VBT-2 datum_length",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "datum_length",
+      "attribute": "datum_length",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "datum_length",
+      "attribute": "datum_length",
+      "global": false,
+      "title": "Classical V-belt sections",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "construction",
+      "attribute": "construction",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "matched_set_qty",
+      "attribute": "matched_set_qty",
+      "global": false,
+      "title": "VBT-4 matched_set_qty",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "matched_set_qty",
+      "attribute": "matched_set_qty",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "viscosity_grade",
+      "attribute": "viscosity_grade",
+      "global": false,
+      "title": "Valid ISO grades",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "viscosity_grade",
+      "attribute": "viscosity_grade",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "base_oil",
+      "attribute": "base_oil",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "application",
+      "attribute": "application",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "iso_class",
+      "attribute": "iso_class",
+      "global": false,
+      "title": "Allowed",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "iso_class",
+      "attribute": "iso_class",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "pack_size",
+      "attribute": "pack_size",
+      "global": false,
+      "title": "Standard packs and conversions",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "pack_size",
+      "attribute": "pack_size",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "nlgi_grade",
+      "attribute": "nlgi_grade",
+      "global": false,
+      "title": "GRS-1 nlgi_grade",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "nlgi_grade",
+      "attribute": "nlgi_grade",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "thickener",
+      "attribute": "thickener",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "base_oil_viscosity",
+      "attribute": "base_oil_viscosity",
+      "global": false,
+      "title": "GRS-3 base_oil_viscosity",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "base_oil_viscosity",
+      "attribute": "base_oil_viscosity",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "ep_additive",
+      "attribute": "ep_additive",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "Grease pack_size",
+      "attribute": "pack_size",
+      "global": false,
+      "title": "GRS-5 pack_size",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "Grease pack_size",
+      "attribute": "pack_size",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "filter_service",
+      "attribute": "filter_service",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "micron_rating",
+      "attribute": "micron_rating",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "micron_rating",
+      "attribute": "micron_rating",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "rating_basis",
+      "attribute": "rating_basis",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "rating_basis",
+      "attribute": "rating_basis",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "media",
+      "attribute": "media",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "media",
+      "attribute": "media",
+      "global": false,
+      "title": "Pressure conversion",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "media",
+      "attribute": "media",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "collapse_pressure",
+      "attribute": "collapse_pressure",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "collapse_pressure",
+      "attribute": "collapse_pressure",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "seal_material",
+      "attribute": "seal_material",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "seal_material",
+      "attribute": "seal_material",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "thread",
+      "attribute": "thread",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "thread",
+      "attribute": "thread",
+      "global": false,
+      "title": "Unit conversion",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "thread",
+      "attribute": "thread",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "length",
+      "attribute": "length",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "length",
+      "attribute": "length",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "strength_grade",
+      "attribute": "strength_grade",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "strength_grade",
+      "attribute": "strength_grade",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "standard",
+      "attribute": "standard",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "standard",
+      "attribute": "standard",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "finish",
+      "attribute": "finish",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "finish",
+      "attribute": "finish",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "hose_standard",
+      "attribute": "hose_standard",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "hose_standard",
+      "attribute": "hose_standard",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "dash_size",
+      "attribute": "dash_size",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "dash_size",
+      "attribute": "dash_size",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "max_working_pressure",
+      "attribute": "max_working_pressure",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "max_working_pressure",
+      "attribute": "max_working_pressure",
+      "global": false,
+      "title": "Pressure conversion",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "max_working_pressure",
+      "attribute": "max_working_pressure",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "end_fitting",
+      "attribute": "end_fitting",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "end_fitting",
+      "attribute": "end_fitting",
+      "global": false,
+      "title": "Unit conversion",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "end_fitting",
+      "attribute": "end_fitting",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "assembly_length",
+      "attribute": "assembly_length",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "assembly_length",
+      "attribute": "assembly_length",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "glove_size",
+      "attribute": "glove_size",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "glove_size",
+      "attribute": "glove_size",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "cut_level",
+      "attribute": "cut_level",
+      "global": false,
+      "title": "Fields at a glance",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "cut_level",
+      "attribute": "cut_level",
+      "global": false,
+      "title": "Before → after",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "glove_material",
+      "attribute": "glove_material",
+      "global": false,
+      "title": "[Fields at a glance]",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "glove_material",
+      "attribute": "glove_material",
+      "global": false,
+      "title": "[Before → after]",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "coating",
+      "attribute": "coating",
+      "global": false,
+      "title": "[Fields at a glance]",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "coating",
+      "attribute": "coating",
+      "global": false,
+      "title": "[Before → after]",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "cuff_length",
+      "attribute": "cuff_length",
+      "global": false,
+      "title": "[Fields at a glance]",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "cuff_length",
+      "attribute": "cuff_length",
+      "global": false,
+      "title": "GLV-5 cuff_length",
+      "any_attribute": false,
+      "role": "conversion",
+      "pairs": []
+    },
+    {
+      "group": "cuff_length",
+      "attribute": "cuff_length",
+      "global": false,
+      "title": "[Before → after]",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    },
+    {
+      "group": "impact_protection",
+      "attribute": "impact_protection",
+      "global": false,
+      "title": "[Fields at a glance]",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "impact_protection",
+      "attribute": "impact_protection",
+      "global": false,
+      "title": "GLV-6 impact_protection",
+      "any_attribute": false,
+      "role": "other",
+      "pairs": []
+    },
+    {
+      "group": "impact_protection",
+      "attribute": "impact_protection",
+      "global": false,
+      "title": "[Before → after]",
+      "any_attribute": false,
+      "role": "examples",
+      "pairs": []
+    }
+  ]
+}

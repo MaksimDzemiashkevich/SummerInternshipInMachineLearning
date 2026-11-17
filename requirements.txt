@@ -17,3 +17,23 @@ jupyter>=1.0.0
 langgraph-cli[inmem]>=0.4.0
 langchain-mcp-adapters
 langchain-core>=1.4.0
+pandas
+sentence-transformers
+fastapi
+uvicorn
+python-dotenv
+rank_bm25
+rapidfuzz
+pint
+babel
+psutil
+
+# сервис: Excel, загрузка файлов, MCP
+openpyxl
+python-multipart
+mcp
+
+# извлечение правил из PDF (нужен ещё сервер VLM и Tesseract)
+PyMuPDF
+pytesseract
+pillow

@@ -1,0 +1,5337 @@
+{
+ "lists": [
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "1.1",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "2.1",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "3.7",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Short length",
+   "global": true,
+   "title": "3.11",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "4.3",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "5.3",
+   "any_attribute": true,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "NA",
+     "value": "N/A"
+    },
+    {
+     "form": "N.A.",
+     "value": "N/A"
+    },
+    {
+     "form": "not applicable",
+     "value": "N/A"
+    },
+    {
+     "form": "-",
+     "value": "N/A"
+    },
+    {
+     "form": "--",
+     "value": "N/A"
+    }
+   ]
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "5.4",
+   "any_attribute": true,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "TBD",
+     "value": "TBA"
+    },
+    {
+     "form": "TBC",
+     "value": "TBA"
+    },
+    {
+     "form": "to be confirmed",
+     "value": "TBA"
+    },
+    {
+     "form": "to be advised",
+     "value": "TBA"
+    },
+    {
+     "form": "by vendor",
+     "value": "TBA"
+    },
+    {
+     "form": "later",
+     "value": "TBA"
+    }
+   ]
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "5.6",
+   "any_attribute": true,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "5.7",
+   "any_attribute": true,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "5.9",
+   "any_attribute": true,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "6.6",
+   "any_attribute": true,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "6.7",
+   "any_attribute": true,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "6.9",
+   "any_attribute": true,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "",
+   "any_attribute": true,
+   "role": "synonyms",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "",
+   "any_attribute": true,
+   "role": "synonyms",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "",
+   "any_attribute": true,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "+ -",
+     "value": "+/-"
+    },
+    {
+     "form": "+ / -",
+     "value": "+/-"
+    }
+   ]
+  },
+  {
+   "group": "Global",
+   "attribute": "Global",
+   "global": true,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gauge pressure",
+   "attribute": "Gauge pressure",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "bar g",
+     "value": "barg"
+    },
+    {
+     "form": "bar(g)",
+     "value": "barg"
+    },
+    {
+     "form": "bar",
+     "value": "barg"
+    }
+   ]
+  },
+  {
+   "group": "Gauge pressure",
+   "attribute": "Gauge pressure",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Gauge pressure",
+   "attribute": "Pressure vessels",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gauge pressure",
+   "attribute": "PWHT",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gauge pressure",
+   "attribute": "Shell-and-tube heat exchangers",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Absolute pressure",
+   "attribute": "Absolute pressure",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "bar a",
+     "value": "bara"
+    },
+    {
+     "form": "bar(a)",
+     "value": "bara"
+    }
+   ]
+  },
+  {
+   "group": "Absolute pressure",
+   "attribute": "Absolute pressure",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Differential pressure",
+   "attribute": "Differential pressure",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Temperature",
+   "attribute": "Temperature",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "deg C",
+     "value": "degC"
+    },
+    {
+     "form": "°C",
+     "value": "degC"
+    },
+    {
+     "form": "C",
+     "value": "degC"
+    }
+   ]
+  },
+  {
+   "group": "Temperature",
+   "attribute": "Temperature",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Temperature",
+   "attribute": "Pressure vessels",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Temperature",
+   "attribute": "PWHT",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Temperature",
+   "attribute": "Storage tanks",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Short length",
+   "attribute": "Short length",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Short length",
+   "attribute": "Long length",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "mtr",
+     "value": "m"
+    },
+    {
+     "form": "meter",
+     "value": "m"
+    },
+    {
+     "form": "meters",
+     "value": "m"
+    },
+    {
+     "form": "metre",
+     "value": "m"
+    },
+    {
+     "form": "metres",
+     "value": "m"
+    }
+   ]
+  },
+  {
+   "group": "Short length",
+   "attribute": "Long length",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Short length",
+   "attribute": "Pressure vessels",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Long length",
+   "attribute": "Long length",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "mtr",
+     "value": "m"
+    },
+    {
+     "form": "meter",
+     "value": "m"
+    },
+    {
+     "form": "meters",
+     "value": "m"
+    },
+    {
+     "form": "metre",
+     "value": "m"
+    },
+    {
+     "form": "metres",
+     "value": "m"
+    }
+   ]
+  },
+  {
+   "group": "Long length",
+   "attribute": "Long length",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Long length",
+   "attribute": "Storage tanks",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Volumetric flow",
+   "attribute": "Volumetric flow",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "m3/hr",
+     "value": "m3/h"
+    },
+    {
+     "form": "cmh",
+     "value": "m3/h"
+    }
+   ]
+  },
+  {
+   "group": "Volumetric flow",
+   "attribute": "Volumetric flow",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Power",
+   "attribute": "Power",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Power",
+   "attribute": "Shell-and-tube heat exchangers",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Apparent power",
+   "attribute": "Apparent power",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Mass",
+   "attribute": "Mass",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "kgs",
+     "value": "kg"
+    }
+   ]
+  },
+  {
+   "group": "Mass",
+   "attribute": "Mass",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Volume",
+   "attribute": "Volume",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "ltr",
+     "value": "m3"
+    }
+   ]
+  },
+  {
+   "group": "Volume",
+   "attribute": "Volume",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Volume",
+   "attribute": "Storage tanks",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Area",
+   "attribute": "Area",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "sq m",
+     "value": "m2"
+    }
+   ]
+  },
+  {
+   "group": "Area",
+   "attribute": "Area",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Area",
+   "attribute": "Shell-and-tube heat exchangers",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Rotational speed",
+   "attribute": "Rotational speed",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "r/min",
+     "value": "rpm"
+    },
+    {
+     "form": "min-1",
+     "value": "rpm"
+    }
+   ]
+  },
+  {
+   "group": "Rotational speed",
+   "attribute": "Current",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Rotational speed",
+   "attribute": "Duration",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Current",
+   "attribute": "Current",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Duration",
+   "attribute": "Duration",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "conversion",
+   "pairs": []
+  },
+  {
+   "group": "Nominal size",
+   "attribute": "Nominal size",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "DN15",
+     "value": "NPS 1/2"
+    },
+    {
+     "form": "DN20",
+     "value": "NPS 3/4"
+    },
+    {
+     "form": "DN25",
+     "value": "NPS 1"
+    },
+    {
+     "form": "DN32",
+     "value": "NPS 1-1/4"
+    },
+    {
+     "form": "DN40",
+     "value": "NPS 1-1/2"
+    },
+    {
+     "form": "DN50",
+     "value": "NPS 2"
+    },
+    {
+     "form": "DN65",
+     "value": "NPS 2-1/2"
+    },
+    {
+     "form": "DN80",
+     "value": "NPS 3"
+    },
+    {
+     "form": "DN100",
+     "value": "NPS 4"
+    },
+    {
+     "form": "DN150",
+     "value": "NPS 6"
+    },
+    {
+     "form": "DN200",
+     "value": "NPS 8"
+    },
+    {
+     "form": "DN250",
+     "value": "NPS 10"
+    },
+    {
+     "form": "DN300",
+     "value": "NPS 12"
+    },
+    {
+     "form": "DN350",
+     "value": "NPS 14"
+    },
+    {
+     "form": "DN400",
+     "value": "NPS 16"
+    },
+    {
+     "form": "DN450",
+     "value": "NPS 18"
+    },
+    {
+     "form": "DN500",
+     "value": "NPS 20"
+    },
+    {
+     "form": "DN600",
+     "value": "NPS 24"
+    }
+   ]
+  },
+  {
+   "group": "Pressure class",
+   "attribute": "Pressure class",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "PN rating",
+   "attribute": "PN rating",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe schedule",
+   "attribute": "Pipe schedule",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "standard",
+     "value": "SCH STD"
+    },
+    {
+     "form": "standard weight",
+     "value": "SCH STD"
+    },
+    {
+     "form": "STD",
+     "value": "SCH STD"
+    },
+    {
+     "form": "extra strong",
+     "value": "SCH XS"
+    },
+    {
+     "form": "XS",
+     "value": "SCH XS"
+    },
+    {
+     "form": "double extra strong",
+     "value": "SCH XXS"
+    },
+    {
+     "form": "XXS",
+     "value": "SCH XXS"
+    }
+   ]
+  },
+  {
+   "group": "Taper pipe thread",
+   "attribute": "Taper pipe thread",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "0.25",
+     "value": "1/4"
+    },
+    {
+     "form": "0.5",
+     "value": "1/2"
+    },
+    {
+     "form": "0.75",
+     "value": "3/4"
+    },
+    {
+     "form": "1.5",
+     "value": "1-1/2"
+    }
+   ]
+  },
+  {
+   "group": "Bolt or stud diameter",
+   "attribute": "Bolt or stud diameter",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "0.5",
+     "value": "1/2"
+    },
+    {
+     "form": "0.625",
+     "value": "5/8"
+    },
+    {
+     "form": "0.75",
+     "value": "3/4"
+    },
+    {
+     "form": "0.875",
+     "value": "7/8"
+    },
+    {
+     "form": "1.125",
+     "value": "1-1/8"
+    },
+    {
+     "form": "1.25",
+     "value": "1-1/4"
+    }
+   ]
+  },
+  {
+   "group": "Voltage",
+   "attribute": "Voltage",
+   "global": false,
+   "title": "Alternating and direct current forms",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Voltage",
+   "attribute": "Electric motors",
+   "global": false,
+   "title": "Attributes held by electric motors",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Voltage",
+   "attribute": "Power, control and instrument cables",
+   "global": false,
+   "title": "Attributes held by power, control and instrument cables",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Signal",
+   "attribute": "Signal",
+   "global": false,
+   "title": "Analogue signal recognized forms",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "4-20 mA",
+     "value": "4-20mA"
+    },
+    {
+     "form": "4..20mA",
+     "value": "4-20mA"
+    },
+    {
+     "form": "4…20 mA",
+     "value": "4-20mA"
+    },
+    {
+     "form": "4 to 20 mA",
+     "value": "4-20mA"
+    },
+    {
+     "form": "4~20mA",
+     "value": "4-20mA"
+    },
+    {
+     "form": "4-20 mA + HART",
+     "value": "4-20mA HART"
+    },
+    {
+     "form": "4-20mA/HART",
+     "value": "4-20mA HART"
+    },
+    {
+     "form": "HART 4-20mA",
+     "value": "4-20mA HART"
+    }
+   ]
+  },
+  {
+   "group": "Signal",
+   "attribute": "Signal",
+   "global": false,
+   "title": "Signal types",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "FF",
+     "value": "Foundation Fieldbus"
+    },
+    {
+     "form": "FF H1",
+     "value": "Foundation Fieldbus"
+    },
+    {
+     "form": "PROFIBUS-PA",
+     "value": "Profibus PA"
+    },
+    {
+     "form": "PB-PA",
+     "value": "Profibus PA"
+    },
+    {
+     "form": "VFC",
+     "value": "Volt-free contact"
+    },
+    {
+     "form": "dry contact",
+     "value": "Volt-free contact"
+    },
+    {
+     "form": "potential-free contact",
+     "value": "Volt-free contact"
+    }
+   ]
+  },
+  {
+   "group": "Signal",
+   "attribute": "Actuator",
+   "global": false,
+   "title": "Admissible actuator values for control valves",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Signal",
+   "attribute": "Control valves",
+   "global": false,
+   "title": "Attributes held by control valves",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Signal",
+   "attribute": "Pressure transmitters",
+   "global": false,
+   "title": "Attributes held by pressure transmitters",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Signal",
+   "attribute": "Range",
+   "global": false,
+   "title": "Range units for gas detectors",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Signal",
+   "attribute": "Gas detectors",
+   "global": false,
+   "title": "Attributes held by gas detectors",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "IP rating",
+   "attribute": "Electric motors",
+   "global": false,
+   "title": "Attributes held by electric motors",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "IP rating",
+   "attribute": "Pressure transmitters",
+   "global": false,
+   "title": "Attributes held by pressure transmitters",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "IP rating",
+   "attribute": "Cable glands",
+   "global": false,
+   "title": "Attributes held by cable glands",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "IP rating",
+   "attribute": "Junction boxes",
+   "global": false,
+   "title": "Attributes held by junction boxes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Ex marking",
+   "attribute": "Ex marking",
+   "global": false,
+   "title": "Gas groups",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Ex marking",
+   "attribute": "Electric motors",
+   "global": false,
+   "title": "Attributes held by electric motors",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Ex marking",
+   "attribute": "Pressure transmitters",
+   "global": false,
+   "title": "Attributes held by pressure transmitters",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Ex marking",
+   "attribute": "Cable glands",
+   "global": false,
+   "title": "Attributes held by cable glands",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Ex marking",
+   "attribute": "Junction boxes",
+   "global": false,
+   "title": "Attributes held by junction boxes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Ex marking",
+   "attribute": "Gas detectors",
+   "global": false,
+   "title": "Attributes held by gas detectors",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Motor mounting arrangement",
+   "attribute": "Motor mounting arrangement",
+   "global": false,
+   "title": "Recognized motor mounting arrangements",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "IM B3",
+     "value": "B3"
+    },
+    {
+     "form": "IMB3",
+     "value": "B3"
+    },
+    {
+     "form": "IM 1001",
+     "value": "B3"
+    },
+    {
+     "form": "IM B5",
+     "value": "B5"
+    },
+    {
+     "form": "IM 3001",
+     "value": "B5"
+    },
+    {
+     "form": "IM B35",
+     "value": "B35"
+    },
+    {
+     "form": "IM 2001",
+     "value": "B35"
+    },
+    {
+     "form": "IM V1",
+     "value": "V1"
+    },
+    {
+     "form": "IM 3011",
+     "value": "V1"
+    }
+   ]
+  },
+  {
+   "group": "Motor mounting arrangement",
+   "attribute": "Electric motors",
+   "global": false,
+   "title": "Attributes held by electric motors",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Transformer vector group",
+   "attribute": "Transformers",
+   "global": false,
+   "title": "Attributes held by transformers",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Cable size",
+   "attribute": "Cable size",
+   "global": false,
+   "title": "",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "C",
+     "value": "cores"
+    },
+    {
+     "form": "core",
+     "value": "cores"
+    },
+    {
+     "form": "P",
+     "value": "pairs"
+    },
+    {
+     "form": "pr",
+     "value": "pairs"
+    },
+    {
+     "form": "pair",
+     "value": "pairs"
+    },
+    {
+     "form": "T",
+     "value": "triads"
+    },
+    {
+     "form": "triad",
+     "value": "triads"
+    },
+    {
+     "form": "mm²",
+     "value": "mm2"
+    },
+    {
+     "form": "sq mm",
+     "value": "mm2"
+    },
+    {
+     "form": "sqmm",
+     "value": "mm2"
+    }
+   ]
+  },
+  {
+   "group": "Material",
+   "attribute": "Material",
+   "global": false,
+   "title": "Material designations",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "ASTM A105",
+     "value": "A105"
+    },
+    {
+     "form": "SA105",
+     "value": "A105"
+    },
+    {
+     "form": "SA-105",
+     "value": "A105"
+    },
+    {
+     "form": "A-105",
+     "value": "A105"
+    },
+    {
+     "form": "A106 Gr B",
+     "value": "A106 B"
+    },
+    {
+     "form": "A106 Gr.B",
+     "value": "A106 B"
+    },
+    {
+     "form": "A106-B",
+     "value": "A106 B"
+    },
+    {
+     "form": "ASTM A106 Grade B",
+     "value": "A106 B"
+    },
+    {
+     "form": "SA106 B",
+     "value": "A106 B"
+    },
+    {
+     "form": "A333 Gr 6",
+     "value": "A333 6"
+    },
+    {
+     "form": "WCB",
+     "value": "A216 WCB"
+    },
+    {
+     "form": "ASTM A216 WCB",
+     "value": "A216 WCB"
+    },
+    {
+     "form": "A216 Gr WCB",
+     "value": "A216 WCB"
+    },
+    {
+     "form": "SA216 WCB",
+     "value": "A216 WCB"
+    },
+    {
+     "form": "LCC",
+     "value": "A352 LCC"
+    },
+    {
+     "form": "CF8M",
+     "value": "A351 CF8M"
+    },
+    {
+     "form": "ASTM A351 CF8M",
+     "value": "A351 CF8M"
+    },
+    {
+     "form": "F316",
+     "value": "A182 F316"
+    },
+    {
+     "form": "ASTM A182 F316",
+     "value": "A182 F316"
+    },
+    {
+     "form": "F316L",
+     "value": "A182 F316L"
+    },
+    {
+     "form": "ASTM A182 F316L",
+     "value": "A182 F316L"
+    },
+    {
+     "form": "WPB",
+     "value": "A234 WPB"
+    },
+    {
+     "form": "WP316L",
+     "value": "A403 WP316L"
+    },
+    {
+     "form": "A516 Gr 70",
+     "value": "A516 70"
+    },
+    {
+     "form": "SA-516 70",
+     "value": "A516 70"
+    },
+    {
+     "form": "SA516 Gr.70",
+     "value": "A516 70"
+    },
+    {
+     "form": "ASTM A516 Grade 70",
+     "value": "A516 70"
+    },
+    {
+     "form": "SA179",
+     "value": "A179"
+    },
+    {
+     "form": "B7",
+     "value": "A193 B7"
+    },
+    {
+     "form": "ASTM A193 B7",
+     "value": "A193 B7"
+    },
+    {
+     "form": "A193 Gr B7",
+     "value": "A193 B7"
+    },
+    {
+     "form": "2H",
+     "value": "A194 2H"
+    },
+    {
+     "form": "ASTM A194 2H",
+     "value": "A194 2H"
+    },
+    {
+     "form": "A194 Gr 2H",
+     "value": "A194 2H"
+    },
+    {
+     "form": "carbon steel",
+     "value": "CS"
+    },
+    {
+     "form": "C.S.",
+     "value": "CS"
+    },
+    {
+     "form": "duplex",
+     "value": "Duplex SS"
+    },
+    {
+     "form": "duplex stainless steel",
+     "value": "Duplex SS"
+    },
+    {
+     "form": "DSS",
+     "value": "Duplex SS"
+    },
+    {
+     "form": "hot dip galvanized steel",
+     "value": "HDG steel"
+    },
+    {
+     "form": "hot-dip galvanised steel",
+     "value": "HDG steel"
+    },
+    {
+     "form": "galvanized steel (HDG)",
+     "value": "HDG steel"
+    },
+    {
+     "form": "painted carbon steel",
+     "value": "Painted CS"
+    },
+    {
+     "form": "painted steel",
+     "value": "Painted CS"
+    },
+    {
+     "form": "aluminum",
+     "value": "Aluminium"
+    },
+    {
+     "form": "Al",
+     "value": "Aluminium"
+    },
+    {
+     "form": "nickel plated brass",
+     "value": "Ni-plated brass"
+    },
+    {
+     "form": "NP brass",
+     "value": "Ni-plated brass"
+    },
+    {
+     "form": "glass reinforced polyester",
+     "value": "GRP"
+    },
+    {
+     "form": "FRP",
+     "value": "GRP"
+    },
+    {
+     "form": "fiberglass",
+     "value": "GRP"
+    },
+    {
+     "form": "DI",
+     "value": "Ductile iron"
+    },
+    {
+     "form": "SG iron",
+     "value": "Ductile iron"
+    },
+    {
+     "form": "Cu",
+     "value": "Copper"
+    },
+    {
+     "form": "Inconel 625",
+     "value": "Alloy 625"
+    },
+    {
+     "form": "UNS N06625",
+     "value": "Alloy 625"
+    },
+    {
+     "form": "St6",
+     "value": "Stellite 6"
+    },
+    {
+     "form": "Teflon",
+     "value": "PTFE"
+    },
+    {
+     "form": "reinforced PTFE",
+     "value": "RPTFE"
+    },
+    {
+     "form": "R-PTFE",
+     "value": "RPTFE"
+    },
+    {
+     "form": "flexible graphite",
+     "value": "Graphite"
+    },
+    {
+     "form": "Grafoil",
+     "value": "Graphite"
+    },
+    {
+     "form": "Viton",
+     "value": "FKM"
+    },
+    {
+     "form": "FPM",
+     "value": "FKM"
+    },
+    {
+     "form": "nitrile",
+     "value": "NBR"
+    },
+    {
+     "form": "Buna-N",
+     "value": "NBR"
+    }
+   ]
+  },
+  {
+   "group": "Material",
+   "attribute": "Transformers",
+   "global": false,
+   "title": "Transformer attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Valves",
+   "global": false,
+   "title": "Valve attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Gaskets",
+   "global": false,
+   "title": "Gasket attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Stud bolts",
+   "global": false,
+   "title": "Stud bolt attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Centrifugal pumps",
+   "global": false,
+   "title": "Pump attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Pressure transmitters",
+   "global": false,
+   "title": "Pressure transmitter attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Temperature elements",
+   "global": false,
+   "title": "Temperature element attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Cable glands",
+   "global": false,
+   "title": "Cable gland attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Junction boxes",
+   "global": false,
+   "title": "Junction box attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Pressure vessels",
+   "global": false,
+   "title": "Pressure vessel attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Material",
+   "attribute": "Shell-and-tube heat exchangers",
+   "global": false,
+   "title": "Heat exchanger attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "End connection",
+   "attribute": "End connection",
+   "global": false,
+   "title": "End connections and flange facings",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "raised face",
+     "value": "RF"
+    },
+    {
+     "form": "RF flanged",
+     "value": "RF"
+    },
+    {
+     "form": "flanged RF",
+     "value": "RF"
+    },
+    {
+     "form": "RFF",
+     "value": "RF"
+    },
+    {
+     "form": "flanged, raised face",
+     "value": "RF"
+    },
+    {
+     "form": "flat face",
+     "value": "FF"
+    },
+    {
+     "form": "full face",
+     "value": "FF"
+    },
+    {
+     "form": "ring joint",
+     "value": "RTJ"
+    },
+    {
+     "form": "ring type joint",
+     "value": "RTJ"
+    },
+    {
+     "form": "RJ",
+     "value": "RTJ"
+    },
+    {
+     "form": "butt weld",
+     "value": "BW"
+    },
+    {
+     "form": "butt-welded",
+     "value": "BW"
+    },
+    {
+     "form": "BWE",
+     "value": "BW"
+    },
+    {
+     "form": "socket weld",
+     "value": "SW"
+    },
+    {
+     "form": "SWE",
+     "value": "SW"
+    },
+    {
+     "form": "threaded",
+     "value": "THD"
+    },
+    {
+     "form": "screwed",
+     "value": "THD"
+    },
+    {
+     "form": "thrd",
+     "value": "THD"
+    },
+    {
+     "form": "weld neck",
+     "value": "WN"
+    },
+    {
+     "form": "welding neck",
+     "value": "WN"
+    },
+    {
+     "form": "slip-on",
+     "value": "SO"
+    },
+    {
+     "form": "slip on",
+     "value": "SO"
+    },
+    {
+     "form": "blind",
+     "value": "BL"
+    },
+    {
+     "form": "lap joint",
+     "value": "LJ"
+    },
+    {
+     "form": "double flanged",
+     "value": "RF"
+    },
+    {
+     "form": "flanged",
+     "value": "RF"
+    }
+   ]
+  },
+  {
+   "group": "End connection",
+   "attribute": "Type",
+   "global": false,
+   "title": "Flange types",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "weld neck",
+     "value": "WN"
+    },
+    {
+     "form": "welding neck",
+     "value": "WN"
+    },
+    {
+     "form": "slip-on",
+     "value": "SO"
+    },
+    {
+     "form": "slip on",
+     "value": "SO"
+    },
+    {
+     "form": "blind",
+     "value": "BL"
+    },
+    {
+     "form": "lap joint",
+     "value": "LJ"
+    }
+   ]
+  },
+  {
+   "group": "End connection",
+   "attribute": "End connection",
+   "global": false,
+   "title": "Butterfly valve end connections",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Flange type",
+   "attribute": "Flange type",
+   "global": false,
+   "title": "Flange types",
+   "any_attribute": false,
+   "role": "register",
+   "pairs": [
+    {
+     "form": "weld neck",
+     "value": "WN"
+    },
+    {
+     "form": "welding neck",
+     "value": "WN"
+    },
+    {
+     "form": "slip-on",
+     "value": "SO"
+    },
+    {
+     "form": "slip on",
+     "value": "SO"
+    },
+    {
+     "form": "blind",
+     "value": "BL"
+    },
+    {
+     "form": "socket weld",
+     "value": "SW"
+    },
+    {
+     "form": "lap joint",
+     "value": "LJ"
+    }
+   ]
+  },
+  {
+   "group": "Flange type",
+   "attribute": "Elbows",
+   "global": false,
+   "title": "Elbows hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Flange type",
+   "attribute": "Flanges",
+   "global": false,
+   "title": "Flanges hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Flange type",
+   "attribute": "Facing",
+   "global": false,
+   "title": "Facing",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Valve operator",
+   "attribute": "Valve operator",
+   "global": false,
+   "title": "Valve operators",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "HW",
+     "value": "Handwheel"
+    },
+    {
+     "form": "hand wheel",
+     "value": "Handwheel"
+    },
+    {
+     "form": "lever operated",
+     "value": "Lever"
+    },
+    {
+     "form": "wrench",
+     "value": "Lever"
+    },
+    {
+     "form": "gear operator",
+     "value": "Gear"
+    },
+    {
+     "form": "gearbox",
+     "value": "Gear"
+    },
+    {
+     "form": "gear operated",
+     "value": "Gear"
+    },
+    {
+     "form": "GO",
+     "value": "Gear"
+    },
+    {
+     "form": "pneumatic",
+     "value": "Pneumatic actuator"
+    },
+    {
+     "form": "air operated",
+     "value": "Pneumatic actuator"
+    },
+    {
+     "form": "MOV",
+     "value": "Electric actuator"
+    },
+    {
+     "form": "motor operated",
+     "value": "Electric actuator"
+    },
+    {
+     "form": "electric",
+     "value": "Electric actuator"
+    }
+   ]
+  },
+  {
+   "group": "Valve operator",
+   "attribute": "Control valves",
+   "global": false,
+   "title": "Control valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Valve operator",
+   "attribute": "Actuator",
+   "global": false,
+   "title": "Actuator admissible values",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Fail position",
+   "attribute": "Fail position",
+   "global": false,
+   "title": "Fail positions",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "FC",
+     "value": "Fail closed"
+    },
+    {
+     "form": "fail close",
+     "value": "Fail closed"
+    },
+    {
+     "form": "fail-to-close",
+     "value": "Fail closed"
+    },
+    {
+     "form": "FTC",
+     "value": "Fail closed"
+    },
+    {
+     "form": "FO",
+     "value": "Fail open"
+    },
+    {
+     "form": "fail-to-open",
+     "value": "Fail open"
+    },
+    {
+     "form": "FTO",
+     "value": "Fail open"
+    },
+    {
+     "form": "FL",
+     "value": "Fail last"
+    },
+    {
+     "form": "fail in place",
+     "value": "Fail last"
+    },
+    {
+     "form": "fail as is",
+     "value": "Fail last"
+    }
+   ]
+  },
+  {
+   "group": "Fail position",
+   "attribute": "Bonnet",
+   "global": false,
+   "title": "Bonnets",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "bolted bonnet",
+     "value": "Bolted"
+    },
+    {
+     "form": "BB",
+     "value": "Bolted"
+    },
+    {
+     "form": "pressure seal bonnet",
+     "value": "Pressure seal"
+    },
+    {
+     "form": "PSB",
+     "value": "Pressure seal"
+    },
+    {
+     "form": "welded bonnet",
+     "value": "Welded"
+    }
+   ]
+  },
+  {
+   "group": "Fail position",
+   "attribute": "Control valves",
+   "global": false,
+   "title": "Control valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Fail position",
+   "attribute": "Actuator",
+   "global": false,
+   "title": "Actuator admissible values",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Bonnet",
+   "attribute": "Fail position",
+   "global": false,
+   "title": "Fail positions",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "FC",
+     "value": "Fail closed"
+    },
+    {
+     "form": "fail close",
+     "value": "Fail closed"
+    },
+    {
+     "form": "fail-to-close",
+     "value": "Fail closed"
+    },
+    {
+     "form": "FTC",
+     "value": "Fail closed"
+    },
+    {
+     "form": "FO",
+     "value": "Fail open"
+    },
+    {
+     "form": "fail-to-open",
+     "value": "Fail open"
+    },
+    {
+     "form": "FTO",
+     "value": "Fail open"
+    },
+    {
+     "form": "FL",
+     "value": "Fail last"
+    },
+    {
+     "form": "fail in place",
+     "value": "Fail last"
+    },
+    {
+     "form": "fail as is",
+     "value": "Fail last"
+    }
+   ]
+  },
+  {
+   "group": "Bonnet",
+   "attribute": "Bonnet",
+   "global": false,
+   "title": "Bonnets",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "bolted bonnet",
+     "value": "Bolted"
+    },
+    {
+     "form": "BB",
+     "value": "Bolted"
+    },
+    {
+     "form": "pressure seal bonnet",
+     "value": "Pressure seal"
+    },
+    {
+     "form": "PSB",
+     "value": "Pressure seal"
+    },
+    {
+     "form": "welded bonnet",
+     "value": "Welded"
+    }
+   ]
+  },
+  {
+   "group": "Bonnet",
+   "attribute": "Gate, globe, check and ball valves",
+   "global": false,
+   "title": "Gate, globe, check and ball valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Ball type",
+   "attribute": "Ball type",
+   "global": false,
+   "title": "Ball type",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "floating ball",
+     "value": "Floating"
+    },
+    {
+     "form": "trunnion mounted",
+     "value": "Trunnion"
+    },
+    {
+     "form": "trunnion-mounted",
+     "value": "Trunnion"
+    },
+    {
+     "form": "TMB",
+     "value": "Trunnion"
+    }
+   ]
+  },
+  {
+   "group": "Ball type",
+   "attribute": "Bore",
+   "global": false,
+   "title": "Bore",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "FB",
+     "value": "Full bore"
+    },
+    {
+     "form": "full port",
+     "value": "Full bore"
+    },
+    {
+     "form": "RB",
+     "value": "Reduced bore"
+    },
+    {
+     "form": "reduced port",
+     "value": "Reduced bore"
+    }
+   ]
+  },
+  {
+   "group": "Ball type",
+   "attribute": "Check type",
+   "global": false,
+   "title": "Check types",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "swing check",
+     "value": "Swing"
+    },
+    {
+     "form": "piston check",
+     "value": "Piston"
+    },
+    {
+     "form": "dual plate check",
+     "value": "Dual plate"
+    },
+    {
+     "form": "DPC",
+     "value": "Dual plate"
+    },
+    {
+     "form": "double door",
+     "value": "Dual plate"
+    }
+   ]
+  },
+  {
+   "group": "Ball type",
+   "attribute": "Gate, globe, check and ball valves",
+   "global": false,
+   "title": "Gate, globe, check and ball valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Bore",
+   "attribute": "Ball type",
+   "global": false,
+   "title": "Ball type",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "floating ball",
+     "value": "Floating"
+    },
+    {
+     "form": "trunnion mounted",
+     "value": "Trunnion"
+    },
+    {
+     "form": "trunnion-mounted",
+     "value": "Trunnion"
+    },
+    {
+     "form": "TMB",
+     "value": "Trunnion"
+    }
+   ]
+  },
+  {
+   "group": "Bore",
+   "attribute": "Bore",
+   "global": false,
+   "title": "Bore",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "FB",
+     "value": "Full bore"
+    },
+    {
+     "form": "full port",
+     "value": "Full bore"
+    },
+    {
+     "form": "RB",
+     "value": "Reduced bore"
+    },
+    {
+     "form": "reduced port",
+     "value": "Reduced bore"
+    }
+   ]
+  },
+  {
+   "group": "Bore",
+   "attribute": "Check type",
+   "global": false,
+   "title": "Check types",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "swing check",
+     "value": "Swing"
+    },
+    {
+     "form": "piston check",
+     "value": "Piston"
+    },
+    {
+     "form": "dual plate check",
+     "value": "Dual plate"
+    },
+    {
+     "form": "DPC",
+     "value": "Dual plate"
+    },
+    {
+     "form": "double door",
+     "value": "Dual plate"
+    }
+   ]
+  },
+  {
+   "group": "Bore",
+   "attribute": "Gate, globe, check and ball valves",
+   "global": false,
+   "title": "Gate, globe, check and ball valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Check type",
+   "attribute": "Ball type",
+   "global": false,
+   "title": "Ball type",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "floating ball",
+     "value": "Floating"
+    },
+    {
+     "form": "trunnion mounted",
+     "value": "Trunnion"
+    },
+    {
+     "form": "trunnion-mounted",
+     "value": "Trunnion"
+    },
+    {
+     "form": "TMB",
+     "value": "Trunnion"
+    }
+   ]
+  },
+  {
+   "group": "Check type",
+   "attribute": "Bore",
+   "global": false,
+   "title": "Bore",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "FB",
+     "value": "Full bore"
+    },
+    {
+     "form": "full port",
+     "value": "Full bore"
+    },
+    {
+     "form": "RB",
+     "value": "Reduced bore"
+    },
+    {
+     "form": "reduced port",
+     "value": "Reduced bore"
+    }
+   ]
+  },
+  {
+   "group": "Check type",
+   "attribute": "Check type",
+   "global": false,
+   "title": "Check types",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "swing check",
+     "value": "Swing"
+    },
+    {
+     "form": "piston check",
+     "value": "Piston"
+    },
+    {
+     "form": "dual plate check",
+     "value": "Dual plate"
+    },
+    {
+     "form": "DPC",
+     "value": "Dual plate"
+    },
+    {
+     "form": "double door",
+     "value": "Dual plate"
+    }
+   ]
+  },
+  {
+   "group": "Check type",
+   "attribute": "Gate, globe, check and ball valves",
+   "global": false,
+   "title": "Gate, globe, check and ball valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Trim",
+   "attribute": "Trim",
+   "global": false,
+   "title": "Trim",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Trim",
+   "attribute": "Characteristic",
+   "global": false,
+   "title": "Flow characteristic",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "=%",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "EQ%",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "equal %",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "LIN",
+     "value": "Linear"
+    },
+    {
+     "form": "QO",
+     "value": "Quick opening"
+    }
+   ]
+  },
+  {
+   "group": "Trim",
+   "attribute": "Leakage class",
+   "global": false,
+   "title": "Seat leakage class",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Trim",
+   "attribute": "Cv",
+   "global": false,
+   "title": "Cv",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Trim",
+   "attribute": "Gate, globe, check and ball valves",
+   "global": false,
+   "title": "Gate, globe, check and ball valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Trim",
+   "attribute": "Control valves",
+   "global": false,
+   "title": "Control valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Trim",
+   "attribute": "Actuator",
+   "global": false,
+   "title": "Actuator admissible values",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Characteristic",
+   "attribute": "Characteristic",
+   "global": false,
+   "title": "Flow characteristic",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "=%",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "EQ%",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "equal %",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "LIN",
+     "value": "Linear"
+    },
+    {
+     "form": "QO",
+     "value": "Quick opening"
+    }
+   ]
+  },
+  {
+   "group": "Characteristic",
+   "attribute": "Leakage class",
+   "global": false,
+   "title": "Seat leakage class",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Characteristic",
+   "attribute": "Cv",
+   "global": false,
+   "title": "Cv",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Characteristic",
+   "attribute": "Control valves",
+   "global": false,
+   "title": "Control valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Characteristic",
+   "attribute": "Actuator",
+   "global": false,
+   "title": "Actuator admissible values",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Leakage class",
+   "attribute": "Characteristic",
+   "global": false,
+   "title": "Flow characteristic",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "=%",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "EQ%",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "equal %",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "LIN",
+     "value": "Linear"
+    },
+    {
+     "form": "QO",
+     "value": "Quick opening"
+    }
+   ]
+  },
+  {
+   "group": "Leakage class",
+   "attribute": "Leakage class",
+   "global": false,
+   "title": "Seat leakage class",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Leakage class",
+   "attribute": "Cv",
+   "global": false,
+   "title": "Cv",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Leakage class",
+   "attribute": "Control valves",
+   "global": false,
+   "title": "Control valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Leakage class",
+   "attribute": "Actuator",
+   "global": false,
+   "title": "Actuator admissible values",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Cv",
+   "attribute": "Characteristic",
+   "global": false,
+   "title": "Flow characteristic",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "=%",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "EQ%",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "equal %",
+     "value": "Equal percentage"
+    },
+    {
+     "form": "LIN",
+     "value": "Linear"
+    },
+    {
+     "form": "QO",
+     "value": "Quick opening"
+    }
+   ]
+  },
+  {
+   "group": "Cv",
+   "attribute": "Leakage class",
+   "global": false,
+   "title": "Seat leakage class",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Cv",
+   "attribute": "Cv",
+   "global": false,
+   "title": "Cv",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Cv",
+   "attribute": "Control valves",
+   "global": false,
+   "title": "Control valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Cv",
+   "attribute": "Actuator",
+   "global": false,
+   "title": "Actuator admissible values",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Relief valve type",
+   "attribute": "Relief valve type",
+   "global": false,
+   "title": "Relief valves",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "conv.",
+     "value": "Conventional"
+    },
+    {
+     "form": "spring loaded",
+     "value": "Conventional"
+    },
+    {
+     "form": "bellows",
+     "value": "Balanced bellows"
+    },
+    {
+     "form": "balanced bellow",
+     "value": "Balanced bellows"
+    },
+    {
+     "form": "POPRV",
+     "value": "Pilot operated"
+    },
+    {
+     "form": "pilot",
+     "value": "Pilot operated"
+    }
+   ]
+  },
+  {
+   "group": "Relief valve type",
+   "attribute": "Orifice",
+   "global": false,
+   "title": "Orifice",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Relief valve type",
+   "attribute": "Relief valves",
+   "global": false,
+   "title": "Relief valves hold attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Orifice",
+   "attribute": "Type",
+   "global": false,
+   "title": "11.9 Relief valves",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "conv.",
+     "value": "Conventional"
+    },
+    {
+     "form": "spring loaded",
+     "value": "Conventional"
+    },
+    {
+     "form": "bellows",
+     "value": "Balanced bellows"
+    },
+    {
+     "form": "balanced bellow",
+     "value": "Balanced bellows"
+    },
+    {
+     "form": "POPRV",
+     "value": "Pilot operated"
+    },
+    {
+     "form": "pilot",
+     "value": "Pilot operated"
+    }
+   ]
+  },
+  {
+   "group": "Orifice",
+   "attribute": "Orifice",
+   "global": false,
+   "title": "11.9 Relief valves",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Orifice",
+   "attribute": "Relief valves",
+   "global": false,
+   "title": "12.6 Relief valves hold Inlet size, Inlet rating, Outlet size, Outlet rating, Orifice, Set pressure and Type",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe manufacture",
+   "attribute": "Pipe manufacture",
+   "global": false,
+   "title": "11.10 Pipe manufacture",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "SMLS",
+     "value": "Seamless"
+    },
+    {
+     "form": "S/L",
+     "value": "Seamless"
+    }
+   ]
+  },
+  {
+   "group": "Pipe manufacture",
+   "attribute": "Pipe manufacture",
+   "global": false,
+   "title": "11.10 Pipe manufacture",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe manufacture",
+   "attribute": "End finish",
+   "global": false,
+   "title": "11.10 Pipe ends",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "bevelled end",
+     "value": "BE"
+    },
+    {
+     "form": "beveled end",
+     "value": "BE"
+    },
+    {
+     "form": "BEV",
+     "value": "BE"
+    },
+    {
+     "form": "plain end",
+     "value": "PE"
+    }
+   ]
+  },
+  {
+   "group": "Pipe manufacture",
+   "attribute": "Elbow radius",
+   "global": false,
+   "title": "11.10 Elbow radius",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "long radius",
+     "value": "LR"
+    },
+    {
+     "form": "1.5D",
+     "value": "LR"
+    },
+    {
+     "form": "1.5 D",
+     "value": "LR"
+    },
+    {
+     "form": "short radius",
+     "value": "SR"
+    },
+    {
+     "form": "1D",
+     "value": "SR"
+    },
+    {
+     "form": "1 D",
+     "value": "SR"
+    }
+   ]
+  },
+  {
+   "group": "Pipe manufacture",
+   "attribute": "Angle",
+   "global": false,
+   "title": "11.10 Angle",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe manufacture",
+   "attribute": "Pipe",
+   "global": false,
+   "title": "13.1 Pipe holds Size, Schedule, Material, Manufacture, End finish and Length",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe manufacture",
+   "attribute": "Length",
+   "global": false,
+   "title": "13.1 Length is a long length in m",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe end finish",
+   "attribute": "Pipe manufacture",
+   "global": false,
+   "title": "11.10 Pipe manufacture",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "SMLS",
+     "value": "Seamless"
+    },
+    {
+     "form": "S/L",
+     "value": "Seamless"
+    }
+   ]
+  },
+  {
+   "group": "Pipe end finish",
+   "attribute": "Pipe manufacture",
+   "global": false,
+   "title": "11.10 Pipe manufacture",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe end finish",
+   "attribute": "Pipe end finish",
+   "global": false,
+   "title": "11.10 Pipe ends",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "bevelled end",
+     "value": "BE"
+    },
+    {
+     "form": "beveled end",
+     "value": "BE"
+    },
+    {
+     "form": "BEV",
+     "value": "BE"
+    },
+    {
+     "form": "plain end",
+     "value": "PE"
+    }
+   ]
+  },
+  {
+   "group": "Pipe end finish",
+   "attribute": "Elbow radius",
+   "global": false,
+   "title": "11.10 Elbow radius",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "long radius",
+     "value": "LR"
+    },
+    {
+     "form": "1.5D",
+     "value": "LR"
+    },
+    {
+     "form": "1.5 D",
+     "value": "LR"
+    },
+    {
+     "form": "short radius",
+     "value": "SR"
+    },
+    {
+     "form": "1D",
+     "value": "SR"
+    },
+    {
+     "form": "1 D",
+     "value": "SR"
+    }
+   ]
+  },
+  {
+   "group": "Pipe end finish",
+   "attribute": "Angle",
+   "global": false,
+   "title": "11.10 Angle",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe end finish",
+   "attribute": "Pipe",
+   "global": false,
+   "title": "13.1 Pipe holds Size, Schedule, Material, Manufacture, End finish and Length",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pipe end finish",
+   "attribute": "Length",
+   "global": false,
+   "title": "13.1 Length is a long length in m",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Elbow radius",
+   "attribute": "Pipe manufacture",
+   "global": false,
+   "title": "11.10 Pipe manufacture",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "SMLS",
+     "value": "Seamless"
+    },
+    {
+     "form": "S/L",
+     "value": "Seamless"
+    }
+   ]
+  },
+  {
+   "group": "Elbow radius",
+   "attribute": "Pipe manufacture",
+   "global": false,
+   "title": "11.10 Pipe manufacture",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Elbow radius",
+   "attribute": "End finish",
+   "global": false,
+   "title": "11.10 Pipe ends",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "bevelled end",
+     "value": "BE"
+    },
+    {
+     "form": "beveled end",
+     "value": "BE"
+    },
+    {
+     "form": "BEV",
+     "value": "BE"
+    },
+    {
+     "form": "plain end",
+     "value": "PE"
+    }
+   ]
+  },
+  {
+   "group": "Elbow radius",
+   "attribute": "Elbow radius",
+   "global": false,
+   "title": "11.10 Elbow radius",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "long radius",
+     "value": "LR"
+    },
+    {
+     "form": "1.5D",
+     "value": "LR"
+    },
+    {
+     "form": "1.5 D",
+     "value": "LR"
+    },
+    {
+     "form": "short radius",
+     "value": "SR"
+    },
+    {
+     "form": "1D",
+     "value": "SR"
+    },
+    {
+     "form": "1 D",
+     "value": "SR"
+    }
+   ]
+  },
+  {
+   "group": "Elbow radius",
+   "attribute": "Angle",
+   "global": false,
+   "title": "11.10 Angle",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Elbow radius",
+   "attribute": "Elbows",
+   "global": false,
+   "title": "13.3 Elbows hold Size, Schedule, Material, Radius and Angle",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Elbow radius",
+   "attribute": "Flanges",
+   "global": false,
+   "title": "13.3 Flanges hold Type, Size, Rating, Facing and Material",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Elbow radius",
+   "attribute": "Facing",
+   "global": false,
+   "title": "13.3 Facing uses the terms of end connections, restricted to RF, FF and RTJ",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Angle",
+   "attribute": "Pipe manufacture",
+   "global": false,
+   "title": "11.10 Pipe manufacture",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "SMLS",
+     "value": "Seamless"
+    },
+    {
+     "form": "S/L",
+     "value": "Seamless"
+    }
+   ]
+  },
+  {
+   "group": "Angle",
+   "attribute": "Pipe manufacture",
+   "global": false,
+   "title": "11.10 Pipe manufacture",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Angle",
+   "attribute": "End finish",
+   "global": false,
+   "title": "11.10 Pipe ends",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "bevelled end",
+     "value": "BE"
+    },
+    {
+     "form": "beveled end",
+     "value": "BE"
+    },
+    {
+     "form": "BEV",
+     "value": "BE"
+    },
+    {
+     "form": "plain end",
+     "value": "PE"
+    }
+   ]
+  },
+  {
+   "group": "Angle",
+   "attribute": "Elbow radius",
+   "global": false,
+   "title": "11.10 Elbow radius",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "long radius",
+     "value": "LR"
+    },
+    {
+     "form": "1.5D",
+     "value": "LR"
+    },
+    {
+     "form": "1.5 D",
+     "value": "LR"
+    },
+    {
+     "form": "short radius",
+     "value": "SR"
+    },
+    {
+     "form": "1D",
+     "value": "SR"
+    },
+    {
+     "form": "1 D",
+     "value": "SR"
+    }
+   ]
+  },
+  {
+   "group": "Angle",
+   "attribute": "Angle",
+   "global": false,
+   "title": "11.10 Angle",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Angle",
+   "attribute": "Elbows",
+   "global": false,
+   "title": "13.3 Elbows hold Size, Schedule, Material, Radius and Angle",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Angle",
+   "attribute": "Flanges",
+   "global": false,
+   "title": "13.3 Flanges hold Type, Size, Rating, Facing and Material",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Angle",
+   "attribute": "Facing",
+   "global": false,
+   "title": "13.3 Facing uses the terms of end connections, restricted to RF, FF and RTJ",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gasket type",
+   "attribute": "Gasket type",
+   "global": false,
+   "title": "11.11 Gaskets",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "SPW",
+     "value": "Spiral wound"
+    },
+    {
+     "form": "SWG",
+     "value": "Spiral wound"
+    },
+    {
+     "form": "spiral-wound",
+     "value": "Spiral wound"
+    },
+    {
+     "form": "RJ gasket",
+     "value": "Ring joint"
+    },
+    {
+     "form": "RTJ gasket",
+     "value": "Ring joint"
+    }
+   ]
+  },
+  {
+   "group": "Gasket type",
+   "attribute": "Bolt coating",
+   "global": false,
+   "title": "11.11 Bolt coatings",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "Teflon coated",
+     "value": "PTFE coated"
+    },
+    {
+     "form": "PTFE-coated",
+     "value": "PTFE coated"
+    },
+    {
+     "form": "hot dip galvanized",
+     "value": "HDG"
+    },
+    {
+     "form": "galvanized",
+     "value": "HDG"
+    },
+    {
+     "form": "black",
+     "value": "Uncoated"
+    },
+    {
+     "form": "plain",
+     "value": "Uncoated"
+    }
+   ]
+  },
+  {
+   "group": "Gasket type",
+   "attribute": "Gaskets",
+   "global": false,
+   "title": "13.4 Gaskets hold Type, Size, Rating, Winding material and Filler material",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gasket type",
+   "attribute": "Winding material and Filler material",
+   "global": false,
+   "title": "13.4 Winding material and Filler material apply to spiral wound gaskets only and shall be N/A for other gasket types",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Bolt coating",
+   "attribute": "Gasket type",
+   "global": false,
+   "title": "11.11 Gaskets",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "SPW",
+     "value": "Spiral wound"
+    },
+    {
+     "form": "SWG",
+     "value": "Spiral wound"
+    },
+    {
+     "form": "spiral-wound",
+     "value": "Spiral wound"
+    },
+    {
+     "form": "RJ gasket",
+     "value": "Ring joint"
+    },
+    {
+     "form": "RTJ gasket",
+     "value": "Ring joint"
+    }
+   ]
+  },
+  {
+   "group": "Bolt coating",
+   "attribute": "Bolt coating",
+   "global": false,
+   "title": "11.11 Bolt coatings",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "Teflon coated",
+     "value": "PTFE coated"
+    },
+    {
+     "form": "PTFE-coated",
+     "value": "PTFE coated"
+    },
+    {
+     "form": "hot dip galvanized",
+     "value": "HDG"
+    },
+    {
+     "form": "galvanized",
+     "value": "HDG"
+    },
+    {
+     "form": "black",
+     "value": "Uncoated"
+    },
+    {
+     "form": "plain",
+     "value": "Uncoated"
+    }
+   ]
+  },
+  {
+   "group": "Bolt coating",
+   "attribute": "Stud bolts",
+   "global": false,
+   "title": "13.5 Stud bolts hold Diameter, Length, Stud material, Nut material and Coating",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Bolt coating",
+   "attribute": "Length",
+   "global": false,
+   "title": "13.5 Length of a stud is a short length in mm",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pump type",
+   "attribute": "Seal",
+   "global": false,
+   "title": "11.12 Seals",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "single seal",
+     "value": "Single mechanical seal"
+    },
+    {
+     "form": "SMS",
+     "value": "Single mechanical seal"
+    },
+    {
+     "form": "double seal",
+     "value": "Double mechanical seal"
+    },
+    {
+     "form": "dual seal",
+     "value": "Double mechanical seal"
+    },
+    {
+     "form": "DMS",
+     "value": "Double mechanical seal"
+    }
+   ]
+  },
+  {
+   "group": "Pump type",
+   "attribute": "Driver",
+   "global": false,
+   "title": "11.12 Drivers",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "motor",
+     "value": "Electric motor"
+    },
+    {
+     "form": "E-motor",
+     "value": "Electric motor"
+    },
+    {
+     "form": "EM",
+     "value": "Electric motor"
+    },
+    {
+     "form": "diesel",
+     "value": "Diesel engine"
+    }
+   ]
+  },
+  {
+   "group": "Pump type",
+   "attribute": "Pump type",
+   "global": false,
+   "title": "11.12 The API pump type is written as its letters and digits together without separation",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pump type",
+   "attribute": "Centrifugal pumps",
+   "global": false,
+   "title": "14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pump type",
+   "attribute": "Flow",
+   "global": false,
+   "title": "14.1 Flow is held in m3/h at the rated point",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pump type",
+   "attribute": "Head",
+   "global": false,
+   "title": "14.1 Head is a long length in m at the rated point",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Pump type",
+   "attribute": "Speed",
+   "global": false,
+   "title": "14.1 Speed is held in rpm",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal",
+   "attribute": "Seal",
+   "global": false,
+   "title": "11.12 Seals",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "single seal",
+     "value": "Single mechanical seal"
+    },
+    {
+     "form": "SMS",
+     "value": "Single mechanical seal"
+    },
+    {
+     "form": "double seal",
+     "value": "Double mechanical seal"
+    },
+    {
+     "form": "dual seal",
+     "value": "Double mechanical seal"
+    },
+    {
+     "form": "DMS",
+     "value": "Double mechanical seal"
+    }
+   ]
+  },
+  {
+   "group": "Seal",
+   "attribute": "Driver",
+   "global": false,
+   "title": "11.12 Drivers",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "motor",
+     "value": "Electric motor"
+    },
+    {
+     "form": "E-motor",
+     "value": "Electric motor"
+    },
+    {
+     "form": "EM",
+     "value": "Electric motor"
+    },
+    {
+     "form": "diesel",
+     "value": "Diesel engine"
+    }
+   ]
+  },
+  {
+   "group": "Seal",
+   "attribute": "Pump type",
+   "global": false,
+   "title": "11.12 The API pump type is written as its letters and digits together without separation",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal",
+   "attribute": "Centrifugal pumps",
+   "global": false,
+   "title": "14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal",
+   "attribute": "Flow",
+   "global": false,
+   "title": "14.1 Flow is held in m3/h at the rated point",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal",
+   "attribute": "Head",
+   "global": false,
+   "title": "14.1 Head is a long length in m at the rated point",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal",
+   "attribute": "Speed",
+   "global": false,
+   "title": "14.1 Speed is held in rpm",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal",
+   "attribute": "Seal plan",
+   "global": false,
+   "title": "14.2 Where a double seal has two plans, both shall be written in the received order separated by a slash without spaces",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Seal plan",
+   "global": false,
+   "title": "11.12 Seal plan",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Seal",
+   "global": false,
+   "title": "11.12 Seals",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "single seal",
+     "value": "Single mechanical seal"
+    },
+    {
+     "form": "SMS",
+     "value": "Single mechanical seal"
+    },
+    {
+     "form": "double seal",
+     "value": "Double mechanical seal"
+    },
+    {
+     "form": "dual seal",
+     "value": "Double mechanical seal"
+    },
+    {
+     "form": "DMS",
+     "value": "Double mechanical seal"
+    }
+   ]
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Driver",
+   "global": false,
+   "title": "11.12 Drivers",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "motor",
+     "value": "Electric motor"
+    },
+    {
+     "form": "E-motor",
+     "value": "Electric motor"
+    },
+    {
+     "form": "EM",
+     "value": "Electric motor"
+    },
+    {
+     "form": "diesel",
+     "value": "Diesel engine"
+    }
+   ]
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Pump type",
+   "global": false,
+   "title": "11.12 The API pump type is written as its letters and digits together without separation",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Centrifugal pumps",
+   "global": false,
+   "title": "14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Flow",
+   "global": false,
+   "title": "14.1 Flow is held in m3/h at the rated point",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Head",
+   "global": false,
+   "title": "14.1 Head is a long length in m at the rated point",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Speed",
+   "global": false,
+   "title": "14.1 Speed is held in rpm",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Seal plan",
+   "attribute": "Seal plan",
+   "global": false,
+   "title": "14.2 Where a double seal has two plans, both shall be written in the received order separated by a slash without spaces",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Driver",
+   "attribute": "Seal",
+   "global": false,
+   "title": "11.12 Seals",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "single seal",
+     "value": "Single mechanical seal"
+    },
+    {
+     "form": "SMS",
+     "value": "Single mechanical seal"
+    },
+    {
+     "form": "double seal",
+     "value": "Double mechanical seal"
+    },
+    {
+     "form": "dual seal",
+     "value": "Double mechanical seal"
+    },
+    {
+     "form": "DMS",
+     "value": "Double mechanical seal"
+    }
+   ]
+  },
+  {
+   "group": "Driver",
+   "attribute": "Driver",
+   "global": false,
+   "title": "11.12 Drivers",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "motor",
+     "value": "Electric motor"
+    },
+    {
+     "form": "E-motor",
+     "value": "Electric motor"
+    },
+    {
+     "form": "EM",
+     "value": "Electric motor"
+    },
+    {
+     "form": "diesel",
+     "value": "Diesel engine"
+    }
+   ]
+  },
+  {
+   "group": "Driver",
+   "attribute": "Pump type",
+   "global": false,
+   "title": "11.12 The API pump type is written as its letters and digits together without separation",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Driver",
+   "attribute": "Centrifugal pumps",
+   "global": false,
+   "title": "14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Driver",
+   "attribute": "Flow",
+   "global": false,
+   "title": "14.1 Flow is held in m3/h at the rated point",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Driver",
+   "attribute": "Head",
+   "global": false,
+   "title": "14.1 Head is a long length in m at the rated point",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Driver",
+   "attribute": "Speed",
+   "global": false,
+   "title": "14.1 Speed is held in rpm",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Temperature sensor",
+   "attribute": "Sensor",
+   "global": false,
+   "title": "11.13 Temperature sensors",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "RTD Pt100",
+     "value": "Pt100"
+    },
+    {
+     "form": "PT-100",
+     "value": "Pt100"
+    },
+    {
+     "form": "Pt 100",
+     "value": "Pt100"
+    },
+    {
+     "form": "K-type",
+     "value": "Type K"
+    },
+    {
+     "form": "thermocouple K",
+     "value": "Type K"
+    },
+    {
+     "form": "TC K",
+     "value": "Type K"
+    }
+   ]
+  },
+  {
+   "group": "Temperature sensor",
+   "attribute": "Wiring",
+   "global": false,
+   "title": "11.13 Wiring",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "3 wire",
+     "value": "3-wire"
+    },
+    {
+     "form": "4 wire",
+     "value": "4-wire"
+    }
+   ]
+  },
+  {
+   "group": "Temperature sensor",
+   "attribute": "Temperature elements",
+   "global": false,
+   "title": "15.2 Temperature elements hold Sensor, Wiring, Sheath material, Insertion length and Process connection",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Temperature sensor",
+   "attribute": "Insertion length",
+   "global": false,
+   "title": "15.2 Insertion length is a short length in mm",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Wiring",
+   "attribute": "Sensor",
+   "global": false,
+   "title": "11.13 Temperature sensors",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "RTD Pt100",
+     "value": "Pt100"
+    },
+    {
+     "form": "PT-100",
+     "value": "Pt100"
+    },
+    {
+     "form": "Pt 100",
+     "value": "Pt100"
+    },
+    {
+     "form": "K-type",
+     "value": "Type K"
+    },
+    {
+     "form": "thermocouple K",
+     "value": "Type K"
+    },
+    {
+     "form": "TC K",
+     "value": "Type K"
+    }
+   ]
+  },
+  {
+   "group": "Wiring",
+   "attribute": "Wiring",
+   "global": false,
+   "title": "11.13 Wiring",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "3 wire",
+     "value": "3-wire"
+    },
+    {
+     "form": "4 wire",
+     "value": "4-wire"
+    }
+   ]
+  },
+  {
+   "group": "Wiring",
+   "attribute": "Temperature elements",
+   "global": false,
+   "title": "15.2 Temperature elements hold Sensor, Wiring, Sheath material, Insertion length and Process connection",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Wiring",
+   "attribute": "Insertion length",
+   "global": false,
+   "title": "15.2 Insertion length is a short length in mm",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Level measuring principle",
+   "attribute": "Level measuring principle",
+   "global": false,
+   "title": "Level measuring principles",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "guided wave radar",
+     "value": "GWR"
+    },
+    {
+     "form": "guided radar",
+     "value": "GWR"
+    },
+    {
+     "form": "differential pressure",
+     "value": "DP"
+    },
+    {
+     "form": "d/p",
+     "value": "DP"
+    }
+   ]
+  },
+  {
+   "group": "Level measuring principle",
+   "attribute": "Level measuring principle",
+   "global": false,
+   "title": "Level measuring principles",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "non-contact radar",
+     "value": "Radar"
+    }
+   ]
+  },
+  {
+   "group": "Level measuring principle",
+   "attribute": "Flow meter type",
+   "global": false,
+   "title": "Flow meters",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "coriolis mass",
+     "value": "Coriolis"
+    },
+    {
+     "form": "CMF",
+     "value": "Coriolis"
+    },
+    {
+     "form": "mag",
+     "value": "Magnetic"
+    },
+    {
+     "form": "electromagnetic",
+     "value": "Magnetic"
+    },
+    {
+     "form": "magflow",
+     "value": "Magnetic"
+    },
+    {
+     "form": "USM",
+     "value": "Ultrasonic"
+    }
+   ]
+  },
+  {
+   "group": "Flow meter type",
+   "attribute": "Level measuring principle",
+   "global": false,
+   "title": "Level measuring principles",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "guided wave radar",
+     "value": "GWR"
+    },
+    {
+     "form": "guided radar",
+     "value": "GWR"
+    },
+    {
+     "form": "differential pressure",
+     "value": "DP"
+    },
+    {
+     "form": "d/p",
+     "value": "DP"
+    }
+   ]
+  },
+  {
+   "group": "Flow meter type",
+   "attribute": "Level measuring principle",
+   "global": false,
+   "title": "Level measuring principles",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "non-contact radar",
+     "value": "Radar"
+    }
+   ]
+  },
+  {
+   "group": "Flow meter type",
+   "attribute": "Flow meter type",
+   "global": false,
+   "title": "Flow meters",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "coriolis mass",
+     "value": "Coriolis"
+    },
+    {
+     "form": "CMF",
+     "value": "Coriolis"
+    },
+    {
+     "form": "mag",
+     "value": "Magnetic"
+    },
+    {
+     "form": "electromagnetic",
+     "value": "Magnetic"
+    },
+    {
+     "form": "magflow",
+     "value": "Magnetic"
+    },
+    {
+     "form": "USM",
+     "value": "Ultrasonic"
+    }
+   ]
+  },
+  {
+   "group": "Accuracy",
+   "attribute": "Accuracy",
+   "global": false,
+   "title": "Accuracy",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "span",
+     "value": "of span"
+    },
+    {
+     "form": "% span",
+     "value": "of span"
+    },
+    {
+     "form": "of calibrated span",
+     "value": "of span"
+    },
+    {
+     "form": "rdg",
+     "value": "of reading"
+    },
+    {
+     "form": "of rdg",
+     "value": "of reading"
+    },
+    {
+     "form": "reading",
+     "value": "of reading"
+    },
+    {
+     "form": "FS",
+     "value": "of full scale"
+    },
+    {
+     "form": "of FS",
+     "value": "of full scale"
+    },
+    {
+     "form": "full scale",
+     "value": "of full scale"
+    }
+   ]
+  },
+  {
+   "group": "Cable insulation",
+   "attribute": "Cable insulation",
+   "global": false,
+   "title": "Cable insulation",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "cross-linked polyethylene",
+     "value": "XLPE"
+    },
+    {
+     "form": "XLPE insulated",
+     "value": "XLPE"
+    }
+   ]
+  },
+  {
+   "group": "Cable insulation",
+   "attribute": "Cable armour",
+   "global": false,
+   "title": "Armour",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "steel wire armour",
+     "value": "SWA"
+    },
+    {
+     "form": "steel wire armoured",
+     "value": "SWA"
+    },
+    {
+     "form": "GSWA",
+     "value": "SWA"
+    },
+    {
+     "form": "galvanized steel wire braid",
+     "value": "GSWB"
+    },
+    {
+     "form": "steel wire braid",
+     "value": "GSWB"
+    },
+    {
+     "form": "SWB",
+     "value": "GSWB"
+    }
+   ]
+  },
+  {
+   "group": "Cable insulation",
+   "attribute": "Cable armour",
+   "global": false,
+   "title": "Armour",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "unarmored",
+     "value": "Unarmoured"
+    },
+    {
+     "form": "non-armoured",
+     "value": "Unarmoured"
+    }
+   ]
+  },
+  {
+   "group": "Cable insulation",
+   "attribute": "Cable sheath",
+   "global": false,
+   "title": "The outer sheath",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "LS0H",
+     "value": "LSZH"
+    },
+    {
+     "form": "LSOH",
+     "value": "LSZH"
+    },
+    {
+     "form": "low smoke zero halogen",
+     "value": "LSZH"
+    }
+   ]
+  },
+  {
+   "group": "Cable armour",
+   "attribute": "Cable insulation",
+   "global": false,
+   "title": "Cable insulation",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "cross-linked polyethylene",
+     "value": "XLPE"
+    },
+    {
+     "form": "XLPE insulated",
+     "value": "XLPE"
+    }
+   ]
+  },
+  {
+   "group": "Cable armour",
+   "attribute": "Cable armour",
+   "global": false,
+   "title": "Armour",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "steel wire armour",
+     "value": "SWA"
+    },
+    {
+     "form": "steel wire armoured",
+     "value": "SWA"
+    },
+    {
+     "form": "GSWA",
+     "value": "SWA"
+    },
+    {
+     "form": "galvanized steel wire braid",
+     "value": "GSWB"
+    },
+    {
+     "form": "steel wire braid",
+     "value": "GSWB"
+    },
+    {
+     "form": "SWB",
+     "value": "GSWB"
+    }
+   ]
+  },
+  {
+   "group": "Cable armour",
+   "attribute": "Cable armour",
+   "global": false,
+   "title": "Armour",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "unarmored",
+     "value": "Unarmoured"
+    },
+    {
+     "form": "non-armoured",
+     "value": "Unarmoured"
+    }
+   ]
+  },
+  {
+   "group": "Cable armour",
+   "attribute": "Cable sheath",
+   "global": false,
+   "title": "The outer sheath",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "LS0H",
+     "value": "LSZH"
+    },
+    {
+     "form": "LSOH",
+     "value": "LSZH"
+    },
+    {
+     "form": "low smoke zero halogen",
+     "value": "LSZH"
+    }
+   ]
+  },
+  {
+   "group": "Cable sheath",
+   "attribute": "Cable insulation",
+   "global": false,
+   "title": "Cable insulation",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "cross-linked polyethylene",
+     "value": "XLPE"
+    },
+    {
+     "form": "XLPE insulated",
+     "value": "XLPE"
+    }
+   ]
+  },
+  {
+   "group": "Cable sheath",
+   "attribute": "Cable armour",
+   "global": false,
+   "title": "Armour",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "steel wire armour",
+     "value": "SWA"
+    },
+    {
+     "form": "steel wire armoured",
+     "value": "SWA"
+    },
+    {
+     "form": "GSWA",
+     "value": "SWA"
+    },
+    {
+     "form": "galvanized steel wire braid",
+     "value": "GSWB"
+    },
+    {
+     "form": "steel wire braid",
+     "value": "GSWB"
+    },
+    {
+     "form": "SWB",
+     "value": "GSWB"
+    }
+   ]
+  },
+  {
+   "group": "Cable sheath",
+   "attribute": "Cable armour",
+   "global": false,
+   "title": "Armour",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "unarmored",
+     "value": "Unarmoured"
+    },
+    {
+     "form": "non-armoured",
+     "value": "Unarmoured"
+    }
+   ]
+  },
+  {
+   "group": "Cable sheath",
+   "attribute": "Cable sheath",
+   "global": false,
+   "title": "The outer sheath",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "LS0H",
+     "value": "LSZH"
+    },
+    {
+     "form": "LSOH",
+     "value": "LSZH"
+    },
+    {
+     "form": "low smoke zero halogen",
+     "value": "LSZH"
+    }
+   ]
+  },
+  {
+   "group": "Cable screen",
+   "attribute": "Cable screen",
+   "global": false,
+   "title": "Cable screens",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "OS",
+     "value": "Overall"
+    },
+    {
+     "form": "overall screen",
+     "value": "Overall"
+    },
+    {
+     "form": "collective screen",
+     "value": "Overall"
+    },
+    {
+     "form": "IS/OS",
+     "value": "Individual and overall"
+    },
+    {
+     "form": "ISOS",
+     "value": "Individual and overall"
+    },
+    {
+     "form": "individual and overall screen",
+     "value": "Individual and overall"
+    },
+    {
+     "form": "unshielded",
+     "value": "Unscreened"
+    }
+   ]
+  },
+  {
+   "group": "Cable screen",
+   "attribute": "Cable gland type",
+   "global": false,
+   "title": "Cable glands",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "barrier gland",
+     "value": "Barrier"
+    },
+    {
+     "form": "compound filled",
+     "value": "Barrier"
+    },
+    {
+     "form": "compression gland",
+     "value": "Compression"
+    },
+    {
+     "form": "standard gland",
+     "value": "Compression"
+    }
+   ]
+  },
+  {
+   "group": "Cable gland type",
+   "attribute": "Cable screen",
+   "global": false,
+   "title": "Cable screens",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "OS",
+     "value": "Overall"
+    },
+    {
+     "form": "overall screen",
+     "value": "Overall"
+    },
+    {
+     "form": "collective screen",
+     "value": "Overall"
+    },
+    {
+     "form": "IS/OS",
+     "value": "Individual and overall"
+    },
+    {
+     "form": "ISOS",
+     "value": "Individual and overall"
+    },
+    {
+     "form": "individual and overall screen",
+     "value": "Individual and overall"
+    },
+    {
+     "form": "unshielded",
+     "value": "Unscreened"
+    }
+   ]
+  },
+  {
+   "group": "Cable gland type",
+   "attribute": "Cable gland type",
+   "global": false,
+   "title": "Cable glands",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "barrier gland",
+     "value": "Barrier"
+    },
+    {
+     "form": "compound filled",
+     "value": "Barrier"
+    },
+    {
+     "form": "compression gland",
+     "value": "Compression"
+    },
+    {
+     "form": "standard gland",
+     "value": "Compression"
+    }
+   ]
+  },
+  {
+   "group": "Vessel orientation",
+   "attribute": "Vessel orientation",
+   "global": false,
+   "title": "Vessel orientation",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "V",
+     "value": "Vertical"
+    },
+    {
+     "form": "vert.",
+     "value": "Vertical"
+    },
+    {
+     "form": "H",
+     "value": "Horizontal"
+    },
+    {
+     "form": "horiz.",
+     "value": "Horizontal"
+    }
+   ]
+  },
+  {
+   "group": "Vessel orientation",
+   "attribute": "Vessel head type",
+   "global": false,
+   "title": "Heads",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "2:1 elliptical",
+     "value": "2:1 SE"
+    },
+    {
+     "form": "elliptical",
+     "value": "2:1 SE"
+    },
+    {
+     "form": "2:1 semi-elliptical",
+     "value": "2:1 SE"
+    },
+    {
+     "form": "SE 2:1",
+     "value": "2:1 SE"
+    },
+    {
+     "form": "hemispherical",
+     "value": "Hemi"
+    },
+    {
+     "form": "torispherical",
+     "value": "Tori"
+    },
+    {
+     "form": "F&D",
+     "value": "Tori"
+    }
+   ]
+  },
+  {
+   "group": "Vessel head type",
+   "attribute": "Vessel orientation",
+   "global": false,
+   "title": "Vessel orientation",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "V",
+     "value": "Vertical"
+    },
+    {
+     "form": "vert.",
+     "value": "Vertical"
+    },
+    {
+     "form": "H",
+     "value": "Horizontal"
+    },
+    {
+     "form": "horiz.",
+     "value": "Horizontal"
+    }
+   ]
+  },
+  {
+   "group": "Vessel head type",
+   "attribute": "Vessel head type",
+   "global": false,
+   "title": "Heads",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "2:1 elliptical",
+     "value": "2:1 SE"
+    },
+    {
+     "form": "elliptical",
+     "value": "2:1 SE"
+    },
+    {
+     "form": "2:1 semi-elliptical",
+     "value": "2:1 SE"
+    },
+    {
+     "form": "SE 2:1",
+     "value": "2:1 SE"
+    },
+    {
+     "form": "hemispherical",
+     "value": "Hemi"
+    },
+    {
+     "form": "torispherical",
+     "value": "Tori"
+    },
+    {
+     "form": "F&D",
+     "value": "Tori"
+    }
+   ]
+  },
+  {
+   "group": "Design code",
+   "attribute": "Design code",
+   "global": false,
+   "title": "Design codes",
+   "any_attribute": false,
+   "role": "register",
+   "pairs": [
+    {
+     "form": "ASME VIII Div 1",
+     "value": "ASME VIII-1"
+    },
+    {
+     "form": "ASME Sec VIII Div. 1",
+     "value": "ASME VIII-1"
+    },
+    {
+     "form": "ASME Section VIII Division 1",
+     "value": "ASME VIII-1"
+    },
+    {
+     "form": "API650",
+     "value": "API 650"
+    },
+    {
+     "form": "API Std 650",
+     "value": "API 650"
+    }
+   ]
+  },
+  {
+   "group": "Design code",
+   "attribute": "Radiography",
+   "global": false,
+   "title": "Radiography",
+   "any_attribute": false,
+   "role": "register",
+   "pairs": [
+    {
+     "form": "100% RT",
+     "value": "Full RT"
+    },
+    {
+     "form": "full",
+     "value": "Full RT"
+    },
+    {
+     "form": "spot",
+     "value": "Spot RT"
+    },
+    {
+     "form": "no radiography",
+     "value": "No RT"
+    },
+    {
+     "form": "nil",
+     "value": "No RT"
+    }
+   ]
+  },
+  {
+   "group": "Radiography",
+   "attribute": "Design code",
+   "global": false,
+   "title": "Design codes",
+   "any_attribute": false,
+   "role": "register",
+   "pairs": [
+    {
+     "form": "ASME VIII Div 1",
+     "value": "ASME VIII-1"
+    },
+    {
+     "form": "ASME Sec VIII Div. 1",
+     "value": "ASME VIII-1"
+    },
+    {
+     "form": "ASME Section VIII Division 1",
+     "value": "ASME VIII-1"
+    },
+    {
+     "form": "API650",
+     "value": "API 650"
+    },
+    {
+     "form": "API Std 650",
+     "value": "API 650"
+    }
+   ]
+  },
+  {
+   "group": "Radiography",
+   "attribute": "Radiography",
+   "global": false,
+   "title": "Radiography",
+   "any_attribute": false,
+   "role": "register",
+   "pairs": [
+    {
+     "form": "100% RT",
+     "value": "Full RT"
+    },
+    {
+     "form": "full",
+     "value": "Full RT"
+    },
+    {
+     "form": "spot",
+     "value": "Spot RT"
+    },
+    {
+     "form": "no radiography",
+     "value": "No RT"
+    },
+    {
+     "form": "nil",
+     "value": "No RT"
+    }
+   ]
+  },
+  {
+   "group": "Tank roof",
+   "attribute": "Tank roof",
+   "global": false,
+   "title": "Tank roofs",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "fixed cone roof",
+     "value": "Cone roof"
+    },
+    {
+     "form": "cone",
+     "value": "Cone roof"
+    },
+    {
+     "form": "CRT",
+     "value": "Cone roof"
+    }
+   ]
+  },
+  {
+   "group": "Tank roof",
+   "attribute": "Tank roof",
+   "global": false,
+   "title": "Tank roofs",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "dome",
+     "value": "Dome roof"
+    },
+    {
+     "form": "external floating roof",
+     "value": "EFR"
+    },
+    {
+     "form": "internal floating roof",
+     "value": "IFR"
+    }
+   ]
+  },
+  {
+   "group": "TEMA type",
+   "attribute": "Tank roof",
+   "global": false,
+   "title": "Tank roofs",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "fixed cone roof",
+     "value": "Cone roof"
+    },
+    {
+     "form": "cone",
+     "value": "Cone roof"
+    },
+    {
+     "form": "CRT",
+     "value": "Cone roof"
+    }
+   ]
+  },
+  {
+   "group": "TEMA type",
+   "attribute": "Tank roof",
+   "global": false,
+   "title": "Tank roofs",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "dome",
+     "value": "Dome roof"
+    },
+    {
+     "form": "external floating roof",
+     "value": "EFR"
+    },
+    {
+     "form": "internal floating roof",
+     "value": "IFR"
+    }
+   ]
+  },
+  {
+   "group": "Gas detection principle",
+   "attribute": "Principle",
+   "global": false,
+   "title": "Gas detection principles",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "infrared",
+     "value": "IR"
+    },
+    {
+     "form": "IR point",
+     "value": "IR"
+    },
+    {
+     "form": "infrared point",
+     "value": "IR"
+    },
+    {
+     "form": "NDIR",
+     "value": "IR"
+    },
+    {
+     "form": "cat bead",
+     "value": "Catalytic"
+    },
+    {
+     "form": "pellistor",
+     "value": "Catalytic"
+    },
+    {
+     "form": "EC",
+     "value": "Electrochemical"
+    },
+    {
+     "form": "electro-chemical",
+     "value": "Electrochemical"
+    }
+   ]
+  },
+  {
+   "group": "Gas detection principle",
+   "attribute": "Gas",
+   "global": false,
+   "title": "Gases",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "CH4",
+     "value": "Methane"
+    },
+    {
+     "form": "hydrogen sulfide",
+     "value": "H2S"
+    },
+    {
+     "form": "hydrogen sulphide",
+     "value": "H2S"
+    },
+    {
+     "form": "H2",
+     "value": "Hydrogen"
+    },
+    {
+     "form": "O2",
+     "value": "Oxygen"
+    }
+   ]
+  },
+  {
+   "group": "Gas detection principle",
+   "attribute": "Gas detector",
+   "global": false,
+   "title": "Gas detector attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gas detection principle",
+   "attribute": "Range",
+   "global": false,
+   "title": "Range units",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gas",
+   "attribute": "Principle",
+   "global": false,
+   "title": "Gas detection principles",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "infrared",
+     "value": "IR"
+    },
+    {
+     "form": "IR point",
+     "value": "IR"
+    },
+    {
+     "form": "infrared point",
+     "value": "IR"
+    },
+    {
+     "form": "NDIR",
+     "value": "IR"
+    },
+    {
+     "form": "cat bead",
+     "value": "Catalytic"
+    },
+    {
+     "form": "pellistor",
+     "value": "Catalytic"
+    },
+    {
+     "form": "EC",
+     "value": "Electrochemical"
+    },
+    {
+     "form": "electro-chemical",
+     "value": "Electrochemical"
+    }
+   ]
+  },
+  {
+   "group": "Gas",
+   "attribute": "Gas",
+   "global": false,
+   "title": "Gases",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "CH4",
+     "value": "Methane"
+    },
+    {
+     "form": "hydrogen sulfide",
+     "value": "H2S"
+    },
+    {
+     "form": "hydrogen sulphide",
+     "value": "H2S"
+    },
+    {
+     "form": "H2",
+     "value": "Hydrogen"
+    },
+    {
+     "form": "O2",
+     "value": "Oxygen"
+    }
+   ]
+  },
+  {
+   "group": "Gas",
+   "attribute": "Gas detector",
+   "global": false,
+   "title": "Gas detector attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gas",
+   "attribute": "Range",
+   "global": false,
+   "title": "Range units",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Gas detector range unit",
+   "attribute": "Range",
+   "global": false,
+   "title": "Gas detector range units",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "% LEL",
+     "value": "%LEL"
+    },
+    {
+     "form": "LEL%",
+     "value": "%LEL"
+    },
+    {
+     "form": "ppmv",
+     "value": "ppm"
+    },
+    {
+     "form": "% vol",
+     "value": "%vol"
+    },
+    {
+     "form": "vol%",
+     "value": "%vol"
+    }
+   ]
+  },
+  {
+   "group": "Gas detector range unit",
+   "attribute": "Gas detector",
+   "global": false,
+   "title": "Gas detector attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Extinguisher type",
+   "attribute": "Type",
+   "global": false,
+   "title": "Extinguishers",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "hand held",
+     "value": "Portable"
+    },
+    {
+     "form": "handheld",
+     "value": "Portable"
+    },
+    {
+     "form": "trolley",
+     "value": "Wheeled"
+    },
+    {
+     "form": "trolley mounted",
+     "value": "Wheeled"
+    }
+   ]
+  },
+  {
+   "group": "Extinguisher type",
+   "attribute": "Agent",
+   "global": false,
+   "title": "The agent",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "dry chemical powder",
+     "value": "DCP"
+    },
+    {
+     "form": "dry powder",
+     "value": "DCP"
+    },
+    {
+     "form": "powder",
+     "value": "DCP"
+    },
+    {
+     "form": "carbon dioxide",
+     "value": "CO2"
+    },
+    {
+     "form": "AFFF foam",
+     "value": "AFFF"
+    },
+    {
+     "form": "foam",
+     "value": "AFFF"
+    }
+   ]
+  },
+  {
+   "group": "Extinguisher type",
+   "attribute": "Extinguishers",
+   "global": false,
+   "title": "Extinguisher attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Extinguisher type",
+   "attribute": "Charge",
+   "global": false,
+   "title": "Charge units",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Extinguishing agent",
+   "attribute": "Type",
+   "global": false,
+   "title": "Extinguishers",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "hand held",
+     "value": "Portable"
+    },
+    {
+     "form": "handheld",
+     "value": "Portable"
+    },
+    {
+     "form": "trolley",
+     "value": "Wheeled"
+    },
+    {
+     "form": "trolley mounted",
+     "value": "Wheeled"
+    }
+   ]
+  },
+  {
+   "group": "Extinguishing agent",
+   "attribute": "Agent",
+   "global": false,
+   "title": "The agent",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "dry chemical powder",
+     "value": "DCP"
+    },
+    {
+     "form": "dry powder",
+     "value": "DCP"
+    },
+    {
+     "form": "powder",
+     "value": "DCP"
+    },
+    {
+     "form": "carbon dioxide",
+     "value": "CO2"
+    },
+    {
+     "form": "AFFF foam",
+     "value": "AFFF"
+    },
+    {
+     "form": "foam",
+     "value": "AFFF"
+    }
+   ]
+  },
+  {
+   "group": "Extinguishing agent",
+   "attribute": "Extinguishers",
+   "global": false,
+   "title": "Extinguisher attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Extinguishing agent",
+   "attribute": "Charge",
+   "global": false,
+   "title": "Charge units",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Affirmative or negative value",
+   "attribute": "Affirmative or negative value",
+   "global": false,
+   "title": "Affirmative and negative values",
+   "any_attribute": false,
+   "role": "synonyms",
+   "pairs": [
+    {
+     "form": "Y",
+     "value": "Yes"
+    },
+    {
+     "form": "true",
+     "value": "Yes"
+    },
+    {
+     "form": "N",
+     "value": "No"
+    },
+    {
+     "form": "false",
+     "value": "No"
+    }
+   ]
+  },
+  {
+   "group": "Affirmative or negative value",
+   "attribute": "Pressure vessel",
+   "global": false,
+   "title": "Pressure vessel attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Count",
+   "attribute": "Count",
+   "global": false,
+   "title": "Count notation",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Count",
+   "attribute": "Junction boxes",
+   "global": false,
+   "title": "Junction box attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Catalogue item identity",
+   "attribute": "Stud bolts",
+   "global": false,
+   "title": "Stud bolt attributes",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  },
+  {
+   "group": "Charge",
+   "attribute": "Charge",
+   "global": false,
+   "title": "Charge units",
+   "any_attribute": false,
+   "role": "other",
+   "pairs": []
+  }
+ ]
+}

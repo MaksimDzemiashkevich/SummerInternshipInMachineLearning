@@ -1,0 +1,4004 @@
+{
+ "specs": [
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "barg",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "barg",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "bar g",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "bar(g)",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "bar",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "psig",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "psi",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "psi(g)",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "kPa",
+     "factor": 0.01,
+     "offset": 0
+    },
+    {
+     "from": "kPag",
+     "factor": 0.01,
+     "offset": 0
+    },
+    {
+     "from": "MPa",
+     "factor": 10,
+     "offset": 0
+    },
+    {
+     "from": "MPag",
+     "factor": 10,
+     "offset": 0
+    },
+    {
+     "from": "kg/cm2",
+     "factor": 0.980665,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted input units to barg and round to one decimal after conversion. A pressure unit without a gauge or absolute indication is read as gauge.",
+   "flag_when": "If conversion would require changing gauge pressure to absolute pressure or absolute pressure to gauge pressure, leave the value unchanged and enter it in the query register.",
+   "max_decimals": 1,
+   "variants": [],
+   "attribute": "Gauge pressure",
+   "aliases": [
+    "gauge pressure",
+    "pressure",
+    "operating pressure",
+    "design pressure",
+    "pressure (gauge)",
+    "barg",
+    "psig"
+   ],
+   "rules": "7.4 Gauge pressure shall be held in barg. The following are accepted for gauge pressure: ‘barg’, ‘bar g’, ‘bar(g)’ and ‘bar’ without conversion; ‘psig’, ‘psi’ and ‘psi(g)’, to be multiplied by 0.0689476; ‘kPa’ and ‘kPag’, to be multiplied by 0.01; ‘MPa’ and ‘MPag’, to be multiplied by 10; and ‘kg/cm2’, to be multiplied by 0.980665. A pressure unit received without a gauge or absolute indication in a gauge attribute shall be read as gauge. Gauge pressure is rounded to one decimal after conversion.\n7.7 Gauge pressure shall not be converted to absolute pressure, and absolute pressure shall not be converted to gauge pressure.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No.\n17.4 Shell-and-tube heat exchangers hold TEMA type, Duty, Area, Shell design pressure, Tube design pressure and Tube material. Duty is held in kW, Area in m2, and both design pressures in barg."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "bara",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "bara",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "bar a",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "bar(a)",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "psia",
+     "factor": 0.0689476,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted input units to bara and round to one decimal after conversion.",
+   "flag_when": "If the pressure unit does not contain an absolute indication, or if conversion would require changing gauge pressure to absolute pressure or absolute pressure to gauge pressure, leave the value unchanged and enter it in the query register.",
+   "max_decimals": 1,
+   "variants": [],
+   "attribute": "Absolute pressure",
+   "aliases": [
+    "absolute pressure",
+    "pressure absolute",
+    "absolute",
+    "bara",
+    "psia",
+    "pressure (absolute)"
+   ],
+   "rules": "7.5 Absolute pressure shall be held in bara. The following are accepted for absolute pressure: ‘bara’, ‘bar a’ and ‘bar(a)’ without conversion, and ‘psia’, to be multiplied by 0.0689476. A pressure unit received without an absolute indication in an absolute attribute is not accepted and the value shall be entered in the query register. Absolute pressure is rounded to one decimal after conversion.\n7.7 Gauge pressure shall not be converted to absolute pressure, and absolute pressure shall not be converted to gauge pressure."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "bar",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "bar",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "mbar",
+     "factor": 0.001,
+     "offset": 0
+    },
+    {
+     "from": "psi",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "psid",
+     "factor": 0.0689476,
+     "offset": 0
+    },
+    {
+     "from": "kPa",
+     "factor": 0.01,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted input units to bar and round to two decimals after conversion.",
+   "flag_when": "",
+   "max_decimals": 2,
+   "variants": [],
+   "attribute": "Differential pressure",
+   "aliases": [
+    "differential pressure",
+    "differential",
+    "pressure differential",
+    "DP",
+    "delta P",
+    "bar",
+    "psid"
+   ],
+   "rules": "7.6 Differential pressure shall be held in bar. The following are accepted for differential pressure: ‘bar’ without conversion; ‘mbar’, to be multiplied by 0.001; ‘psi’ and ‘psid’, to be multiplied by 0.0689476; and ‘kPa’, to be multiplied by 0.01. Differential pressure is rounded to two decimals after conversion."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "degC",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "degC",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "deg C",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "°C",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "C",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "degF",
+     "factor": 0.5555555555555556,
+     "offset": -17.77777777777778
+    },
+    {
+     "from": "deg F",
+     "factor": 0.5555555555555556,
+     "offset": -17.77777777777778
+    },
+    {
+     "from": "°F",
+     "factor": 0.5555555555555556,
+     "offset": -17.77777777777778
+    },
+    {
+     "from": "F",
+     "factor": 0.5555555555555556,
+     "offset": -17.77777777777778
+    }
+   ],
+   "series": [],
+   "instructions": "Convert Fahrenheit by reducing it by 32, multiplying by 5/9, and rounding to a whole number. Write a result of minus zero as 0.",
+   "flag_when": "",
+   "max_decimals": 0,
+   "variants": [],
+   "attribute": "Temperature",
+   "aliases": [
+    "temperature",
+    "operating temperature",
+    "design temperature",
+    "process temperature",
+    "temp",
+    "degC",
+    "degF"
+   ],
+   "rules": "7.8 Temperature shall be held in degC. The spellings ‘degC’, ‘deg C’, ‘°C’, and a letter ‘C’ standing alone after the number, are accepted without conversion. A temperature received in degrees Fahrenheit, written ‘degF’, ‘deg F’, ‘°F’ or as a letter ‘F’ standing alone after the number, shall be reduced by 32, multiplied by 5/9 and rounded to a whole number. A result of minus zero shall be written as 0.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No.\n17.3 Storage tanks hold Capacity, Diameter, Height, Roof, Design code and Design temperature. Capacity is held in m3; Diameter and Height are long lengths in m."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "mm",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "mm",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "\"",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "in",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "inch",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "inches",
+     "factor": 25.4,
+     "offset": 0
+    },
+    {
+     "from": "cm",
+     "factor": 10,
+     "offset": 0
+    },
+    {
+     "from": "m",
+     "factor": 1000,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted short-length units to mm and round to one decimal after conversion. Do not convert an outside diameter to an inside diameter.",
+   "flag_when": "",
+   "max_decimals": 1,
+   "variants": [],
+   "attribute": "Short length",
+   "aliases": [
+    "short length",
+    "length",
+    "diameter",
+    "thickness",
+    "insertion length",
+    "stud length",
+    "mm",
+    "in"
+   ],
+   "rules": "3.11 Short length: a dimension of a component or instrument, including diameters, thicknesses, insertion lengths and stud lengths.\n7.9 Short lengths shall be held in mm. The following are accepted: ‘mm’ without conversion; inches, written with an inch mark or as ‘in’, ‘inch’ or ‘inches’, to be multiplied by 25.4; ‘cm’, to be multiplied by 10; and ‘m’, to be multiplied by 1000. Short lengths are rounded to one decimal after conversion.\n7.10 Long lengths shall be held in m. The following are accepted: ‘m’, ‘mtr’, ‘meter’, ‘meters’, ‘metre’ and ‘metres’ without conversion; ‘mm’, to be multiplied by 0.001; and feet, written ‘ft’ or ‘feet’ or with an apostrophe, to be multiplied by 0.3048. Long lengths are rounded to two decimals after conversion. Clauses 12 to 18 identify the attributes held as long lengths; every other length attribute is a short length.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No.\n17.2 An outside diameter shall not be converted to an inside diameter."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "m",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "m",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "mtr",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "meter",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "meters",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "metre",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "metres",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "mm",
+     "factor": 0.001,
+     "offset": 0
+    },
+    {
+     "from": "ft",
+     "factor": 0.3048,
+     "offset": 0
+    },
+    {
+     "from": "feet",
+     "factor": 0.3048,
+     "offset": 0
+    },
+    {
+     "from": "'",
+     "factor": 0.3048,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted long-length units to m and round to two decimals after conversion.",
+   "flag_when": "",
+   "max_decimals": 2,
+   "variants": [],
+   "attribute": "Long length",
+   "aliases": [
+    "long length",
+    "length",
+    "height",
+    "tank diameter",
+    "pump head",
+    "cable length",
+    "pipe length",
+    "m",
+    "ft"
+   ],
+   "rules": "3.12 Long length: a length of cable or pipe, the height or diameter of a storage tank, pump head and similar dimensions of large magnitude.\n7.10 Long lengths shall be held in m. The following are accepted: ‘m’, ‘mtr’, ‘meter’, ‘meters’, ‘metre’ and ‘metres’ without conversion; ‘mm’, to be multiplied by 0.001; and feet, written ‘ft’ or ‘feet’ or with an apostrophe, to be multiplied by 0.3048. Long lengths are rounded to two decimals after conversion. Clauses 12 to 18 identify the attributes held as long lengths; every other length attribute is a short length.\n17.3 Storage tanks hold Capacity, Diameter, Height, Roof, Design code and Design temperature. Capacity is held in m3; Diameter and Height are long lengths in m."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "m3/h",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "m3/h",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "m3/hr",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "cmh",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "gpm",
+     "factor": 0.2271,
+     "offset": 0
+    },
+    {
+     "from": "USgpm",
+     "factor": 0.2271,
+     "offset": 0
+    },
+    {
+     "from": "l/s",
+     "factor": 3.6,
+     "offset": 0
+    },
+    {
+     "from": "l/min",
+     "factor": 0.06,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted input units to m3/h, then round the result to one decimal place. Write the number followed by one space and m3/h; trailing zeros are removed.",
+   "flag_when": "If the required unit is missing, the input contains an unresolved qualifier or ambiguity, or it cannot be presented unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": 1,
+   "variants": [],
+   "attribute": "Volumetric flow",
+   "aliases": [
+    "volumetric flow",
+    "flow",
+    "flow rate",
+    "capacity",
+    "m3/h",
+    "m3/hr",
+    "gpm"
+   ],
+   "rules": "7.11 Volumetric flow shall be held in m3/h. The following are accepted: ‘m3/h’, ‘m3/hr’, ‘m3/h’ and ‘cmh’ without conversion; US gallons per minute, written ‘gpm’ or ‘USgpm’, to be multiplied by 0.2271; litres per second, written ‘l/s’, to be multiplied by 3.6; and litres per minute, written ‘l/min’, to be multiplied by 0.06. Flow is rounded to one decimal after conversion."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "kW",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "kW",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "hp",
+     "factor": 0.746,
+     "offset": 0
+    },
+    {
+     "from": "bhp",
+     "factor": 0.746,
+     "offset": 0
+    },
+    {
+     "from": "W",
+     "factor": 0.001,
+     "offset": 0
+    },
+    {
+     "from": "MW",
+     "factor": 1000,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted input units to kW, then round the result to one decimal place. Write the number followed by one space and kW; trailing zeros are removed.",
+   "flag_when": "If the required unit is missing, the input contains an unresolved qualifier or ambiguity, or it cannot be presented unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": 1,
+   "variants": [],
+   "attribute": "Power",
+   "aliases": [
+    "power",
+    "heat duty",
+    "motor power",
+    "rated power",
+    "shaft power",
+    "kW",
+    "hp",
+    "bhp"
+   ],
+   "rules": "7.12 Power, including heat duty, shall be held in kW. The following are accepted: ‘kW’ without conversion; ‘hp’ and ‘bhp’, to be multiplied by 0.746; ‘W’, to be multiplied by 0.001; and ‘MW’, to be multiplied by 1000. Power is rounded to one decimal after conversion.\n17.4 Shell-and-tube heat exchangers hold TEMA type, Duty, Area, Shell design pressure, Tube design pressure and Tube material. Duty is held in kW, Area in m2, and both design pressures in barg."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "kVA",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "kVA",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "MVA",
+     "factor": 1000,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert MVA to kVA, then round the result to one decimal place. Write the number followed by one space and kVA; trailing zeros are removed.",
+   "flag_when": "If the required unit is missing, the input contains an unresolved qualifier or ambiguity, or it cannot be presented unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": 1,
+   "variants": [],
+   "attribute": "Apparent power",
+   "aliases": [
+    "apparent power",
+    "transformer rating",
+    "UPS rating",
+    "transformer capacity",
+    "kVA",
+    "MVA"
+   ],
+   "rules": "7.13 Apparent power, used for transformers and UPS systems, shall be held in kVA. ‘kVA’ is accepted without conversion and ‘MVA’ is to be multiplied by 1000. Apparent power is rounded to one decimal after conversion."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "kg",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "kg",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "kgs",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "lb",
+     "factor": 0.4536,
+     "offset": 0
+    },
+    {
+     "from": "lbs",
+     "factor": 0.4536,
+     "offset": 0
+    },
+    {
+     "from": "t",
+     "factor": 1000,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted input units to kg, then round the result to one decimal place. Write the number followed by one space and kg; trailing zeros are removed.",
+   "flag_when": "If the required unit is missing, the input contains an unresolved qualifier or ambiguity, or it cannot be presented unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": 1,
+   "variants": [],
+   "attribute": "Mass",
+   "aliases": [
+    "mass",
+    "weight",
+    "equipment weight",
+    "shipping weight",
+    "net weight",
+    "kg",
+    "lb",
+    "tonnes"
+   ],
+   "rules": "7.14 Mass shall be held in kg. The following are accepted: ‘kg’ and ‘kgs’ without conversion; pounds, written ‘lb’ or ‘lbs’, to be multiplied by 0.4536; and tonnes, written ‘t’, to be multiplied by 1000. Mass is rounded to one decimal after conversion."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "m3",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "m3",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "l",
+     "factor": 0.001,
+     "offset": 0
+    },
+    {
+     "from": "ltr",
+     "factor": 0.001,
+     "offset": 0
+    },
+    {
+     "from": "bbl",
+     "factor": 0.159,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "For vessels and tanks, convert accepted input units to m3, then round the result to one decimal place. Write the number followed by one space and m3; trailing zeros are removed.",
+   "flag_when": "If the required unit is missing, a non-permitted unit is used for an extinguisher charge, the input contains an unresolved qualifier or ambiguity, or it cannot be presented unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": 1,
+   "variants": [
+    {
+     "applies_to": "the charge of foam and water extinguishers",
+     "kind": "quantity",
+     "unit": "l",
+     "decimals": null,
+     "decimal_separator": ".",
+     "unit_space": true,
+     "conversions": [
+      {
+       "from": "l",
+       "factor": 1,
+       "offset": 0
+      }
+     ],
+     "series": [],
+     "instructions": "Hold the charge in l and round it to one decimal place. Write the number followed by one space and l; no other unit is accepted and trailing zeros are removed.",
+     "flag_when": "If the unit is not l, the input contains an unresolved qualifier or ambiguity, or it cannot be presented unambiguously, leave it unchanged and enter it in the query register.",
+     "max_decimals": 1
+    }
+   ],
+   "attribute": "Volume",
+   "aliases": [
+    "volume",
+    "vessel volume",
+    "tank volume",
+    "capacity",
+    "extinguisher charge",
+    "m3",
+    "litre",
+    "l",
+    "bbl"
+   ],
+   "rules": "7.15 The volume of vessels and tanks shall be held in m3. The following are accepted: ‘m3’ and ‘m3’ without conversion; litres, written ‘l’ or ‘ltr’, to be multiplied by 0.001; and barrels, written ‘bbl’, to be multiplied by 0.159. Volume is rounded to one decimal after conversion. The charge of foam and water extinguishers is held in l, and no other unit is accepted for it.\n17.3 Storage tanks hold Capacity, Diameter, Height, Roof, Design code and Design temperature. Capacity is held in m3; Diameter and Height are long lengths in m."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "m2",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "m2",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "sq m",
+     "factor": 1,
+     "offset": 0
+    },
+    {
+     "from": "sq ft",
+     "factor": 0.0929,
+     "offset": 0
+    },
+    {
+     "from": "ft2",
+     "factor": 0.0929,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Convert accepted input units to m2, then round the result to one decimal place. Write the number followed by one space and m2; trailing zeros are removed.",
+   "flag_when": "If the required unit is missing, the input contains an unresolved qualifier or ambiguity, or it cannot be presented unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": 1,
+   "variants": [],
+   "attribute": "Area",
+   "aliases": [
+    "area",
+    "surface area",
+    "heat-transfer area",
+    "cross-sectional area",
+    "m2",
+    "sq m",
+    "sq ft"
+   ],
+   "rules": "7.16 Area shall be held in m2. The following are accepted: ‘m2’, ‘m2’ and ‘sq m’ without conversion, and square feet, written ‘sq ft’ or ‘ft2’, to be multiplied by 0.0929. Area is rounded to one decimal after conversion.\n17.4 Shell-and-tube heat exchangers hold TEMA type, Duty, Area, Shell design pressure, Tube design pressure and Tube material. Duty is held in kW, Area in m2, and both design pressures in barg."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "rpm",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write rotational speed in rpm. Accept rpm, RPM, r/min and min-1 without conversion.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Rotational speed",
+   "aliases": [
+    "rotational speed",
+    "speed",
+    "rotation speed",
+    "motor speed",
+    "running speed",
+    "rpm",
+    "r/min"
+   ],
+   "rules": "7.17 Rotational speed shall be held in rpm, and ‘rpm’, ‘RPM’, ‘r/min’ and ‘min-1’ are accepted without conversion. Frequency shall be held in Hz. Current shall be held in A, ‘kA’ being accepted and multiplied by 1000. Durations such as battery autonomy shall be held in min, hours written ‘h’ or ‘hr’ being multiplied by 60 and rounded to a whole number."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "Hz",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write frequency in Hz.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Frequency",
+   "aliases": [
+    "frequency",
+    "electrical frequency",
+    "line frequency",
+    "supply frequency",
+    "Hz"
+   ],
+   "rules": "7.17 Rotational speed shall be held in rpm, and ‘rpm’, ‘RPM’, ‘r/min’ and ‘min-1’ are accepted without conversion. Frequency shall be held in Hz. Current shall be held in A, ‘kA’ being accepted and multiplied by 1000. Durations such as battery autonomy shall be held in min, hours written ‘h’ or ‘hr’ being multiplied by 60 and rounded to a whole number."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "A",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "kA",
+     "factor": 1000,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Write current in A. Convert an input in kA by multiplying by 1000.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Current",
+   "aliases": [
+    "current",
+    "rated current",
+    "full-load current",
+    "motor current",
+    "electrical current",
+    "A",
+    "kA"
+   ],
+   "rules": "7.17 Rotational speed shall be held in rpm, and ‘rpm’, ‘RPM’, ‘r/min’ and ‘min-1’ are accepted without conversion. Frequency shall be held in Hz. Current shall be held in A, ‘kA’ being accepted and multiplied by 1000. Durations such as battery autonomy shall be held in min, hours written ‘h’ or ‘hr’ being multiplied by 60 and rounded to a whole number."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "min",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [
+    {
+     "from": "h",
+     "factor": 60,
+     "offset": 0
+    },
+    {
+     "from": "hr",
+     "factor": 60,
+     "offset": 0
+    }
+   ],
+   "series": [],
+   "instructions": "Write duration in min. Convert hours written as h or hr by multiplying by 60 and round to a whole number.",
+   "flag_when": "",
+   "max_decimals": 0,
+   "variants": [],
+   "attribute": "Duration",
+   "aliases": [
+    "duration",
+    "battery autonomy",
+    "autonomy",
+    "run time",
+    "operating duration",
+    "min",
+    "h",
+    "hr"
+   ],
+   "rules": "7.17 Rotational speed shall be held in rpm, and ‘rpm’, ‘RPM’, ‘r/min’ and ‘min-1’ are accepted without conversion. Frequency shall be held in Hz. Current shall be held in A, ‘kA’ being accepted and multiplied by 1000. Durations such as battery autonomy shall be held in min, hours written ‘h’ or ‘hr’ being multiplied by 60 and rounded to a whole number."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the nominal size as NPS, a space and the size, without an inch mark. Write fractional sizes with a hyphen between the whole number and the fraction; convert the listed DN sizes to their specified NPS sizes.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when a number followed by mm alone is received, or when the DN or NPS size is not listed.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Nominal size",
+   "aliases": [
+    "nominal size",
+    "pipe size",
+    "valve size",
+    "flange size",
+    "NPS",
+    "DN",
+    "NB",
+    "inch size"
+   ],
+   "rules": "8.1 The nominal size of pipe, valves, fittings and flanges shall be expressed in inches in the form NPS, a space and the size, without an inch mark. A fractional size shall be written with a hyphen between the whole number and the fraction.\n8.2 The following received forms are recognized as nominal sizes in inches: the size followed by an inch mark or by ‘in’, ‘inch’ or ‘inches’; the size preceded by ‘NPS’, with or without an intervening space; and an inch size followed by ‘NB’, the NB being disregarded. A fraction separated from the whole number by a space, a fraction written with a Unicode fraction character and a decimal size shall each be rewritten as the hyphenated fraction.\n8.3 A size in DN shall be converted to NPS as follows: DN15 to NPS 1/2; DN20 to NPS 3/4; DN25 to NPS 1; DN32 to NPS 1-1/4; DN40 to NPS 1-1/2; DN50 to NPS 2; DN65 to NPS 2-1/2; DN80 to NPS 3; DN100 to NPS 4; DN150 to NPS 6; DN200 to NPS 8; DN250 to NPS 10; DN300 to NPS 12; DN350 to NPS 14; DN400 to NPS 16; DN450 to NPS 18; DN500 to NPS 20; and DN600 to NPS 24.\n8.4 A DN size is recognized where the letters DN precede or follow the number, with or without a space, and where the number is followed by ‘NB’ or ‘mm NB’. A number followed by mm alone is not recognized as a nominal size, since it is frequently an outside diameter, and shall be entered in the query register. A DN or NPS not listed in 8.3 shall likewise be entered in the query register."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the pressure class as CL, a space and the class number. Recognize Class, CL or ANSI before the number, a hash sign before or after the number, lb or lbs after the number, and class after the number.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when the class number is not 150, 300, 600, 800, 900, 1500 or 2500; do not convert a PN rating to a pressure class.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Pressure class",
+   "aliases": [
+    "pressure class",
+    "class",
+    "flange class",
+    "rating class",
+    "CL",
+    "ANSI class",
+    "Class"
+   ],
+   "rules": "8.5 A pressure class shall be written as CL, a space and the class number. The class numbers in use are 150, 300, 600, 800, 900, 1500 and 2500, and any other number shall be entered in the query register. The received forms recognized are ‘Class’, ‘CL’ or ‘ANSI’ preceding the number, with or without a space; a hash sign preceding or following the number; ‘lb’ or ‘lbs’ following the number; and ‘class’ following the number.\n8.7 A pressure class shall not be converted to a PN rating and a PN rating shall not be converted to a pressure class. The attribute Rating may hold either."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the value as PN, a space, and one of 6, 10, 16, 25, 40, 63, or 100. Recognize PN before or after the number, separated by a space, hyphen, or nothing, and do not convert a pressure class to a PN rating.",
+   "flag_when": "Leave the value unchanged and enter it in the query register if it is not an unambiguous PN rating.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "PN rating",
+   "aliases": [
+    "PN rating",
+    "PN",
+    "nominal pressure",
+    "pressure rating",
+    "flange rating",
+    "PN class"
+   ],
+   "rules": "8.6 A PN rating shall be written as PN, a space and the number. The PN numbers in use are 6, 10, 16, 25, 40, 63 and 100. The letters PN may precede or follow the number in the received value, separated from it by a space, by a hyphen or by nothing.\n8.7 A pressure class shall not be converted to a PN rating and a PN rating shall not be converted to a pressure class. The attribute Rating may hold either."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write a numbered schedule as SCH, a space, and the schedule; retain S immediately after the number for a stainless steel schedule. Write weight designations as SCH STD, SCH XS, or SCH XXS, recognizing standard, standard weight, extra strong, and double extra strong as specified.",
+   "flag_when": "Leave the value unchanged and enter it in the query register if the schedule cannot be presented unambiguously.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Pipe schedule",
+   "aliases": [
+    "pipe schedule",
+    "schedule",
+    "wall schedule",
+    "pipe wall thickness",
+    "SCH",
+    "S-",
+    "STD",
+    "XS",
+    "XXS"
+   ],
+   "rules": "8.8 A pipe schedule shall be written as SCH, a space and the schedule. ‘Sch’, ‘SCH’, ‘Schedule’ and ‘S-’ preceding the schedule are recognized, with or without a space or full stop. The weight designations are written SCH STD, SCH XS and SCH XXS; the received words ‘standard’, ‘standard weight’ and ‘STD’ denote SCH STD, ‘extra strong’ and ‘XS’ denote SCH XS, and ‘double extra strong’ and ‘XXS’ denote SCH XXS. A schedule number followed by the letter S is a stainless steel schedule distinct from the same number without the letter, and the S shall be retained immediately after the number."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the size in inches as a fraction followed immediately by an inch mark, then a space and NPT; when known, write FNPT or MNPT immediately before NPT. Recognize the stated gender forms and rewrite the stated decimal sizes as the specified fractions.",
+   "flag_when": "Leave the value unchanged and enter it in the query register if the size or gender is ambiguous.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Taper pipe thread",
+   "aliases": [
+    "taper pipe thread",
+    "pipe thread",
+    "NPT",
+    "thread size",
+    "female thread",
+    "male thread",
+    "FNPT",
+    "MNPT"
+   ],
+   "rules": "8.9 A taper pipe thread shall be written as the size in inches as a fraction, followed without a space by an inch mark, then a space and NPT. Where the gender is known it shall be written immediately before NPT without a space, giving FNPT for female threads and MNPT for male threads.\n8.10 The gender of a taper pipe thread is recognized from ‘F’, ‘female’, ‘FNPT’, ‘NPTF’, ‘NPT(F)’ and ‘NPT-F’, and correspondingly from ‘M’, ‘male’, ‘MNPT’, ‘NPTM’, ‘NPT(M)’ and ‘NPT-M’, in any position relative to NPT. The size may be received with an inch mark, ‘in’ or ‘inch’, or as a Unicode fraction character; a decimal size shall be rewritten as a fraction, 0.25 becoming 1/4, 0.5 becoming 1/2, 0.75 becoming 3/4, 1.5 becoming 1-1/2, and 1 and 2 remaining as whole numbers."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write M immediately followed by the diameter and, only when received, a lower case x followed by the pitch, with no spaces. Recognize spaces and an upper case X in the received value.",
+   "flag_when": "Leave the value unchanged and enter it in the query register if the received value does not unambiguously identify the metric thread.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Metric thread",
+   "aliases": [
+    "metric thread",
+    "thread",
+    "metric thread size",
+    "diameter and pitch",
+    "M thread",
+    "pitch",
+    "metric diameter"
+   ],
+   "rules": "8.11 A metric thread shall be written as M followed without a space by the diameter and, where the pitch is received, a lower case x and the pitch, likewise without spaces. A pitch shall be neither added where it was not received nor deleted where it was. Spaces and an upper case X in the received value are recognized."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write an inch-series diameter as the specified fraction followed immediately by an inch mark, rewriting the specified decimal diameters as fractions. Write metric bolt diameters in accordance with the metric thread form, and do not convert inch and metric diameters into one another.",
+   "flag_when": "Leave the value unchanged and enter it in the query register if the diameter system or value is ambiguous.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Bolt or stud diameter",
+   "aliases": [
+    "bolt diameter",
+    "stud diameter",
+    "bolt size",
+    "stud size",
+    "fastener diameter",
+    "inch-series diameter",
+    "metric bolt diameter"
+   ],
+   "rules": "8.12 The diameter of an inch-series bolt or stud shall be written as the fraction followed without a space by an inch mark. The fraction followed by ‘in’, ‘inch’ or an inch mark is recognized, and decimal diameters shall be rewritten as fractions: 0.5 as 1/2, 0.625 as 5/8, 0.75 as 3/4, 0.875 as 7/8, 1.125 as 1-1/8 and 1.25 as 1-1/4, with 1 remaining as a whole number. Metric bolt diameters are written in accordance with 8.11. Inch and metric bolt diameters shall not be converted into one another."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "For a voltage below 1000 V, write the number, a space, and VAC or VDC; for 1000 V or more, write the number, a space, and kV. Rewrite received kV values below 1 kV in V and received V values of 1000 or more in kV, and recognize the stated AC and DC forms.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when neither the equipment clause nor the received value states whether the voltage is AC or DC.",
+   "max_decimals": null,
+   "variants": [
+    {
+     "applies_to": "electric motors",
+     "kind": "format",
+     "values": [],
+     "closed": false,
+     "unit": "",
+     "decimals": null,
+     "decimal_separator": ".",
+     "unit_space": true,
+     "conversions": [],
+     "series": [],
+     "instructions": "Write the voltage as an AC voltage, adding VAC when it is not received; write 1000 V and above in kV in accordance with the general voltage rule.",
+     "flag_when": "Leave the value unchanged and enter it in the query register if the voltage cannot be presented unambiguously.",
+     "max_decimals": null,
+     "variants": []
+    },
+    {
+     "applies_to": "a three-phase voltage stated together with its phase voltage",
+     "kind": "format",
+     "values": [],
+     "closed": false,
+     "unit": "",
+     "decimals": null,
+     "decimal_separator": ".",
+     "unit_space": true,
+     "conversions": [],
+     "series": [],
+     "instructions": "Write the two numbers separated by a slash without spaces, with the higher first, followed by a space and VAC.",
+     "flag_when": "Leave the value unchanged and enter it in the query register if the two voltage values or their order is ambiguous.",
+     "max_decimals": null,
+     "variants": []
+    },
+    {
+     "applies_to": "cables",
+     "kind": "format",
+     "values": [],
+     "closed": false,
+     "unit": "kV",
+     "decimals": null,
+     "decimal_separator": ".",
+     "unit_space": true,
+     "conversions": [],
+     "series": [],
+     "instructions": "Write the rated voltage as Uo and U in kV, separated by a slash without spaces, followed by a space and kV. Rewrite values received in V in kV and delete Uo/U when it precedes the numbers.",
+     "flag_when": "Leave the value unchanged and enter it in the query register if the cable voltage rating cannot be presented unambiguously.",
+     "max_decimals": null,
+     "variants": []
+    },
+    {
+     "applies_to": "transformers",
+     "kind": "format",
+     "values": [],
+     "closed": false,
+     "unit": "kV",
+     "decimals": null,
+     "decimal_separator": ".",
+     "unit_space": true,
+     "conversions": [],
+     "series": [],
+     "instructions": "Write the voltage ratio as the two voltages in kV, separated by a slash without spaces, with the high voltage first.",
+     "flag_when": "Leave the value unchanged and enter it in the query register if the transformer voltage ratio or its order is ambiguous.",
+     "max_decimals": null,
+     "variants": []
+    }
+   ],
+   "attribute": "Voltage",
+   "aliases": [
+    "voltage",
+    "rated voltage",
+    "received voltage",
+    "voltage rating",
+    "phase voltage",
+    "VAC",
+    "VDC",
+    "kV"
+   ],
+   "rules": "9.1 A voltage below 1000 V shall be written as the number, a space and VAC or VDC. A voltage of 1000 V or more shall be written in kV as the number, a space and kV, with no suffix, all high voltage in the installations covered being alternating current.\n9.2 A received voltage expressed in kV but below 1 kV shall be rewritten in V, and a received voltage expressed in V and equal to or greater than 1000 shall be rewritten in kV.\n9.3 Alternating current is recognized from ‘V AC’, ‘VAC’ and ‘Vac’ following the number and from ‘AC’ preceding it; direct current is recognized from ‘V DC’, ‘VDC’ and ‘Vdc’ following the number and from ‘DC’ preceding it. Where Clauses 12 to 18 state that an attribute is AC or DC and the received value does not state it, VAC or VDC as appropriate shall be added. Where neither the equipment clause nor the received value states it, the value shall be entered in the query register.\n9.4 A three-phase voltage stated together with its phase voltage shall be written as the two numbers separated by a slash without spaces, the higher first, followed by a space and VAC.\n9.5 The rated voltage of a cable shall be written as Uo and U in kV, separated by a slash without spaces, followed by a space and kV. Values received in V shall be rewritten in kV, and the characters ‘Uo/U’ preceding the numbers shall be deleted. The voltage ratio of a transformer shall be written in the same manner with the high voltage first, both voltages in kV.\n14.3 Electric motors hold Power, Voltage, Frequency, Speed, Efficiency class, Insulation class, IP rating, Ex marking and Mounting. Power is held in kW. Voltage is an AC attribute: VAC shall be added where it is not received, and 1000 V and above are written in kV in accordance with 9.1.\n16.1 Power, control and instrument cables hold Voltage rating, Size, Insulation, Armour, Sheath, Screen and Length. Size is a cable size in accordance with 9.17 and 9.18. Length is a long length in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "4-20mA",
+     "accepted": [
+      "4-20mA",
+      "4-20 mA",
+      "4..20mA",
+      "4…20 mA",
+      "4 to 20 mA",
+      "4~20mA"
+     ]
+    },
+    {
+     "value": "4-20mA HART",
+     "accepted": [
+      "4-20mA HART",
+      "4-20 mA + HART",
+      "4-20mA/HART",
+      "HART 4-20mA"
+     ]
+    },
+    {
+     "value": "Foundation Fieldbus",
+     "accepted": [
+      "Foundation Fieldbus",
+      "FF",
+      "FF H1",
+      "FOUNDATION fieldbus"
+     ]
+    },
+    {
+     "value": "Profibus PA",
+     "accepted": [
+      "Profibus PA",
+      "PROFIBUS-PA",
+      "PB-PA"
+     ]
+    },
+    {
+     "value": "Volt-free contact",
+     "accepted": [
+      "Volt-free contact",
+      "VFC",
+      "dry contact",
+      "potential-free contact"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the signal using the prescribed form and exactly the prescribed capitals. Leave any other signal unchanged and enter it in the query register.",
+   "flag_when": "Any other signal shall be left unchanged and entered in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Signal",
+   "aliases": [
+    "signal",
+    "analogue signal",
+    "positioner signal",
+    "instrument signal",
+    "4-20mA",
+    "HART",
+    "VFC"
+   ],
+   "rules": "9.6 An analogue signal shall be written 4-20mA without any space, and with HART as 4-20mA HART, a single space preceding HART. The received forms ‘4-20 mA’, ‘4..20mA’, ‘4…20 mA’, ‘4 to 20 mA’ and ‘4~20mA’ are recognized, as are the same forms followed by HART and the forms ‘4-20 mA + HART’, ‘4-20mA/HART’ and ‘HART 4-20mA’.\n9.7 Foundation Fieldbus shall be written in that form, ‘FF’, ‘FF H1’ and ‘FOUNDATION fieldbus’ being recognized. Profibus PA shall be written in that form, ‘PROFIBUS-PA’ and ‘PB-PA’ being recognized. A volt-free contact shall be written Volt-free contact, ‘VFC’, ‘dry contact’ and ‘potential-free contact’ being recognized. Any other signal shall be entered in the query register.\n12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv.\n15.1 Pressure transmitters hold Range, Output, Accuracy, Process connection, Wetted material, IP rating, Ex marking and Power supply. Range is a range of gauge pressure in barg and is the calibrated range. Output is a signal in accordance with Clause 9. Process connection is a taper pipe thread. Power supply is a DC attribute, and VDC shall be added where it is not received.\n18.1 Gas detectors hold Principle, Gas, Range, Output and Ex marking. Range is held in %LEL for flammable gases, in ppm for toxic gases and in %vol for oxygen."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write an IP code as IP followed directly by its two digits. For a dual rating, write the first complete code, a slash, and the two digits of the second code only.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "IP rating",
+   "aliases": [
+    "IP rating",
+    "IP code",
+    "ingress protection",
+    "IP",
+    "dual IP rating",
+    "protection code",
+    "IP digits"
+   ],
+   "rules": "9.8 An IP code shall be written as IP followed directly by its two digits. Spaces and hyphens between IP and the digits in the received value are recognized. A dual rating shall be written as the first complete code, a slash and the two digits of the second code only; the received value may carry IP before both codes or before the first only.\n14.3 Electric motors hold Power, Voltage, Frequency, Speed, Efficiency class, Insulation class, IP rating, Ex marking and Mounting. Power is held in kW. Voltage is an AC attribute: VAC shall be added where it is not received, and 1000 V and above are written in kV in accordance with 9.1.\n15.1 Pressure transmitters hold Range, Output, Accuracy, Process connection, Wetted material, IP rating, Ex marking and Power supply. Range is a range of gauge pressure in barg and is the calibrated range. Output is a signal in accordance with Clause 9. Process connection is a taper pipe thread. Power supply is a DC attribute, and VDC shall be added where it is not received.\n16.3 Cable glands hold Gland type, Thread, Material, Ex marking and IP rating. Thread is a metric thread or a taper pipe thread in accordance with Clause 8, and a metric thread shall not be converted to an NPT size.\n16.4 Junction boxes hold Material, Dimensions, Terminals, Entries, IP rating and Ex marking. Dimensions are width, height and depth in mm in that order, written in accordance with 6.13. Terminals and Entries are counts in accordance with 11.25.\nB.2 Registers prepared before this edition may contain dual IP codes written in an earlier form. Such values are presented in accordance with 9.8 in the same manner as any other received value."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write Ex followed by the protection code or codes, gas group, temperature class and, where received, equipment protection level, in that order with single spaces. Write protection codes in lower case except n-type codes, gas groups as IIA, IIB or IIC, temperature classes as T followed by a digit, and equipment protection levels as G followed by a lower-case letter; write EEx as Ex and do not add unreceived elements.",
+   "flag_when": "Markings for dust, ATEX category markings and certificate numbers, and values containing them, shall be left unchanged and entered in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Ex marking",
+   "aliases": [
+    "Ex marking",
+    "explosion protection",
+    "hazardous-area marking",
+    "Ex code",
+    "protection code",
+    "gas group",
+    "temperature class",
+    "equipment protection level"
+   ],
+   "rules": "9.9 An Ex marking shall be written as Ex followed by the protection code or codes, the gas group, the temperature class and, where received, the equipment protection level, in that sequence and separated by single spaces.\n9.10 Within an Ex marking, protection codes are written in lower case, with the exception of the n-type codes, which consist of a lower case n followed by an upper case letter. The gas group is written in capitals as IIA, IIB or IIC, and IIB+H2 is written without spaces. The temperature class is an upper case T followed by its digit. The equipment protection level is an upper case G followed by a lower case letter.\n9.11 The former prefix EEx shall be written Ex, and Ex received in any capitals is recognized. Hyphens and commas separating the parts of a received marking shall be treated as spaces. No element shall be added that was not received; in particular a level letter shall not be added to a protection code received without one, and an equipment protection level shall not be derived from the other elements. Markings for dust, ATEX category markings and certificate numbers are outside the scope of this standard, and values containing them shall be entered in the query register.\n14.3 Electric motors hold Power, Voltage, Frequency, Speed, Efficiency class, Insulation class, IP rating, Ex marking and Mounting. Power is held in kW. Voltage is an AC attribute: VAC shall be added where it is not received, and 1000 V and above are written in kV in accordance with 9.1.\n15.1 Pressure transmitters hold Range, Output, Accuracy, Process connection, Wetted material, IP rating, Ex marking and Power supply. Range is a range of gauge pressure in barg and is the calibrated range. Output is a signal in accordance with Clause 9. Process connection is a taper pipe thread. Power supply is a DC attribute, and VDC shall be added where it is not received.\n16.3 Cable glands hold Gland type, Thread, Material, Ex marking and IP rating. Thread is a metric thread or a taper pipe thread in accordance with Clause 8, and a metric thread shall not be converted to an NPT size.\n16.4 Junction boxes hold Material, Dimensions, Terminals, Entries, IP rating and Ex marking. Dimensions are width, height and depth in mm in that order, written in accordance with 6.13. Terminals and Entries are counts in accordance with 11.25.\n18.1 Gas detectors hold Principle, Gas, Range, Output and Ex marking. Range is held in %LEL for flammable gases, in ppm for toxic gases and in %vol for oxygen."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the motor efficiency class as IE followed directly by the digit. Remove spaces and hyphens between IE and the digit.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Motor efficiency class",
+   "aliases": [
+    "motor efficiency class",
+    "efficiency class",
+    "IE class",
+    "IE rating",
+    "motor efficiency",
+    "IE"
+   ],
+   "rules": "9.12 A motor efficiency class shall be written as IE followed directly by the digit; spaces and hyphens between them in the received value are recognized.\n14.3 Electric motors hold Power, Voltage, Frequency, Speed, Efficiency class, Insulation class, IP rating, Ex marking and Mounting. Power is held in kW. Voltage is an AC attribute: VAC shall be added where it is not received, and 1000 V and above are written in kV in accordance with 9.1."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the insulation class as the single letter alone. Delete the preceding words class, ins. class or insulation class, and delete class following the letter.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Insulation class",
+   "aliases": [
+    "insulation class",
+    "insulation rating",
+    "motor insulation",
+    "ins. class",
+    "thermal insulation class",
+    "class"
+   ],
+   "rules": "9.13 An insulation class shall be written as the single letter alone. The words ‘class’, ‘ins. class’ and ‘insulation class’ preceding the letter, and ‘class’ following it, shall be deleted.\n14.3 Electric motors hold Power, Voltage, Frequency, Speed, Efficiency class, Insulation class, IP rating, Ex marking and Mounting. Power is held in kW. Voltage is an AC attribute: VAC shall be added where it is not received, and 1000 V and above are written in kV in accordance with 9.1."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the mounting arrangement as the short IM code without the letters IM: B3, B5, B35 or V1. Map IM B3, IMB3 and IM 1001 to B3; IM B5 and IM 3001 to B5; IM B35 and IM 2001 to B35; and IM V1 and IM 3011 to V1.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Motor mounting arrangement",
+   "aliases": [
+    "mounting arrangement",
+    "motor mounting",
+    "IM code",
+    "mounting code",
+    "installation arrangement",
+    "B3",
+    "B5"
+   ],
+   "rules": "9.14 The mounting arrangement of a motor shall be written as the short IM code without the letters IM, namely B3, B5, B35 or V1. For B3, ‘IM B3’, ‘IMB3’ and ‘IM 1001’ are recognized; for B5, ‘IM B5’ and ‘IM 3001’; for B35, ‘IM B35’ and ‘IM 2001’; and for V1, ‘IM V1’ and ‘IM 3011’.\n14.3 Electric motors hold Power, Voltage, Frequency, Speed, Efficiency class, Insulation class, IP rating, Ex marking and Mounting. Power is held in kW. Voltage is an AC attribute: VAC shall be added where it is not received, and 1000 V and above are written in kV in accordance with 9.1."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write IC directly followed by the code. Remove spaces and hyphens between IC and the code.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Motor cooling method",
+   "aliases": [
+    "cooling method",
+    "motor cooling",
+    "IC code",
+    "cooling code",
+    "cooling arrangement",
+    "IC"
+   ],
+   "rules": "9.15 The cooling method of a motor shall be written as IC followed directly by the code; spaces and hyphens between them in the received value are recognized."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the high-voltage letter in upper case, followed by N in upper case where present, then the low-voltage letters in lower case and finally the clock number, without spaces.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Transformer vector group",
+   "aliases": [
+    "vector group",
+    "transformer vector group",
+    "transformer connection",
+    "winding connection",
+    "clock number",
+    "HV/LV vector"
+   ],
+   "rules": "9.16 The vector group of a transformer shall be written without spaces as the high voltage letter in upper case, followed by N in upper case where present, then the low voltage letters in lower case and finally the clock number. Transformer cooling shall be written in capitals, and two stages shall be separated by a slash without spaces.\n16.5 Transformers hold Power, Voltage ratio, Vector group, Cooling and Impedance. Power is held in kVA and Impedance is a percentage."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write transformer cooling in capitals. Separate two stages with a slash without spaces.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Transformer cooling",
+   "aliases": [
+    "transformer cooling",
+    "cooling type",
+    "transformer cooling method",
+    "cooling stages",
+    "ONAN",
+    "ONAF"
+   ],
+   "rules": "9.16 The vector group of a transformer shall be written without spaces as the high voltage letter in upper case, followed by N in upper case where present, then the low voltage letters in lower case and finally the clock number. Transformer cooling shall be written in capitals, and two stages shall be separated by a slash without spaces.\n16.5 Transformers hold Power, Voltage ratio, Vector group, Cooling and Impedance. Power is held in kVA and Impedance is a percentage."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "mm2",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "For a cable with cores, write the number of cores, a space, a lower case x, a space, the cross-section, a space and mm2. Treat C, core, cores, or a number multiplied by a cross-section without a type word as cores; recognize mm2, mm², sq mm and sqmm as the cross-section unit.",
+   "flag_when": "A cross-section is received without a unit or in AWG; or the value is ambiguous or cannot be presented unambiguously.",
+   "max_decimals": null,
+   "variants": [
+    {
+     "applies_to": "paired cable",
+     "kind": "format",
+     "instructions": "Write the number of pairs, a space, the word pair, a space, a lower case x, a space, the cross-section, a space and mm2. Treat P, pr, pair and pairs as denoting pairs."
+    },
+    {
+     "applies_to": "triad cable",
+     "kind": "format",
+     "instructions": "Write the number of triads, a space, the word triad, a space, a lower case x, a space, the cross-section, a space and mm2. Treat T, triad and triads as denoting triads."
+    }
+   ],
+   "attribute": "Cable size",
+   "aliases": [
+    "cable size",
+    "cable construction",
+    "number of cores",
+    "number of pairs",
+    "number of triads",
+    "cross-section",
+    "conductor cross-section",
+    "mm2"
+   ],
+   "rules": "A cable size shall be written as the number of cores, a space, a lower case x, a space, the cross-section, a space and mm2. A paired cable shall be written as the number of pairs, a space, the word pair, a space, a lower case x, a space, the cross-section, a space and mm2, and a triad cable in the same manner using the word triad.\nIn a received cable size, ‘C’, ‘core’ and ‘cores’ following a number denote cores, ‘P’, ‘pr’, ‘pair’ and ‘pairs’ denote pairs, and ‘T’, ‘triad’ and ‘triads’ denote triads; a number multiplied by a cross-section without any of these words denotes cores. The cross-section unit is recognized from ‘mm2’, ‘mm²’, ‘sq mm’ and ‘sqmm’. A cross-section received without a unit or in AWG shall be entered in the query register.\n16.1 Power, control and instrument cables hold Voltage rating, Size, Insulation, Armour, Sheath, Screen and Length. Size is a cable size in accordance with 9.17 and 9.18. Length is a long length in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "A105",
+     "accepted": [
+      "A105",
+      "ASTM A105",
+      "SA105",
+      "SA-105",
+      "A-105"
+     ]
+    },
+    {
+     "value": "A106 B",
+     "accepted": [
+      "A106 B",
+      "A106 Gr B",
+      "A106 Gr.B",
+      "A106-B",
+      "ASTM A106 Grade B",
+      "SA106 B"
+     ]
+    },
+    {
+     "value": "A333 6",
+     "accepted": [
+      "A333 6",
+      "A333 Gr 6"
+     ]
+    },
+    {
+     "value": "A216 WCB",
+     "accepted": [
+      "A216 WCB",
+      "WCB",
+      "ASTM A216 WCB",
+      "A216 Gr WCB",
+      "SA216 WCB"
+     ]
+    },
+    {
+     "value": "A352 LCC",
+     "accepted": [
+      "A352 LCC",
+      "LCC"
+     ]
+    },
+    {
+     "value": "A351 CF8M",
+     "accepted": [
+      "A351 CF8M",
+      "CF8M",
+      "ASTM A351 CF8M"
+     ]
+    },
+    {
+     "value": "A182 F316",
+     "accepted": [
+      "A182 F316",
+      "F316",
+      "ASTM A182 F316"
+     ]
+    },
+    {
+     "value": "A182 F316L",
+     "accepted": [
+      "A182 F316L",
+      "F316L",
+      "ASTM A182 F316L"
+     ]
+    },
+    {
+     "value": "A234 WPB",
+     "accepted": [
+      "A234 WPB",
+      "WPB"
+     ]
+    },
+    {
+     "value": "A403 WP316L",
+     "accepted": [
+      "A403 WP316L",
+      "WP316L"
+     ]
+    },
+    {
+     "value": "A516 70",
+     "accepted": [
+      "A516 70",
+      "A516 Gr 70",
+      "SA-516 70",
+      "SA516 Gr.70",
+      "ASTM A516 Grade 70"
+     ]
+    },
+    {
+     "value": "A179",
+     "accepted": [
+      "A179",
+      "SA179"
+     ]
+    },
+    {
+     "value": "A193 B7",
+     "accepted": [
+      "A193 B7",
+      "B7",
+      "ASTM A193 B7",
+      "A193 Gr B7"
+     ]
+    },
+    {
+     "value": "A193 B7M",
+     "accepted": [
+      "A193 B7M"
+     ]
+    },
+    {
+     "value": "A194 2H",
+     "accepted": [
+      "A194 2H",
+      "2H",
+      "ASTM A194 2H",
+      "A194 Gr 2H"
+     ]
+    },
+    {
+     "value": "A194 2HM",
+     "accepted": [
+      "A194 2HM"
+     ]
+    },
+    {
+     "value": "SS304",
+     "accepted": [
+      "SS304",
+      "SS"
+     ]
+    },
+    {
+     "value": "SS316",
+     "accepted": [
+      "SS316"
+     ]
+    },
+    {
+     "value": "SS316L",
+     "accepted": [
+      "SS316L"
+     ]
+    },
+    {
+     "value": "CS",
+     "accepted": [
+      "CS",
+      "carbon steel",
+      "C.S."
+     ]
+    },
+    {
+     "value": "LTCS",
+     "accepted": [
+      "LTCS"
+     ]
+    },
+    {
+     "value": "Duplex SS",
+     "accepted": [
+      "Duplex SS",
+      "duplex",
+      "duplex stainless steel",
+      "DSS"
+     ]
+    },
+    {
+     "value": "HDG steel",
+     "accepted": [
+      "HDG steel",
+      "hot dip galvanized steel",
+      "hot-dip galvanised steel",
+      "galvanized steel (HDG)"
+     ]
+    },
+    {
+     "value": "Painted CS",
+     "accepted": [
+      "Painted CS",
+      "painted carbon steel",
+      "painted steel"
+     ]
+    },
+    {
+     "value": "Aluminium",
+     "accepted": [
+      "Aluminium",
+      "aluminum",
+      "Al"
+     ]
+    },
+    {
+     "value": "Ni-plated brass",
+     "accepted": [
+      "Ni-plated brass",
+      "nickel plated brass",
+      "NP brass"
+     ]
+    },
+    {
+     "value": "Brass",
+     "accepted": [
+      "Brass"
+     ]
+    },
+    {
+     "value": "GRP",
+     "accepted": [
+      "GRP",
+      "glass reinforced polyester",
+      "FRP",
+      "fiberglass"
+     ]
+    },
+    {
+     "value": "Ductile iron",
+     "accepted": [
+      "Ductile iron",
+      "DI",
+      "SG iron"
+     ]
+    },
+    {
+     "value": "Copper",
+     "accepted": [
+      "Copper",
+      "Cu"
+     ]
+    },
+    {
+     "value": "Tinned copper",
+     "accepted": [
+      "Tinned copper"
+     ]
+    },
+    {
+     "value": "Alloy 625",
+     "accepted": [
+      "Alloy 625",
+      "Inconel 625",
+      "UNS N06625"
+     ]
+    },
+    {
+     "value": "Stellite 6",
+     "accepted": [
+      "Stellite 6",
+      "St6"
+     ]
+    },
+    {
+     "value": "PTFE",
+     "accepted": [
+      "PTFE",
+      "Teflon"
+     ]
+    },
+    {
+     "value": "RPTFE",
+     "accepted": [
+      "RPTFE",
+      "reinforced PTFE",
+      "R-PTFE"
+     ]
+    },
+    {
+     "value": "Graphite",
+     "accepted": [
+      "Graphite",
+      "flexible graphite",
+      "Grafoil"
+     ]
+    },
+    {
+     "value": "FKM",
+     "accepted": [
+      "FKM",
+      "Viton",
+      "FPM"
+     ]
+    },
+    {
+     "value": "NBR",
+     "accepted": [
+      "NBR",
+      "nitrile",
+      "Buna-N"
+     ]
+    },
+    {
+     "value": "EPDM",
+     "accepted": [
+      "EPDM"
+     ]
+    },
+    {
+     "value": "PEEK",
+     "accepted": [
+      "PEEK"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Apply the prescribed material designation, removing ASTM, Gr, Gr. and Grade as specified, writing the ASME prefix SA or SA- as A, replacing the specification-grade hyphen with a space, and writing grades in capitals. Any other material, a trade name not mentioned, or a value naming two materials is left unchanged and entered in the query register.",
+   "flag_when": "The material is not a recognized designation, is stainless steel without a grade, names two materials, or is another material or trade name not mentioned in the clause.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Material",
+   "aliases": [
+    "material",
+    "material designation",
+    "body material",
+    "wetted material",
+    "casing material",
+    "stud material",
+    "nut material",
+    "ASTM grade",
+    "ASME material",
+    "stainless steel"
+   ],
+   "rules": "An ASTM or ASME material designation shall be written without the prefix ASTM, as the specification letter and number, a space and the grade. The words ‘Gr’, ‘Gr.’ and ‘Grade’ shall be deleted; the ASME prefix ‘SA’ or ‘SA-’ shall be written as A; a hyphen between specification and grade shall be written as a space; and the grade shall be written in capitals. A grade received without its specification is accepted only where recognized in this clause.\nForged carbon steel is written A105, with ‘ASTM A105’, ‘SA105’, ‘SA-105’ and ‘A-105’ recognized. Seamless carbon steel pipe is written A106 B, with ‘A106 Gr B’, ‘A106 Gr.B’, ‘A106-B’, ‘ASTM A106 Grade B’ and ‘SA106 B’ recognized. Low-temperature pipe is written A333 6, with ‘A333 Gr 6’ recognized.\nCast carbon steel is written A216 WCB, with the grade ‘WCB’ alone and ‘ASTM A216 WCB’, ‘A216 Gr WCB’ and ‘SA216 WCB’ recognized. Low-temperature cast steel is written A352 LCC, with ‘LCC’ recognized. Cast stainless steel is written A351 CF8M, with ‘CF8M’ and ‘ASTM A351 CF8M’ recognized. Forged stainless steel is written A182 F316 or A182 F316L, with ‘F316’, ‘F316L’, ‘ASTM A182 F316’ and ‘ASTM A182 F316L’ recognized.\nCarbon steel fittings are written A234 WPB, with ‘WPB’ recognized, and stainless steel fittings A403 WP316L, with ‘WP316L’ recognized. Plate is written A516 70, with ‘A516 Gr 70’, ‘SA-516 70’, ‘SA516 Gr.70’ and ‘ASTM A516 Grade 70’ recognized. Heat exchanger tubes are written A179, with ‘SA179’ recognized.\nStud material is written A193 B7 or A193 B7M, with ‘B7’, ‘ASTM A193 B7’ and ‘A193 Gr B7’ recognized for the former. Nut material is written A194 2H or A194 2HM, with ‘2H’, ‘ASTM A194 2H’ and ‘A194 Gr 2H’ recognized for the former.\n10.6 Stainless steel without an ASTM designation is written as SS followed directly by the grade number, namely SS304, SS316 and SS316L. For each grade the forms ‘SS’ followed by a space and the grade, the grade followed by ‘SS’ or ‘SS’, ‘AISI’ followed by the grade, ‘S.S.’ followed by the grade, ‘stainless steel’ followed by the grade and the grade followed by ‘stainless’ are recognized. Stainless steel received without any grade shall not be assigned one; it shall be entered in the query register.\n10.7 Carbon steel without a designation is written CS, with ‘carbon steel’ and ‘C.S.’ recognized. Low-temperature carbon steel is written LTCS. Duplex stainless steel is written Duplex SS, with ‘duplex’, ‘duplex stainless steel’ and ‘DSS’ recognized.\n10.8 Hot dip galvanized steel is written HDG steel, with ‘hot dip galvanized steel’, ‘hot-dip galvanised steel’ and ‘galvanized steel (HDG)’ recognized. Painted carbon steel is written Painted CS, with ‘painted carbon steel’ and ‘painted steel’ recognized.\n10.9 Aluminium is written with the British spelling, Aluminium, with ‘aluminum’ and ‘Al’ recognized. Nickel plated brass is written Ni-plated brass, with ‘nickel plated brass’ and ‘NP brass’ recognized, and brass without plating is written Brass. Glass reinforced plastic is written GRP, with ‘glass reinforced polyester’, ‘FRP’ and ‘fiberglass’ recognized. Ductile iron is written Ductile iron, with ‘DI’ and ‘SG iron’ recognized.\n10.10 Copper is written Copper, with ‘Cu’ recognized, and tinned copper is written Tinned copper. Nickel alloy 625 is written Alloy 625, with ‘Inconel 625’ and ‘UNS N06625’ recognized. Stellite hard facing is written Stellite 6, with ‘St6’ recognized.\n10.11 Non-metallic materials are written PTFE, with ‘Teflon’ recognized; RPTFE, with ‘reinforced PTFE’ and ‘R-PTFE’ recognized; Graphite, with ‘flexible graphite’ and ‘Grafoil’ recognized; FKM, with ‘Viton’ and ‘FPM’ recognized; NBR, with ‘nitrile’ and ‘Buna-N’ recognized; EPDM; and PEEK.\n10.12 Any other material, including trade names not mentioned in this clause and values naming two materials, shall be left unchanged and entered in the query register.\n12.1 Gate, globe, check and ball valves hold the attributes Size, Rating, End connection, Body material, Trim, Operator, Bonnet and Weight. Ball valves additionally hold Ball type, Bore and Seat material, and check valves additionally hold Check type.\n12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv.\n13.4 Gaskets hold Type, Size, Rating, Winding material and Filler material. Winding material and Filler material apply to spiral wound gaskets only and shall be N/A for other gasket types.\n13.5 Stud bolts hold Diameter, Length, Stud material, Nut material and Coating. Diameter is written in accordance with 8.12. Length of a stud is a short length in mm and, unlike the length of pipe, is a characteristic of the item: studs of different length are different items.\n14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver. Flow is held in m3/h at the rated point, Head is a long length in m at the rated point, and Speed is held in rpm.\n15.1 Pressure transmitters hold Range, Output, Accuracy, Process connection, Wetted material, IP rating, Ex marking and Power supply. Range is a range of gauge pressure in barg and is the calibrated range. Output is a signal in accordance with Clause 9. Process connection is a taper pipe thread. Power supply is a DC attribute, and VDC shall be added where it is not received.\n15.2 Temperature elements hold Sensor, Wiring, Sheath material, Insertion length and Process connection. Wiring applies to resistance thermometers only and shall be N/A for thermocouples. Insertion length is a short length in mm.\n16.3 Cable glands hold Gland type, Thread, Material, Ex marking and IP rating. Thread is a metric thread or a taper pipe thread in accordance with Clause 8, and a metric thread shall not be converted to an NPT size.\n16.4 Junction boxes hold Material, Dimensions, Terminals, Entries, IP rating and Ex marking. Dimensions are width, height and depth in mm in that order, written in accordance with 6.13. Terminals and Entries are counts in accordance with 11.25.\n16.5 Transformers hold Power, Voltage ratio, Vector group, Cooling and Impedance. Power is held in kVA and Impedance is a percentage.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No.\n17.4 Shell-and-tube heat exchangers hold TEMA type, Duty, Area, Shell design pressure, Tube design pressure and Tube material. Duty is held in kW, Area in m2, and both design pressures in barg."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "RF",
+     "accepted": [
+      "RF",
+      "raised face",
+      "RF flanged",
+      "flanged RF",
+      "RFF",
+      "flanged, raised face",
+      "double flanged",
+      "flanged"
+     ]
+    },
+    {
+     "value": "FF",
+     "accepted": [
+      "FF",
+      "flat face",
+      "full face"
+     ]
+    },
+    {
+     "value": "RTJ",
+     "accepted": [
+      "RTJ",
+      "ring joint",
+      "ring type joint",
+      "RJ"
+     ]
+    },
+    {
+     "value": "BW",
+     "accepted": [
+      "BW",
+      "butt weld",
+      "butt-welded",
+      "BWE"
+     ]
+    },
+    {
+     "value": "SW",
+     "accepted": [
+      "SW",
+      "socket weld",
+      "SWE"
+     ]
+    },
+    {
+     "value": "THD",
+     "accepted": [
+      "THD",
+      "threaded",
+      "screwed",
+      "thrd"
+     ]
+    },
+    {
+     "value": "Wafer",
+     "accepted": [
+      "Wafer"
+     ]
+    },
+    {
+     "value": "Lug",
+     "accepted": [
+      "Lug"
+     ]
+    },
+    {
+     "value": "WN",
+     "accepted": [
+      "WN",
+      "weld neck",
+      "welding neck"
+     ]
+    },
+    {
+     "value": "SO",
+     "accepted": [
+      "SO",
+      "slip-on",
+      "slip on"
+     ]
+    },
+    {
+     "value": "BL",
+     "accepted": [
+      "BL",
+      "blind"
+     ]
+    },
+    {
+     "value": "LJ",
+     "accepted": [
+      "LJ",
+      "lap joint"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed end-connection form and its recognized variants. For butterfly valves, limit the value to Wafer, Lug or RF; write a double flanged butterfly valve as RF.",
+   "flag_when": "The value is not a recognized end connection or is not permitted for the applicable butterfly valve.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "End connection",
+   "aliases": [
+    "end connection",
+    "connection type",
+    "pipe end",
+    "valve end",
+    "threaded end",
+    "weld end",
+    "wafer",
+    "lug",
+    "RF"
+   ],
+   "rules": "11.2 End connections and flange facings. Raised face is written RF, with ‘raised face’, ‘RF flanged’, ‘flanged RF’, ‘RFF’ and ‘flanged, raised face’ recognized. Flat face is written FF, with ‘flat face’ and ‘full face’ recognized. Ring type joint is written RTJ, with ‘ring joint’, ‘ring type joint’ and ‘RJ’ recognized. Butt weld is written BW, with ‘butt weld’, ‘butt-welded’ and ‘BWE’ recognized. Socket weld is written SW, with ‘socket weld’ and ‘SWE’ recognized. Threaded ends are written THD, with ‘threaded’, ‘screwed’ and ‘thrd’ recognized. Wafer and lug bodies are written Wafer and Lug.\n11.3 Flange types are written WN for weld neck, with ‘weld neck’ and ‘welding neck’ recognized; SO for slip-on, with ‘slip-on’ and ‘slip on’ recognized; BL for blind, with ‘blind’ recognized; SW for socket weld; and LJ for lap joint, with ‘lap joint’ recognized.\n12.4 For butterfly valves, End connection is limited to Wafer, Lug and RF. A double flanged butterfly valve is written RF, and for this type of valve alone the received forms ‘double flanged’ and ‘flanged’ are recognized as RF. End connection is used to record the body style of butterfly valves only.\n13.3 Elbows hold Size, Schedule, Material, Radius and Angle. Flanges hold Type, Size, Rating, Facing and Material; Facing uses the terms of end connections, restricted to RF, FF and RTJ."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "WN",
+     "accepted": [
+      "WN",
+      "weld neck",
+      "welding neck"
+     ]
+    },
+    {
+     "value": "SO",
+     "accepted": [
+      "SO",
+      "slip-on",
+      "slip on"
+     ]
+    },
+    {
+     "value": "BL",
+     "accepted": [
+      "BL",
+      "blind"
+     ]
+    },
+    {
+     "value": "SW",
+     "accepted": [
+      "SW"
+     ]
+    },
+    {
+     "value": "LJ",
+     "accepted": [
+      "LJ",
+      "lap joint"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Replace each recognized variant with its prescribed form: WN, SO, BL, SW or LJ. Preserve the prescribed capitalization.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when it does not exactly match a prescribed form or recognized variant, or when it is ambiguous.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Flange type",
+   "aliases": [
+    "flange type",
+    "flange arrangement",
+    "weld neck",
+    "slip-on",
+    "blind flange",
+    "socket weld flange",
+    "lap joint flange",
+    "WN",
+    "SO"
+   ],
+   "rules": "11.3 Flange types are written WN for weld neck, with ‘weld neck’ and ‘welding neck’ recognized; SO for slip-on, with ‘slip-on’ and ‘slip on’ recognized; BL for blind, with ‘blind’ recognized; SW for socket weld; and LJ for lap joint, with ‘lap joint’ recognized.\n13.3 Elbows hold Size, Schedule, Material, Radius and Angle. Flanges hold Type, Size, Rating, Facing and Material; Facing uses the terms of end connections, restricted to RF, FF and RTJ."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Handwheel",
+     "accepted": [
+      "Handwheel",
+      "HW",
+      "hand wheel"
+     ]
+    },
+    {
+     "value": "Lever",
+     "accepted": [
+      "Lever",
+      "lever operated",
+      "wrench"
+     ]
+    },
+    {
+     "value": "Gear",
+     "accepted": [
+      "Gear",
+      "gear operator",
+      "gearbox",
+      "gear operated",
+      "GO"
+     ]
+    },
+    {
+     "value": "Pneumatic actuator",
+     "accepted": [
+      "Pneumatic actuator",
+      "pneumatic",
+      "air operated"
+     ]
+    },
+    {
+     "value": "Electric actuator",
+     "accepted": [
+      "Electric actuator",
+      "MOV",
+      "motor operated",
+      "electric"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Replace each recognized variant with its prescribed form and capitalization: Handwheel, Lever, Gear, Pneumatic actuator or Electric actuator.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when it does not exactly match a prescribed form or recognized variant, or when it is ambiguous.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Valve operator",
+   "aliases": [
+    "operator",
+    "valve operator",
+    "actuator",
+    "handwheel",
+    "lever",
+    "gear operator",
+    "pneumatic actuator",
+    "electric actuator"
+   ],
+   "rules": "11.4 Valve operators are written Handwheel, with ‘HW’ and ‘hand wheel’ recognized; Lever, with ‘lever operated’ and ‘wrench’ recognized; Gear, with ‘gear operator’, ‘gearbox’, ‘gear operated’ and ‘GO’ recognized; Pneumatic actuator, with ‘pneumatic’ and ‘air operated’ recognized; and Electric actuator, with ‘MOV’, ‘motor operated’ and ‘electric’ recognized.\n12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Fail closed",
+     "accepted": [
+      "Fail closed",
+      "FC",
+      "fail close",
+      "fail-to-close",
+      "FTC"
+     ]
+    },
+    {
+     "value": "Fail open",
+     "accepted": [
+      "Fail open",
+      "FO",
+      "fail-to-open",
+      "FTO"
+     ]
+    },
+    {
+     "value": "Fail last",
+     "accepted": [
+      "Fail last",
+      "FL",
+      "fail in place",
+      "fail as is"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Replace each recognized variant with its prescribed form and capitalization: Fail closed, Fail open or Fail last.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when it does not exactly match a prescribed form or recognized variant, or when it is ambiguous.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Fail position",
+   "aliases": [
+    "fail position",
+    "failure position",
+    "fail action",
+    "fail closed",
+    "fail open",
+    "fail last",
+    "FC",
+    "FO"
+   ],
+   "rules": "11.5 Fail positions are written Fail closed, with ‘FC’, ‘fail close’, ‘fail-to-close’ and ‘FTC’ recognized; Fail open, with ‘FO’, ‘fail-to-open’ and ‘FTO’ recognized; and Fail last, with ‘FL’, ‘fail in place’ and ‘fail as is’ recognized. Bonnets are written Bolted, with ‘bolted bonnet’ and ‘BB’ recognized; Pressure seal, with ‘pressure seal bonnet’ and ‘PSB’ recognized; and Welded, with ‘welded bonnet’ recognized.\n12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Bolted",
+     "accepted": [
+      "Bolted",
+      "bolted bonnet",
+      "BB"
+     ]
+    },
+    {
+     "value": "Pressure seal",
+     "accepted": [
+      "Pressure seal",
+      "pressure seal bonnet",
+      "PSB"
+     ]
+    },
+    {
+     "value": "Welded",
+     "accepted": [
+      "Welded",
+      "welded bonnet"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Replace each recognized variant with its prescribed form and capitalization: Bolted, Pressure seal or Welded.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when it does not exactly match a prescribed form or recognized variant, or when it is ambiguous.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Bonnet",
+   "aliases": [
+    "bonnet",
+    "bonnet type",
+    "bolted bonnet",
+    "pressure seal bonnet",
+    "welded bonnet",
+    "BB",
+    "PSB"
+   ],
+   "rules": "11.5 Fail positions are written Fail closed, with ‘FC’, ‘fail close’, ‘fail-to-close’ and ‘FTC’ recognized; Fail open, with ‘FO’, ‘fail-to-open’ and ‘FTO’ recognized; and Fail last, with ‘FL’, ‘fail in place’ and ‘fail as is’ recognized. Bonnets are written Bolted, with ‘bolted bonnet’ and ‘BB’ recognized; Pressure seal, with ‘pressure seal bonnet’ and ‘PSB’ recognized; and Welded, with ‘welded bonnet’ recognized.\n12.1 Gate, globe, check and ball valves hold the attributes Size, Rating, End connection, Body material, Trim, Operator, Bonnet and Weight. Ball valves additionally hold Ball type, Bore and Seat material, and check valves additionally hold Check type."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Floating",
+     "accepted": [
+      "Floating",
+      "floating ball"
+     ]
+    },
+    {
+     "value": "Trunnion",
+     "accepted": [
+      "Trunnion",
+      "trunnion mounted",
+      "trunnion-mounted",
+      "TMB"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Replace each recognized variant with its prescribed form and capitalization: Floating or Trunnion.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when it does not exactly match a prescribed form or recognized variant, or when it is ambiguous.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Ball type",
+   "aliases": [
+    "ball type",
+    "ball valve ball",
+    "floating ball",
+    "trunnion ball",
+    "trunnion mounted",
+    "TMB"
+   ],
+   "rules": "11.6 The ball of a ball valve is written Floating, with ‘floating ball’ recognized, or Trunnion, with ‘trunnion mounted’, ‘trunnion-mounted’ and ‘TMB’ recognized. The bore is written Full bore, with ‘FB’ and ‘full port’ recognized, or Reduced bore, with ‘RB’ and ‘reduced port’ recognized. Check valves are written Swing, with ‘swing check’ recognized; Piston, with ‘piston check’ recognized; or Dual plate, with ‘dual plate check’, ‘DPC’ and ‘double door’ recognized.\n12.1 Gate, globe, check and ball valves hold the attributes Size, Rating, End connection, Body material, Trim, Operator, Bonnet and Weight. Ball valves additionally hold Ball type, Bore and Seat material, and check valves additionally hold Check type."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Full bore",
+     "accepted": [
+      "Full bore",
+      "FB",
+      "full port"
+     ]
+    },
+    {
+     "value": "Reduced bore",
+     "accepted": [
+      "Reduced bore",
+      "RB",
+      "reduced port"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Replace each recognized variant with its prescribed form and capitalization: Full bore or Reduced bore.",
+   "flag_when": "Leave the value unchanged and enter it in the query register when it does not exactly match a prescribed form or recognized variant, or when it is ambiguous.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Bore",
+   "aliases": [
+    "bore",
+    "valve bore",
+    "port",
+    "full bore",
+    "reduced bore",
+    "full port",
+    "reduced port",
+    "FB",
+    "RB"
+   ],
+   "rules": "11.6 The ball of a ball valve is written Floating, with ‘floating ball’ recognized, or Trunnion, with ‘trunnion mounted’, ‘trunnion-mounted’ and ‘TMB’ recognized. The bore is written Full bore, with ‘FB’ and ‘full port’ recognized, or Reduced bore, with ‘RB’ and ‘reduced port’ recognized. Check valves are written Swing, with ‘swing check’ recognized; Piston, with ‘piston check’ recognized; or Dual plate, with ‘dual plate check’, ‘DPC’ and ‘double door’ recognized.\n12.1 Gate, globe, check and ball valves hold the attributes Size, Rating, End connection, Body material, Trim, Operator, Bonnet and Weight. Ball valves additionally hold Ball type, Bore and Seat material, and check valves additionally hold Check type."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Swing",
+     "accepted": [
+      "Swing",
+      "swing check"
+     ]
+    },
+    {
+     "value": "Piston",
+     "accepted": [
+      "Piston",
+      "piston check"
+     ]
+    },
+    {
+     "value": "Dual plate",
+     "accepted": [
+      "Dual plate",
+      "dual plate check",
+      "DPC",
+      "double door"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use only the prescribed check-valve type. Apply the prescribed capitalization.",
+   "flag_when": "When the value does not match one of the listed forms, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Check type",
+   "aliases": [
+    "check type",
+    "check valve type",
+    "swing check",
+    "piston check",
+    "dual plate",
+    "DPC",
+    "double door"
+   ],
+   "rules": "11.6 The ball of a ball valve is written Floating, with ‘floating ball’ recognized, or Trunnion, with ‘trunnion mounted’, ‘trunnion-mounted’ and ‘TMB’ recognized. The bore is written Full bore, with ‘FB’ and ‘full port’ recognized, or Reduced bore, with ‘RB’ and ‘reduced port’ recognized. Check valves are written Swing, with ‘swing check’ recognized; Piston, with ‘piston check’ recognized; or Dual plate, with ‘dual plate check’, ‘DPC’ and ‘double door’ recognized.\n12.1 Gate, globe, check and ball valves hold the attributes Size, Rating, End connection, Body material, Trim, Operator, Bonnet and Weight. Ball valves additionally hold Ball type, Bore and Seat material, and check valves additionally hold Check type."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the value as \"Trim\" followed by one space and the trim number; write any letter suffix in capitals. Recognize TRIM joined to the number, \"API trim\", \"trim no.\" and a hash sign before the number, and remove those forms when producing the prescribed form.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Trim",
+   "aliases": [
+    "trim",
+    "valve trim",
+    "trim number",
+    "API trim",
+    "trim no.",
+    "trim code"
+   ],
+   "rules": "11.7 A valve trim is written as Trim, a space and the trim number, with any letter suffix in capitals. ‘TRIM’ joined to the number, ‘API trim’, ‘trim no.’ and a hash sign preceding the number are recognized.\n11.8 The flow characteristic of a control valve is written Equal percentage, with ‘=%’, ‘EQ%’ and ‘equal %’ recognized; Linear, with ‘LIN’ recognized; or Quick opening, with ‘QO’ recognized. Seat leakage class is written as Class followed by the Roman numeral; the Roman numeral alone and ‘class’ followed by an ordinary digit are recognized, and ‘ANSI’, ‘FCI’ or ‘ANSI/FCI 70-2’ preceding the class are deleted. Cv is written as the number alone, ‘Cv’, an equals sign or a colon being deleted.\n12.1 Gate, globe, check and ball valves hold the attributes Size, Rating, End connection, Body material, Trim, Operator, Bonnet and Weight. Ball valves additionally hold Ball type, Bore and Seat material, and check valves additionally hold Check type.\n12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Equal percentage",
+     "accepted": [
+      "Equal percentage",
+      "=%",
+      "EQ%",
+      "equal %"
+     ]
+    },
+    {
+     "value": "Linear",
+     "accepted": [
+      "Linear",
+      "LIN"
+     ]
+    },
+    {
+     "value": "Quick opening",
+     "accepted": [
+      "Quick opening",
+      "QO"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed flow-characteristic name and capitalization.",
+   "flag_when": "When the value does not match one of the listed forms, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Characteristic",
+   "aliases": [
+    "characteristic",
+    "flow characteristic",
+    "control valve characteristic",
+    "equal percentage",
+    "linear",
+    "quick opening",
+    "EQ%",
+    "LIN"
+   ],
+   "rules": "11.8 The flow characteristic of a control valve is written Equal percentage, with ‘=%’, ‘EQ%’ and ‘equal %’ recognized; Linear, with ‘LIN’ recognized; or Quick opening, with ‘QO’ recognized. Seat leakage class is written as Class followed by the Roman numeral; the Roman numeral alone and ‘class’ followed by an ordinary digit are recognized, and ‘ANSI’, ‘FCI’ or ‘ANSI/FCI 70-2’ preceding the class are deleted. Cv is written as the number alone, ‘Cv’, an equals sign or a colon being deleted.\n12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the value as \"Class\" followed by the leakage-class Roman numeral. Recognize the Roman numeral alone and \"class\" followed by an ordinary digit, and delete a preceding \"ANSI\", \"FCI\" or \"ANSI/FCI 70-2\".",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Leakage class",
+   "aliases": [
+    "leakage class",
+    "seat leakage class",
+    "seat class",
+    "ANSI leakage class",
+    "FCI 70-2",
+    "Class"
+   ],
+   "rules": "11.8 The flow characteristic of a control valve is written Equal percentage, with ‘=%’, ‘EQ%’ and ‘equal %’ recognized; Linear, with ‘LIN’ recognized; or Quick opening, with ‘QO’ recognized. Seat leakage class is written as Class followed by the Roman numeral; the Roman numeral alone and ‘class’ followed by an ordinary digit are recognized, and ‘ANSI’, ‘FCI’ or ‘ANSI/FCI 70-2’ preceding the class are deleted. Cv is written as the number alone, ‘Cv’, an equals sign or a colon being deleted.\n12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write only the number for Cv. Delete \"Cv\", an equals sign or a colon when they precede the number; do not convert a Kv value to Cv.",
+   "flag_when": "When a Kv value is received, do not convert it to Cv; leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Cv",
+   "aliases": [
+    "Cv",
+    "flow coefficient",
+    "valve coefficient",
+    "capacity coefficient",
+    "control valve Cv"
+   ],
+   "rules": "11.8 The flow characteristic of a control valve is written Equal percentage, with ‘=%’, ‘EQ%’ and ‘equal %’ recognized; Linear, with ‘LIN’ recognized; or Quick opening, with ‘QO’ recognized. Seat leakage class is written as Class followed by the Roman numeral; the Roman numeral alone and ‘class’ followed by an ordinary digit are recognized, and ‘ANSI’, ‘FCI’ or ‘ANSI/FCI 70-2’ preceding the class are deleted. Cv is written as the number alone, ‘Cv’, an equals sign or a colon being deleted.\n12.5 Control valves hold Size, Rating, Body material, Cv, Characteristic, Leakage class, Actuator, Fail position and Positioner signal. Actuator uses the terms of Operator, but only Pneumatic actuator and Electric actuator are admissible for control valves, and any other value shall be entered in the query register. Positioner signal is a signal in accordance with Clause 9. A Kv value shall not be converted to Cv."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Conventional",
+     "accepted": [
+      "Conventional",
+      "conv.",
+      "spring loaded"
+     ]
+    },
+    {
+     "value": "Balanced bellows",
+     "accepted": [
+      "Balanced bellows",
+      "bellows",
+      "balanced bellow"
+     ]
+    },
+    {
+     "value": "Pilot operated",
+     "accepted": [
+      "Pilot operated",
+      "POPRV",
+      "pilot"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed relief-valve type name and capitalization.",
+   "flag_when": "When the value does not match one of the listed forms, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Relief valve type",
+   "aliases": [
+    "relief valve type",
+    "relief type",
+    "conventional",
+    "balanced bellows",
+    "pilot operated",
+    "spring loaded",
+    "POPRV"
+   ],
+   "rules": "11.9 Relief valves are written Conventional, with ‘conv.’ and ‘spring loaded’ recognized; Balanced bellows, with ‘bellows’ and ‘balanced bellow’ recognized; or Pilot operated, with ‘POPRV’ and ‘pilot’ recognized. The orifice is written as its single capital letter, the words ‘orifice’, ‘API’ and ‘size’ accompanying it being deleted.\n12.6 Relief valves hold Inlet size, Inlet rating, Outlet size, Outlet rating, Orifice, Set pressure and Type. Inlet rating and Outlet rating are pressure classes. Set pressure is always a gauge pressure in barg, and a set pressure received in an absolute unit shall be entered in the query register."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the orifice as its single capital letter. Delete the words 'orifice', 'API' and 'size'.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Orifice",
+   "aliases": [
+    "orifice",
+    "relief orifice",
+    "orifice letter",
+    "API orifice",
+    "orifice size"
+   ],
+   "rules": "11.9 Relief valves are written Conventional, with ‘conv.’ and ‘spring loaded’ recognized; Balanced bellows, with ‘bellows’ and ‘balanced bellow’ recognized; or Pilot operated, with ‘POPRV’ and ‘pilot’ recognized. The orifice is written as its single capital letter, the words ‘orifice’, ‘API’ and ‘size’ accompanying it being deleted.\n12.6 Relief valves hold Inlet size, Inlet rating, Outlet size, Outlet rating, Orifice, Set pressure and Type. Inlet rating and Outlet rating are pressure classes. Set pressure is always a gauge pressure in barg, and a set pressure received in an absolute unit shall be entered in the query register."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Seamless",
+     "accepted": [
+      "Seamless",
+      "SMLS",
+      "S/L"
+     ]
+    },
+    {
+     "value": "ERW",
+     "accepted": [
+      "ERW"
+     ]
+    },
+    {
+     "value": "LSAW",
+     "accepted": [
+      "LSAW"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed form and capitalization for pipe manufacture.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Pipe manufacture",
+   "aliases": [
+    "pipe manufacture",
+    "manufacture",
+    "seamless",
+    "ERW",
+    "LSAW",
+    "SMLS",
+    "pipe production"
+   ],
+   "rules": "11.10 Pipe manufacture is written Seamless, with ‘SMLS’ and ‘S/L’ recognized, ERW or LSAW. Pipe ends are written BE, with ‘bevelled end’, ‘beveled end’ and ‘BEV’ recognized, or PE, with ‘plain end’ recognized. The radius of an elbow is written LR, with 'long radius', '1.5D' and '1.5 D' recognized, or SR, with 'short radius', '1D' and '1 D' recognized. An angle is written as the number, a space and deg, the received forms 'deg', 'degree', 'degrees' and the degree sign being recognized.\n13.1 Pipe holds Size, Schedule, Material, Manufacture, End finish and Length. Length is a long length in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "BE",
+     "accepted": [
+      "BE",
+      "bevelled end",
+      "beveled end",
+      "BEV"
+     ]
+    },
+    {
+     "value": "PE",
+     "accepted": [
+      "PE",
+      "plain end"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use BE for bevelled or beveled end and PE for plain end, with the prescribed capitalization.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Pipe end finish",
+   "aliases": [
+    "end finish",
+    "pipe ends",
+    "pipe end preparation",
+    "bevelled end",
+    "plain end",
+    "BE",
+    "PE"
+   ],
+   "rules": "11.10 Pipe manufacture is written Seamless, with ‘SMLS’ and ‘S/L’ recognized, ERW or LSAW. Pipe ends are written BE, with ‘bevelled end’, ‘beveled end’ and ‘BEV’ recognized, or PE, with ‘plain end’ recognized. The radius of an elbow is written LR, with 'long radius', '1.5D' and '1.5 D' recognized, or SR, with 'short radius', '1D' and '1 D' recognized. An angle is written as the number, a space and deg, the received forms 'deg', 'degree', 'degrees' and the degree sign being recognized.\n13.1 Pipe holds Size, Schedule, Material, Manufacture, End finish and Length. Length is a long length in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "LR",
+     "accepted": [
+      "LR",
+      "long radius",
+      "1.5D",
+      "1.5 D"
+     ]
+    },
+    {
+     "value": "SR",
+     "accepted": [
+      "SR",
+      "short radius",
+      "1D",
+      "1 D"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use LR for long radius and SR for short radius, with the prescribed capitalization.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Elbow radius",
+   "aliases": [
+    "radius",
+    "elbow radius",
+    "bend radius",
+    "long radius",
+    "short radius",
+    "LR",
+    "SR",
+    "1.5D"
+   ],
+   "rules": "11.10 Pipe manufacture is written Seamless, with ‘SMLS’ and ‘S/L’ recognized, ERW or LSAW. Pipe ends are written BE, with ‘bevelled end’, ‘beveled end’ and ‘BEV’ recognized, or PE, with ‘plain end’ recognized. The radius of an elbow is written LR, with 'long radius', '1.5D' and '1.5 D' recognized, or SR, with 'short radius', '1D' and '1 D' recognized. An angle is written as the number, a space and deg, the received forms 'deg', 'degree', 'degrees' and the degree sign being recognized.\n13.3 Elbows hold Size, Schedule, Material, Radius and Angle. Flanges hold Type, Size, Rating, Facing and Material; Facing uses the terms of end connections, restricted to RF, FF and RTJ."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "deg",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the angle as the number, a space and deg. Recognize deg, degree, degrees and the degree sign as equivalent incoming forms.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Angle",
+   "aliases": [
+    "angle",
+    "elbow angle",
+    "included angle",
+    "degrees",
+    "deg",
+    "degree"
+   ],
+   "rules": "11.10 Pipe manufacture is written Seamless, with ‘SMLS’ and ‘S/L’ recognized, ERW or LSAW. Pipe ends are written BE, with ‘bevelled end’, ‘beveled end’ and ‘BEV’ recognized, or PE, with ‘plain end’ recognized. The radius of an elbow is written LR, with 'long radius', '1.5D' and '1.5 D' recognized, or SR, with 'short radius', '1D' and '1 D' recognized. An angle is written as the number, a space and deg, the received forms 'deg', 'degree', 'degrees' and the degree sign being recognized.\n13.3 Elbows hold Size, Schedule, Material, Radius and Angle. Flanges hold Type, Size, Rating, Facing and Material; Facing uses the terms of end connections, restricted to RF, FF and RTJ."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Spiral wound",
+     "accepted": [
+      "Spiral wound",
+      "SPW",
+      "SWG",
+      "spiral-wound"
+     ]
+    },
+    {
+     "value": "Ring joint",
+     "accepted": [
+      "Ring joint",
+      "RJ gasket",
+      "RTJ gasket"
+     ]
+    },
+    {
+     "value": "Sheet",
+     "accepted": [
+      "Sheet"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed form and capitalization for gasket type. Winding material and filler material are N/A for gasket types other than Spiral wound.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Gasket type",
+   "aliases": [
+    "gasket type",
+    "gasket",
+    "spiral wound",
+    "ring joint gasket",
+    "sheet gasket",
+    "SPW",
+    "RTJ gasket"
+   ],
+   "rules": "11.11 Gaskets are written Spiral wound, with 'SPW', 'SWG' and 'spiral-wound' recognized; Ring joint, with 'RJ gasket' and 'RTJ gasket' recognized; or Sheet. Bolt coatings are written PTFE coated, with 'Teflon coated' and 'PTFE-coated' recognized; HDG, with 'hot dip galvanized' and 'galvanized' recognized; or Uncoated, with 'black' and 'plain' recognized.\n13.4 Gaskets hold Type, Size, Rating, Winding material and Filler material. Winding material and Filler material apply to spiral wound gaskets only and shall be N/A for other gasket types."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "PTFE coated",
+     "accepted": [
+      "PTFE coated",
+      "Teflon coated",
+      "PTFE-coated"
+     ]
+    },
+    {
+     "value": "HDG",
+     "accepted": [
+      "HDG",
+      "hot dip galvanized",
+      "galvanized"
+     ]
+    },
+    {
+     "value": "Uncoated",
+     "accepted": [
+      "Uncoated",
+      "black",
+      "plain"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed coating value and capitalization. Recognized variants are replaced by the prescribed form.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Bolt coating",
+   "aliases": [
+    "bolt coating",
+    "fastener coating",
+    "coating",
+    "PTFE coated",
+    "HDG",
+    "uncoated",
+    "galvanized"
+   ],
+   "rules": "11.11 Gaskets are written Spiral wound, with 'SPW', 'SWG' and 'spiral-wound' recognized; Ring joint, with 'RJ gasket' and 'RTJ gasket' recognized; or Sheet. Bolt coatings are written PTFE coated, with 'Teflon coated' and 'PTFE-coated' recognized; HDG, with 'hot dip galvanized' and 'galvanized' recognized; or Uncoated, with 'black' and 'plain' recognized.\n13.5 Stud bolts hold Diameter, Length, Stud material, Nut material and Coating. Diameter is written in accordance with 8.12. Length of a stud is a short length in mm and, unlike the length of pipe, is a characteristic of the item: studs of different length are different items."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the API pump type as its letters and digits together without separation. Delete the words “API”, “610” and “type”, and delete hyphens and spaces between letters and digits.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Pump type",
+   "aliases": [
+    "pump type",
+    "API pump type",
+    "pump model",
+    "pump designation",
+    "API 610 type"
+   ],
+   "rules": "11.12 The API pump type is written as its letters and digits together without separation; the words 'API', '610' and 'type' are deleted, as are hyphens and spaces between letters and digits. Seals are written Single mechanical seal, with 'single seal' and 'SMS' recognized, or Double mechanical seal, with 'double seal', 'dual seal' and 'DMS' recognized. A seal plan is written as Plan, a space and the plan number with any letter in capitals; 'API' preceding it is deleted, and 'PLAN' joined to the number or separated from it by a hyphen is recognized. Drivers are written Electric motor, with 'motor', 'E-motor' and 'EM' recognized, or Diesel engine, with 'diesel' recognized.\n14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver. Flow is held in m3/h at the rated point, Head is a long length in m at the rated point, and Speed is held in rpm."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Single mechanical seal",
+     "accepted": [
+      "Single mechanical seal",
+      "single seal",
+      "SMS"
+     ]
+    },
+    {
+     "value": "Double mechanical seal",
+     "accepted": [
+      "Double mechanical seal",
+      "double seal",
+      "dual seal",
+      "DMS"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed seal value and capitalization. Recognized variants are replaced by the prescribed form.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Seal",
+   "aliases": [
+    "seal",
+    "mechanical seal",
+    "seal type",
+    "single seal",
+    "double seal",
+    "SMS",
+    "DMS"
+   ],
+   "rules": "11.12 The API pump type is written as its letters and digits together without separation; the words 'API', '610' and 'type' are deleted, as are hyphens and spaces between letters and digits. Seals are written Single mechanical seal, with 'single seal' and 'SMS' recognized, or Double mechanical seal, with 'double seal', 'dual seal' and 'DMS' recognized. A seal plan is written as Plan, a space and the plan number with any letter in capitals; 'API' preceding it is deleted, and 'PLAN' joined to the number or separated from it by a hyphen is recognized. Drivers are written Electric motor, with 'motor', 'E-motor' and 'EM' recognized, or Diesel engine, with 'diesel' recognized.\n14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver. Flow is held in m3/h at the rated point, Head is a long length in m at the rated point, and Speed is held in rpm.\n14.2 Head shall never be derived from a pressure, since the derivation requires the density of the liquid. Where a double seal has two plans, both shall be written in the received order separated by a slash without spaces."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the seal plan as “Plan”, a space, and the plan number, with any letter in capitals. Delete a preceding “API”; recognize “PLAN” joined to the number or separated from it by a hyphen. If a double seal has two plans, write both in received order separated by a slash without spaces.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Seal plan",
+   "aliases": [
+    "seal plan",
+    "API plan",
+    "plan number",
+    "seal flush plan",
+    "Plan"
+   ],
+   "rules": "11.12 The API pump type is written as its letters and digits together without separation; the words 'API', '610' and 'type' are deleted, as are hyphens and spaces between letters and digits. Seals are written Single mechanical seal, with 'single seal' and 'SMS' recognized, or Double mechanical seal, with 'double seal', 'dual seal' and 'DMS' recognized. A seal plan is written as Plan, a space and the plan number with any letter in capitals; 'API' preceding it is deleted, and 'PLAN' joined to the number or separated from it by a hyphen is recognized. Drivers are written Electric motor, with 'motor', 'E-motor' and 'EM' recognized, or Diesel engine, with 'diesel' recognized.\n14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver. Flow is held in m3/h at the rated point, Head is a long length in m at the rated point, and Speed is held in rpm.\n14.2 Head shall never be derived from a pressure, since the derivation requires the density of the liquid. Where a double seal has two plans, both shall be written in the received order separated by a slash without spaces."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Electric motor",
+     "accepted": [
+      "Electric motor",
+      "motor",
+      "E-motor",
+      "EM"
+     ]
+    },
+    {
+     "value": "Diesel engine",
+     "accepted": [
+      "Diesel engine",
+      "diesel"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed driver value and capitalization. Recognized variants are replaced by the prescribed form.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Driver",
+   "aliases": [
+    "driver",
+    "pump driver",
+    "electric motor",
+    "diesel engine",
+    "motor",
+    "E-motor",
+    "EM"
+   ],
+   "rules": "11.12 The API pump type is written as its letters and digits together without separation; the words 'API', '610' and 'type' are deleted, as are hyphens and spaces between letters and digits. Seals are written Single mechanical seal, with 'single seal' and 'SMS' recognized, or Double mechanical seal, with 'double seal', 'dual seal' and 'DMS' recognized. A seal plan is written as Plan, a space and the plan number with any letter in capitals; 'API' preceding it is deleted, and 'PLAN' joined to the number or separated from it by a hyphen is recognized. Drivers are written Electric motor, with 'motor', 'E-motor' and 'EM' recognized, or Diesel engine, with 'diesel' recognized.\n14.1 Centrifugal pumps hold Pump type, Flow, Head, Speed, Casing material, Seal, Seal plan and Driver. Flow is held in m3/h at the rated point, Head is a long length in m at the rated point, and Speed is held in rpm."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Pt100",
+     "accepted": [
+      "Pt100",
+      "RTD Pt100",
+      "PT-100",
+      "Pt 100"
+     ]
+    },
+    {
+     "value": "Type K",
+     "accepted": [
+      "Type K",
+      "K-type",
+      "thermocouple K",
+      "TC K"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use “Pt100” or “Type” followed by the thermocouple letter, with the prescribed capitalization. Recognized variants are replaced by the prescribed form.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Temperature sensor",
+   "aliases": [
+    "sensor",
+    "temperature sensor",
+    "RTD",
+    "thermocouple",
+    "Pt100",
+    "Type K",
+    "Type J"
+   ],
+   "rules": "11.13 Temperature sensors are written Pt100, with 'RTD Pt100', 'PT-100' and 'Pt 100' recognized, or as Type followed by the thermocouple letter, such as Type K, with 'K-type', 'thermocouple K' and 'TC K' recognized and the corresponding forms for J. Wiring is written 3-wire or 4-wire, with '3 wire' and '4 wire' recognized.\n15.2 Temperature elements hold Sensor, Wiring, Sheath material, Insertion length and Process connection. Wiring applies to resistance thermometers only and shall be N/A for thermocouples. Insertion length is a short length in mm."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "3-wire",
+     "accepted": [
+      "3-wire",
+      "3 wire"
+     ]
+    },
+    {
+     "value": "4-wire",
+     "accepted": [
+      "4-wire",
+      "4 wire"
+     ]
+    },
+    {
+     "value": "N/A",
+     "accepted": [
+      "N/A"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write resistance-thermometer wiring as 3-wire or 4-wire. Write N/A for thermocouples.",
+   "flag_when": "",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Wiring",
+   "aliases": [
+    "wiring",
+    "sensor wiring",
+    "lead configuration",
+    "3-wire",
+    "4-wire",
+    "wire arrangement"
+   ],
+   "rules": "11.13 Temperature sensors are written Pt100, with 'RTD Pt100', 'PT-100' and 'Pt 100' recognized, or as Type followed by the thermocouple letter, such as Type K, with 'K-type', 'thermocouple K' and 'TC K' recognized and the corresponding forms for J. Wiring is written 3-wire or 4-wire, with '3 wire' and '4 wire' recognized.\n15.2 Temperature elements hold Sensor, Wiring, Sheath material, Insertion length and Process connection. Wiring applies to resistance thermometers only and shall be N/A for thermocouples. Insertion length is a short length in mm."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "GWR",
+     "accepted": [
+      "GWR",
+      "guided wave radar",
+      "guided radar"
+     ]
+    },
+    {
+     "value": "Radar",
+     "accepted": [
+      "Radar",
+      "non-contact radar"
+     ]
+    },
+    {
+     "value": "DP",
+     "accepted": [
+      "DP",
+      "differential pressure",
+      "d/p"
+     ]
+    },
+    {
+     "value": "Displacer",
+     "accepted": [
+      "Displacer"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed level measuring principle and its recognized variants.",
+   "flag_when": "The value does not match a prescribed form or recognized variant.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Level measuring principle",
+   "aliases": [
+    "principle",
+    "level principle",
+    "level measurement",
+    "GWR",
+    "radar",
+    "DP",
+    "displacer"
+   ],
+   "rules": "11.14 Level measuring principles are written GWR, with 'guided wave radar' and 'guided radar' recognized; Radar, with 'non-contact radar' recognized; DP, with 'differential pressure' and 'd/p' recognized; or Displacer. Flow meters are written Coriolis, with 'coriolis mass' and 'CMF' recognized; Magnetic, with 'mag', 'electromagnetic' and 'magflow' recognized; Vortex; or Ultrasonic, with 'USM' recognized.\n15.3 Level transmitters hold Principle, Range, Output, Size and Rating, Size and Rating being those of the process connection flange. Range is held in mm."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Coriolis",
+     "accepted": [
+      "Coriolis",
+      "coriolis mass",
+      "CMF"
+     ]
+    },
+    {
+     "value": "Magnetic",
+     "accepted": [
+      "Magnetic",
+      "mag",
+      "electromagnetic",
+      "magflow"
+     ]
+    },
+    {
+     "value": "Vortex",
+     "accepted": [
+      "Vortex"
+     ]
+    },
+    {
+     "value": "Ultrasonic",
+     "accepted": [
+      "Ultrasonic",
+      "USM"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use the prescribed flow meter type and its recognized variants.",
+   "flag_when": "The value does not match a prescribed form or recognized variant.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Flow meter type",
+   "aliases": [
+    "meter type",
+    "flow meter type",
+    "flow measurement principle",
+    "Coriolis",
+    "magnetic",
+    "vortex",
+    "ultrasonic",
+    "CMF"
+   ],
+   "rules": "11.14 Level measuring principles are written GWR, with 'guided wave radar' and 'guided radar' recognized; Radar, with 'non-contact radar' recognized; DP, with 'differential pressure' and 'd/p' recognized; or Displacer. Flow meters are written Coriolis, with 'coriolis mass' and 'CMF' recognized; Magnetic, with 'mag', 'electromagnetic' and 'magflow' recognized; Vortex; or Ultrasonic, with 'USM' recognized.\n15.4 Flow meters hold Meter type, Size, Rating, Range, Accuracy and Output. Range is held in m3/h. A range received in units of mass shall not be converted and shall be entered in the query register."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the value as +/-, the number, the percent sign, a space, and the reference: of span, of reading, or of full scale. Recognize span, % span, of calibrated span, rdg, of rdg, reading, FS, of FS, and full scale, and write the prescribed reference form; add +/- when it is absent.",
+   "flag_when": "The reference is absent, except for pressure gauges where of full scale applies.",
+   "max_decimals": null,
+   "variants": [
+    {
+     "applies_to": "pressure gauges",
+     "instructions": "When the reference is absent, use of full scale.",
+     "flag_when": ""
+    }
+   ],
+   "attribute": "Accuracy",
+   "aliases": [
+    "accuracy",
+    "measurement accuracy",
+    "accuracy reference",
+    "percent accuracy",
+    "% span",
+    "% reading",
+    "full scale"
+   ],
+   "rules": "11.15 Accuracy is written as +/-, the number, the percent sign, a space and the reference, which is of span, with 'span', '% span' and 'of calibrated span' recognized; of reading, with 'rdg', 'of rdg' and 'reading' recognized; or of full scale, with 'FS', 'of FS' and 'full scale' recognized. Where the received value lacks the plus-minus, +/- shall be added. Where it lacks the reference, the value shall be entered in the query register, except that the reference of full scale applies to pressure gauges.\n15.1 Pressure transmitters hold Range, Output, Accuracy, Process connection, Wetted material, IP rating, Ex marking and Power supply. Range is a range of gauge pressure in barg and is the calibrated range. Output is a signal in accordance with Clause 9. Process connection is a taper pipe thread. Power supply is a DC attribute, and VDC shall be added where it is not received.\n15.4 Flow meters hold Meter type, Size, Rating, Range, Accuracy and Output. Range is held in m3/h. A range received in units of mass shall not be converted and shall be entered in the query register."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "XLPE",
+     "accepted": [
+      "XLPE",
+      "cross-linked polyethylene",
+      "XLPE insulated"
+     ]
+    },
+    {
+     "value": "PVC",
+     "accepted": [
+      "PVC"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use XLPE or PVC as prescribed, recognizing the listed variants.",
+   "flag_when": "The value does not match a prescribed form or recognized variant.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Cable insulation",
+   "aliases": [
+    "insulation",
+    "cable insulation",
+    "insulation material",
+    "XLPE",
+    "PVC",
+    "cross-linked polyethylene"
+   ],
+   "rules": "11.16 Cable insulation is written XLPE, with 'cross-linked polyethylene' and 'XLPE insulated' recognized, or PVC. Armour is written SWA, with 'steel wire armour', 'steel wire armoured' and 'GSWA' recognized; GSWB, with 'galvanized steel wire braid', 'steel wire braid' and 'SWB' recognized; or Unarmoured, with 'unarmored' and 'non-armoured' recognized. The outer sheath is written LSZH, with 'LS0H', 'LSOH' and 'low smoke zero halogen' recognized, or PVC.\n16.1 Power, control and instrument cables hold Voltage rating, Size, Insulation, Armour, Sheath, Screen and Length. Size is a cable size in accordance with 9.17 and 9.18. Length is a long length in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "SWA",
+     "accepted": [
+      "SWA",
+      "steel wire armour",
+      "steel wire armoured",
+      "GSWA"
+     ]
+    },
+    {
+     "value": "GSWB",
+     "accepted": [
+      "GSWB",
+      "galvanized steel wire braid",
+      "steel wire braid",
+      "SWB"
+     ]
+    },
+    {
+     "value": "Unarmoured",
+     "accepted": [
+      "Unarmoured",
+      "unarmored",
+      "non-armoured"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Use SWA, GSWB, or Unarmoured as prescribed, recognizing the listed variants.",
+   "flag_when": "The value does not match a prescribed form or recognized variant.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Cable armour",
+   "aliases": [
+    "armour",
+    "cable armour",
+    "armoring",
+    "steel wire armour",
+    "steel wire braid",
+    "SWA",
+    "GSWA",
+    "GSWB"
+   ],
+   "rules": "11.16 Cable insulation is written XLPE, with 'cross-linked polyethylene' and 'XLPE insulated' recognized, or PVC. Armour is written SWA, with 'steel wire armour', 'steel wire armoured' and 'GSWA' recognized; GSWB, with 'galvanized steel wire braid', 'steel wire braid' and 'SWB' recognized; or Unarmoured, with 'unarmored' and 'non-armoured' recognized. The outer sheath is written LSZH, with 'LS0H', 'LSOH' and 'low smoke zero halogen' recognized, or PVC.\n16.1 Power, control and instrument cables hold Voltage rating, Size, Insulation, Armour, Sheath, Screen and Length. Size is a cable size in accordance with 9.17 and 9.18. Length is a long length in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "LSZH",
+     "accepted": [
+      "LSZH",
+      "LS0H",
+      "LSOH",
+      "low smoke zero halogen"
+     ]
+    },
+    {
+     "value": "PVC",
+     "accepted": [
+      "PVC"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the outer sheath as LSZH or PVC. Recognize LS0H, LSOH and low smoke zero halogen as LSZH.",
+   "flag_when": "When the value is not one of the prescribed forms or recognized variants, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Cable sheath",
+   "aliases": [
+    "sheath",
+    "outer sheath",
+    "cable sheath",
+    "LSZH",
+    "LSOH",
+    "low smoke zero halogen",
+    "PVC"
+   ],
+   "rules": "11.16 Cable insulation is written XLPE, with 'cross-linked polyethylene' and 'XLPE insulated' recognized, or PVC. Armour is written SWA, with 'steel wire armour', 'steel wire armoured' and 'GSWA' recognized; GSWB, with 'galvanized steel wire braid', 'steel wire braid' and 'SWB' recognized; or Unarmoured, with 'unarmored' and 'non-armoured' recognized. The outer sheath is written LSZH, with 'LS0H', 'LSOH' and 'low smoke zero halogen' recognized, or PVC.\n16.1 Power, control and instrument cables hold Voltage rating, Size, Insulation, Armour, Sheath, Screen and Length. Size is a cable size in accordance with 9.17 and 9.18. Length is a long length in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Overall",
+     "accepted": [
+      "Overall",
+      "OS",
+      "overall screen",
+      "collective screen"
+     ]
+    },
+    {
+     "value": "Individual and overall",
+     "accepted": [
+      "Individual and overall",
+      "IS/OS",
+      "ISOS",
+      "individual and overall screen"
+     ]
+    },
+    {
+     "value": "Unscreened",
+     "accepted": [
+      "Unscreened",
+      "unshielded"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the cable screen as Overall, Individual and overall, or Unscreened. Recognize the listed abbreviations and descriptions as their prescribed forms.",
+   "flag_when": "When the value is not one of the prescribed forms or recognized variants, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Cable screen",
+   "aliases": [
+    "screen",
+    "cable screen",
+    "shield",
+    "overall screen",
+    "individual and overall screen",
+    "unscreened",
+    "OS",
+    "IS/OS"
+   ],
+   "rules": "11.17 Cable screens are written Overall, with ‘OS’, ‘overall screen’ and ‘collective screen’ recognized; Individual and overall, with ‘IS/OS’, ‘ISOS’ and ‘individual and overall screen’ recognized; or Unscreened, with ‘unshielded’ recognized. Cable glands are written Barrier, with ‘barrier gland’ and ‘compound filled’ recognized, or Compression, with ‘compression gland’ and ‘standard gland’ recognized.\n16.1 Power, control and instrument cables hold Voltage rating, Size, Insulation, Armour, Sheath, Screen and Length. Size is a cable size in accordance with 9.17 and 9.18. Length is a long length in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Barrier",
+     "accepted": [
+      "Barrier",
+      "barrier gland",
+      "compound filled"
+     ]
+    },
+    {
+     "value": "Compression",
+     "accepted": [
+      "Compression",
+      "compression gland",
+      "standard gland"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the cable gland type as Barrier or Compression. Recognize the listed descriptions as their prescribed forms.",
+   "flag_when": "When the value is not one of the prescribed forms or recognized variants, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Cable gland type",
+   "aliases": [
+    "gland type",
+    "cable gland",
+    "gland",
+    "barrier gland",
+    "compression gland",
+    "compound filled"
+   ],
+   "rules": "11.17 Cable screens are written Overall, with ‘OS’, ‘overall screen’ and ‘collective screen’ recognized; Individual and overall, with ‘IS/OS’, ‘ISOS’ and ‘individual and overall screen’ recognized; or Unscreened, with ‘unshielded’ recognized. Cable glands are written Barrier, with ‘barrier gland’ and ‘compound filled’ recognized, or Compression, with ‘compression gland’ and ‘standard gland’ recognized.\n16.3 Cable glands hold Gland type, Thread, Material, Ex marking and IP rating. Thread is a metric thread or a taper pipe thread in accordance with Clause 8, and a metric thread shall not be converted to an NPT size."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Vertical",
+     "accepted": [
+      "Vertical",
+      "V",
+      "vert."
+     ]
+    },
+    {
+     "value": "Horizontal",
+     "accepted": [
+      "Horizontal",
+      "H",
+      "horiz."
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the vessel orientation as Vertical or Horizontal. Recognize V and vert. as Vertical, and H and horiz. as Horizontal.",
+   "flag_when": "When the value is not one of the prescribed forms or recognized variants, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Vessel orientation",
+   "aliases": [
+    "orientation",
+    "vessel orientation",
+    "vertical",
+    "horizontal",
+    "V",
+    "H",
+    "vert.",
+    "horiz."
+   ],
+   "rules": "11.18 Vessel orientation is written Vertical, with ‘V’ and ‘vert.’ recognized, or Horizontal, with ‘H’ and ‘horiz.’ recognized. Heads are written 2:1 SE, with ‘2:1 elliptical’, ‘elliptical’, ‘2:1 semi-elliptical’ and ‘SE 2:1’ recognized; Hemi, with ‘hemispherical’ recognized; or Tori, with ‘torispherical’ and ‘F&D’ recognized.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "2:1 SE",
+     "accepted": [
+      "2:1 SE",
+      "2:1 elliptical",
+      "elliptical",
+      "2:1 semi-elliptical",
+      "SE 2:1"
+     ]
+    },
+    {
+     "value": "Hemi",
+     "accepted": [
+      "Hemi",
+      "hemispherical"
+     ]
+    },
+    {
+     "value": "Tori",
+     "accepted": [
+      "Tori",
+      "torispherical",
+      "F&D"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the vessel head type as 2:1 SE, Hemi, or Tori. Recognize the listed descriptions and abbreviations as their prescribed forms.",
+   "flag_when": "When the value is not one of the prescribed forms or recognized variants, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Vessel head type",
+   "aliases": [
+    "heads",
+    "head type",
+    "vessel head",
+    "elliptical head",
+    "hemispherical head",
+    "torispherical head",
+    "2:1 SE",
+    "F&D"
+   ],
+   "rules": "11.18 Vessel orientation is written Vertical, with ‘V’ and ‘vert.’ recognized, or Horizontal, with ‘H’ and ‘horiz.’ recognized. Heads are written 2:1 SE, with ‘2:1 elliptical’, ‘elliptical’, ‘2:1 semi-elliptical’ and ‘SE 2:1’ recognized; Hemi, with ‘hemispherical’ recognized; or Tori, with ‘torispherical’ and ‘F&D’ recognized.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "ASME VIII-1",
+     "accepted": [
+      "ASME VIII-1",
+      "ASME VIII Div 1",
+      "ASME Sec VIII Div. 1",
+      "ASME Section VIII Division 1"
+     ]
+    },
+    {
+     "value": "ASME VIII-2",
+     "accepted": [
+      "ASME VIII-2"
+     ]
+    },
+    {
+     "value": "API 650",
+     "accepted": [
+      "API 650",
+      "API650",
+      "API Std 650"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the design code as ASME VIII-1, ASME VIII-2, or API 650. Recognize the listed forms as their prescribed forms.",
+   "flag_when": "When the value is not one of the prescribed forms or recognized variants, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Design code",
+   "aliases": [
+    "design code",
+    "code",
+    "design standard",
+    "ASME VIII-1",
+    "ASME VIII-2",
+    "API 650",
+    "vessel code"
+   ],
+   "rules": "11.19 Design codes are written ASME VIII-1, with ‘ASME VIII Div 1’, ‘ASME Sec VIII Div. 1’ and ‘ASME Section VIII Division 1’ recognized; ASME VIII-2, with the corresponding forms for Division 2 recognized; and API 650, with ‘API650’ and ‘API Std 650’ recognized. Radiography is written Full RT, with ‘100% RT’ and ‘full’ recognized; Spot RT, with ‘spot’ recognized; or No RT, with ‘no radiography’ and ‘nil’ recognized.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No.\n17.3 Storage tanks hold Capacity, Diameter, Height, Roof, Design code and Design temperature. Capacity is held in m3; Diameter and Height are long lengths in m."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Full RT",
+     "accepted": [
+      "Full RT",
+      "100% RT",
+      "full"
+     ]
+    },
+    {
+     "value": "Spot RT",
+     "accepted": [
+      "Spot RT",
+      "spot"
+     ]
+    },
+    {
+     "value": "No RT",
+     "accepted": [
+      "No RT",
+      "no radiography",
+      "nil"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the value exactly as the prescribed form, using the prescribed capitals.",
+   "flag_when": "If the value does not match a recognized variant or prescribed form, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Radiography",
+   "aliases": [
+    "radiography",
+    "RT",
+    "radiographic examination",
+    "full RT",
+    "spot RT",
+    "no RT",
+    "100% RT"
+   ],
+   "rules": "11.19 Design codes are written ASME VIII-1, with ‘ASME VIII Div 1’, ‘ASME Sec VIII Div. 1’ and ‘ASME Section VIII Division 1’ recognized; ASME VIII-2, with the corresponding forms for Division 2 recognized; and API 650, with ‘API650’ and ‘API Std 650’ recognized. Radiography is written Full RT, with ‘100% RT’ and ‘full’ recognized; Spot RT, with ‘spot’ recognized; or No RT, with ‘no radiography’ and ‘nil’ recognized.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Cone roof",
+     "accepted": [
+      "Cone roof",
+      "fixed cone roof",
+      "cone",
+      "CRT"
+     ]
+    },
+    {
+     "value": "Dome roof",
+     "accepted": [
+      "Dome roof",
+      "dome"
+     ]
+    },
+    {
+     "value": "EFR",
+     "accepted": [
+      "EFR",
+      "external floating roof"
+     ]
+    },
+    {
+     "value": "IFR",
+     "accepted": [
+      "IFR",
+      "internal floating roof"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the value exactly as the prescribed form, using the prescribed capitals.",
+   "flag_when": "If the value does not match a recognized variant or prescribed form, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Tank roof",
+   "aliases": [
+    "tank roof",
+    "roof type",
+    "cone roof",
+    "dome roof",
+    "external floating roof",
+    "internal floating roof",
+    "EFR",
+    "IFR"
+   ],
+   "rules": "11.20 Tank roofs are written Cone roof, with ‘fixed cone roof’, ‘cone’ and ‘CRT’ recognized; Dome roof, with ‘dome’ recognized; EFR, with ‘external floating roof’ recognized; or IFR, with ‘internal floating roof’ recognized. The TEMA type is written as three capital letters without spaces; ‘TEMA’ preceding and ‘type’ following are deleted, as are hyphens and spaces between the letters.\n17.3 Storage tanks hold Capacity, Diameter, Height, Roof, Design code and Design temperature. Capacity is held in m3; Diameter and Height are long lengths in m."
+  },
+  {
+   "kind": "format",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the TEMA type as three capital letters without spaces. Delete a preceding 'TEMA' and a following 'type', as well as hyphens and spaces between the letters.",
+   "flag_when": "If the received value cannot be presented as one unambiguous three-letter type, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "TEMA type",
+   "aliases": [
+    "TEMA type",
+    "TEMA designation",
+    "exchanger type",
+    "TEMA",
+    "heat exchanger type"
+   ],
+   "rules": "11.20 Tank roofs are written Cone roof, with ‘fixed cone roof’, ‘cone’ and ‘CRT’ recognized; Dome roof, with ‘dome’ recognized; EFR, with ‘external floating roof’ recognized; or IFR, with ‘internal floating roof’ recognized. The TEMA type is written as three capital letters without spaces; ‘TEMA’ preceding and ‘type’ following are deleted, as are hyphens and spaces between the letters.\n17.4 Shell-and-tube heat exchangers hold TEMA type, Duty, Area, Shell design pressure, Tube design pressure and Tube material. Duty is held in kW, Area in m2, and both design pressures in barg."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "IR",
+     "accepted": [
+      "IR",
+      "infrared",
+      "IR point",
+      "infrared point",
+      "NDIR"
+     ]
+    },
+    {
+     "value": "Catalytic",
+     "accepted": [
+      "Catalytic",
+      "cat bead",
+      "pellistor"
+     ]
+    },
+    {
+     "value": "Electrochemical",
+     "accepted": [
+      "Electrochemical",
+      "EC",
+      "electro-chemical"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the value exactly as the prescribed form, using the prescribed capitals.",
+   "flag_when": "If the value does not match a recognized variant or prescribed form, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Gas detection principle",
+   "aliases": [
+    "gas detection principle",
+    "detection principle",
+    "IR",
+    "catalytic",
+    "electrochemical",
+    "infrared",
+    "pellistor"
+   ],
+   "rules": "11.21 Gas detection principles are written IR, with ‘infrared’, ‘IR point’, ‘infrared point’ and ‘NDIR’ recognized; Catalytic, with ‘cat bead’ and ‘pellistor’ recognized; or Electrochemical, with ‘EC’ and ‘electro-chemical’ recognized. Gases are written Methane, with ‘CH4’ recognized; H2S, with ‘hydrogen sulfide’ and ‘hydrogen sulphide’ recognized; Hydrogen, with ‘H2’ recognized; or Oxygen, with ‘O2’ recognized.\n18.1 Gas detectors hold Principle, Gas, Range, Output and Ex marking. Range is held in %LEL for flammable gases, in ppm for toxic gases and in %vol for oxygen."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Methane",
+     "accepted": [
+      "Methane",
+      "CH4"
+     ]
+    },
+    {
+     "value": "H2S",
+     "accepted": [
+      "H2S",
+      "hydrogen sulfide",
+      "hydrogen sulphide"
+     ]
+    },
+    {
+     "value": "Hydrogen",
+     "accepted": [
+      "Hydrogen",
+      "H2"
+     ]
+    },
+    {
+     "value": "Oxygen",
+     "accepted": [
+      "Oxygen",
+      "O2"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the value exactly as the prescribed form, using the prescribed capitals.",
+   "flag_when": "If the value does not match a recognized variant or prescribed form, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Gas",
+   "aliases": [
+    "gas",
+    "detected gas",
+    "methane",
+    "hydrogen sulfide",
+    "hydrogen",
+    "oxygen",
+    "CH4",
+    "H2S"
+   ],
+   "rules": "11.21 Gas detection principles are written IR, with ‘infrared’, ‘IR point’, ‘infrared point’ and ‘NDIR’ recognized; Catalytic, with ‘cat bead’ and ‘pellistor’ recognized; or Electrochemical, with ‘EC’ and ‘electro-chemical’ recognized. Gases are written Methane, with ‘CH4’ recognized; H2S, with ‘hydrogen sulfide’ and ‘hydrogen sulphide’ recognized; Hydrogen, with ‘H2’ recognized; or Oxygen, with ‘O2’ recognized.\n18.1 Gas detectors hold Principle, Gas, Range, Output and Ex marking. Range is held in %LEL for flammable gases, in ppm for toxic gases and in %vol for oxygen."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "%LEL",
+     "accepted": [
+      "%LEL",
+      "% LEL",
+      "LEL%"
+     ]
+    },
+    {
+     "value": "ppm",
+     "accepted": [
+      "ppm",
+      "ppmv"
+     ]
+    },
+    {
+     "value": "%vol",
+     "accepted": [
+      "%vol",
+      "% vol",
+      "vol%"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": false,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the range unit as %LEL, ppm or %vol. Do not convert one range unit into another.",
+   "flag_when": "If the value does not match a recognized unit form, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Gas detector range unit",
+   "aliases": [
+    "range unit",
+    "gas range unit",
+    "detector unit",
+    "%LEL",
+    "ppm",
+    "ppmv",
+    "%vol",
+    "vol%"
+   ],
+   "rules": "11.22 Gas detector range units are recognized as follows: ‘%LEL’, ‘% LEL’ and ‘LEL%’ for %LEL; ‘ppm’ and ‘ppmv’ for ppm; and ‘%vol’, ‘% vol’ and ‘vol%’ for %vol. These units shall not be converted into one another.\n18.1 Gas detectors hold Principle, Gas, Range, Output and Ex marking. Range is held in %LEL for flammable gases, in ppm for toxic gases and in %vol for oxygen."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Portable",
+     "accepted": [
+      "Portable",
+      "hand held",
+      "handheld"
+     ]
+    },
+    {
+     "value": "Wheeled",
+     "accepted": [
+      "Wheeled",
+      "trolley",
+      "trolley mounted"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the extinguisher type as Portable or Wheeled. Recognize ‘hand held’ and ‘handheld’ as Portable, and ‘trolley’ and ‘trolley mounted’ as Wheeled.",
+   "flag_when": "If the value does not match a prescribed form or recognized variant unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Extinguisher type",
+   "aliases": [
+    "extinguisher type",
+    "extinguisher",
+    "portable",
+    "wheeled",
+    "handheld",
+    "trolley"
+   ],
+   "rules": "11.23 Extinguishers are written Portable, with ‘hand held’ and ‘handheld’ recognized, or Wheeled, with ‘trolley’ and ‘trolley mounted’ recognized. The agent is written DCP, with ‘dry chemical powder’, ‘dry powder’ and ‘powder’ recognized; CO2, with ‘carbon dioxide’ recognized; AFFF, with ‘AFFF foam’ and ‘foam’ recognized; or Water.\n18.2 Extinguishers hold Type, Agent and Charge. Charge is held in kg for DCP and CO2 and in l for AFFF and Water. A charge received in the other of these two units shall not be converted and shall be entered in the query register."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "DCP",
+     "accepted": [
+      "DCP",
+      "dry chemical powder",
+      "dry powder",
+      "powder"
+     ]
+    },
+    {
+     "value": "CO2",
+     "accepted": [
+      "CO2",
+      "carbon dioxide"
+     ]
+    },
+    {
+     "value": "AFFF",
+     "accepted": [
+      "AFFF",
+      "AFFF foam",
+      "foam"
+     ]
+    },
+    {
+     "value": "Water",
+     "accepted": [
+      "Water"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the extinguishing agent as DCP, CO2, AFFF or Water. Recognize the stated alternative names as the corresponding prescribed form.",
+   "flag_when": "If the value does not match a prescribed form or recognized variant unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Extinguishing agent",
+   "aliases": [
+    "agent",
+    "extinguishing agent",
+    "dry chemical powder",
+    "CO2",
+    "AFFF",
+    "water",
+    "foam"
+   ],
+   "rules": "11.23 Extinguishers are written Portable, with ‘hand held’ and ‘handheld’ recognized, or Wheeled, with ‘trolley’ and ‘trolley mounted’ recognized. The agent is written DCP, with ‘dry chemical powder’, ‘dry powder’ and ‘powder’ recognized; CO2, with ‘carbon dioxide’ recognized; AFFF, with ‘AFFF foam’ and ‘foam’ recognized; or Water.\n18.2 Extinguishers hold Type, Agent and Charge. Charge is held in kg for DCP and CO2 and in l for AFFF and Water. A charge received in the other of these two units shall not be converted and shall be entered in the query register."
+  },
+  {
+   "kind": "list",
+   "values": [
+    {
+     "value": "Yes",
+     "accepted": [
+      "Yes",
+      "Y",
+      "yes",
+      "true"
+     ]
+    },
+    {
+     "value": "No",
+     "accepted": [
+      "No",
+      "N",
+      "no",
+      "false"
+     ]
+    }
+   ],
+   "closed": true,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write affirmative values as Yes and negative values as No. Recognize the stated alternative forms as the corresponding prescribed form.",
+   "flag_when": "If the value does not match a prescribed form or recognized variant unambiguously, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Affirmative or negative value",
+   "aliases": [
+    "yes/no",
+    "boolean value",
+    "affirmative value",
+    "negative value",
+    "Yes",
+    "No",
+    "Y",
+    "N"
+   ],
+   "rules": "11.24 Affirmative and negative values are written Yes, with ‘Y’, ‘yes’ and ‘true’ recognized, and No, with ‘N’, ‘no’ and ‘false’ recognized.\n17.1 Pressure vessels hold Orientation, Inside diameter, Length, Design pressure, Design temperature, Material, Head type, Design code, Radiography and PWHT. Inside diameter and Length, the latter measured tangent to tangent, are short lengths in mm. Design pressure is a gauge pressure in barg. PWHT is Yes or No."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": 0,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the count as a whole number in digits only. Convert numbers from one to twelve written in words to digits, and delete ‘nos’, ‘no.’, ‘pcs’, ‘off’ and the name of the counted object following the number.",
+   "flag_when": "If the value is ambiguous, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [],
+   "attribute": "Count",
+   "aliases": [
+    "count",
+    "number of items",
+    "quantity count",
+    "terminals",
+    "entries",
+    "poles",
+    "stages",
+    "passes",
+    "whole number"
+   ],
+   "rules": "11.25 An attribute stating a number of things, such as terminals, entries, poles, stages or passes, shall be written as a whole number in digits only. Numbers from one to twelve written in words\n11.25 An attribute stating a number of things, such as terminals, entries, poles, stages or passes, shall be written as a whole number in digits only. Numbers from one to twelve written in words shall be written in digits, and ‘nos’, ‘no.’, ‘pcs’, ‘off’ and the name of the counted object following the number shall be deleted.\n16.4 Junction boxes hold Material, Dimensions, Terminals, Entries, IP rating and Ex marking. Dimensions are width, height and depth in mm in that order, written in accordance with 6.13. Terminals and Entries are counts in accordance with 11.25."
+  },
+  {
+   "kind": "quantity",
+   "values": [],
+   "closed": false,
+   "unit": "",
+   "decimals": null,
+   "decimal_separator": ".",
+   "unit_space": true,
+   "conversions": [],
+   "series": [],
+   "instructions": "Write the charge in the unit specified for the extinguisher agent, with one space between the number and the unit.",
+   "flag_when": "If a charge is received in the other of the two specified units, leave it unchanged and enter it in the query register.",
+   "max_decimals": null,
+   "variants": [
+    {
+     "applies_to": "DCP and CO2",
+     "kind": "quantity",
+     "unit": "kg",
+     "decimals": null,
+     "decimal_separator": ".",
+     "unit_space": true,
+     "conversions": [],
+     "series": [],
+     "instructions": "Write the charge in kg, with one space between the number and the unit.",
+     "flag_when": "If the charge is received in l, leave it unchanged and enter it in the query register.",
+     "max_decimals": null
+    },
+    {
+     "applies_to": "AFFF and Water",
+     "kind": "quantity",
+     "unit": "l",
+     "decimals": null,
+     "decimal_separator": ".",
+     "unit_space": true,
+     "conversions": [],
+     "series": [],
+     "instructions": "Write the charge in l, with one space between the number and the unit.",
+     "flag_when": "If the charge is received in kg, leave it unchanged and enter it in the query register.",
+     "max_decimals": null
+    }
+   ],
+   "attribute": "Charge",
+   "aliases": [
+    "charge",
+    "extinguisher charge",
+    "agent charge",
+    "fill charge",
+    "charge quantity",
+    "kg charge",
+    "litre charge"
+   ],
+   "rules": "18.2 Extinguishers hold Type, Agent and Charge. Charge is held in kg for DCP and CO2 and in l for AFFF and Water. A charge received in the other of these two units shall not be converted and shall be entered in the query register."
+  }
+ ]
+}
